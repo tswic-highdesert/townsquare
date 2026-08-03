@@ -1,0 +1,32 @@
+{
+  // Ported verbatim from the v1 repo: the feed scrapers, the content contracts,
+  // and the ingest layer. These ran in production for months.
+  //
+  // `noUncheckedIndexedAccess` is off here and on everywhere else. Turning it on
+  // for this code surfaces ~149 sites, nearly all of them unguarded regex-match
+  // indexing inside scrapers. Those are latent bugs worth fixing, but fixing them
+  // blind means editing parsing logic against live third-party HTML that nobody
+  // in this session has read, and a wrong guard changes what a scraper returns
+  // rather than failing loudly.
+  //
+  // Tracked as debt: fix per-scraper, with that scraper's fixture, then delete
+  // the file it is listed in here.
+  "extends": "./tsconfig.base.json",
+  "include": [
+    "packages/content/src/**/*",
+    "packages/feed/src/**/*",
+    "packages/db/src/**/*"
+  ],
+  "exclude": ["**/node_modules", "**/dist"],
+  "compilerOptions": {
+    "noUncheckedIndexedAccess": false,
+    "baseUrl": ".",
+    "paths": {
+      "@townsquare/manifest": ["./packages/manifest/src/index.ts"],
+      "@townsquare/shared": ["./packages/shared/src/index.ts"],
+      "@townsquare/content": ["./packages/content/src/index.ts"],
+      "@townsquare/feed": ["./packages/feed/src/index.ts"],
+      "@townsquare/db": ["./packages/db/src/index.ts"]
+    }
+  }
+}

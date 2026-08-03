@@ -20,6 +20,11 @@ const LIMITS = {
 }
 
 export class TownSquareError extends Error {
+  /**
+   * @param {string} code
+   * @param {string} message
+   * @param {{retryAfter?: number, details?: unknown}} [extra]
+   */
   constructor(code, message, extra) {
     super(message)
     this.name = 'TownSquareError'
@@ -34,9 +39,13 @@ export class TownSquareError extends Error {
   }
 }
 
-/** @type {{port: MessagePort, init: object} | null} */
+/** @typedef {{port: MessagePort, init: any}} Channel */
+
+/** @type {Channel | null} */
 let channel = null
+/** @type {Promise<Channel> | null} */
 let connecting = null
+/** @type {Map<string, {resolve: (v:any)=>void, reject: (e:any)=>void, timer: any}>} */
 const pending = new Map()
 let nextId = 0
 
@@ -55,6 +64,7 @@ function connect() {
       )
     }, LIMITS.handshakeTimeoutMs)
 
+    /** @param {MessageEvent} e */
     function onInit(e) {
       // The host is our parent and nobody else. A message from any other window
       // is ignored outright rather than inspected.
@@ -88,6 +98,7 @@ function connect() {
   return connecting
 }
 
+/** @param {MessageEvent} e */
 function onPortMessage(e) {
   const d = e.data
   if (!d || d.ts !== PROTOCOL_VERSION) return
@@ -115,14 +126,21 @@ function onPortMessage(e) {
   else p.reject(new TownSquareError(d.error.code, d.error.message, d.error))
 }
 
+/** @param {Record<string,string>|undefined} vars */
 function applyTheme(vars) {
   if (!vars) return
   const root = document.documentElement
   for (const k in vars) {
-    if (k.startsWith('--ts-')) root.style.setProperty(k, vars[k])
+    const v = vars[k]
+    if (v !== undefined && k.startsWith('--ts-')) root.style.setProperty(k, v)
   }
 }
 
+/**
+ * @param {string} method
+ * @param {unknown} params
+ * @returns {Promise<any>}
+ */
 async function call(method, params) {
   const ch = await connect()
 
@@ -149,6 +167,9 @@ async function call(method, params) {
  * Fire-and-forget, for the `app.*` calls that have nothing to return.
  * Deliberately does not reject: a creation should not have to await a title
  * change, and an unhandled rejection from one would be worse than silence.
+ *
+ * @param {string} method
+ * @param {unknown} params
  */
 function notify(method, params) {
   connect().then(
@@ -161,15 +182,20 @@ function notify(method, params) {
 
 export const app = {
   ready: () => notify('app.ready', undefined),
+  /** @param {number} px */
   setHeight: (px) => notify('app.setHeight', px),
+  /** @param {string} text */
   setTitle: (text) => notify('app.setTitle', text),
 }
 
 export const town = {
   info: () => call('town.info', undefined),
   thisWeek: () => call('town.thisWeek', undefined),
+  /** @param {object} [opts] */
   items: (opts) => call('town.items', opts || {}),
+  /** @param {string} id */
   item: (id) => call('town.item', id),
+  /** @param {object} [opts] */
   businesses: (opts) => call('town.businesses', opts || {}),
 }
 
@@ -178,15 +204,22 @@ export const user = {
 }
 
 export const records = {
+  /** @param {string} type @param {object} [opts] */
   list: (type, opts) => call('records.list', [type, opts]),
+  /** @param {string} type @param {string} id */
   get: (type, id) => call('records.get', [type, id]),
+  /** @param {string} type @param {object} data */
   create: (type, data) => call('records.create', [type, data]),
+  /** @param {string} type @param {string} id @param {object} patch */
   update: (type, id, patch) => call('records.update', [type, id, patch]),
+  /** @param {string} type @param {string} id */
   history: (type, id) => call('records.history', [type, id]),
 }
 
 export const storage = {
+  /** @param {string} key */
   get: (key) => call('storage.get', key),
+  /** @param {string} key @param {unknown} value */
   set: (key, value) => call('storage.set', [key, value]),
 }
 

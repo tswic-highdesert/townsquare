@@ -1,14 +1,24 @@
 {
   "extends": "./tsconfig.base.json",
-  "include": ["packages/*/src/**/*", "packages/*/scripts/**/*", "apps/*/src/**/*"],
-  "exclude": ["**/node_modules", "**/dist", "**/*.generated.ts"],
+  "include": [
+    "packages/manifest/src/**/*",
+    "packages/shared/src/**/*",
+    "packages/tokens/src/**/*",
+    "packages/sdk/src/**/*",
+    "packages/sdk/scripts/**/*",
+    "packages/sdk/runtime/**/*",
+    "apps/*/src/**/*"
+  ],
+  "exclude": ["**/node_modules", "**/dist"],
   "compilerOptions": {
+    "baseUrl": ".",
     "paths": {
       "@townsquare/manifest": ["./packages/manifest/src/index.ts"],
       "@townsquare/shared": ["./packages/shared/src/index.ts"],
       "@townsquare/tokens": ["./packages/tokens/src/index.ts"],
-      "@townsquare/sdk": ["./packages/sdk/src/index.js"]
-    },
-    "baseUrl": "."
+      "@townsquare/content": ["./packages/content/src/index.ts"],
+      "@townsquare/feed": ["./packages/feed/src/index.ts"],
+      "@townsquare/db": ["./packages/db/src/index.ts"]
+    }
   }
 }

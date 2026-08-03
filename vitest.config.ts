@@ -10,6 +10,9 @@ export default defineConfig({
       '@townsquare/shared': r('./packages/shared/src/index.ts'),
       '@townsquare/tokens': r('./packages/tokens/src/index.ts'),
       '@townsquare/sdk': r('./packages/sdk/src/index.ts'),
+      '@townsquare/content': r('./packages/content/src/index.ts'),
+      '@townsquare/feed': r('./packages/feed/src/index.ts'),
+      '@townsquare/db': r('./packages/db/src/index.ts'),
     },
   },
   test: {

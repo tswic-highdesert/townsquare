@@ -2,4 +2,7 @@ packages:
   - packages/*
   - apps/*
 allowBuilds:
+  cpu-features: false   # optional native speedup for ssh2; not needed
   esbuild: true
+  protobufjs: true
+  ssh2: true            # testcontainers reaper
