@@ -9,6 +9,7 @@ export default defineConfig({
       '@townsquare/manifest': r('./packages/manifest/src/index.ts'),
       '@townsquare/shared': r('./packages/shared/src/index.ts'),
       '@townsquare/tokens': r('./packages/tokens/src/index.ts'),
+      '@townsquare/sdk': r('./packages/sdk/src/index.ts'),
     },
   },
   test: {

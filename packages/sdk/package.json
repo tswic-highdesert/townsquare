@@ -1,0 +1,15 @@
+{
+  "name": "@townsquare/sdk",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "main": "./src/index.ts",
+  "exports": {
+    ".": "./src/index.ts",
+    "./runtime": "./runtime/sdk.js"
+  },
+  "dependencies": {
+    "@townsquare/shared": "workspace:*",
+    "zod": "^3.23.0"
+  }
+}

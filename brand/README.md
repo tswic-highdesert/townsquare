@@ -23,6 +23,8 @@ to billboard.
 | `logo-lockup.svg` | **Master lockup**, editable text (Libre Baskerville embedded). Best for web. |
 | `logo-lockup-outlined.svg` | Same lockup, text converted to paths — universal (Illustrator/Figma/print). |
 | `mark.png` | The approved standalone mark, raster. This is what the app icons were rendered from. |
+| `mark.svg` | **The mark as clean vector**, full color, tight-cropped (`viewBox="17 11 87 92"`). Added 2026-08-03 for in-app use — this is what the hi-fi design inlines. Generated from `build.py`'s `icon_group()` geometry. |
+| `mark-mono-alert.svg` | Same mark, single-color cream knockout for the emergency screen's alarm red (`#FFEDE7` on `#7E1F0C`). |
 | `png/` | Rendered PNG exports: `appicon-1024`, `apple-touch-icon-180`, `favicon-32`, `logo-lockup`. |
 | `build.py` | Generator for the two lockup SVGs. Re-run to regenerate or make a new location. |
 | `_fonts/` | Libre Baskerville variable font + OFL license. |
@@ -75,3 +77,8 @@ python3 build.py          # rebuilds all SVGs
 
 The full mark gets busy below ~32px. For 16px favicons, a simplified single-element
 glyph (e.g. just the speech bubble) reads better — not yet built; ask if you want it.
+
+**Updated 2026-08-03.** Tested `mark.svg` at 20 / 22 / 26 / 46px against the app's
+cream: the four color masses stay distinct and it reads fine, so the app UI uses the
+full mark at those sizes rather than a simplified glyph. The ~32px caveat still
+stands for a 16px *favicon*, where the tail and the gold panel do collapse.
