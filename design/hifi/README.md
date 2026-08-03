@@ -19,7 +19,8 @@ shipping fidelity. Build against it.
 | `Town Square hi-fi.dc.html` | The design itself. Eight turns (t4–t11), ~20 screens. |
 | `support.js` | Generated dc-runtime. Do not edit. |
 | `image-slot.js` | Omelette starter component backing `<image-slot>`. Do not edit. |
-| `uploads/mark.png` | The approved raster mark, copied from `../../brand/`. |
+| `uploads/mark.png` | The approved raster mark, full size, copied from `../../brand/`. |
+| `uploads/mark-ui.png` | The approved mark trimmed and scaled to 256px. **This is what the design references for the in-app logo.** |
 
 ## Viewing it
 
@@ -54,21 +55,30 @@ square with the Material Symbols `forum` glyph in it, in six places. All six
 now use the real Town Square mark (two overlapping figures + terracotta speech
 bubble), inlined as an SVG data-URI:
 
-| Where | Treatment |
+| Where | Size |
 |---|---|
-| Today header (22px) | Full-color mark, tile dropped |
-| "running on Town Square" chips, ×2 (20px) | Full-color mark, tile dropped |
-| Today source summary (26px) | Full-color mark, tile dropped |
-| Escape hatch (30px in a 46px tile) | Full-color mark on a surface tile, so it still pairs with the dashed external tile beside it |
-| Emergency "relayed by Town Square" (22px) | **Monochrome cream knockout**, not full color — the emergency screen is deliberately a second visual register with one alarm red, and a full-color logo would break it |
+| Today header | 22px, tile dropped |
+| "running on Town Square" chips, ×2 | 20px, tile dropped |
+| Today source summary | 26px, tile dropped |
+| Escape hatch | 30px on a surface tile, so it still pairs with the dashed external tile beside it |
+| Emergency "relayed by Town Square" | 22px |
 
-The marks are inlined as data-URIs rather than `<svg>` elements on purpose: the
-dc-runtime renders the template through `React.createElement`, which is fussy
-about SVG attribute casing (`viewBox`, `fill-opacity`). A CSS
-`background-image` sidesteps that entirely.
+All six reference `./uploads/mark-ui.png` via a CSS `background-image`, rather
+than an `<img>` or inline `<svg>`. That is deliberate: the dc-runtime renders
+the template through `React.createElement`, which is fussy about SVG attribute
+casing (`viewBox`, `fill-opacity`). A CSS background sidesteps it entirely.
 
-Both mark vectors live in `../../brand/` (`mark.svg`, `mark-mono-alert.svg`) —
-regenerate or restyle from there, not from the data-URIs.
+**Corrected 2026-08-03.** The first pass at this used a vector mark generated
+from `build.py`'s `icon_group()`. That function is a work-in-progress
+approximation, **not** the approved logo, and Tal caught it. Everything now
+comes from `brand/mark.png`, the real one. See the warning in
+`../../brand/README.md` before you touch the logo again.
+
+Open question for Tal: the emergency chip carries the full-color mark. That
+screen is otherwise a deliberate single-alarm-red register, and a monochrome
+knockout would respect it better, but the real mark's internal separations are
+thin anti-aliased strokes that disappear when flattened to one color at 22px.
+Doing it properly needs a purpose-built mono lockup, which does not exist yet.
 
 ## Notes
 
