@@ -1,0 +1,151 @@
+/**
+ * The shell: a gallery, a trust page, and a running creation.
+ *
+ * Three screens, matching `design/hifi` sections 6a, 6b and 6d. The trust page
+ * is not a formality — it is the moment a resident decides, and it is generated
+ * entirely from the frozen manifest by `describeManifest`, so a creation cannot
+ * write its own.
+ */
+
+import { useEffect, useState } from 'react'
+import { describeManifest } from '@townsquare/host'
+import { CreationFrame } from './CreationFrame.js'
+import { fetchCreations, fetchTown, type CreationSummary } from './townData.js'
+
+type Screen =
+  | { name: 'gallery' }
+  | { name: 'trust'; creation: CreationSummary }
+  | { name: 'running'; creation: CreationSummary }
+
+export function App() {
+  const [creations, setCreations] = useState<CreationSummary[] | null>(null)
+  const [town, setTown] = useState({ id: '', name: 'Town Square', timezone: 'America/Chicago' })
+  const [screen, setScreen] = useState<Screen>({ name: 'gallery' })
+  const [liveTitle, setLiveTitle] = useState<string | null>(null)
+
+  useEffect(() => {
+    void fetchCreations().then(setCreations)
+    void fetchTown().then(setTown)
+  }, [])
+
+  if (screen.name === 'gallery') {
+    return (
+      <div className="shell">
+        <div className="eyebrow">{town.name}</div>
+        <h1>Built by neighbors</h1>
+        <p style={{ color: 'var(--navy-60)', maxWidth: '46ch' }}>
+          Everything here was made by someone who lives in town, runs sandboxed on Town Square,
+          and can only reach what it says it can.
+        </p>
+
+        {creations === null ? (
+          <p className="eyebrow" style={{ marginTop: 32 }}>
+            Loading…
+          </p>
+        ) : creations.length === 0 ? (
+          <p style={{ marginTop: 32, color: 'var(--navy-60)' }}>
+            Nobody has built anything yet. You could be first.
+          </p>
+        ) : (
+          <ul className="gallery">
+            {creations.map((creation) => (
+              <li key={creation.slug}>
+                <button className="card" onClick={() => setScreen({ name: 'trust', creation })}>
+                  <img
+                    className="card-icon"
+                    src={`${creation.origin}/${creation.manifest.icon}`}
+                    alt=""
+                  />
+                  <span>
+                    <span className="card-name">{creation.name}</span>
+                    <span className="card-tagline" style={{ display: 'block' }}>
+                      {creation.tagline}
+                    </span>
+                  </span>
+                </button>
+              </li>
+            ))}
+          </ul>
+        )}
+      </div>
+    )
+  }
+
+  if (screen.name === 'trust') {
+    const { creation } = screen
+    const lines = describeManifest(creation.manifest)
+
+    return (
+      <div className="shell">
+        <button className="back" onClick={() => setScreen({ name: 'gallery' })}>
+          ← Back
+        </button>
+
+        <h1 style={{ marginBottom: 4 }}>{creation.name}</h1>
+        <p style={{ color: 'var(--navy-60)', marginTop: 0 }}>{creation.tagline}</p>
+        <p>{creation.description}</p>
+
+        <div className="eyebrow" style={{ marginTop: 28 }}>
+          What it can touch
+        </div>
+        <ul className="trust">
+          {lines.map((line) => (
+            <li key={line.kind} data-weight={line.weight}>
+              <div className="trust-title">{line.title}</div>
+              <div className="trust-detail">{line.detail}</div>
+            </li>
+          ))}
+        </ul>
+
+        <button className="primary" onClick={() => setScreen({ name: 'running', creation })}>
+          Open
+        </button>
+      </div>
+    )
+  }
+
+  const { creation } = screen
+  return (
+    <div className="shell">
+      {/*
+        The chrome above a creation is not decoration. It is the reason a
+        creation cannot credibly imitate Town Square: a resident always has a
+        frame of reference that the creation cannot draw over, and there is no
+        login form anywhere inside a creation for one to imitate.
+      */}
+      <div className="chrome">
+        <button
+          className="back"
+          onClick={() => {
+            setLiveTitle(null)
+            setScreen({ name: 'trust', creation })
+          }}
+        >
+          ←
+        </button>
+        <img className="card-icon" style={{ width: 28, height: 28 }} src={`${creation.origin}/${creation.manifest.icon}`} alt="" />
+        <span>
+          <h1 className="chrome-title">{creation.name}</h1>
+          <span className="chrome-by">by a neighbor</span>
+        </span>
+        <span className="badge">Sandboxed</span>
+      </div>
+
+      {/* Set by the creation through app.setTitle. Rendered as a text node. */}
+      {liveTitle && <div className="live-title">{liveTitle}</div>}
+
+      <CreationFrame
+        guestOrigin={creation.origin}
+        manifest={creation.manifest}
+        town={town}
+        onTitleChange={setLiveTitle}
+        onIncident={(kind, detail) => console.warn('creation incident', kind, detail)}
+      />
+
+      <div className="footer-chrome">
+        <span>running on Town Square</span>
+        <button onClick={() => alert('Reporting arrives with the review queue.')}>Report</button>
+      </div>
+    </div>
+  )
+}

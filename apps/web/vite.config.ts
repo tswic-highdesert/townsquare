@@ -1,0 +1,60 @@
+/**
+ * The shell's dev server.
+ *
+ * Three origins, on purpose, in development as in production:
+ *
+ *   townsquare.localhost:5173      the shell. The session cookie lives here.
+ *   *.tsq-apps.localhost:3031      untrusted bundles, one origin each
+ *   localhost:3030                 the read API, which holds the credential
+ *
+ * Chromium and Safari resolve any `*.localhost` name to 127.0.0.1 themselves
+ * and treat it as a secure context, so this costs no /etc/hosts entry and no
+ * certificate — and every origin check means exactly what it will mean in
+ * production, which is the only way boundary tests are worth running.
+ */
+
+import { defineConfig } from 'vite'
+import react from '@vitejs/plugin-react'
+import { fileURLToPath } from 'node:url'
+
+const r = (p: string) => fileURLToPath(new URL(p, import.meta.url))
+
+const SHELL_PORT = 5173
+const API_PORT = Number(process.env['API_PORT'] ?? 3030)
+
+export default defineConfig({
+  root: r('.'),
+  plugins: [react()],
+  resolve: {
+    alias: {
+      '@townsquare/manifest': r('../../packages/manifest/src/index.ts'),
+      '@townsquare/shared': r('../../packages/shared/src/index.ts'),
+      '@townsquare/tokens': r('../../packages/tokens/src/index.ts'),
+      '@townsquare/sdk': r('../../packages/sdk/src/index.ts'),
+      '@townsquare/host': r('../../packages/host/src/index.ts'),
+      '@townsquare/sandbox': r('../../packages/sandbox/src/index.ts'),
+    },
+  },
+  server: {
+    port: SHELL_PORT,
+    // Bind to loopback, but answer to the name. Browsers map `*.localhost` to
+    // 127.0.0.1 themselves; the OS resolver does not, so binding to the name
+    // would fail with ENOTFOUND. Visiting http://townsquare.localhost:5173
+    // then gives the shell a genuinely different registrable domain from the
+    // bundle origins, which is what makes every origin check real here.
+    host: '127.0.0.1',
+    allowedHosts: ['townsquare.localhost', 'localhost'],
+    proxy: {
+      // The read API is its own service, exactly as it is in production. The
+      // shell talks to it; a creation never can.
+      '/api': { target: `http://localhost:${API_PORT}`, changeOrigin: false },
+    },
+    headers: {
+      // The session cookie will live on this origin. Keep it out of any frame
+      // and out of any opener.
+      'Content-Security-Policy': "frame-ancestors 'self'",
+      'Cross-Origin-Opener-Policy': 'same-origin',
+      'X-Content-Type-Options': 'nosniff',
+    },
+  },
+})

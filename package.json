@@ -11,15 +11,25 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "gen": "tsx packages/sdk/scripts/generate.ts",
-    "gen:check": "tsx packages/sdk/scripts/generate.ts --check"
+    "gen:check": "tsx packages/sdk/scripts/generate.ts --check",
+    "dev:api": "tsx watch apps/api/src/main.ts",
+    "dev:sandbox": "tsx watch apps/sandbox/src/main.ts",
+    "dev:web": "pnpm --filter @townsquare/web dev"
   },
   "devDependencies": {
     "@types/node": "^22.10.0",
+    "@types/react": "^19.2.18",
+    "@types/react-dom": "^19.2.4",
+    "@vitejs/plugin-react": "^6.0.5",
+    "happy-dom": "^20.11.1",
     "tsx": "^4.19.0",
     "typescript": "^5.6.0",
+    "vite": "^8.2.0",
     "vitest": "^2.1.0"
   },
   "dependencies": {
+    "react": "^19.2.8",
+    "react-dom": "^19.2.8",
     "zod": "^3.23.0"
   }
 }

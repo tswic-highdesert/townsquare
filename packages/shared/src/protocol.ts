@@ -114,7 +114,20 @@ export function isHello(v: unknown): v is Hello {
   return d['ts'] === PROTOCOL_VERSION && d['kind'] === 'hello' && typeof d['sdk'] === 'number'
 }
 
-export function isRequest(v: unknown): v is Request {
+/**
+ * A request whose *envelope* is well formed. The method is any string.
+ *
+ * Method membership is deliberately not checked here. Transport validates
+ * transport; the registry decides what a method means. Folding the two
+ * together turns a builder's typo into a dropped message and a fifteen-second
+ * hang, when it should be an immediate `invalid_request` naming the method
+ * they got wrong. That is the error builders hit most, so it has to be good.
+ */
+export interface RequestEnvelope extends Omit<Request, 'method'> {
+  method: string
+}
+
+export function isRequestEnvelope(v: unknown): v is RequestEnvelope {
   if (typeof v !== 'object' || v === null) return false
   const d = v as Record<string, unknown>
   return (
@@ -123,8 +136,13 @@ export function isRequest(v: unknown): v is Request {
     typeof d['id'] === 'string' &&
     d['id'].length > 0 &&
     d['id'].length <= 64 &&
-    isMethod(d['method'])
+    typeof d['method'] === 'string'
   )
+}
+
+/** The stricter guard: envelope plus a method that actually exists. */
+export function isRequest(v: unknown): v is Request {
+  return isRequestEnvelope(v) && isMethod(v.method)
 }
 
 export function isResponse(v: unknown): v is Response {

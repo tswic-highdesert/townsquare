@@ -37,6 +37,12 @@ packages/manifest    the townsquare.json schema, and additive-only type evolutio
 packages/shared      wire protocol, error codes, CSP compiler, path normalizer, origins
 packages/tokens      design tokens, emitted for both the shell and the guest frame
 packages/sdk         @townsquare/sdk, the contract creations are written against
+packages/bundle      publish-time validation, autochecks, content addressing
+packages/sandbox     the bundle server, as a pure request-in/response-out function
+packages/host        the frame, the handshake, and the permission gate. no React
+apps/api             the read API. holds the credential
+apps/sandbox         serves untrusted bundles. holds nothing
+apps/web             the shell: gallery, trust page, running creation
 ```
 
 ## Develop
@@ -46,6 +52,9 @@ pnpm install
 pnpm typecheck
 pnpm test
 ```
+
+Running it locally takes three processes on three origins. See
+[DEVELOPING.md](DEVELOPING.md).
 
 ## Two rules worth knowing before reading the code
 

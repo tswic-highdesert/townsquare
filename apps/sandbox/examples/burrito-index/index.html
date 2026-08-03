@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <title>The Burrito Index</title>
+    <style>
+      /* Everything here styles itself from the tokens Town Square injects, so
+         the app inherits the town's look without knowing what it is. */
+      main { padding: var(--ts-space-6) var(--ts-space-5); max-width: 640px; margin: 0 auto; }
+      h1 { font-size: var(--ts-text-h2); margin: 0 0 var(--ts-space-2); }
+      .lede { color: var(--ts-navy60); margin: 0 0 var(--ts-space-6); }
+      ol { list-style: none; padding: 0; margin: 0; display: grid; gap: var(--ts-space-3); }
+      li {
+        display: flex; align-items: center; gap: var(--ts-space-4);
+        padding: var(--ts-space-4);
+        background: var(--ts-surface);
+        border: 1px solid var(--ts-hairline);
+        border-radius: var(--ts-radius-card);
+      }
+      .rank {
+        flex: none; width: 28px; height: 28px; display: grid; place-items: center;
+        border-radius: var(--ts-radius-full);
+        background: var(--ts-terracotta-14); color: var(--ts-terracotta);
+        font-size: var(--ts-text-label);
+      }
+      .name { font-weight: 600; }
+      .detail { color: var(--ts-navy60); font-size: var(--ts-text-label); }
+      .note { margin-top: var(--ts-space-6); color: var(--ts-navy40); font-size: var(--ts-text-caption); }
+    </style>
+  </head>
+  <body>
+    <main>
+      <h1>The Burrito Index</h1>
+      <p class="lede" id="lede">Loading the town directory…</p>
+      <ol id="list"></ol>
+      <p class="note">
+        Names and hours come from the Town Square directory. The ranking is mine,
+        not the city's.
+      </p>
+    </main>
+
+    <script type="module">
+      // Bare specifier, no build step, no package.json. The import map that
+      // makes this resolve is injected by Town Square at serve time.
+      import { town, app } from '@townsquare/sdk'
+
+      const list = document.getElementById('list')
+      const lede = document.getElementById('lede')
+
+      try {
+        const { name } = await town.info()
+        const { items } = await town.businesses({ tag: 'restaurant', limit: 14 })
+
+        lede.textContent = `${items.length} spots in ${name}, ranked by whoever shows up to vote.`
+
+        for (const [index, business] of items.entries()) {
+          const li = document.createElement('li')
+
+          const rank = document.createElement('span')
+          rank.className = 'rank'
+          rank.textContent = String(index + 1)
+
+          const body = document.createElement('div')
+          const name = document.createElement('div')
+          name.className = 'name'
+          // textContent, never innerHTML: this is town data, and an app that
+          // interpolates it into markup is one bad listing from an incident.
+          name.textContent = business.name
+          const detail = document.createElement('div')
+          detail.className = 'detail'
+          detail.textContent = business.category ?? 'Local business'
+
+          body.append(name, detail)
+          li.append(rank, body)
+          list.append(li)
+        }
+
+        app.setTitle(`${items.length} spots ranked`)
+      } catch (err) {
+        lede.textContent = `Could not load the directory: ${err.message}`
+      } finally {
+        // Always, even on failure. An app that never calls ready() is replaced
+        // by a did-not-load state after ten seconds.
+        app.ready()
+      }
+    </script>
+  </body>
+</html>

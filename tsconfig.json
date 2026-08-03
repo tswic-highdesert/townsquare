@@ -7,15 +7,24 @@
     "packages/sdk/src/**/*",
     "packages/sdk/scripts/**/*",
     "packages/sdk/runtime/**/*",
+    "packages/bundle/src/**/*",
+    "packages/sandbox/src/**/*",
+    "packages/host/src/**/*",
     "apps/*/src/**/*"
   ],
   "exclude": ["**/node_modules", "**/dist"],
   "compilerOptions": {
+    "jsx": "react-jsx",
+    "types": ["node"],
     "baseUrl": ".",
     "paths": {
       "@townsquare/manifest": ["./packages/manifest/src/index.ts"],
       "@townsquare/shared": ["./packages/shared/src/index.ts"],
       "@townsquare/tokens": ["./packages/tokens/src/index.ts"],
+      "@townsquare/bundle": ["./packages/bundle/src/index.ts"],
+      "@townsquare/sandbox": ["./packages/sandbox/src/index.ts"],
+      "@townsquare/host": ["./packages/host/src/index.ts"],
+      "@townsquare/sdk": ["./packages/sdk/src/index.ts"],
       "@townsquare/content": ["./packages/content/src/index.ts"],
       "@townsquare/feed": ["./packages/feed/src/index.ts"],
       "@townsquare/db": ["./packages/db/src/index.ts"]
