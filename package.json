@@ -1,0 +1,25 @@
+{
+  "name": "townsquare",
+  "private": true,
+  "type": "module",
+  "packageManager": "pnpm@11.0.9",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "gen": "tsx packages/sdk/scripts/generate.ts",
+    "gen:check": "tsx packages/sdk/scripts/generate.ts --check"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.0",
+    "tsx": "^4.19.0",
+    "typescript": "^5.6.0",
+    "vitest": "^2.1.0"
+  },
+  "dependencies": {
+    "zod": "^3.23.0"
+  }
+}
