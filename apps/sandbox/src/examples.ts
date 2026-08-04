@@ -18,6 +18,27 @@ import { MemoryBundleStore } from '@townsquare/sandbox'
 const EXAMPLES_DIR = fileURLToPath(new URL('../examples', import.meta.url))
 const TOWN_ID = 'russellville-ar'
 
+/**
+ * An extra directory of creations to load, for the boundary suite.
+ *
+ * The attacker fixture must not ship in the normal gallery, but it must go
+ * through the *same* publish path as anything else — otherwise the suite would
+ * be attacking a specially-privileged bundle and proving nothing.
+ */
+const EXTRA_DIR = process.env['TOWNSQUARE_EXTRA_EXAMPLES']
+
+/**
+ * Who is allowed to frame these creations.
+ *
+ * Baked into the frozen CSP at publish time. Getting this wrong does not fail
+ * loudly anywhere on the server — the browser simply refuses to render every
+ * creation, which is why it is configuration rather than a constant.
+ */
+const SHELL_ORIGINS = (process.env['SHELL_ORIGINS'] ?? 'http://townsquare.localhost:5173')
+  .split(',')
+  .map((o) => o.trim())
+  .filter(Boolean)
+
 async function readDirectoryAsBundle(dir: string): Promise<BundleFile[]> {
   const files: BundleFile[] = []
 
@@ -40,21 +61,26 @@ async function readDirectoryAsBundle(dir: string): Promise<BundleFile[]> {
   return files
 }
 
+async function directoriesIn(root: string): Promise<Array<[string, string]>> {
+  try {
+    return (await readdir(root, { withFileTypes: true }))
+      .filter((e) => e.isDirectory())
+      .map((e) => [e.name, join(root, e.name)])
+  } catch {
+    console.warn(`no examples directory at ${root}`)
+    return []
+  }
+}
+
 export async function loadExampleCreations(): Promise<MemoryBundleStore> {
   const store = new MemoryBundleStore()
 
-  let entries: string[]
-  try {
-    entries = (await readdir(EXAMPLES_DIR, { withFileTypes: true }))
-      .filter((e) => e.isDirectory())
-      .map((e) => e.name)
-  } catch {
-    console.warn(`no examples directory at ${EXAMPLES_DIR}`)
-    return store
-  }
+  const entries = [
+    ...(await directoriesIn(EXAMPLES_DIR)),
+    ...(EXTRA_DIR ? await directoriesIn(EXTRA_DIR) : []),
+  ]
 
-  for (const name of entries) {
-    const dir = join(EXAMPLES_DIR, name)
+  for (const [name, dir] of entries) {
     if (!(await stat(dir)).isDirectory()) continue
 
     const files = await readDirectoryAsBundle(dir)
@@ -80,7 +106,7 @@ export async function loadExampleCreations(): Promise<MemoryBundleStore> {
       originKey,
       entryPath: report.entry,
       // Compiled once, here, and frozen. Never recomputed per request.
-      cspHeader: compileCsp(report.manifest),
+      cspHeader: compileCsp(report.manifest, { shellOrigins: SHELL_ORIGINS }),
       townId: TOWN_ID,
       creationStatus: 'active',
       files: new Map(files.map((f) => [f.path, f.bytes])),

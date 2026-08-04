@@ -33,7 +33,7 @@ export function App() {
       <div className="shell">
         <div className="eyebrow">{town.name}</div>
         <h1>Built by neighbors</h1>
-        <p style={{ color: 'var(--navy-60)', maxWidth: '46ch' }}>
+        <p className="lede">
           Everything here was made by someone who lives in town, runs sandboxed on Town Square,
           and can only reach what it says it can.
         </p>
@@ -43,7 +43,7 @@ export function App() {
             Loading…
           </p>
         ) : creations.length === 0 ? (
-          <p style={{ marginTop: 32, color: 'var(--navy-60)' }}>
+          <p className="lede" style={{ marginTop: 32 }}>
             Nobody has built anything yet. You could be first.
           </p>
         ) : (
@@ -82,7 +82,7 @@ export function App() {
         </button>
 
         <h1 style={{ marginBottom: 4 }}>{creation.name}</h1>
-        <p style={{ color: 'var(--navy-60)', marginTop: 0 }}>{creation.tagline}</p>
+        <p className="lede" style={{ marginTop: 0 }}>{creation.tagline}</p>
         <p>{creation.description}</p>
 
         <div className="eyebrow" style={{ marginTop: 28 }}>

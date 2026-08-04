@@ -1,36 +1,14 @@
 /*
  * The shell's own look.
  *
- * Palette and type come from the hi-fi design reference in `design/hifi/`,
- * which is tuned off the base brand and is the source of truth for app UI. The
- * brand file still wins for the logo itself.
+ * Every colour, radius and size here is `var(--ts-*)`, injected at startup from
+ * `@townsquare/tokens` — the same values a creation receives inside its frame.
+ * There is deliberately not a single hex literal in this file: a hand-copied
+ * colour is how a shell and the creations it hosts drift apart, and the drift
+ * is invisible until you see them side by side.
  *
- * Creations do not read these. They receive `--ts-*` tokens from
- * `@townsquare/tokens`, injected into their own frame, so the shell can be
- * restyled without touching a single creation.
+ * Structure and copy follow `design/hifi/`, sections 6a, 6b and 6d.
  */
-
-@import url('https://fonts.googleapis.com/css2?family=Newsreader:opsz,wght@6..72,400;6..72,600&family=DM+Sans:wght@400;500;700&family=DM+Mono:wght@400;500&display=swap');
-
-:root {
-  --cream: #ede9e0;
-  --surface: #fffdfb;
-  --ink: #1d1b16;
-  --navy: #26405b;
-  --navy-60: rgba(38, 64, 91, 0.6);
-  --navy-40: rgba(38, 64, 91, 0.4);
-  --terracotta: #c4714e;
-  --terracotta-12: rgba(196, 113, 78, 0.12);
-  --alarm: #7e1f0c;
-  --hairline: rgba(29, 27, 22, 0.1);
-
-  --serif: 'Newsreader', Georgia, serif;
-  --sans: 'DM Sans', system-ui, -apple-system, sans-serif;
-  --mono: 'DM Mono', ui-monospace, monospace;
-
-  --radius-card: 12px;
-  --radius-chip: 999px;
-}
 
 *,
 *::before,
@@ -40,10 +18,10 @@
 
 body {
   margin: 0;
-  background: var(--cream);
-  color: var(--ink);
-  font-family: var(--sans);
-  font-size: 16px;
+  background: var(--ts-cream);
+  color: var(--ts-ink);
+  font-family: var(--ts-font-sans);
+  font-size: var(--ts-text-body);
   line-height: 1.5;
   -webkit-font-smoothing: antialiased;
 }
@@ -51,7 +29,7 @@ body {
 h1,
 h2,
 h3 {
-  font-family: var(--serif);
+  font-family: var(--ts-font-serif);
   font-weight: 600;
   letter-spacing: -0.01em;
 }
@@ -62,45 +40,50 @@ button {
 }
 
 .shell {
-  max-width: 720px;
+  max-width: 680px;
   margin: 0 auto;
-  padding: 32px 20px 64px;
+  padding: var(--ts-space-8) var(--ts-space-5) var(--ts-space-16);
 }
 
 .eyebrow {
-  font-family: var(--mono);
-  font-size: 11px;
+  font-family: var(--ts-font-mono);
+  font-size: var(--ts-text-eyebrow);
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  color: var(--navy-40);
+  color: var(--ts-ink45);
+}
+
+.lede {
+  color: var(--ts-ink60);
+  max-width: 46ch;
 }
 
 /* ── gallery ──────────────────────────────────────────────────────────── */
 
 .gallery {
   display: grid;
-  gap: 12px;
-  margin-top: 24px;
+  gap: var(--ts-space-3);
+  margin-top: var(--ts-space-6);
   padding: 0;
   list-style: none;
 }
 
 .card {
   display: flex;
-  gap: 16px;
+  gap: var(--ts-space-4);
   align-items: flex-start;
   width: 100%;
   text-align: left;
-  padding: 16px;
-  background: var(--surface);
-  border: 1px solid var(--hairline);
-  border-radius: var(--radius-card);
-  box-shadow: 0 1px 2px rgba(29, 27, 22, 0.04);
+  padding: var(--ts-space-4);
+  background: var(--ts-surface);
+  border: 1px solid var(--ts-hairline);
+  border-radius: var(--ts-radius-card);
+  box-shadow: 0 1px 2px var(--ts-ink26);
   transition: box-shadow 120ms ease, transform 120ms ease;
 }
 
 .card:hover {
-  box-shadow: 0 4px 12px rgba(29, 27, 22, 0.08);
+  box-shadow: 0 6px 16px var(--ts-ink26);
   transform: translateY(-1px);
 }
 
@@ -108,22 +91,21 @@ button {
   flex: none;
   width: 44px;
   height: 44px;
-  border-radius: 10px;
-  background: var(--terracotta-12);
+  border-radius: var(--ts-radius-input);
+  background: var(--ts-terracotta-14);
   object-fit: cover;
 }
 
 .card-name {
-  font-family: var(--serif);
-  font-size: 18px;
+  font-family: var(--ts-font-serif);
+  font-size: var(--ts-text-card-title);
   font-weight: 600;
-  margin: 0;
 }
 
 .card-tagline {
-  color: var(--navy-60);
-  font-size: 14px;
-  margin: 2px 0 0;
+  color: var(--ts-ink60);
+  font-size: var(--ts-text-label);
+  margin-top: 2px;
 }
 
 /* ── host chrome (design 6b) ──────────────────────────────────────────── */
@@ -131,86 +113,88 @@ button {
 .chrome {
   display: flex;
   align-items: center;
-  gap: 12px;
-  padding: 12px 0 16px;
-  border-bottom: 1px solid var(--hairline);
+  gap: var(--ts-space-3);
+  padding: var(--ts-space-3) 0 var(--ts-space-4);
+  border-bottom: 1px solid var(--ts-hairline);
 }
 
 .chrome-title {
-  font-family: var(--serif);
-  font-size: 18px;
+  font-family: var(--ts-font-serif);
+  font-size: var(--ts-text-card-title);
   font-weight: 600;
   margin: 0;
   line-height: 1.2;
 }
 
 .chrome-by {
-  font-size: 13px;
-  color: var(--navy-60);
+  font-size: var(--ts-text-caption);
+  color: var(--ts-ink60);
 }
 
+/*
+ * The one piece of chrome a creation can never draw over, which is what makes
+ * it unable to credibly imitate Town Square.
+ */
 .badge {
   margin-left: auto;
   flex: none;
-  font-family: var(--mono);
-  font-size: 10px;
+  font-family: var(--ts-font-mono);
+  font-size: var(--ts-text-eyebrow);
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  color: var(--navy);
-  background: rgba(38, 64, 91, 0.08);
-  border-radius: var(--radius-chip);
+  color: var(--ts-navy);
+  background: var(--ts-sage-14);
+  border-radius: var(--ts-radius-chip);
   padding: 4px 10px;
 }
 
 .live-title {
-  font-size: 13px;
-  color: var(--navy-60);
-  padding: 8px 0 0;
+  font-size: var(--ts-text-caption);
+  color: var(--ts-ink60);
+  padding-top: var(--ts-space-2);
 }
 
 .frame-wrap {
-  margin-top: 12px;
-  border: 1px solid var(--hairline);
-  border-radius: var(--radius-card);
+  margin-top: var(--ts-space-3);
+  border: 1px solid var(--ts-hairline);
+  border-radius: var(--ts-radius-card);
   overflow: hidden;
-  background: var(--surface);
+  background: var(--ts-surface);
 }
 
 .footer-chrome {
   display: flex;
   align-items: center;
-  gap: 12px;
-  padding: 12px 2px;
-  font-size: 12px;
-  color: var(--navy-40);
+  gap: var(--ts-space-3);
+  padding: var(--ts-space-3) 2px;
+  font-size: var(--ts-text-caption);
+  color: var(--ts-ink45);
 }
 
 .footer-chrome button {
   background: none;
   border: 0;
-  color: var(--navy-60);
+  color: var(--ts-ink60);
   text-decoration: underline;
   padding: 0;
-  font-size: 12px;
+  font-size: var(--ts-text-caption);
 }
 
 /* ── trust page (design 6a) ───────────────────────────────────────────── */
 
 .trust {
-  margin: 20px 0;
+  margin: var(--ts-space-5) 0;
   padding: 0;
   list-style: none;
-  display: grid;
-  gap: 2px;
-  background: var(--surface);
-  border: 1px solid var(--hairline);
-  border-radius: var(--radius-card);
+  background: var(--ts-surface);
+  border: 1px solid var(--ts-hairline);
+  border-radius: var(--ts-radius-card);
   overflow: hidden;
 }
 
 .trust li {
-  padding: 14px 16px;
-  border-bottom: 1px solid var(--hairline);
+  padding: var(--ts-space-4);
+  border-bottom: 1px solid var(--ts-hairline);
 }
 
 .trust li:last-child {
@@ -219,45 +203,54 @@ button {
 
 .trust-title {
   font-weight: 500;
-  font-size: 15px;
+  font-size: var(--ts-text-label);
 }
 
 .trust-detail {
-  color: var(--navy-60);
-  font-size: 13px;
+  color: var(--ts-ink60);
+  font-size: var(--ts-text-caption);
   margin-top: 2px;
 }
 
+/*
+ * Anything that outlives the visit, or leaves town, is marked. The rest is
+ * background reassurance and should read that way.
+ */
 .trust li[data-weight='consequential'] {
-  box-shadow: inset 3px 0 0 var(--terracotta);
+  box-shadow: inset 3px 0 0 var(--ts-terracotta);
+  background: var(--ts-terracotta-tint);
 }
 
 .primary {
   display: inline-flex;
   align-items: center;
-  gap: 8px;
-  background: var(--terracotta);
-  color: #fff;
+  gap: var(--ts-space-2);
+  background: var(--ts-terracotta);
+  color: var(--ts-surface);
   border: 0;
-  border-radius: 8px;
-  padding: 12px 20px;
+  border-radius: var(--ts-radius-button);
+  padding: var(--ts-space-3) var(--ts-space-5);
   font-weight: 500;
+}
+
+.primary:hover {
+  background: var(--ts-terracotta-hover);
 }
 
 .secondary {
   background: none;
-  border: 1px solid var(--hairline);
-  border-radius: 8px;
-  padding: 12px 20px;
-  color: var(--ink);
+  border: 1px solid var(--ts-hairline);
+  border-radius: var(--ts-radius-button);
+  padding: var(--ts-space-3) var(--ts-space-5);
+  color: var(--ts-ink);
 }
 
 .back {
   background: none;
   border: 0;
   padding: 0;
-  color: var(--navy-60);
-  font-size: 14px;
+  color: var(--ts-ink60);
+  font-size: var(--ts-text-label);
 }
 
 /* ── boot and failure (design 6d) ─────────────────────────────────────── */
@@ -266,29 +259,48 @@ button {
   display: grid;
   place-items: center;
   min-height: 320px;
-  color: var(--navy-40);
-  font-size: 14px;
+  color: var(--ts-ink45);
+  font-size: var(--ts-text-label);
 }
 
 .failure {
-  padding: 32px 24px;
+  padding: var(--ts-space-8) var(--ts-space-6);
   text-align: center;
 }
 
 .failure h2 {
-  margin: 0 0 8px;
-  font-size: 20px;
+  margin: 0 0 var(--ts-space-2);
+  font-size: var(--ts-text-h2);
 }
 
 .failure p {
-  color: var(--navy-60);
-  margin: 0 auto 20px;
+  color: var(--ts-ink60);
+  margin: 0 auto var(--ts-space-5);
   max-width: 42ch;
 }
 
 .failure .meta {
-  font-family: var(--mono);
-  font-size: 11px;
-  color: var(--navy-40);
-  margin-top: 16px;
+  font-family: var(--ts-font-mono);
+  font-size: var(--ts-text-eyebrow);
+  color: var(--ts-ink45);
+  margin-top: var(--ts-space-4);
+}
+
+/*
+ * The frame and its skeleton share a cell, so the skeleton covers the frame
+ * without taking it out of the layout. An iframe that is not laid out is an
+ * iframe the browser never loads.
+ */
+.frame-stack {
+  display: grid;
+  min-height: 320px;
+}
+
+.frame-stack > * {
+  grid-area: 1 / 1;
+}
+
+.skeleton-overlay {
+  background: var(--ts-surface);
+  z-index: 1;
 }

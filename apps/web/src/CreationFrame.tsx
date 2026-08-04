@@ -49,25 +49,34 @@ export function CreationFrame(props: CreationFrameProps) {
     // `attempt` is in the deps so Try again rebuilds the whole host.
   }, [props.guestOrigin, props.manifest, props.town, attempt])
 
-  return (
-    <>
-      <div className="frame-wrap" hidden={state.name === 'error'}>
-        {state.name !== 'ready' && (
-          <div className="skeleton">starting {props.manifest.name}…</div>
-        )}
-        <div ref={mountRef} hidden={state.name !== 'ready'} />
+  if (state.name === 'error') {
+    return (
+      <div className="frame-wrap">
+        <Failure
+          manifest={props.manifest}
+          reason={state.reason}
+          onRetry={() => setAttempt((n) => n + 1)}
+        />
       </div>
+    )
+  }
 
-      {state.name === 'error' && (
-        <div className="frame-wrap">
-          <Failure
-            manifest={props.manifest}
-            reason={state.reason}
-            onRetry={() => setAttempt((n) => n + 1)}
-          />
-        </div>
+  /*
+   * The skeleton is layered *over* the frame, never in place of it.
+   *
+   * Hiding the mount point until the creation is ready looks reasonable and
+   * deadlocks: a `display: none` iframe is never loaded by the browser, so the
+   * handshake never happens, so it never becomes ready, so it stays hidden. It
+   * then fails with a handshake timeout that reads like the creation's fault.
+   * Found by the boundary suite.
+   */
+  return (
+    <div className="frame-wrap frame-stack">
+      <div ref={mountRef} />
+      {state.name !== 'ready' && (
+        <div className="skeleton skeleton-overlay">starting {props.manifest.name}…</div>
       )}
-    </>
+    </div>
   )
 }
 

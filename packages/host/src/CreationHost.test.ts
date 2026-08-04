@@ -110,6 +110,24 @@ describe('the frame element', () => {
     instance.destroy()
   })
 
+  it('loads eagerly by default, because a hidden lazy frame never loads at all', async () => {
+    // Found by the boundary suite. A `loading="lazy"` iframe that is off-screen
+    // or inside a `display: none` wrapper is never loaded, so the handshake
+    // never happens, so the creation never becomes ready — and it then fails
+    // with a timeout that reads like the creation's fault rather than ours.
+    const { instance, el } = host()
+    void instance.mount()
+    expect(frameIn(el)!.getAttribute('loading')).toBe('eager')
+    instance.destroy()
+  })
+
+  it('still allows lazy when a caller genuinely wants it below the fold', async () => {
+    const { instance, el } = host({ loading: 'lazy' })
+    void instance.mount()
+    expect(frameIn(el)!.getAttribute('loading')).toBe('lazy')
+    instance.destroy()
+  })
+
   it('starts at the skeleton height so the page does not jump', async () => {
     const { instance, el } = host()
     void instance.mount()

@@ -180,6 +180,53 @@ describe('source autochecks', () => {
     ).toContain('dynamic_code')
   })
 
+  it('does not reject a file for talking about eval in a comment', () => {
+    // Found by the boundary suite: its attacker fixture explains in a comment
+    // why it avoids a literal `eval(`, and the validator rejected the comment.
+    // A platform whose security model is "a human reads the source" must not
+    // punish source that explains itself.
+    const src = [
+      '// We deliberately avoid eval() and new Function() here, because the',
+      '// sandbox CSP blocks both and they would fail at runtime anyway.',
+      '/* See also: atob() on a large literal is a review flag. */',
+      'const total = 1 + 1',
+    ].join('\n')
+    const result = validateBundle(bundle({ 'app.js': enc(src) }))
+    expect(result.ok, JSON.stringify(errorCodes(result))).toBe(true)
+  })
+
+  it('still rejects the real thing on the line below the comment', () => {
+    const src = '// no eval() here, honest\nconst f = window.eval("1")'
+    expect(errorCodes(validateBundle(bundle({ 'app.js': enc(src) })))).toContain('dynamic_code')
+  })
+
+  it('strips JS comments inside an HTML script block, not just <!-- -->', () => {
+    // An HTML entry carries inline script, so its comments are JS comments.
+    // Missing this is what rejected the boundary suite's attacker fixture.
+    const html = [
+      '<!doctype html><html><body><script type="module">',
+      '  // We avoid eval() here on purpose.',
+      '  /* and new Function() too */',
+      '  const total = 1 + 1',
+      '</' + 'script></body></html>',
+    ].join('\n')
+    const result = validateBundle(bundle({ 'index.html': enc(html) }))
+    expect(result.ok, JSON.stringify(errorCodes(result))).toBe(true)
+  })
+
+  it('ignores a host mentioned only in a comment', () => {
+    const src = '// Docs at https://api.weather.gov/openapi.json\nconst x = 1'
+    const result = validateBundle(bundle({ 'app.js': enc(src) }))
+    expect(warnCodes(result)).not.toContain('undeclared_host')
+  })
+
+  it('does not mistake a URL for a comment when stripping', () => {
+    // The comment stripper must not eat `//` in `https://`, or every scan
+    // would silently stop at the first link.
+    const src = 'fetch("https://api.weather.gov/points")'
+    expect(warnCodes(validateBundle(bundle({ 'app.js': enc(src) })))).toContain('undeclared_host')
+  })
+
   it('rejects a bundle shipping its own @townsquare import map', () => {
     const html =
       '<!doctype html><html><head><script type="importmap">' +

@@ -18,16 +18,34 @@ import { createServer, type IncomingMessage, type ServerResponse } from 'node:ht
 import { readFile } from 'node:fs/promises'
 import { fileURLToPath } from 'node:url'
 import { serveBundleRequest, type SandboxConfig } from '@townsquare/sandbox'
-import { guestThemeCss } from '@townsquare/tokens'
+import { guestThemeCss, FONT_FILES } from '@townsquare/tokens'
 import { loadExampleCreations } from './examples.js'
 
 const PORT = Number(process.env['SANDBOX_PORT'] ?? 3031)
 const APPS_DOMAIN = process.env['APPS_DOMAIN'] ?? 'tsq-apps.localhost'
 
 const sdkPath = fileURLToPath(new URL('../../../packages/sdk/runtime/sdk.js', import.meta.url))
+const fontsDir = new URL('../../../packages/tokens/fonts/', import.meta.url)
+
+/**
+ * Read the typefaces once, at boot, into memory.
+ *
+ * They are a handful of files that never change while the process runs, and
+ * holding them here means the request path touches no filesystem at all —
+ * which is the same property that makes bundle serving free of traversal bugs.
+ */
+async function loadFonts(): Promise<Map<string, Uint8Array>> {
+  const fonts = new Map<string, Uint8Array>()
+  for (const name of FONT_FILES) {
+    const path = fileURLToPath(new URL(`${name}.woff2`, fontsDir))
+    fonts.set(name, new Uint8Array(await readFile(path)))
+  }
+  return fonts
+}
 
 async function main(): Promise<void> {
   const sdkJs = await readFile(sdkPath, 'utf8')
+  const fonts = await loadFonts()
   const store = await loadExampleCreations()
 
   const config: SandboxConfig = {
@@ -36,8 +54,9 @@ async function main(): Promise<void> {
     assets: {
       sdkJs,
       themeCss: () => guestThemeCss(),
-      themeVersion: 1,
+      themeVersion: 2,
       sdkMajor: 1,
+      fonts,
     },
   }
 

@@ -217,7 +217,7 @@ export function validateBundle(
       else warn(file.path, finding.code, finding.message)
     }
 
-    for (const host of undeclaredHosts(text, manifest)) {
+    for (const host of undeclaredHosts(stripComments(text, ext), manifest)) {
       warn(
         file.path,
         'undeclared_host',
@@ -250,6 +250,21 @@ export function scanSource(path: string, text: string): SourceFinding[] {
   const out: SourceFinding[] = []
   const ext = extensionOf(path)
 
+  /**
+   * Pattern checks run on the source with comments removed.
+   *
+   * Comments are prose, and prose talks about code. A file carrying
+   * `// we deliberately avoid eval() here` is the *opposite* of a problem, and
+   * auto-rejecting it would teach builders that explaining themselves is
+   * dangerous — which is precisely backwards for a platform whose security
+   * model is "a human reads the source".
+   *
+   * The minification heuristics below deliberately keep using the raw text:
+   * whitespace ratio and line length are claims about the actual file, and a
+   * minified bundle with its comments stripped is still a minified bundle.
+   */
+  const code = stripComments(text, ext)
+
   if (text.length > 2000 && ext !== 'css') {
     const lines = text.split('\n')
     const meanLine = text.length / lines.length
@@ -279,7 +294,7 @@ export function scanSource(path: string, text: string): SourceFinding[] {
       [/\beval\s*\(/, 'eval()'],
       [/\bnew\s+Function\s*\(/, 'new Function()'],
     ] as const) {
-      if (pattern.test(text)) {
+      if (pattern.test(code)) {
         out.push({
           severity: 'error',
           code: 'dynamic_code',
@@ -291,7 +306,7 @@ export function scanSource(path: string, text: string): SourceFinding[] {
     // A long string next to a decoder is the shape of a payload hidden from
     // review. It is a warning rather than an error because base64 images and
     // legitimate decoding exist.
-    if (/\batob\s*\(/.test(text) && /["'`][A-Za-z0-9+/=]{1024,}["'`]/.test(text)) {
+    if (/\batob\s*\(/.test(code) && /["'`][A-Za-z0-9+/=]{1024,}["'`]/.test(code)) {
       out.push({
         severity: 'warning',
         code: 'encoded_payload',
@@ -299,8 +314,8 @@ export function scanSource(path: string, text: string): SourceFinding[] {
       })
     }
 
-    const escapes = (text.match(/\\x[0-9a-fA-F]{2}|\\u[0-9a-fA-F]{4}/g) ?? []).length
-    if (escapes > 100 && escapes * 4 > text.length * 0.1) {
+    const escapes = (code.match(/\\x[0-9a-fA-F]{2}|\\u[0-9a-fA-F]{4}/g) ?? []).length
+    if (escapes > 100 && escapes * 4 > code.length * 0.1) {
       out.push({
         severity: 'warning',
         code: 'escape_density',
@@ -311,7 +326,7 @@ export function scanSource(path: string, text: string): SourceFinding[] {
     // The import map is spliced in at serve time and is what makes the bare
     // `@townsquare/sdk` specifier resolve. A bundle shipping its own would
     // shadow ours and could point the SDK name at code we never reviewed.
-    if (/<script[^>]+type\s*=\s*["']?importmap/i.test(text) && /@townsquare\//.test(text)) {
+    if (/<script[^>]+type\s*=\s*["']?importmap/i.test(code) && /@townsquare\//.test(code)) {
       out.push({
         severity: 'error',
         code: 'own_import_map',
@@ -323,7 +338,7 @@ export function scanSource(path: string, text: string): SourceFinding[] {
   // The SDK is served from the guest's own origin and shared as a module
   // singleton. A vendored copy would handshake separately and drift from the
   // host's protocol version on its own schedule.
-  if ((ext === 'js' || ext === 'mjs') && /kind:\s*['"]hello['"]/.test(text) && /ts:\s*1/.test(text)) {
+  if ((ext === 'js' || ext === 'mjs') && /kind:\s*['"]hello['"]/.test(code) && /ts:\s*1/.test(code)) {
     out.push({
       severity: 'error',
       code: 'vendored_sdk',
@@ -332,6 +347,38 @@ export function scanSource(path: string, text: string): SourceFinding[] {
   }
 
   return out
+}
+
+/**
+ * Remove comments so a pattern check reads code, not prose.
+ *
+ * Deliberately crude: it does not parse, so a `//` inside a string literal
+ * costs us the rest of that line. That direction is the safe one — the worst
+ * case is a heuristic seeing *less* than it might have, which risks a missed
+ * flag that a human reviewer still catches, rather than a false auto-reject
+ * that no human ever sees.
+ */
+export function stripComments(text: string, ext: string | null): string {
+  if (ext === 'html') {
+    // Both kinds. An HTML file carries inline `<script>`, so its comments are
+    // usually JS comments, not `<!-- -->` — which is exactly the case the
+    // first version of this missed.
+    return stripJsComments(text.replace(/<!--[\s\S]*?-->/g, ' '))
+  }
+  if (ext === 'js' || ext === 'mjs' || ext === 'css') {
+    return stripJsComments(text)
+  }
+  return text
+}
+
+function stripJsComments(text: string): string {
+  return (
+    text
+      .replace(/\/\*[\s\S]*?\*\//g, ' ')
+      // The `[^:]` guard is what stops this eating the `//` in `https://`,
+      // which would silently truncate every scan at the first link.
+      .replace(/(^|[^:])\/\/[^\n]*/g, '$1')
+  )
 }
 
 const URL_PATTERN = /https?:\/\/([a-z0-9.-]+\.[a-z]{2,})/gi

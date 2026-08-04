@@ -1,0 +1,13 @@
+{
+  "manifest_version": 1,
+  "sdk": 1,
+  "name": "Neighborhood Watch",
+  "tagline": "Looks perfectly ordinary",
+  "description": "The boundary suite's attacker. It declares almost nothing and then tries every escape in the threat model, recording what the browser actually did. Everything it attempts must fail.",
+  "version": "1.0.0",
+  "entry": "index.html",
+  "icon": "icon.png",
+  "permissions": {
+    "network": ["tile.openstreetmap.org"]
+  }
+}

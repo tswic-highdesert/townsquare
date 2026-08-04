@@ -94,6 +94,16 @@ export interface CreationHostConfig {
   onTitleChange?(title: string): void
   onHeightChange?(px: number): void
   onIncident?(kind: string, detail: Record<string, unknown>): void
+  /**
+   * `lazy` only when the frame is genuinely below the fold.
+   *
+   * Default `eager`, because the host is normally mounted in response to
+   * someone choosing to open a creation, and a lazy frame that is off-screen —
+   * or hidden behind a loading skeleton — never loads, so the handshake never
+   * happens and the creation times out looking broken. That deadlock is easy to
+   * build and very hard to see.
+   */
+  loading?: 'eager' | 'lazy'
   /** Injectable for tests. */
   timeouts?: { handshakeMs?: number; readyMs?: number }
 }
@@ -129,7 +139,7 @@ export class CreationHost {
     iframe.setAttribute('sandbox', SANDBOX_TOKENS)
     iframe.setAttribute('allow', ALLOW_ATTRIBUTE)
     iframe.setAttribute('referrerpolicy', 'no-referrer')
-    iframe.setAttribute('loading', 'lazy')
+    iframe.setAttribute('loading', this.cfg.loading ?? 'eager')
     iframe.setAttribute('title', `${this.cfg.manifest.name} — a resident-built creation`)
     iframe.style.width = '100%'
     iframe.style.border = '0'

@@ -13,18 +13,49 @@
  * production, which is the only way boundary tests are worth running.
  */
 
-import { defineConfig } from 'vite'
+import { defineConfig, type Plugin } from 'vite'
 import react from '@vitejs/plugin-react'
 import { fileURLToPath } from 'node:url'
+import { readFile } from 'node:fs/promises'
+import { join } from 'node:path'
 
 const r = (p: string) => fileURLToPath(new URL(p, import.meta.url))
 
 const SHELL_PORT = 5173
+const FONTS_DIR = r('../../packages/tokens/fonts')
+
+/**
+ * Serve the typefaces from `@townsquare/tokens`, not from a copy.
+ *
+ * The shell and every creation must use the same files. Copying them into a
+ * `public/` directory here would work today and drift the first time one side
+ * is updated, and a font mismatch between the shell and the frames inside it is
+ * exactly the kind of thing nobody notices for months.
+ */
+function fonts(): Plugin {
+  return {
+    name: 'townsquare-fonts',
+    configureServer(server) {
+      server.middlewares.use('/fonts', (req, res, next) => {
+        const name = (req.url ?? '').replace(/^\//, '').split('?')[0] ?? ''
+        if (!/^[a-z0-9-]{1,40}\.woff2$/.test(name)) return next()
+        readFile(join(FONTS_DIR, name)).then(
+          (bytes) => {
+            res.setHeader('Content-Type', 'font/woff2')
+            res.setHeader('Cache-Control', 'public, max-age=31536000, immutable')
+            res.end(bytes)
+          },
+          () => next(),
+        )
+      })
+    },
+  }
+}
 const API_PORT = Number(process.env['API_PORT'] ?? 3030)
 
 export default defineConfig({
   root: r('.'),
-  plugins: [react()],
+  plugins: [react(), fonts()],
   resolve: {
     alias: {
       '@townsquare/manifest': r('../../packages/manifest/src/index.ts'),

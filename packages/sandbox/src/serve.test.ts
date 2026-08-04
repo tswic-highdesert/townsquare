@@ -22,7 +22,7 @@ const MANIFEST = {
 function csp(): string {
   const parsed = parseManifest(MANIFEST)
   if (!parsed.ok) throw new Error(JSON.stringify(parsed.issues))
-  return compileCsp(parsed.manifest)
+  return compileCsp(parsed.manifest, { shellOrigins: ['https://townsquare.org'] })
 }
 
 const enc = (s: string) => new TextEncoder().encode(s)
@@ -64,6 +64,7 @@ function config(overrides: Partial<SandboxConfig> = {}): SandboxConfig {
       themeCss: () => guestThemeCss(),
       themeVersion: 19,
       sdkMajor: 1,
+      fonts: new Map([['dm-sans', new Uint8Array([0x77, 0x4f, 0x46, 0x32])]]),
     },
     ...overrides,
   }
@@ -140,7 +141,7 @@ describe('security headers', () => {
     const res = await get('/')
     expect(res.headers['Content-Security-Policy']).toBe(
       "default-src 'none'; " +
-        "script-src 'self'; " +
+        "script-src 'self' 'unsafe-inline'; " +
         "style-src 'self' 'unsafe-inline'; " +
         "img-src 'self' data: https://tile.openstreetmap.org; " +
         "font-src 'self' data: https://tile.openstreetmap.org; " +
@@ -152,7 +153,9 @@ describe('security headers', () => {
         "base-uri 'none'; " +
         "form-action 'none'; " +
         "worker-src 'self'; " +
-        "frame-ancestors 'self'",
+        // The shell's origin, not 'self'. A creation is framed by the shell,
+        // which is a different registrable domain on purpose.
+        'frame-ancestors https://townsquare.org',
     )
   })
 
@@ -261,5 +264,48 @@ describe('platform assets', () => {
   it('404s an unknown platform path', async () => {
     expect((await get('/_ts/nope.js')).status).toBe(404)
     expect((await get('/_ts/sdk/9/sdk.js')).status).toBe(404)
+  })
+})
+
+describe('self-hosted fonts', () => {
+  it('serves a typeface from the creation own origin, so font-src self covers it', async () => {
+    const res = await get('/_ts/fonts/dm-sans.woff2')
+    expect(res.status).toBe(200)
+    expect(res.headers['Content-Type']).toBe('font/woff2')
+    expect(res.headers['Cache-Control']).toContain('immutable')
+  })
+
+  it('is why no creation ever has to declare a font host', async () => {
+    // The frozen CSP has `font-src 'self'` and nothing else beyond declared
+    // hosts. If fonts were fetched from Google, every creation would need
+    // fonts.gstatic.com in its manifest, turning a typeface into a permission.
+    const csp = (await get('/')).headers['Content-Security-Policy']!
+    expect(csp).toContain("font-src 'self' data:")
+    expect(csp).not.toContain('gstatic')
+    expect(csp).not.toContain('googleapis')
+  })
+
+  it('404s a font that is not in the map', async () => {
+    expect((await get('/_ts/fonts/comic-sans.woff2')).status).toBe(404)
+  })
+
+  it('refuses to treat a font name as a path', async () => {
+    for (const attempt of [
+      '/_ts/fonts/../../etc/passwd.woff2',
+      '/_ts/fonts/a/b.woff2',
+      '/_ts/fonts/..%2fdm-sans.woff2',
+    ]) {
+      expect((await get(attempt)).status, attempt).toBe(404)
+    }
+  })
+
+  it('omits the body on HEAD for a platform asset', async () => {
+    const res = await serveBundleRequest(
+      { method: 'HEAD', host: HOST, url: '/_ts/fonts/dm-sans.woff2' },
+      config(),
+    )
+    expect(res.status).toBe(200)
+    expect(res.body).toBeNull()
+    expect(res.headers['Content-Length']).toBe('4')
   })
 })

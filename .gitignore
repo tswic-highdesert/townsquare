@@ -12,3 +12,7 @@ dist/
 
 # Bundle scratch space during local development
 .bundles/
+
+# Playwright
+e2e/test-results/
+e2e/playwright-report/

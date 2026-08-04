@@ -71,16 +71,47 @@ function assertSafeHost(host: string): void {
 }
 
 export interface CompileCspOptions {
+  /**
+   * The shell origins allowed to frame this creation. Required.
+   *
+   * `'self'` is the wrong answer and was the original bug here: a creation is
+   * framed by the *shell*, which lives on a different registrable domain by
+   * design, so `frame-ancestors 'self'` means nothing can ever embed it. The
+   * whole platform silently fails to load, and it fails at the browser rather
+   * than anywhere a server log would show it.
+   *
+   * There is deliberately no default. A policy about who may frame you is not
+   * something to guess.
+   */
+  shellOrigins: string[]
   /** Where CSP violation reports are sent. Omit to disable reporting. */
   reportUri?: string
+}
+
+/** `scheme://host[:port]`, and nothing else — no path, no wildcard, no space. */
+const ORIGIN = /^https?:\/\/[a-z0-9.-]+(:[0-9]{1,5})?$/
+
+function assertSafeOrigin(origin: string): void {
+  if (!ORIGIN.test(origin)) {
+    throw new CspCompileError(`not a bare origin: ${JSON.stringify(origin)}`)
+  }
+  if (/[;,'"\s\\()*]/.test(origin)) {
+    throw new CspCompileError(`origin contains forbidden characters: ${JSON.stringify(origin)}`)
+  }
 }
 
 /**
  * @returns the exact `Content-Security-Policy` header value to serve.
  */
-export function compileCsp(manifest: Manifest, opts: CompileCspOptions = {}): string {
+export function compileCsp(manifest: Manifest, opts: CompileCspOptions): string {
   const hosts = [...new Set(manifest.permissions.network)].sort()
   for (const h of hosts) assertSafeHost(h)
+
+  const ancestors = [...new Set(opts.shellOrigins)]
+  if (ancestors.length === 0) {
+    throw new CspCompileError('at least one shell origin is required for frame-ancestors')
+  }
+  for (const o of ancestors) assertSafeOrigin(o)
 
   // Every declared host is pinned to https. A creation cannot opt into cleartext,
   // which would expose residents on shared networks and is never necessary.
@@ -92,8 +123,27 @@ export function compileCsp(manifest: Manifest, opts: CompileCspOptions = {}): st
     // therefore fails closed rather than inheriting something permissive.
     `default-src 'none'`,
 
-    // The vendoring gate. Never widened by the manifest.
-    `script-src 'self'`,
+    /*
+     * The vendoring gate. The host list is never widened by the manifest, and
+     * that — not the absence of `'unsafe-inline'` — is what enforces "everything
+     * is vendored": no third-party origin can ever appear here, so no creation
+     * can pull code at runtime.
+     *
+     * `'unsafe-inline'` IS allowed, and leaving it out was a real bug: a
+     * single-file `index.html` with an inline `<script type="module">` is the
+     * normal shape of a resident's creation and the near-universal shape of a
+     * generated one. Without it, nothing runs at all.
+     *
+     * It costs nothing here. CSP's job in this frame is egress control, not
+     * XSS hardening: the whole document is already untrusted code on its own
+     * origin, so an attacker who can write inline script can equally write an
+     * external one in the same bundle. There is no privilege between them.
+     *
+     * `'unsafe-eval'` stays denied, and that distinction is the one that
+     * matters — eval is how you fetch a payload after approval and run
+     * behaviour a reviewer never saw.
+     */
+    `script-src 'self' 'unsafe-inline'`,
 
     // 'unsafe-inline' for styles only. Generated apps use inline styles
     // constantly, and style injection inside an already-untrusted, already-
@@ -118,8 +168,9 @@ export function compileCsp(manifest: Manifest, opts: CompileCspOptions = {}): st
     // Workers stay same-origin so they cannot become an unpoliced fetch context.
     `worker-src 'self'`,
 
-    // Belt and braces with the iframe `sandbox` attribute on the host side.
-    `frame-ancestors 'self'`,
+    // Who may embed this creation. The shell, and nobody else — this is what
+    // stops an external site framing a creation to clickjack it.
+    `frame-ancestors ${ancestors.join(' ')}`,
   ]
 
   if (opts.reportUri) {

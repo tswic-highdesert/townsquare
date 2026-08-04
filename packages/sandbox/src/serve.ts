@@ -62,6 +62,14 @@ export interface PlatformAssets {
   /** Bumped when the theme sheet changes, so the URL is cache-busted. */
   themeVersion: number
   sdkMajor: number
+  /**
+   * Self-hosted typefaces, by bare name (`dm-sans` → the woff2 bytes).
+   *
+   * Served from the creation's own origin, which is the whole reason
+   * `font-src 'self'` is sufficient. The alternative — pointing at Google —
+   * would make a typeface into a permission every reviewer has to think about.
+   */
+  fonts?: ReadonlyMap<string, Uint8Array>
 }
 
 export interface SandboxConfig {
@@ -133,7 +141,8 @@ export async function serveBundleRequest(
   // `script-src 'self'` and `style-src 'self'` cover them with no per-creation
   // exception and nothing to declare in a manifest.
   if (path.startsWith('/_ts/')) {
-    return servePlatformAsset(path, resolved, cfg)
+    const asset = servePlatformAsset(path, resolved, cfg)
+    return asset.body ? { ...asset, body: bodyFor(req, asset.body) } : asset
   }
 
   const normalized = normalizeBundlePath(path, resolved.entryPath)
@@ -216,6 +225,28 @@ function servePlatformAsset(
     return {
       status: 200,
       headers: withLength({ ...common, 'Content-Type': 'text/javascript; charset=utf-8' }, bytes),
+      body: bytes,
+    }
+  }
+
+  // `/_ts/fonts/<name>.woff2`. Bare names only: the lookup is an exact hit
+  // against a map we built, so there is no path here to traverse.
+  if (path.startsWith('/_ts/fonts/') && path.endsWith('.woff2')) {
+    const name = path.slice('/_ts/fonts/'.length, -'.woff2'.length)
+    const bytes = /^[a-z0-9-]{1,40}$/.test(name) ? assets.fonts?.get(name) : undefined
+    if (!bytes) return text(404, 'Not found')
+    return {
+      status: 200,
+      headers: withLength(
+        {
+          ...common,
+          'Content-Type': 'font/woff2',
+          // Fonts are versioned by their own filename and never change in
+          // place, so they can be cached as long as anything here.
+          'Cache-Control': IMMUTABLE,
+        },
+        bytes,
+      ),
       body: bytes,
     }
   }
