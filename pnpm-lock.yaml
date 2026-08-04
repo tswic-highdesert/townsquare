@@ -57,9 +57,18 @@ importers:
       '@townsquare/feed':
         specifier: workspace:*
         version: link:../../packages/feed
+      '@townsquare/identity':
+        specifier: workspace:*
+        version: link:../../packages/identity
+      '@townsquare/manifest':
+        specifier: workspace:*
+        version: link:../../packages/manifest
       '@townsquare/sandbox':
         specifier: workspace:*
         version: link:../../packages/sandbox
+      '@townsquare/sdk':
+        specifier: workspace:*
+        version: link:../../packages/sdk
       '@townsquare/shared':
         specifier: workspace:*
         version: link:../../packages/shared
@@ -169,6 +178,12 @@ importers:
       '@townsquare/tokens':
         specifier: workspace:*
         version: link:../tokens
+
+  packages/identity:
+    dependencies:
+      '@townsquare/shared':
+        specifier: workspace:*
+        version: link:../shared
 
   packages/manifest:
     dependencies:

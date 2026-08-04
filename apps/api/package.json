@@ -10,7 +10,10 @@
   "dependencies": {
     "@townsquare/bundle": "workspace:*",
     "@townsquare/feed": "workspace:*",
+    "@townsquare/identity": "workspace:*",
+    "@townsquare/manifest": "workspace:*",
     "@townsquare/sandbox": "workspace:*",
+    "@townsquare/sdk": "workspace:*",
     "@townsquare/shared": "workspace:*"
   }
 }

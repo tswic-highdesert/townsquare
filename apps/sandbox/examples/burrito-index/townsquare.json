@@ -9,5 +9,5 @@
   "entry": "index.html",
   "icon": "icon.png",
   "display": { "surface": "full", "height": "auto" },
-  "permissions": {}
+  "permissions": { "identity": "handle" }
 }

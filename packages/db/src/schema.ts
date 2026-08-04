@@ -172,6 +172,86 @@ export const vouches = pgTable(
   }),
 )
 
+/**
+ * Browser sessions, one row per sign-in.
+ *
+ * The row holds a hash, never the cookie value, for the same reason `api_keys`
+ * does: a database dump should not be a set of working credentials. Sessions
+ * are rows rather than a self-contained signed cookie because sign-out has to
+ * mean something — a stateless token cannot be withdrawn, and "sign me out
+ * everywhere" is the one account control a pseudonymous user actually has.
+ */
+export const sessions = pgTable(
+  'sessions',
+  {
+    id: uuid('id').primaryKey().defaultRandom(),
+    userId: uuid('user_id').notNull(),
+    tokenHash: text('token_hash').notNull(),
+    createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+    lastSeenAt: timestamp('last_seen_at', { withTimezone: true }).notNull().defaultNow(),
+    expiresAt: timestamp('expires_at', { withTimezone: true }).notNull(),
+    revokedAt: timestamp('revoked_at', { withTimezone: true }),
+  },
+  (t) => ({
+    hashUq: uniqueIndex('sessions_hash_uq').on(t.tokenHash),
+    userIdx: index('sessions_user_idx').on(t.userId, t.expiresAt),
+  }),
+)
+
+/**
+ * One-time email challenges. The whole of authentication.
+ *
+ * There is no password column anywhere in this schema, on purpose. A password
+ * is a secret this project would then be responsible for, and the account it
+ * protects holds a handle and an email — proving control of the email is
+ * exactly as strong as a password reset, which is the real floor of any
+ * email-recoverable account.
+ *
+ * `purpose` distinguishes the first confirmation from later sign-ins, because
+ * only the first one flips `email_confirmed` and the difference is worth
+ * being able to audit.
+ */
+export const authChallenges = pgTable(
+  'auth_challenges',
+  {
+    id: uuid('id').primaryKey().defaultRandom(),
+    userId: uuid('user_id').notNull(),
+    /** 'confirm' | 'signin' */
+    purpose: text('purpose').notNull(),
+    tokenHash: text('token_hash').notNull(),
+    createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+    expiresAt: timestamp('expires_at', { withTimezone: true }).notNull(),
+    /** Set on use. A challenge is single-use even before it expires. */
+    consumedAt: timestamp('consumed_at', { withTimezone: true }),
+    /** Wrong-token attempts against this challenge. Lock out, do not extend. */
+    attempts: integer('attempts').notNull().default(0),
+  },
+  (t) => ({
+    hashUq: uniqueIndex('auth_challenges_hash_uq').on(t.tokenHash),
+    userIdx: index('auth_challenges_user_idx').on(t.userId, t.expiresAt),
+  }),
+)
+
+/**
+ * Act tokens are signed and stateless, so this table is the exception list
+ * rather than the token store: a `jti` lands here only when something has to
+ * be cut off inside its fifteen-minute life, which in practice means a
+ * creation was blocked or a session was signed out mid-run.
+ *
+ * Rows are deletable once `expires_at` passes, because after that the
+ * signature check rejects the token anyway.
+ */
+export const actTokenRevocations = pgTable(
+  'act_token_revocations',
+  {
+    jti: text('jti').primaryKey(),
+    reason: text('reason').notNull(),
+    revokedAt: timestamp('revoked_at', { withTimezone: true }).notNull().defaultNow(),
+    expiresAt: timestamp('expires_at', { withTimezone: true }).notNull(),
+  },
+  (t) => ({ expiryIdx: index('act_token_revocations_expiry_idx').on(t.expiresAt) }),
+)
+
 // ── creations ───────────────────────────────────────────────────────────────
 
 export const creations = pgTable(
@@ -481,6 +561,8 @@ export type ContentItemRow = typeof contentItems.$inferSelect
 export type NewContentItem = typeof contentItems.$inferInsert
 export type UserRow = typeof users.$inferSelect
 export type VouchRow = typeof vouches.$inferSelect
+export type SessionRow = typeof sessions.$inferSelect
+export type AuthChallengeRow = typeof authChallenges.$inferSelect
 export type CreationRow = typeof creations.$inferSelect
 export type CreationVersionRow = typeof creationVersions.$inferSelect
 export type RecordRow = typeof records.$inferSelect

@@ -124,9 +124,49 @@ describe('permission enforcement', () => {
   })
 
   it('says unavailable, not permission_denied, for a correctly declared capability that is not built yet', async () => {
-    const b = bridge({ manifest: manifestWith({ identity: 'handle' }) })
-    const res = await b.handle(req('user.current'))
+    const b = bridge({ manifest: manifestWith({ read: ['taco_vote'], write: ['taco_vote'] },
+      { defines: [{ type: 'taco_vote', label: 'Taco vote', schema: { spot: { type: 'string' } } }] }) })
+    const res = await b.handle(req('records.get', ['taco_vote', 'id-1']))
     expect(res).toMatchObject({ ok: false, error: { code: 'unavailable' } })
+  })
+
+  it('answers user.current from the identity source, not from the guest', async () => {
+    const b = bridge({
+      manifest: manifestWith({ identity: 'handle' }),
+      identity: { current: async () => ({ handle: 'tswic', verified: true }) },
+    })
+    expect(await b.handle(req('user.current'))).toMatchObject({
+      ok: true,
+      result: { handle: 'tswic', verified: true },
+    })
+  })
+
+  it('answers null for a signed-out visitor rather than failing', async () => {
+    const b = bridge({
+      manifest: manifestWith({ identity: 'handle' }),
+      identity: { current: async () => null },
+    })
+    expect(await b.handle(req('user.current'))).toMatchObject({ ok: true, result: null })
+  })
+
+  it('says unavailable when the shell has no identity source at all', async () => {
+    // Distinct from "nobody is signed in" on purpose. Reporting anonymous when
+    // we simply cannot tell is a claim, and a wrong one.
+    const b = bridge({ manifest: manifestWith({ identity: 'handle' }) })
+    expect(await b.handle(req('user.current'))).toMatchObject({
+      ok: false,
+      error: { code: 'unavailable' },
+    })
+  })
+
+  it('denies user.current before the identity source is ever consulted', async () => {
+    const current = vi.fn(async () => ({ handle: 'tswic', verified: true }))
+    const b = bridge({ manifest: manifestWith(), identity: { current } })
+    expect(await b.handle(req('user.current'))).toMatchObject({
+      ok: false,
+      error: { code: 'permission_denied' },
+    })
+    expect(current).not.toHaveBeenCalled()
   })
 
   it('gives the same answer for a malformed record type whether or not it was granted', async () => {

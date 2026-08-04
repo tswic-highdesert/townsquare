@@ -11,11 +11,23 @@
 import { useEffect, useRef, useState } from 'react'
 import { CreationHost, type HostState } from '@townsquare/host'
 import type { Manifest } from '@townsquare/manifest'
+import { createActTokenHolder } from './actToken.js'
 import { townData } from './townData.js'
 
 export interface CreationFrameProps {
   guestOrigin: string
   manifest: Manifest
+  /** Minting an act token needs to name the creation. */
+  slug: string
+  /**
+   * The permission view of the signed-in resident, or null.
+   *
+   * Only `handle` and `verified` — enough to decide whether a write is allowed
+   * without the shell holding anything more about a person than a creation is
+   * ever told. What the creation actually receives comes from the server, not
+   * from this.
+   */
+  user: { handle: string; verified: boolean } | null
   town: { id: string; name: string; timezone: string }
   onTitleChange?(title: string): void
   onIncident?(kind: string, detail: Record<string, unknown>): void
@@ -30,11 +42,17 @@ export function CreationFrame(props: CreationFrameProps) {
     const el = mountRef.current
     if (!el) return
 
+    // Minted per mount and held in a closure, never in state. A fresh frame
+    // gets a fresh token, which is also what makes signing in or out mid-visit
+    // take effect: the frame is rebuilt and the new token carries the new
+    // subject.
+    const act = createActTokenHolder(props.slug)
+
     const host = new CreationHost(el, {
       guestOrigin: props.guestOrigin,
       manifest: props.manifest,
       town: props.town,
-      context: { user: null, town: townData },
+      context: { user: props.user, town: townData, identity: act.identity },
       onStateChange: setState,
       onTitleChange: props.onTitleChange,
       onIncident: props.onIncident,
@@ -45,9 +63,13 @@ export function CreationFrame(props: CreationFrameProps) {
     // Teardown removes the element. A frame is never reused across creations or
     // versions, which is the only reliable way to discard the previous guest's
     // execution context and its timers.
-    return () => host.destroy()
-    // `attempt` is in the deps so Try again rebuilds the whole host.
-  }, [props.guestOrigin, props.manifest, props.town, attempt])
+    return () => {
+      host.destroy()
+      act.dispose()
+    }
+    // `attempt` is in the deps so Try again rebuilds the whole host, and
+    // `props.user` is in them so signing in re-mints under the new subject.
+  }, [props.guestOrigin, props.manifest, props.slug, props.user, props.town, attempt])
 
   if (state.name === 'error') {
     return (

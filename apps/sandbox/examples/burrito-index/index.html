@@ -41,7 +41,7 @@
     <script type="module">
       // Bare specifier, no build step, no package.json. The import map that
       // makes this resolve is injected by Town Square at serve time.
-      import { town, app } from '@townsquare/sdk'
+      import { town, user, app } from '@townsquare/sdk'
 
       const list = document.getElementById('list')
       const lede = document.getElementById('lede')
@@ -50,7 +50,21 @@
         const { name } = await town.info()
         const { items } = await town.businesses({ tag: 'restaurant', limit: 14 })
 
-        lede.textContent = `${items.length} spots in ${name}, ranked by whoever shows up to vote.`
+        // `null` is the normal answer. Most people reading a town square are
+        // not signed in, and an app that assumes otherwise is broken for most
+        // of the town — so the signed-out copy is the default, not the
+        // fallback.
+        const me = await user.current()
+        const greeting = me ? `${me.handle}, ` : ''
+
+        lede.textContent = `${greeting}${items.length} spots in ${name}, ranked by whoever shows up to vote.`
+
+        if (me && !me.verified) {
+          const hint = document.createElement('p')
+          hint.className = 'note'
+          hint.textContent = 'Get a neighbour to vouch for you and your votes will count.'
+          lede.after(hint)
+        }
 
         for (const [index, business] of items.entries()) {
           const li = document.createElement('li')

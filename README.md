@@ -34,13 +34,14 @@ reading.
 
 ```
 packages/manifest    the townsquare.json schema, and additive-only type evolution
+packages/identity    handles, sessions, vouching, act tokens. no email leaves it
 packages/shared      wire protocol, error codes, CSP compiler, path normalizer, origins
 packages/tokens      design tokens, emitted for both the shell and the guest frame
 packages/sdk         @townsquare/sdk, the contract creations are written against
 packages/bundle      publish-time validation, autochecks, content addressing
 packages/sandbox     the bundle server, as a pure request-in/response-out function
 packages/host        the frame, the handshake, and the permission gate. no React
-apps/api             the read API. holds the credential
+apps/api             the read API and every auth route. holds the credential
 apps/sandbox         serves untrusted bundles. holds nothing
 apps/web             the shell: gallery, trust page, running creation
 ```
@@ -62,6 +63,12 @@ Running it locally takes three processes on three origins. See
 enforces the declaration.** The guest-side copy of its own permissions is
 advisory, so it can produce a good error message, but it is never the boundary.
 Hand-written messages that bypass the SDK entirely still fail closed.
+
+**A creation learns `{ handle, verified }` about you, or nothing.** That is the
+whole identity surface — no email, no real name, no user id — and it is
+projected server-side from a fifteen-minute act token that names one creation
+and one approved version. The token never enters the frame, and the session
+cookie is unreachable from JavaScript anywhere, including the shell's own.
 
 **`script-src` is always `'self'` and is never influenced by a manifest.** That is
 the mechanism behind "everything is vendored". Without it, vendoring is a policy

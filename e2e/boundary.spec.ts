@@ -436,3 +436,87 @@ async function fetchBundle(
     maxRedirects: 0,
   })
 }
+
+test.describe('#4 identity reaches a creation only through the bridge', () => {
+  /**
+   * Sign in the way a resident does: ask for a link, then open it.
+   *
+   * The development API hands the link straight back in the response, which is
+   * exactly what makes this testable without a mailbox — and exactly why that
+   * echo is refused the moment the shell is https.
+   */
+  async function signIn(page: Page, handle: string, email: string): Promise<void> {
+    const res = await page.request.post(`${API}/api/auth/signup`, {
+      headers: { Origin: 'http://townsquare.localhost:5173' },
+      data: { handle, email },
+    })
+    const body = (await res.json()) as { devLink?: string }
+    if (!body.devLink) throw new Error('the development API did not echo a sign-in link')
+    await page.goto(body.devLink)
+    await expect(page.getByRole('button', { name: new RegExp(handle) })).toBeVisible()
+  }
+
+  test('a signed-in handle reaches the guest, and the credential behind it does not', async ({
+    page,
+  }) => {
+    await signIn(page, 'boundary-tester', 'boundary@example.com')
+    const frame = await openCreation(page, 'Burrito Index')
+
+    // The handle arrives — through the port, projected by the server, in a
+    // creation that declared `permissions.identity: "handle"`.
+    await expect(frame.locator('#lede')).toContainText('boundary-tester')
+
+    const probe = await frame.evaluate(async (api: string) => {
+      const violations: string[] = []
+      document.addEventListener('securitypolicyviolation', (e) =>
+        violations.push(e.violatedDirective),
+      )
+
+      // What the guest would do if it wanted the credential rather than the
+      // answer: go to the source itself.
+      const attempts: Record<string, string> = {}
+      for (const path of ['/api/bridge/me', '/api/creations/burrito-index/act', '/api/auth/me']) {
+        try {
+          const res = await fetch(api + path, { method: 'GET' })
+          attempts[path] = `returned ${res.status}`
+        } catch {
+          attempts[path] = 'blocked'
+        }
+      }
+
+      await new Promise((r) => setTimeout(r, 250))
+      return { attempts, violations, cookie: document.cookie, storage: JSON.stringify(sessionStorage ?? null) }
+    }, API)
+
+    // Every direct route to the credential is refused by the frame's own CSP,
+    // before the request reaches a server that could have answered it.
+    for (const [path, outcome] of Object.entries(probe.attempts)) {
+      expect(outcome, path).toBe('blocked')
+    }
+    expect(probe.violations.join(' ')).toContain('connect-src')
+
+    // And there is nothing to steal in here anyway: the session cookie is
+    // scoped to the shell's domain, and the act token never leaves the closure
+    // it was minted into on the host page.
+    expect(probe.cookie).toBe('')
+  })
+
+  test('a creation that never declared identity is refused it server-side too', async ({
+    request,
+  }) => {
+    // The Neighborhood Watch fixture declares no identity permission. Even
+    // holding a legitimately minted act token for itself, the API refuses —
+    // the host's check is a fast error message, this is the boundary.
+    const res = await request.post(`${API}/api/creations/attacker/act`, {
+      headers: { Origin: 'http://townsquare.localhost:5173' },
+      data: {},
+    })
+    if (res.status() === 404) test.skip(true, 'attacker fixture is not loaded')
+
+    const { token } = (await res.json()) as { token: string }
+    const me = await request.get(`${API}/api/bridge/me`, {
+      headers: { Authorization: `Bearer ${token}` },
+    })
+    expect(me.status()).toBe(403)
+  })
+})

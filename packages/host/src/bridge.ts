@@ -41,6 +41,19 @@ export interface TownDataSource {
   businesses(params: unknown): Promise<unknown>
 }
 
+/**
+ * Who is looking at this creation.
+ *
+ * A function rather than a value because the answer is fetched with the act
+ * token and projected server side, so the shell never holds an email or a user
+ * id in a shape it could forward into a frame. The `user` on the context below
+ * is the *permission* view — enough to decide whether a write is allowed — and
+ * this is the only thing whose result is ever handed to the guest.
+ */
+export interface IdentitySource {
+  current(): Promise<{ handle: string; verified: boolean } | null>
+}
+
 /** Handled locally, in the host page, with no round trip. */
 export interface FrameControls {
   ready(): void
@@ -54,6 +67,10 @@ export interface BridgeContext {
   /** null when nobody is signed in, which is the common case. */
   user: ActingUser | null
   town: TownDataSource
+  /** Absent until the shell has an act token. `user.current` then reports
+   * itself unavailable rather than silently answering "nobody is signed in",
+   * which is a different and much more misleading claim. */
+  identity?: IdentitySource
   frame: FrameControls
   limiter?: RateLimiter
   /** Surfaced to the shell for the incident log. */
@@ -166,11 +183,18 @@ export class Bridge {
       case 'town.businesses':
         return town.businesses(params)
 
-      // Identity, records and storage arrive in Phases 4, 8 and 5. Until then
-      // they must fail as *unimplemented*, not as permission failures: a
-      // builder who declared the permission correctly should not be told they
-      // did not.
-      case 'user.current':
+      case 'user.current': {
+        // Anonymous is a legitimate answer and by far the most common one, so
+        // it is `null` rather than an error. A creation that assumes a signed-in
+        // user is broken for most of the town, and this is where it finds out.
+        const identity = this.ctx.identity
+        if (!identity) throw new NotYetError(method)
+        return identity.current()
+      }
+
+      // Records and storage arrive in Phases 8 and 5. Until then they must
+      // fail as *unimplemented*, not as permission failures: a builder who
+      // declared the permission correctly should not be told they did not.
       case 'records.list':
       case 'records.get':
       case 'records.create':

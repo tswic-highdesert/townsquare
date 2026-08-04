@@ -16,10 +16,15 @@ export default defineConfig({
       '@townsquare/content': r('./packages/content/src/index.ts'),
       '@townsquare/feed': r('./packages/feed/src/index.ts'),
       '@townsquare/db': r('./packages/db/src/index.ts'),
+      '@townsquare/identity': r('./packages/identity/src/index.ts'),
     },
   },
   test: {
-    include: ['packages/**/src/**/*.test.ts'],
+    // `apps/` is included so the auth routes can be tested over a real socket.
+    // The properties there are HTTP properties — which routes read a cookie,
+    // what Set-Cookie says — and a handler called directly cannot be wrong
+    // about any of them.
+    include: ['packages/**/src/**/*.test.ts', 'apps/**/src/**/*.test.ts'],
     environment: 'node',
     testTimeout: 30_000,
   },

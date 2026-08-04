@@ -53,6 +53,53 @@ one. That is why the read API is a separate service even in development: a
 creation's CSP has no `connect-src` entry for the API, so the bridge is the only
 door, and the shell is the only thing holding the key.
 
+## Signing in locally
+
+There is no mail server in development. `pnpm dev:api` prints every sign-in
+link to its terminal and hands the same link back in the response, which the
+sign-in screen shows in a dashed box. Click either one.
+
+That echo is refused the moment `SHELL_ORIGIN` is https, because a returned
+sign-in link is a complete account takeover for anyone who can guess an email.
+
+```bash
+# start the town with a verified resident already in it
+TOWNSQUARE_SEED_COHORT='tswic:tal@example.com:admin' pnpm dev:api
+```
+
+Vouching is a closure — only a verified resident can vouch — so a fresh town
+has nobody who can let anyone else in. `TOWNSQUARE_SEED_COHORT` is how the
+first residents exist: `handle:email` pairs, comma or newline separated, with
+an optional `:admin` or `:moderator`. Re-running is safe; it promotes an
+existing account rather than creating a second one.
+
+Identity is held in memory for now, alongside the example creations, so
+restarting the API signs everyone out.
+
+## What a creation can learn about you
+
+`user.current()` returns `{ handle, verified }` or `null`, and that is the
+entire identity surface. No email, no real name, no user id, no session token,
+and no permission level that grants any of them.
+
+The path is worth following once in the code, because it is the shape every
+later capability reuses:
+
+1. the shell mints an **act token** — `POST /api/creations/:slug/act`, with the
+   session cookie. The token names one user, one creation, one approved
+   version, and the exact grants that version was approved with. It lives
+   fifteen minutes.
+2. the host holds it in a **closure variable** (`apps/web/src/actToken.ts`) —
+   not React state, not a global, not storage.
+3. `user.current()` crosses the port, and the host calls `GET /api/bridge/me`
+   with `Authorization: Bearer <act>` and **`credentials: 'omit'`**.
+4. the API projects `{ handle, verified }` **server side**, so the shell never
+   holds an email in a shape it could forward into a frame.
+
+The guest never sees a token. Even if it somehow did, it would hold what that
+creation was already approved to do, as that user, for a quarter of an hour.
+It is never an account credential.
+
 ## Adding an example creation
 
 Drop a directory in `apps/sandbox/examples/`. It needs a `townsquare.json`, the
@@ -63,7 +110,7 @@ fails loudly at startup rather than working only here.
 ## Tests
 
 ```bash
-pnpm test        # 291 tests
+pnpm test        # 425 tests
 pnpm typecheck
 ```
 
@@ -71,12 +118,21 @@ pnpm typecheck
 real guest SDK against the real host bridge over an actual `MessageChannel`, so
 it covers the half of the protocol that neither side's own unit tests can.
 
-**Not yet written: the Playwright boundary suite.** Everything about the iframe
-that needs a real browser — the origin boundary itself, `window.parent` throwing
-`SecurityError`, CSP actually blocking an image beacon, `eval` actually throwing
-— is currently argued for by construction and by header assertions, not
-demonstrated. That suite is the highest-value thing left in the repo and it
-belongs before any of this is pointed at residents.
+`apps/api/src/identityRoutes.test.ts` is the second: it drives the auth routes
+over a real socket rather than calling the handler, because the properties that
+matter there are HTTP properties — which routes read a cookie, what
+`Set-Cookie` actually says, whether a bridge call authenticated by a session
+would work. A handler called directly cannot be wrong about any of those.
+
+```bash
+pnpm test:e2e    # the Playwright boundary suite, three origins in Chromium
+```
+
+Everything about the iframe that needs a real browser lives there: the origin
+boundary itself, `window.parent` throwing `SecurityError`, CSP actually
+blocking an image beacon, `eval` actually throwing, and — since identity landed
+— a signed-in resident's handle reaching the guest while every direct route to
+the credential behind it is refused.
 
 ## CI
 
@@ -85,7 +141,7 @@ in two jobs split by cost:
 
 | Job | Runs | Roughly |
 |---|---|---|
-| `checks` | typecheck, generated-docs drift, 328 unit tests | under a minute |
+| `checks` | typecheck, generated-docs drift, 425 unit tests | under a minute |
 | `boundary` | the Playwright suite, three origins in Chromium | two to three minutes |
 
 Neither is configured as a **required** status check, on purpose. This repo is

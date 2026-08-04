@@ -7,13 +7,16 @@
  * write its own.
  */
 
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { describeManifest } from '@townsquare/host'
+import { AccountScreen } from './Account.js'
+import { resolveInitialAccount, type AccountView } from './session.js'
 import { CreationFrame } from './CreationFrame.js'
 import { fetchCreations, fetchTown, type CreationSummary } from './townData.js'
 
 type Screen =
   | { name: 'gallery' }
+  | { name: 'account' }
   | { name: 'trust'; creation: CreationSummary }
   | { name: 'running'; creation: CreationSummary }
 
@@ -22,15 +25,52 @@ export function App() {
   const [town, setTown] = useState({ id: '', name: 'Town Square', timezone: 'America/Chicago' })
   const [screen, setScreen] = useState<Screen>({ name: 'gallery' })
   const [liveTitle, setLiveTitle] = useState<string | null>(null)
+  const [account, setAccount] = useState<AccountView | null>(null)
 
   useEffect(() => {
     void fetchCreations().then(setCreations)
     void fetchTown().then(setTown)
+
+    // A confirmation link lands on the gallery with the token in the query.
+    // It is redeemed on the way in and the resident carries on where they were
+    // going: an interstitial "you are signed in" page would be a click that
+    // tells them what the header already says.
+    void resolveInitialAccount().then(setAccount)
   }, [])
+
+  /**
+   * The permission view handed down to a running creation.
+   *
+   * Rebuilt only when the handle or the verification changes, so a frame is
+   * not torn down and re-mounted every time the account view is refetched.
+   */
+  const actingUser = useMemo(
+    () => (account ? { handle: account.handle, verified: account.verified } : null),
+    [account?.handle, account?.verified],
+  )
+
+  const header = (
+    <div className="account-bar">
+      <button className="back" onClick={() => setScreen({ name: 'account' })}>
+        {account ? `${account.handle}${account.verified ? ' · verified' : ''}` : 'Sign in'}
+      </button>
+    </div>
+  )
+
+  if (screen.name === 'account') {
+    return (
+      <AccountScreen
+        account={account}
+        onAccountChange={setAccount}
+        onBack={() => setScreen({ name: 'gallery' })}
+      />
+    )
+  }
 
   if (screen.name === 'gallery') {
     return (
       <div className="shell">
+        {header}
         <div className="eyebrow">{town.name}</div>
         <h1>Built by neighbors</h1>
         <p className="lede">
@@ -137,6 +177,8 @@ export function App() {
       <CreationFrame
         guestOrigin={creation.origin}
         manifest={creation.manifest}
+        slug={creation.slug}
+        user={actingUser}
         town={town}
         onTitleChange={setLiveTitle}
         onIncident={(kind, detail) => console.warn('creation incident', kind, detail)}
