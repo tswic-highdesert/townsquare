@@ -36,7 +36,11 @@ export default defineConfig({
   // storage, so parallel workers would be testing each other's leftovers.
   workers: 1,
   fullyParallel: false,
-  reporter: process.env['CI'] ? 'github' : 'list',
+  // In CI: inline annotations on the failing line, plus an HTML report the
+  // workflow uploads when something fails. Locally: just the list.
+  reporter: process.env['CI']
+    ? [['github'], ['html', { outputFolder: 'playwright-report', open: 'never' }]]
+    : [['list']],
   timeout: 30_000,
   expect: { timeout: 10_000 },
 

@@ -1,0 +1,118 @@
+# Two jobs, split by what they cost.
+#
+# `checks` is fast and runs on everything: typecheck, the generated-docs drift
+# check, and 328 unit tests. `boundary` is the Playwright suite — it installs a
+# browser and drives three origins, so it takes a couple of minutes, and it is
+# the only thing here that can honestly say the sandbox holds.
+#
+# Both run on push and on pull requests. Neither is configured as a *required*
+# status check, deliberately: this repo is pushed to `main` directly, and a
+# required check would block that. The signal is here to be read, not to be a
+# gate nobody asked for.
+
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+# A new push supersedes the last one on the same branch. No point paying for a
+# boundary suite on a commit that is already three commits stale.
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  # Turns off `reuseExistingServer` in the Playwright config, so the suite
+  # always starts its own servers rather than trusting whatever is listening.
+  CI: 'true'
+
+jobs:
+  checks:
+    name: typecheck and unit tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 11.0.9
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+
+      - run: pnpm install --frozen-lockfile
+
+      - name: Typecheck
+        run: pnpm typecheck
+
+      # The SDK docs, types and permission registry are generated from one
+      # table. If a regenerate was skipped, `get_sdk_docs` would describe a
+      # surface that no longer exists, so a stale artifact fails the build.
+      - name: Generated SDK docs are current
+        run: pnpm gen:check
+
+      - name: Unit tests
+        run: pnpm test
+
+  boundary:
+    name: sandbox boundary suite
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 11.0.9
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+
+      - run: pnpm install --frozen-lockfile
+
+      # Keyed on the resolved Playwright version, so a bump fetches a matching
+      # browser instead of silently reusing an incompatible cached one.
+      - name: Resolve Playwright version
+        id: pw
+        run: echo "version=$(pnpm exec playwright --version | awk '{print $2}')" >> "$GITHUB_OUTPUT"
+
+      - name: Cache browser
+        id: browser-cache
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/ms-playwright
+          key: playwright-${{ runner.os }}-${{ steps.pw.outputs.version }}
+
+      - name: Install Chromium
+        if: steps.browser-cache.outputs.cache-hit != 'true'
+        run: pnpm exec playwright install --with-deps chromium
+
+      # System deps are outside the cache, so they are installed either way.
+      - name: Install browser system dependencies
+        if: steps.browser-cache.outputs.cache-hit == 'true'
+        run: pnpm exec playwright install-deps chromium
+
+      # Chromium resolves any `*.localhost` name to loopback itself, so the
+      # three origins the suite needs work with no /etc/hosts entry and no
+      # certificates. The servers are started by the Playwright config.
+      - name: Boundary suite
+        run: pnpm test:e2e
+
+      - name: Upload report on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report
+          path: |
+            e2e/playwright-report/
+            e2e/test-results/
+          retention-days: 7

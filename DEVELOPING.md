@@ -77,3 +77,23 @@ that needs a real browser — the origin boundary itself, `window.parent` throwi
 — is currently argued for by construction and by header assertions, not
 demonstrated. That suite is the highest-value thing left in the repo and it
 belongs before any of this is pointed at residents.
+
+## CI
+
+`.github/workflows/ci.yml` runs on every push to `main` and every pull request,
+in two jobs split by cost:
+
+| Job | Runs | Roughly |
+|---|---|---|
+| `checks` | typecheck, generated-docs drift, 328 unit tests | under a minute |
+| `boundary` | the Playwright suite, three origins in Chromium | two to three minutes |
+
+Neither is configured as a **required** status check, on purpose. This repo is
+pushed to `main` directly, and a required check would block that. The signal is
+there to be read.
+
+The browser is cached on the resolved Playwright version, so bumping Playwright
+fetches a matching Chromium rather than silently reusing an incompatible one.
+When the boundary suite fails, the HTML report and traces are uploaded as an
+artifact — open a trace with `pnpm exec playwright show-trace <file>` to step
+through what the browser actually did.
