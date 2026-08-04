@@ -11,29 +11,56 @@
 
 import type { IncomingMessage, ServerResponse } from 'node:http'
 
-/** Bodies here are two or three short fields. Anything larger is not ours. */
+/**
+ * An auth body is two or three short fields. A storage write is not, so the
+ * cap is a parameter rather than a constant — one number that has to satisfy
+ * both would either truncate a legitimate `storage.set` or let a sign-up post
+ * sixty kilobytes at the login route.
+ */
 export const MAX_BODY_BYTES = 8 * 1024
 
-export async function readJson(req: IncomingMessage): Promise<Record<string, unknown> | null> {
+export type JsonBody =
+  | { ok: true; body: Record<string, unknown> }
+  | { ok: false; reason: 'too_large' | 'malformed' }
+
+/**
+ * Read a JSON object body.
+ *
+ * Overflow and malformed are distinguished because they mean different things
+ * to the caller: one is "what you sent is over a documented limit", the other
+ * is "that was not JSON", and answering `400 invalid` to a 70 KB write sends a
+ * builder looking for a bug in their key name.
+ */
+export async function readJson(req: IncomingMessage, maxBytes = MAX_BODY_BYTES): Promise<JsonBody> {
   const chunks: Buffer[] = []
   let size = 0
 
   for await (const chunk of req) {
     const buf = chunk as Buffer
     size += buf.length
-    if (size > MAX_BODY_BYTES) return null
+    if (size > maxBytes) {
+      // Drain rather than parse. The socket is already carrying the bytes; we
+      // simply refuse to hold them.
+      return { ok: false, reason: 'too_large' }
+    }
     chunks.push(buf)
   }
-  if (size === 0) return {}
+  if (size === 0) return { ok: true, body: {} }
 
   try {
     const parsed: unknown = JSON.parse(Buffer.concat(chunks).toString('utf8'))
     return typeof parsed === 'object' && parsed !== null && !Array.isArray(parsed)
-      ? (parsed as Record<string, unknown>)
-      : null
+      ? { ok: true, body: parsed as Record<string, unknown> }
+      : { ok: false, reason: 'malformed' }
   } catch {
-    return null
+    return { ok: false, reason: 'malformed' }
   }
+}
+
+/** The body, or an empty object when it was unreadable. For the short forms. */
+export async function readFields(req: IncomingMessage): Promise<Record<string, unknown>> {
+  const result = await readJson(req)
+  return result.ok ? result.body : {}
 }
 
 export function str(body: Record<string, unknown> | null, key: string): string {

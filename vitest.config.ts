@@ -17,6 +17,7 @@ export default defineConfig({
       '@townsquare/feed': r('./packages/feed/src/index.ts'),
       '@townsquare/db': r('./packages/db/src/index.ts'),
       '@townsquare/identity': r('./packages/identity/src/index.ts'),
+      '@townsquare/storage': r('./packages/storage/src/index.ts'),
     },
   },
   test: {

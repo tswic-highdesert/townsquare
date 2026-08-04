@@ -54,6 +54,18 @@ export interface IdentitySource {
   current(): Promise<{ handle: string; verified: boolean } | null>
 }
 
+/**
+ * Private scratch space for this creation and this resident.
+ *
+ * `undefined` is the value of an unset key, not an error, because reading a
+ * preference nobody has set yet is the first thing every app that uses this
+ * does.
+ */
+export interface StorageSource {
+  get(key: string): Promise<unknown>
+  set(key: string, value: unknown): Promise<void>
+}
+
 /** Handled locally, in the host page, with no round trip. */
 export interface FrameControls {
   ready(): void
@@ -71,6 +83,8 @@ export interface BridgeContext {
    * itself unavailable rather than silently answering "nobody is signed in",
    * which is a different and much more misleading claim. */
   identity?: IdentitySource
+  /** Absent until the shell can mint an act token. */
+  storage?: StorageSource
   frame: FrameControls
   limiter?: RateLimiter
   /** Surfaced to the shell for the incident log. */
@@ -192,16 +206,29 @@ export class Bridge {
         return identity.current()
       }
 
-      // Records and storage arrive in Phases 8 and 5. Until then they must
-      // fail as *unimplemented*, not as permission failures: a builder who
-      // declared the permission correctly should not be told they did not.
+      case 'storage.get': {
+        const storage = this.ctx.storage
+        if (!storage) throw new NotYetError(method)
+        return storage.get(params as string)
+      }
+      case 'storage.set': {
+        const storage = this.ctx.storage
+        if (!storage) throw new NotYetError(method)
+        // The params schema is a tuple, so this shape is already guaranteed by
+        // the time it gets here.
+        const [key, value] = params as [string, unknown]
+        await storage.set(key, value)
+        return null
+      }
+
+      // Records arrive in Phase 8. Until then they must fail as
+      // *unimplemented*, not as permission failures: a builder who declared
+      // the permission correctly should not be told they did not.
       case 'records.list':
       case 'records.get':
       case 'records.create':
       case 'records.update':
       case 'records.history':
-      case 'storage.get':
-      case 'storage.set':
         throw new NotYetError(method)
     }
   }
@@ -220,7 +247,27 @@ export class NotYetError extends Error {
   }
 }
 
+/**
+ * An error the guest is *meant* to see, as opposed to one it is protected from.
+ *
+ * Most upstream failures are flattened to `unavailable` on the way out,
+ * because an exception message can carry a connection string or a stack path.
+ * But some answers are the point of the call — "that value is too large",
+ * "nobody is signed in" — and flattening those would leave a builder with a
+ * retryable error for a condition retrying can never fix. A source raises this
+ * when it has an answer worth passing on, and nothing else crosses.
+ */
+export class BridgeCallError extends Error {
+  constructor(readonly wire: WireError) {
+    super(wire.message)
+    this.name = 'BridgeCallError'
+  }
+}
+
 function toWireError(err: unknown): WireError {
+  if (err instanceof BridgeCallError) {
+    return err.wire
+  }
   if (err instanceof NotYetError) {
     return wireError('unavailable', err.message)
   }

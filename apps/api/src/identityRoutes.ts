@@ -33,7 +33,17 @@ import {
 } from '@townsquare/identity'
 import { advisoryGrants } from '@townsquare/sdk'
 import type { CatalogueEntry } from '@townsquare/sandbox'
-import { originAllowed, readCookie, readJson, sendJson, serializeCookie, str } from './http.js'
+import { MAX_TOTAL_BYTES, type CreationStorage } from '@townsquare/storage'
+import {
+  originAllowed,
+  readCookie,
+  readFields,
+  readJson,
+  sendJson,
+  serializeCookie,
+  str,
+} from './http.js'
+import { handleStorage } from './storageRoutes.js'
 
 /** HTTP status per failure code. One table, so no route invents its own. */
 const STATUS: Record<string, number> = {
@@ -50,6 +60,8 @@ const STATUS: Record<string, number> = {
 export interface IdentityRoutesConfig {
   identity: Identity
   store: IdentityStore
+  /** Reached only through the bridge, under the act token's scope. */
+  storage: CreationStorage
   /** Looked up for the act endpoint. In production this is a database read. */
   creations: () => CatalogueEntry[]
   shellOrigin: string
@@ -58,6 +70,9 @@ export interface IdentityRoutesConfig {
   /** Development only, and refused outright when the shell is https. */
   echoChallenge?: (email: string) => { url: string } | null
 }
+
+/** 64 KB of value, plus the key and the JSON envelope around both. */
+const STORAGE_BODY_BYTES = MAX_TOTAL_BYTES + 2 * 1024
 
 export function cookieName(shellOrigin: string): string {
   // `__Host-` requires Secure, which plain-http development cannot satisfy.
@@ -132,6 +147,33 @@ export function createIdentityRoutes(cfg: IdentityRoutesConfig) {
         return true
       }
 
+      if (path === '/api/bridge/storage') {
+        // The cap is the storage limit plus room for the envelope, so a value
+        // that would be refused by the quota is refused as `too_large` rather
+        // than as a mystery parse failure.
+        const parsed = method === 'PUT' ? await readJson(req, STORAGE_BODY_BYTES) : null
+        if (parsed && !parsed.ok) {
+          sendJson(
+            res,
+            parsed.reason === 'too_large'
+              ? { error: 'too_large', message: 'That value is larger than storage holds.' }
+              : { error: 'invalid_request', message: 'That request body was not JSON.' },
+            parsed.reason === 'too_large' ? 413 : 400,
+          )
+          return true
+        }
+
+        await handleStorage(cfg.storage, res, {
+          method,
+          claims,
+          query: url.searchParams,
+          // Parsed here rather than in the storage module, which is handed
+          // claims and a body and never the request itself.
+          body: parsed?.ok ? parsed.body : null,
+        })
+        return true
+      }
+
       if (path === '/api/bridge/me' && method === 'GET') {
         // The server re-checks the grant from the token's own claims. The
         // host checked it too; that check is UX, this one is the boundary.
@@ -201,7 +243,7 @@ export function createIdentityRoutes(cfg: IdentityRoutesConfig) {
     }
 
     if (path === '/api/auth/signup' && method === 'POST') {
-      const body = await readJson(req)
+      const body = await readFields(req)
       const result = await identity.signUp({
         email: str(body, 'email'),
         handle: str(body, 'handle'),
@@ -212,7 +254,7 @@ export function createIdentityRoutes(cfg: IdentityRoutesConfig) {
     }
 
     if (path === '/api/auth/signin' && method === 'POST') {
-      const body = await readJson(req)
+      const body = await readFields(req)
       const result = await identity.requestSignIn({ email: str(body, 'email') })
       if (!result.ok) return fail(res, result), true
       sendJson(res, { sent: true, ...devEcho(cfg, str(body, 'email')) })
@@ -220,7 +262,7 @@ export function createIdentityRoutes(cfg: IdentityRoutesConfig) {
     }
 
     if (path === '/api/auth/confirm' && method === 'POST') {
-      const body = await readJson(req)
+      const body = await readFields(req)
       const result = await identity.confirmChallenge(str(body, 'token'))
       if (!result.ok) return fail(res, result), true
 
@@ -239,7 +281,7 @@ export function createIdentityRoutes(cfg: IdentityRoutesConfig) {
 
     if (path === '/api/auth/signout' && method === 'POST') {
       const token = readCookie(req, SESSION_COOKIE)
-      const body = await readJson(req)
+      const body = await readFields(req)
       if (body?.['everywhere'] === true) {
         const user = await identity.resolveSession(token)
         if (user) await identity.signOutEverywhere(user.id)
@@ -262,7 +304,7 @@ export function createIdentityRoutes(cfg: IdentityRoutesConfig) {
         sendJson(res, { error: 'unauthenticated', message: 'Sign in first.' }, 401)
         return true
       }
-      const body = await readJson(req)
+      const body = await readFields(req)
       const revoking = body?.['revoke'] === true
       const result = revoking
         ? await identity.revokeVouch(user.id, str(body, 'handle'))
@@ -287,7 +329,7 @@ export function createIdentityRoutes(cfg: IdentityRoutesConfig) {
         sendJson(res, { error: 'unauthenticated', message: 'Sign in first.' }, 401)
         return true
       }
-      const body = await readJson(req)
+      const body = await readFields(req)
       const result = await identity.manualVerify(user.id, str(body, 'handle'))
       if (!result.ok) return fail(res, result), true
       sendJson(res, result.user)

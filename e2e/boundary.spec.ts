@@ -501,6 +501,32 @@ test.describe('#4 identity reaches a creation only through the bridge', () => {
     expect(probe.cookie).toBe('')
   })
 
+  test('storage is private to one creation and one resident', async ({ page, browser }) => {
+    // Threat model #17, in a real browser: two residents, one creation, one
+    // key. Neither request names a user anywhere — the scope comes from the
+    // act token — so this is the property holding, not a filter working.
+    await signIn(page, 'storage-one', 'storage-one@example.com')
+    const first = await openCreation(page, 'Burrito Index')
+    // Frame locators, not page locators: the button lives inside the guest, on
+    // a different origin, which is the entire point of the architecture.
+    await expect(first.locator('#pin')).toHaveText('Pin my favourite')
+    await first.locator('#pin').click()
+    await expect(first.locator('#pin')).toHaveText('Pinned')
+
+    // Reopening reads it back: the value survived the frame being destroyed,
+    // which is what makes it storage rather than a variable.
+    await openCreation(page, 'Burrito Index')
+    const reopened = await liveGuestFrame(page)
+    await expect(reopened.locator('#favourite')).toBeVisible()
+
+    const other = await browser.newPage()
+    await signIn(other, 'storage-two', 'storage-two@example.com')
+    const theirs = await openCreation(other, 'Burrito Index')
+    await expect(theirs.locator('#pin')).toHaveText('Pin my favourite')
+    await expect(theirs.locator('#favourite')).toHaveCount(0)
+    await other.close()
+  })
+
   test('a creation that never declared identity is refused it server-side too', async ({
     request,
   }) => {

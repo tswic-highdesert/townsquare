@@ -100,6 +100,34 @@ The guest never sees a token. Even if it somehow did, it would hold what that
 creation was already approved to do, as that user, for a quarter of an hour.
 It is never an account credential.
 
+## Private storage
+
+`storage.get(key)` and `storage.set(key, value)` are scratch space for one
+creation and one resident. Not a database, and the distinction is the design:
+this is where an app keeps *your* filters and *your* dismissed banner.
+Anything the town should see belongs in `records`, where it is versioned,
+attributed, and readable by the next creation someone builds.
+
+| Limit | Value | Why |
+|---|---|---|
+| Total | 64 KB per (creation, user) | The number already in the SDK docs a builder reads |
+| Keys | 64 per (creation, user) | Bounds rows, which bytes alone do not |
+| Key | ≤128 chars, `[A-Za-z0-9._:-]` | An identifier, not a path |
+
+The quota is charged per creation *and* per user, so one app filling its
+allowance can never affect another app or another resident.
+
+`set(key, undefined)` removes the key. That is the only way back under quota,
+and the SDK surface is deliberately just `get` and `set`, so it shares the
+verb rather than growing a third method for the one case that most needs to
+work.
+
+**The scope comes from the act token, never from a parameter.** There is no
+argument a creation could pass that would address another resident's row or
+another app's, which is what makes cross-tenant access structurally impossible
+rather than carefully avoided. The example creation exercises the whole path:
+open it signed in and pin a favourite.
+
 ## Adding an example creation
 
 Drop a directory in `apps/sandbox/examples/`. It needs a `townsquare.json`, the
@@ -110,7 +138,7 @@ fails loudly at startup rather than working only here.
 ## Tests
 
 ```bash
-pnpm test        # 425 tests
+pnpm test        # 465 tests
 pnpm typecheck
 ```
 
@@ -130,9 +158,10 @@ pnpm test:e2e    # the Playwright boundary suite, three origins in Chromium
 
 Everything about the iframe that needs a real browser lives there: the origin
 boundary itself, `window.parent` throwing `SecurityError`, CSP actually
-blocking an image beacon, `eval` actually throwing, and — since identity landed
-— a signed-in resident's handle reaching the guest while every direct route to
-the credential behind it is refused.
+blocking an image beacon, `eval` actually throwing, a signed-in resident's
+handle reaching the guest while every direct route to the credential behind it
+is refused, and two residents of the same creation not seeing each other's
+stored values.
 
 ## CI
 
@@ -141,7 +170,7 @@ in two jobs split by cost:
 
 | Job | Runs | Roughly |
 |---|---|---|
-| `checks` | typecheck, generated-docs drift, 425 unit tests | under a minute |
+| `checks` | typecheck, generated-docs drift, 465 unit tests | under a minute |
 | `boundary` | the Playwright suite, three origins in Chromium | two to three minutes |
 
 Neither is configured as a **required** status check, on purpose. This repo is

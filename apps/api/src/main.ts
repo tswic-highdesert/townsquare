@@ -21,6 +21,7 @@ import {
   parseSeedList,
   seedCohort,
 } from '@townsquare/identity'
+import { CreationStorage, MemoryStorageStore } from '@townsquare/storage'
 import { businesses } from '../../../packages/feed/src/data/businesses.js'
 import { loadExampleCreations } from '../../sandbox/src/examples.js'
 import { createIdentityRoutes } from './identityRoutes.js'
@@ -68,9 +69,15 @@ async function main(): Promise<void> {
     console.log(`seed cohort: ${s.handle} ${s.action}${s.reason ? ` (${s.reason})` : ''}`)
   }
 
+  // Same story as identity: the memory store implements the interface the
+  // Drizzle one will, so nothing above it changes when storage moves to
+  // Postgres. Restarting the API empties every creation's scratch space.
+  const storage = new CreationStorage({ store: new MemoryStorageStore() })
+
   const identityRoutes = createIdentityRoutes({
     identity,
     store: identityStore,
+    storage,
     creations: () => store.list(),
     shellOrigin: SHELL_ORIGIN,
     townId: TOWN.id,

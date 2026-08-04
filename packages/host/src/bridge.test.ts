@@ -1,7 +1,7 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { parseManifest, type Manifest } from '@townsquare/manifest'
-import { PROTOCOL_VERSION } from '@townsquare/shared'
-import { Bridge, type BridgeContext } from './bridge.js'
+import { PROTOCOL_VERSION, wireError } from '@townsquare/shared'
+import { Bridge, BridgeCallError, type BridgeContext } from './bridge.js'
 import { RateLimiter } from './limiter.js'
 
 function manifestWith(permissions: Record<string, unknown> = {}, extra: Record<string, unknown> = {}): Manifest {
@@ -156,6 +156,75 @@ describe('permission enforcement', () => {
     expect(await b.handle(req('user.current'))).toMatchObject({
       ok: false,
       error: { code: 'unavailable' },
+    })
+  })
+
+  it('reads and writes storage through the shell source', async () => {
+    const values = new Map<string, unknown>()
+    const b = bridge({
+      manifest: manifestWith({ storage: true }),
+      user: { handle: 'tswic', verified: false },
+      storage: {
+        get: async (key) => values.get(key),
+        set: async (key, value) => void values.set(key, value),
+      },
+    })
+
+    expect(await b.handle(req('storage.set', ['filters', { showInactive: false }]))).toMatchObject({
+      ok: true,
+    })
+    expect(await b.handle(req('storage.get', 'filters'))).toMatchObject({
+      ok: true,
+      result: { showInactive: false },
+    })
+  })
+
+  it('passes an answer the guest is meant to see straight through', async () => {
+    // Quota is not an internal failure to be flattened into `unavailable`.
+    // A builder needs `too_large` to know that retrying will never work.
+    const b = bridge({
+      manifest: manifestWith({ storage: true }),
+      user: { handle: 'tswic', verified: false },
+      storage: {
+        get: async () => undefined,
+        set: async () => {
+          throw new BridgeCallError(wireError('too_large', 'Remove a key first.'))
+        },
+      },
+    })
+
+    expect(await b.handle(req('storage.set', ['filters', 'x']))).toMatchObject({
+      ok: false,
+      error: { code: 'too_large', message: 'Remove a key first.' },
+    })
+  })
+
+  it('still hides an unexpected failure from the guest', async () => {
+    const b = bridge({
+      manifest: manifestWith({ storage: true }),
+      user: { handle: 'tswic', verified: false },
+      storage: {
+        get: async () => {
+          throw new Error('postgres://user:password@db:5432 timed out')
+        },
+        set: async () => {},
+      },
+    })
+
+    const res = await b.handle(req('storage.get', 'filters'))
+    expect(res).toMatchObject({ ok: false, error: { code: 'unavailable' } })
+    expect(JSON.stringify(res)).not.toContain('postgres')
+  })
+
+  it('tells a signed-out visitor there is nowhere to store, not that they lack permission', async () => {
+    const b = bridge({
+      manifest: manifestWith({ storage: true }),
+      user: null,
+      storage: { get: async () => undefined, set: async () => {} },
+    })
+    expect(await b.handle(req('storage.get', 'filters'))).toMatchObject({
+      ok: false,
+      error: { code: 'unauthenticated' },
     })
   })
 

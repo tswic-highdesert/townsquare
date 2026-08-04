@@ -21,6 +21,7 @@ import {
   type ChallengeDelivery,
 } from '@townsquare/identity'
 import type { CatalogueEntry } from '@townsquare/sandbox'
+import { CreationStorage, MemoryStorageStore, MAX_TOTAL_BYTES } from '@townsquare/storage'
 import { createIdentityRoutes } from './identityRoutes.js'
 
 const SHELL_ORIGIN = 'http://townsquare.localhost:5173'
@@ -73,6 +74,7 @@ let store: MemoryIdentityStore
 let identity: Identity
 let delivery: Captured
 let creations: CatalogueEntry[]
+let storage: CreationStorage
 
 beforeAll(async () => {
   server = createServer((req, res) => {
@@ -102,9 +104,11 @@ beforeEach(() => {
   delivery = new Captured()
   identity = new Identity({ store, delivery })
   creations = catalogue({ identity: 'handle' })
+  storage = new CreationStorage({ store: new MemoryStorageStore() })
   routes = createIdentityRoutes({
     identity,
     store,
+    storage,
     creations: () => creations,
     shellOrigin: SHELL_ORIGIN,
     townId: 'russellville-ar',
@@ -348,5 +352,103 @@ describe('what the routes refuse to disclose', () => {
     for (const leak of ['signature', 'expired', 'malformed', 'revoked']) {
       expect(body).not.toContain(leak)
     }
+  })
+})
+
+describe('storage over the bridge', () => {
+  /** Sign in, then exchange the session for an act token. */
+  async function actAs(handle: string, email: string): Promise<string> {
+    const cookie = await signedIn(handle, email)
+    const res = await post('/api/creations/burrito-index/act', {}, { headers: { cookie } })
+    return ((await res.json()) as { token: string }).token
+  }
+
+  function get(token: string, key: string) {
+    return fetch(`${base}/api/bridge/storage?key=${encodeURIComponent(key)}`, {
+      headers: { Authorization: `Bearer ${token}` },
+    })
+  }
+
+  function put(token: string, body: unknown) {
+    return fetch(`${base}/api/bridge/storage`, {
+      method: 'PUT',
+      headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
+      body: JSON.stringify(body),
+    })
+  }
+
+  beforeEach(() => {
+    creations = catalogue({ storage: true })
+  })
+
+  it('round-trips a value', async () => {
+    const token = await actAs('tswic', 'tal@example.com')
+
+    expect((await put(token, { key: 'filters', value: { showInactive: false } })).status).toBe(200)
+    expect(await (await get(token, 'filters')).json()).toEqual({
+      found: true,
+      value: { showInactive: false },
+    })
+  })
+
+  it('reports an unset key as absent rather than as an error', async () => {
+    const token = await actAs('tswic', 'tal@example.com')
+    const res = await get(token, 'never-set')
+    expect(res.status).toBe(200)
+    expect(await res.json()).toEqual({ found: false, value: null })
+  })
+
+  it('removes a key when the value is absent from the body', async () => {
+    const token = await actAs('tswic', 'tal@example.com')
+    await put(token, { key: 'filters', value: 1 })
+    await put(token, { key: 'filters' })
+    expect(await (await get(token, 'filters')).json()).toMatchObject({ found: false })
+  })
+
+  it('scopes rows to the token, so one resident cannot read another', async () => {
+    // Threat model #17. Neither request names a user or a creation anywhere:
+    // the scope is derived from the act token and there is no parameter that
+    // could address someone else's row.
+    const alice = await actAs('alice', 'alice@example.com')
+    const bob = await actAs('bob', 'bob@example.com')
+
+    await put(alice, { key: 'filters', value: 'alice only' })
+    expect(await (await get(bob, 'filters')).json()).toEqual({ found: false, value: null })
+  })
+
+  it('refuses a creation that never declared storage', async () => {
+    creations = catalogue({ identity: 'handle' })
+    const token = await actAs('tswic', 'tal@example.com')
+
+    expect((await get(token, 'filters')).status).toBe(403)
+    expect((await put(token, { key: 'filters', value: 1 })).status).toBe(403)
+  })
+
+  it('refuses an anonymous token, because there is nobody to store against', async () => {
+    const res = await post('/api/creations/burrito-index/act', {})
+    const { token } = (await res.json()) as { token: string }
+    expect((await get(token, 'filters')).status).toBe(401)
+  })
+
+  it('enforces the quota, and says what to do about it', async () => {
+    const token = await actAs('tswic', 'tal@example.com')
+    await put(token, { key: 'big', value: 'x'.repeat(MAX_TOTAL_BYTES - 100) })
+
+    const res = await put(token, { key: 'more', value: 'x'.repeat(500) })
+    expect(res.status).toBe(413)
+    expect(((await res.json()) as { message: string }).message).toContain('Remove a key first')
+  })
+
+  it('rejects a malformed key', async () => {
+    const token = await actAs('tswic', 'tal@example.com')
+    expect((await put(token, { key: 'has space', value: 1 })).status).toBe(400)
+    expect((await put(token, { key: 42, value: 1 })).status).toBe(400)
+    expect((await get(token, '../escape')).status).toBe(400)
+  })
+
+  it('does not authenticate from a session cookie', async () => {
+    const cookie = await signedIn()
+    const res = await fetch(`${base}/api/bridge/storage?key=filters`, { headers: { cookie } })
+    expect(res.status).toBe(401)
   })
 })

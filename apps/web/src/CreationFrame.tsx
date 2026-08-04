@@ -52,7 +52,12 @@ export function CreationFrame(props: CreationFrameProps) {
       guestOrigin: props.guestOrigin,
       manifest: props.manifest,
       town: props.town,
-      context: { user: props.user, town: townData, identity: act.identity },
+      context: {
+        user: props.user,
+        town: townData,
+        identity: act.identity,
+        storage: act.storage,
+      },
       onStateChange: setState,
       onTitleChange: props.onTitleChange,
       onIncident: props.onIncident,

@@ -35,6 +35,7 @@ reading.
 ```
 packages/manifest    the townsquare.json schema, and additive-only type evolution
 packages/identity    handles, sessions, vouching, act tokens. no email leaves it
+packages/storage     per creation, per user scratch space, with the quota rules
 packages/shared      wire protocol, error codes, CSP compiler, path normalizer, origins
 packages/tokens      design tokens, emitted for both the shell and the guest frame
 packages/sdk         @townsquare/sdk, the contract creations are written against

@@ -31,6 +31,7 @@
     <main>
       <h1>The Burrito Index</h1>
       <p class="lede" id="lede">Loading the town directory…</p>
+      <button id="pin" hidden>Pin my favourite</button>
       <ol id="list"></ol>
       <p class="note">
         Names and hours come from the Town Square directory. The ranking is mine,
@@ -41,10 +42,11 @@
     <script type="module">
       // Bare specifier, no build step, no package.json. The import map that
       // makes this resolve is injected by Town Square at serve time.
-      import { town, user, app } from '@townsquare/sdk'
+      import { town, user, storage, app } from '@townsquare/sdk'
 
       const list = document.getElementById('list')
       const lede = document.getElementById('lede')
+      const pin = document.getElementById('pin')
 
       try {
         const { name } = await town.info()
@@ -86,6 +88,30 @@
           body.append(name, detail)
           li.append(rank, body)
           list.append(li)
+        }
+
+        // Storage is private to this app and this resident: it is where a
+        // preference lives, not where the town's data lives. Anyone signed in
+        // gets their own copy, and a signed-out visitor gets a button that
+        // says so rather than an error.
+        if (me) {
+          const favourite = await storage.get('favourite')
+          if (favourite) {
+            const marker = document.createElement('p')
+            marker.className = 'note'
+            marker.id = 'favourite'
+            marker.textContent = `Your pick: ${favourite}`
+            lede.after(marker)
+          }
+
+          pin.hidden = false
+          pin.textContent = favourite ? 'Pin a different favourite' : 'Pin my favourite'
+          pin.addEventListener('click', async () => {
+            const top = items[0]
+            if (!top) return
+            await storage.set('favourite', top.name)
+            pin.textContent = 'Pinned'
+          })
         }
 
         app.setTitle(`${items.length} spots ranked`)

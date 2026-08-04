@@ -9,16 +9,19 @@
  *
  * The token is minted per mounted creation, so it names one creation, one
  * approved version, one user, and the exact grants that version was approved
- * with. It expires in fifteen minutes and is refreshed at thirteen. Nothing
- * here is ever passed into the frame: the guest never sees a token, and the
- * only thing that crosses the port is `{ handle, verified }` as the *server*
- * projected it.
+ * with. It expires in fifteen minutes and is refreshed at thirteen.
+ *
+ * The token itself is never passed into the frame. What crosses the port is
+ * only ever an answer: `{ handle, verified }` as the *server* projected it, or
+ * a value out of the creation's own storage scope.
  */
 
-import type { IdentitySource } from '@townsquare/host'
+import { BridgeCallError, type IdentitySource, type StorageSource } from '@townsquare/host'
+import { isErrorCode, wireError, type WireError } from '@townsquare/shared'
 
 export interface ActTokenHolder {
   identity: IdentitySource
+  storage: StorageSource
   /** Called on teardown. In-flight refreshes stop mattering after this. */
   dispose(): void
 }
@@ -64,6 +67,29 @@ export function createActTokenHolder(creationSlug: string): ActTokenHolder {
     return current?.token ?? null
   }
 
+  /**
+   * One authenticated call to the bridge API.
+   *
+   * A 401 drops the token and reports itself rather than retrying here: an
+   * invisible retry loop against an API that is refusing us is much worse to
+   * debug than one clear failure the guest can see.
+   */
+  async function call(path: string, init: RequestInit = {}): Promise<unknown> {
+    const bearer = await token()
+    if (!bearer) throw new BridgeCallError(wireError('unavailable', 'Town Square could not sign this request.'))
+
+    const res = await fetch(path, {
+      // No cookie, ever. The bridge answers to the act token alone.
+      credentials: 'omit',
+      ...init,
+      headers: { ...(init.headers ?? {}), Authorization: `Bearer ${bearer}` },
+    })
+
+    if (res.status === 401) current = null
+    if (!res.ok) throw new BridgeCallError(await toWireError(res))
+    return res.status === 204 ? null : res.json()
+  }
+
   const identity: IdentitySource = {
     async current() {
       const bearer = await token()
@@ -84,16 +110,57 @@ export function createActTokenHolder(creationSlug: string): ActTokenHolder {
         current = null
         return null
       }
-      if (!res.ok) throw new Error(`bridge/me ${res.status}`)
+      if (!res.ok) throw new BridgeCallError(await toWireError(res))
       return (await res.json()) as { handle: string; verified: boolean } | null
+    },
+  }
+
+  const storage: StorageSource = {
+    async get(key) {
+      const body = (await call(`/api/bridge/storage?key=${encodeURIComponent(key)}`)) as {
+        found: boolean
+        value: unknown
+      }
+      // JSON cannot carry `undefined`, so absence arrives as a flag and is
+      // turned back into `undefined` here — the guest never has to tell an
+      // unset key apart from a stored null by inspecting a wrapper.
+      return body.found ? body.value : undefined
+    },
+
+    async set(key, value) {
+      await call('/api/bridge/storage', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        // A `set(key, undefined)` is a removal, and `JSON.stringify` dropping
+        // the property is exactly how that reaches the server.
+        body: JSON.stringify({ key, value }),
+      })
     },
   }
 
   return {
     identity,
+    storage,
     dispose() {
       disposed = true
       current = null
     },
   }
+}
+
+/**
+ * Turn an API failure into the wire error the guest should see.
+ *
+ * Only codes that are already part of the SDK's documented vocabulary pass
+ * through; anything else becomes `unavailable`, so a new server-side code
+ * cannot leak an undocumented string into generated code that branches on it.
+ */
+async function toWireError(res: Response): Promise<WireError> {
+  const body = (await res.json().catch(() => null)) as { error?: string; message?: string } | null
+  const code = body?.error
+
+  if (isErrorCode(code)) {
+    return wireError(code, body?.message ?? 'Town Square refused that request.')
+  }
+  return wireError('unavailable', 'Town Square could not complete that request.')
 }

@@ -65,6 +65,7 @@ export default defineConfig({
       '@townsquare/host': r('../../packages/host/src/index.ts'),
       '@townsquare/sandbox': r('../../packages/sandbox/src/index.ts'),
       '@townsquare/identity': r('../../packages/identity/src/index.ts'),
+      '@townsquare/storage': r('../../packages/storage/src/index.ts'),
     },
   },
   server: {
