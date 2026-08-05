@@ -38,7 +38,17 @@ export interface GalleryProps {
   creations: CreationSummary[] | null
   townName: string
   onOpen: (creation: CreationSummary) => void
-  onBack: () => void
+  /**
+   * Optional, because this screen is a destination and not a sub-page.
+   *
+   * The gallery is reached from the nav, where the bar underneath already
+   * highlights Creations and every other destination is one tap away. A "back
+   * to Today" above that nav is one affordance too many: it offers a way out
+   * of a place you did not travel into. It is still passed wherever the
+   * gallery is genuinely arrived at from somewhere, and the control is drawn
+   * only then.
+   */
+  onBack?: () => void
   /** The build layer's front door. Reached by asking, never sprung. */
   onHowItWorks: () => void
 }
@@ -65,9 +75,11 @@ export function Gallery(props: GalleryProps) {
 
   return (
     <div className="shell cr-screen">
-      <button className="cr-back" onClick={props.onBack}>
-        <Icon name="arrow-left" size={16} /> Today
-      </button>
+      {props.onBack && (
+        <button className="cr-back" onClick={props.onBack}>
+          <Icon name="arrow-left" size={16} /> Today
+        </button>
+      )}
 
       <div className="cr-eyebrow">{props.townName} · the build layer</div>
       <h1 className="cr-h1">Built by neighbors</h1>

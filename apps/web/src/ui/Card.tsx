@@ -206,6 +206,17 @@ export interface RowProps {
   chevron?: boolean
   /** Draws a chevron and makes the whole row one target. */
   href?: string
+  /**
+   * The href leaves town.
+   *
+   * Adds `target="_blank"` and `rel="noopener noreferrer"`. The second half is
+   * the load-bearing one: the shell holds the session cookie, and a source's
+   * page getting a handle on this window is not a risk worth taking to save an
+   * attribute. Most rows in this product link to a scraped source, so this is
+   * the common case rather than the exception — it is opt-in anyway, because a
+   * row that silently opened a tab would be worse than one that did not.
+   */
+  external?: boolean
   onClick?: () => void
   className?: string
 }
@@ -224,6 +235,7 @@ export function Row({
   trailing,
   chevron = true,
   href,
+  external,
   onClick,
   className,
 }: RowProps) {
@@ -246,7 +258,12 @@ export function Row({
   const props = { className: cx('ts-row', className), 'data-lead': lead ? '' : undefined }
   if (href) {
     return (
-      <a {...props} href={href}>
+      <a
+        {...props}
+        href={href}
+        target={external ? '_blank' : undefined}
+        rel={external ? 'noopener noreferrer' : undefined}
+      >
         {inner}
       </a>
     )

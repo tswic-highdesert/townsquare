@@ -15,6 +15,7 @@
 
 import { AppBar } from './AppBar.js'
 import { Icon, Mark, type IconName } from './Icon.js'
+import { RowIcon, RowItem, RowList } from './ui/index.js'
 import { TabBar, type TabName } from './TabBar.js'
 import type {
   EventCategory,
@@ -83,35 +84,42 @@ export function Today(props: TodayProps) {
             for it from the section they are reading.
           */}
           <SectionHead label="More from town" action="All news" onAction={props.onOpenNews} />
-          <div className="more-list">
+          {/*
+            The headline leads and the thumbnail trails, which is the shape
+            `Row`'s trailing slot exists for. No chevron: the photo already
+            says there is something to open, and two affordances in one corner
+            is one too many.
+
+            Roughly half the town's stories come with a photo and the rest do
+            not, so the thumbnail stays an enhancement rather than the layout —
+            the row reads the same without one, and the `onError` still hides a
+            thumb whose source 404s rather than leaving a broken frame.
+          */}
+          <RowList framed={false} label="More from town">
             {today.more.map((story) => (
-              <Outside key={story.id} href={story.url} className="more-row">
-                <span className="more-text">
-                  <span className="more-title">{story.title}</span>
-                  <span className="more-byline">
-                    {story.source} · {story.timeLabel}
-                  </span>
-                </span>
-                {/*
-                  Roughly half the town's stories come with a photo and the rest
-                  do not, so the thumbnail is an enhancement rather than the
-                  layout: the row reads the same without one.
-                */}
-                {story.imageUrl && (
-                  <span className="more-thumb">
+              <RowItem
+                key={story.id}
+                title={story.title}
+                meta={`${story.source} · ${story.timeLabel}`}
+                href={story.url ?? undefined}
+                external
+                chevron={false}
+                trailing={
+                  story.imageUrl ? (
                     <img
+                      className="ts-row-thumb"
                       src={story.imageUrl}
                       alt=""
                       loading="lazy"
                       onError={(e) => {
-                        e.currentTarget.parentElement?.style.setProperty('display', 'none')
+                        e.currentTarget.style.setProperty('display', 'none')
                       }}
                     />
-                  </span>
-                )}
-              </Outside>
+                  ) : undefined
+                }
+              />
             ))}
-          </div>
+          </RowList>
         </section>
       )}
 
@@ -153,20 +161,17 @@ export function Today(props: TodayProps) {
             creation={today.neighbors.featured}
             onOpen={() => props.onOpenCreation(today.neighbors.featured!.slug)}
           />
-          {today.neighbors.rest.map((creation) => (
-            <button
-              key={creation.slug}
-              className="creation-row"
-              onClick={() => props.onOpenCreation(creation.slug)}
-            >
-              <CreationIcon creation={creation} size={42} />
-              <span className="creation-row-text">
-                <span className="creation-row-name">{creation.name}</span>
-                <span className="creation-row-tagline">{creation.tagline}</span>
-              </span>
-              <Icon name="chevron-right" size={20} className="row-chevron" />
-            </button>
-          ))}
+          <RowList framed={false} label="More from your neighbours">
+            {today.neighbors.rest.map((creation) => (
+              <RowItem
+                key={creation.slug}
+                lead={<CreationIcon creation={creation} size={42} />}
+                title={creation.name}
+                meta={creation.tagline}
+                onClick={() => props.onOpenCreation(creation.slug)}
+              />
+            ))}
+          </RowList>
         </section>
       )}
 
@@ -207,20 +212,18 @@ export function Today(props: TodayProps) {
               </span>
             </Outside>
           )}
-          <div className="civic-list">
+          <RowList framed={false} label="From city hall">
             {today.cityHall.items.map((item) => (
-              <Outside key={item.id} href={item.url} className="civic-row">
-                <span className="civic-icon">
-                  <Icon name="document" size={17} />
-                </span>
-                <span>
-                  <span className="civic-title">{item.title}</span>
-                  <span className="civic-detail">{item.detail}</span>
-                </span>
-                <Icon name="chevron-right" size={18} className="row-chevron" />
-              </Outside>
+              <RowItem
+                key={item.id}
+                lead={<RowIcon name="document" />}
+                title={item.title}
+                meta={item.detail}
+                href={item.url ?? undefined}
+                external
+              />
             ))}
-          </div>
+          </RowList>
         </section>
       )}
       </aside>

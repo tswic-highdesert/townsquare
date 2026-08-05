@@ -317,6 +317,47 @@ queue, so the featured card reads "made by a neighbor" and shows no initials.
 It does *not* fall back to initials of the creation's own name: "The Burrito
 Index" becoming a "TI" avatar reads as a person who does not exist.
 
+## Two kinds of comment, and only one of them rots
+
+Three comments in this repo asserted something that had stopped being true, and
+each cost real time:
+
+- `styles/index.css` promised `ui.css` loaded first "so a screen can override a
+  primitive". The module graph could not deliver it, every screen-level override
+  was losing silently, and the comment was the reason nobody looked.
+- `Directory.tsx` says in two places that it does not draw a map, seventy lines
+  above where it imports and renders `TownMap`. An agent read it and reported
+  the map as lost.
+- `nav.css` said the skip target was assigned by `AppBar` for an hour after it
+  moved into the screens.
+
+The pattern, and it is worth writing as a rule: **a comment that asserts a
+guarantee rots silently. A comment that explains a decision does not**, because
+the decision stays true even when the mechanism moves. "Unlayered CSS wins
+regardless of source order" is a guarantee and needs a test under it.
+"`ref_id` is not a foreign key because the feed is re-scraped and its ids come
+and go" is a decision and will still be true in a year.
+
+Prefer the second kind. Where the first is genuinely needed, put a test beneath
+it — `ui/layer.test.ts` and `packages/db/src/saves.schema.test.ts` are both
+comments with something holding them up.
+
+## Nothing ships stranded
+
+`apps/web/src/reachable.test.ts` walks the real import graph from `main.tsx` and
+fails on any source file nothing reaches.
+
+The News screen sat finished and dark for an hour: component built, API written,
+nothing importing either. Everything compiled, every test passed, and the screen
+looked right in isolation. A screen nothing routes to is invisible to a
+typechecker and to a unit test, and the only person who finds it is a resident
+who never arrives.
+
+Known orphans are listed with the reason each is still there. A waiver has to
+carry an argument, the same way a contrast waiver does, and a second test fails
+if a waived file has been deleted or reconnected — a stale waiver is how the
+next real orphan hides.
+
 ## Running the boundary suite without lying to yourself
 
 Two ways to get a meaningless result, both hit for real:

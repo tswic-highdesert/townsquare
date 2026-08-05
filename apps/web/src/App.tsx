@@ -462,10 +462,10 @@ export function App() {
     if (screen.name === 'gallery') {
       /*
         A destination, so it wears what the other destinations wear: the same
-        bar, the same nav. `Gallery` draws its own header and its own back
-        control, which is one control more than a tab needs — flagged rather
-        than worked around, because reaching into another screen to hide a
-        button is how two agents end up disagreeing about who owns a header.
+        bar, the same nav, and no back control. `onBack` is deliberately not
+        passed: the nav underneath already highlights Creations and every other
+        destination is one tap away, so a "back to Today" here would offer a
+        way out of a place nobody travelled into.
       */
       return (
         <div className="today">
@@ -482,7 +482,6 @@ export function App() {
             creations={creations}
             townName={town.name}
             onOpen={(creation) => setScreen({ name: 'trust', creation, from: 'creations' })}
-            onBack={() => setScreen({ name: 'today' })}
             onHowItWorks={() => setScreen({ name: 'builder' })}
           />
 
