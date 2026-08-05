@@ -29,6 +29,7 @@ import { AppBar, initials, VerifiedChip } from './AppBar.js'
 import { Icon, type IconName } from './Icon.js'
 import { TabBar, type TabName } from './TabBar.js'
 import { unsaveThing, type BuiltCreation, type SavedThing, type SaveKind } from './savesData.js'
+import { EmptyState, RowItem, RowList } from './ui/index.js'
 import type { AccountView } from './session.js'
 
 export interface YoursProps {
@@ -48,6 +49,9 @@ const SAVE_ICON: Record<SaveKind, IconName> = {
   business: 'storefront',
   event: 'calendar',
   creation: 'add',
+  // Matches the glyph search already uses for a story, so a resident who found
+  // one and a resident who saved one are looking at the same mark.
+  story: 'newspaper',
 }
 
 export function Yours(props: YoursProps) {
@@ -121,38 +125,55 @@ export function Yours(props: YoursProps) {
       {props.built.length > 0 && (
         <section className="today-section">
           <SectionHead label="What you built" count={props.built.length} />
-          <div className="civic-list">
+          {/*
+            One target per creation, a title, a fact underneath and a chevron —
+            which is `Row` exactly, so this uses it rather than a fourth local
+            copy of the same shape. `framed={false}` because the section
+            already sits on the page rather than on a card.
+
+            The `.creation-row` rules in `styles/today.css` stay: Today draws
+            the same shape from the same classes and was not migrated with this.
+          */}
+          <RowList framed={false} label="What you built">
             {props.built.map((creation) => (
-              <button
+              <RowItem
                 key={creation.slug}
-                className="creation-row"
+                title={creation.name}
+                // Status and when it last changed, which are both facts on the
+                // row. Not "241 residents": nothing counts that.
+                meta={`${creation.status === 'active' ? 'Live' : creation.status} · updated ${sinceLabel(creation.updatedAt)}`}
                 onClick={() => props.onOpenCreation(creation.slug)}
-              >
-                <span className="creation-row-text">
-                  <span className="creation-row-name">{creation.name}</span>
-                  {/*
-                    Status and when it last changed, which are both facts on the
-                    row. Not "241 residents": nothing counts that.
-                  */}
-                  <span className="creation-row-tagline">
-                    {creation.status === 'active' ? 'Live' : creation.status} · updated{' '}
-                    {sinceLabel(creation.updatedAt)}
-                  </span>
-                </span>
-                <Icon name="chevron-right" size={20} className="row-chevron" />
-              </button>
+              />
             ))}
-          </div>
+          </RowList>
         </section>
       )}
 
       <section className="today-section">
         <SectionHead label="Saved" count={props.saved.length} />
+        {/*
+          Not `Row`, deliberately.
+
+            A saved row has two independent targets in it: the title, which is a
+            link out to the thing, and the bookmark, which un-saves it without
+            leaving the screen. `Row`'s contract is one row, one target — the
+            trailing slot is for a chip or a time, explicitly not for a second
+            thing to press — and bending it here would either nest a button
+            inside a link or quietly widen that contract for every other screen
+            using it.
+
+            The composer and the news feed hit the same limit on two-target
+            rows. Three screens wanting it is an argument for a second
+            primitive with its own contract, not for loosening this one, and
+            none of the three is blocked meanwhile.
+          */}
         {props.saved.length === 0 ? (
-          <p className="yours-empty">
-            Nothing saved yet. The bookmark on a row in Nearby keeps it here — the hardware
-            store’s hours, the clinic you can never remember the name of.
-          </p>
+          <EmptyState
+            align="start"
+            mark="bookmark"
+            line="You haven’t saved anything yet."
+            sub="The bookmark on a row in the directory keeps it here — the hardware store’s hours, the clinic you can never remember the name of."
+          />
         ) : (
           <ul className="saved-list">
             {props.saved.map((save) => (

@@ -1268,41 +1268,15 @@
   color: var(--ts-action);
 }
 
-.cr-bd-field {
-  display: block;
-  margin-bottom: var(--ts-space-4);
-}
-
+/* The standalone label above the terminal command, where there is no field
+   for `TextInput` to own. */
 .cr-bd-field-label {
   display: block;
+  margin-top: var(--ts-space-4);
   font-size: var(--ts-text-caption);
   font-weight: 500;
   color: var(--ts-quiet);
   margin-bottom: 4px;
-}
-
-.cr-bd-input {
-  width: 100%;
-  min-height: 44px;
-  padding: 0 var(--ts-space-3);
-  border: 1px solid var(--ts-hairline);
-  border-radius: var(--ts-radius-input);
-  background: var(--ts-cream);
-  color: var(--ts-ink);
-  font-family: var(--ts-font-sans);
-  font-size: var(--ts-text-label);
-}
-
-.cr-bd-input:focus-visible {
-  outline: none;
-  box-shadow: var(--ts-focus);
-}
-
-.cr-bd-field-hint {
-  display: block;
-  font-size: 12px;
-  color: var(--ts-ink45);
-  margin-top: 4px;
 }
 
 .cr-bd-scopes {
@@ -1410,7 +1384,16 @@
   overflow-wrap: anywhere;
 }
 
-/* Sage on the copied state, because it is a confirmation and not an action. */
+/*
+ * Sage on the copied state, because it is a confirmation and not an action.
+ *
+ * This overrides `.ts-btn[data-variant='secondary']` at equal specificity and
+ * still wins, because `ui.css` lives in `@layer ts-primitives` and this
+ * stylesheet is unlayered — unlayered rules beat layered ones whatever the
+ * source order. That is what lets a screen override a primitive from a
+ * component-imported sheet. The one thing that would break it is wrapping
+ * *this* file in a layer, which would drop it below the primitives.
+ */
 .cr-bd-copy[data-copied] {
   color: var(--ts-verified);
   border-color: var(--ts-verified);

@@ -22,7 +22,7 @@
 
 import { useEffect, useState } from 'react'
 import { Icon } from '../Icon.js'
-import { Button, Card } from '../ui/index.js'
+import { Button, Card, TextInput } from '../ui/index.js'
 import {
   fetchTokens,
   isError,
@@ -263,20 +263,20 @@ function Connect({
             <b>New connection</b>
           </div>
 
-          <label className="cr-bd-field">
-            <span className="cr-bd-field-label">What is this for</span>
-            <input
-              className="cr-bd-input"
-              type="text"
-              value={label}
-              placeholder="MacBook, Claude Code"
-              onChange={(e) => setLabel(e.target.value)}
-              aria-describedby="cr-bd-label-hint"
-            />
-            <span className="cr-bd-field-hint" id="cr-bd-label-hint">
-              So you can tell two machines apart later. Only you see it.
-            </span>
-          </label>
+          {/*
+            A label is the only field, because the scopes below are not yours to
+            choose. `TextInput` carries the label/help/`aria-describedby` wiring
+            that a hand-rolled version gets wrong about a third of the time.
+          */}
+          <TextInput
+            label="What is this for"
+            help="So you can tell two machines apart later. Only you see it."
+            type="text"
+            value={label}
+            placeholder="MacBook, Claude Code"
+            maxLength={80}
+            onChange={(e) => setLabel(e.target.value)}
+          />
 
           {/*
             The scopes are stated and not chosen. A token that could do less
