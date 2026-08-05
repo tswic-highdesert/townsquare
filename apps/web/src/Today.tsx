@@ -329,23 +329,43 @@ function LeadStory({ story }: { story: TodayStory }) {
   return (
     <section className="today-section">
       <SectionHead label="Top of town" />
-      <Outside href={story.url} className="lead">
-        {story.imageUrl && (
+      {/*
+        Two heroes, not one with a hole in it. Most mornings the API finds a
+        story with art and this is a photo hero. When the whole town has
+        published nothing with a picture, `data-art="none"` gives a deliberate
+        typographic hero instead — a headline in a big font on a bare page reads
+        as a screen that could not fill itself, which is the opposite of what
+        the top of Today should say.
+      */}
+      <Outside href={story.url} className="lead" data-art={story.imageUrl ? 'photo' : 'none'}>
+        {story.imageUrl ? (
           <span className="lead-image">
             <img src={story.imageUrl} alt="" loading="lazy" />
+            <span className="lead-kind">
+              <Icon name="newspaper" size={12} />
+              NEWS
+            </span>
+          </span>
+        ) : (
+          <span className="lead-kind">
+            <Icon name="newspaper" size={12} />
+            NEWS
           </span>
         )}
-        <span className="lead-kind">
-          <Icon name="newspaper" size={12} />
-          NEWS
-        </span>
-        <span className="lead-title">{story.title}</span>
-        <span className="lead-byline">
-          <span className="lead-source-mark">{story.sourceInitial}</span>
-          <span className="lead-source">{story.source}</span>
-          <span className="lead-dot" />
-          <span className="lead-meta">
-            {story.timeLabel} · {story.readingMinutes} min
+        <span className="lead-body">
+          <span className="lead-title">{story.title}</span>
+          {!story.imageUrl && story.summary && (
+            // The summary earns its place only on the typographic hero, where
+            // it is doing the work the photo would have done.
+            <span className="lead-summary">{story.summary}</span>
+          )}
+          <span className="lead-byline">
+            <span className="lead-source-mark">{story.sourceInitial}</span>
+            <span className="lead-source">{story.source}</span>
+            <span className="lead-dot" />
+            <span className="lead-meta">
+              {story.timeLabel} · {story.readingMinutes} min
+            </span>
           </span>
         </span>
       </Outside>

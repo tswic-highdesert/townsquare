@@ -62,10 +62,20 @@ actually built.
 | From city hall | an active notice, plus what government sources have scheduled next |
 | In the directory | `businesses.ts`, rotated by the day, open/closed computed live |
 
-**More from town is ordered by recency, not by which stories have art.** Roughly
-half do. Promoting the ones that do would be an editorial call made on the
-strength of a newspaper's photo budget, so the thumbnail is an enhancement of a
-row that reads the same without one.
+**The hero reaches up to 36 hours back for a story with a photo.** The lead is
+the only slot on this screen with real visual weight, and a hero with no art is
+a headline in a large font — it reads as a page that could not fill itself.
+Roughly half the town's stories carry an image and none of the university's do,
+so leading strictly by recency gives a flat screen most mornings. Whatever the
+hero passes over becomes the first row of More from town, so the preference
+costs a newer story the big slot and never the screen.
+
+**When nothing in town has art, the lead becomes a typographic hero** — a
+panel, a rule in the brand colour, a larger headline, and the summary doing the
+work the photo would have. Not the photo layout with a hole in it.
+
+**More from town is ordered by recency, not by which stories have art.** The
+thumbnail is an enhancement of a row that reads the same without one.
 
 **A story's timestamp is a clock time only if it ran today.** Otherwise it is
 "Yesterday", a weekday, or a date. `4:51pm` on a story filed yesterday

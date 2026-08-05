@@ -14,6 +14,7 @@ import {
   greetingFor,
   hoursToday,
   openState,
+  pickLead,
   readingMinutes,
   rotate,
   storyStamp,
@@ -124,6 +125,38 @@ describe('hoursToday', () => {
   it('is null when the day is missing, so the caller can say something else', () => {
     expect(hoursToday(week, 'Sun')).toBeNull()
     expect(hoursToday(undefined, 'Wed')).toBeNull()
+  })
+})
+
+describe('pickLead', () => {
+  const at = (iso: string, imageUrl?: string) =>
+    ({ id: iso, publishedAt: iso, imageUrl }) as never
+  const NOW = Date.parse('2026-08-05T14:00:00.000Z')
+
+  it('reaches past a newer story to find one with art', () => {
+    const lead = pickLead(
+      [at('2026-08-05T12:00:00.000Z'), at('2026-08-04T18:00:00.000Z', 'p.jpg')],
+      NOW,
+    )
+    expect((lead as { id: string }).id).toBe('2026-08-04T18:00:00.000Z')
+  })
+
+  it('will not reach past the window to do it', () => {
+    // Four days old. A hero that stale is worse than a hero with no photo.
+    const lead = pickLead(
+      [at('2026-08-05T12:00:00.000Z'), at('2026-08-01T18:00:00.000Z', 'p.jpg')],
+      NOW,
+    )
+    expect((lead as { id: string }).id).toBe('2026-08-05T12:00:00.000Z')
+  })
+
+  it('falls back to the newest when nothing has art at all', () => {
+    const lead = pickLead([at('2026-08-05T12:00:00.000Z'), at('2026-08-05T09:00:00.000Z')], NOW)
+    expect((lead as { id: string }).id).toBe('2026-08-05T12:00:00.000Z')
+  })
+
+  it('is undefined when the town published nothing', () => {
+    expect(pickLead([], NOW)).toBeUndefined()
   })
 })
 
@@ -362,6 +395,18 @@ describe('assembleToday', () => {
     })
     expect(today.neighbors.featured?.author).toBeNull()
     expect(today.neighbors.featured?.authorInitials).toBeNull()
+  })
+
+  it('keeps a story the hero passed over at the top of the rest', () => {
+    const today = base({
+      items: [
+        story({ id: 'newest-no-art', publishedAt: '2026-08-03T11:00:00.000Z' }),
+        story({ id: 'older-with-art', publishedAt: '2026-08-03T08:00:00.000Z', imageUrl: 'p.jpg' }),
+      ],
+    })
+    expect(today.lead?.id).toBe('older-with-art')
+    // The preference costs the newer story the big slot, never the screen.
+    expect(today.more.map((m) => m.id)).toEqual(['newest-no-art'])
   })
 
   it('carries the rest of the recent news after the lead', () => {

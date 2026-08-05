@@ -811,9 +811,15 @@ details > pre {
 .lead {
   display: flex;
   flex-direction: column;
-  gap: var(--ts-space-2);
+  gap: var(--ts-space-3);
   color: inherit;
   text-decoration: none;
+}
+
+.lead-body {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ts-space-2);
 }
 
 .lead-image {
@@ -822,14 +828,28 @@ details > pre {
   border-radius: var(--ts-radius-sheet);
   overflow: hidden;
   background: var(--ts-stone);
-  box-shadow: 0 2px 4px var(--ts-ink08), 0 12px 26px -12px var(--ts-ink26);
+  box-shadow: 0 2px 4px var(--ts-ink08), 0 14px 30px -14px var(--ts-ink26);
 }
 
 .lead-image img {
   display: block;
   width: 100%;
-  height: 186px;
+  height: 216px;
   object-fit: cover;
+}
+
+/*
+ * A wash at the foot of the photo. Local press art is shot in whatever light
+ * was going, and the chip has to stay legible over a bright sky as well as a
+ * dark room.
+ */
+.lead-image::after {
+  content: '';
+  position: absolute;
+  inset: auto 0 0 0;
+  height: 40%;
+  background: linear-gradient(to top, var(--ts-ink26), transparent);
+  pointer-events: none;
 }
 
 .lead-kind {
@@ -844,19 +864,38 @@ details > pre {
   color: var(--ts-ink60);
 }
 
-/*
- * Over a photo the chip floats; with no photo it is a plain eyebrow. Sources
- * supply an image perhaps a third of the time, so the no-photo case is the
- * common one and has to look intentional rather than like a failed load.
- */
-.lead-image + .lead-kind {
+/* Over a photo the chip floats. */
+.lead-image .lead-kind {
   position: absolute;
   top: var(--ts-space-3);
   left: var(--ts-space-3);
+  z-index: 1;
   background: var(--ts-ink);
   color: var(--ts-cream);
   padding: 5px var(--ts-space-2);
   border-radius: var(--ts-radius-chip);
+}
+
+/*
+ * The typographic hero, for the mornings when nothing in town shipped with a
+ * picture. It is a panel rather than bare text: the lead is the only slot on
+ * this screen with real weight, and it has to keep that weight without art.
+ */
+.lead[data-art='none'] {
+  padding: var(--ts-space-5);
+  border-radius: var(--ts-radius-sheet);
+  background: linear-gradient(160deg, var(--ts-surface), var(--ts-terracotta-tint));
+  border: 1px solid var(--ts-hairline);
+  box-shadow: 0 1px 2px var(--ts-ink08), 0 14px 30px -18px var(--ts-ink26);
+}
+
+/* A rule in the brand colour, doing the job the top edge of a photo would. */
+.lead[data-art='none']::before {
+  content: '';
+  display: block;
+  width: 34px;
+  height: 2px;
+  background: var(--ts-terracotta);
 }
 
 .lead-title {
@@ -866,6 +905,23 @@ details > pre {
   line-height: 1.22;
   letter-spacing: -0.012em;
   text-wrap: pretty;
+}
+
+/* Bigger when it is carrying the hero on its own. */
+.lead[data-art='none'] .lead-title {
+  font-size: 25px;
+  line-height: 1.16;
+}
+
+.lead-summary {
+  font-size: var(--ts-text-label);
+  line-height: 1.45;
+  color: var(--ts-ink60);
+  text-wrap: pretty;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
 }
 
 .lead-byline {

@@ -268,6 +268,32 @@ export interface AssembleInput {
   sources: ReadonlyMap<string, TodaySource>
 }
 
+/**
+ * How far back the hero will reach to find a story with a photo.
+ *
+ * The lead is the one slot on the screen with real visual weight, and a hero
+ * with no art is a headline in a large font — it reads as a page that could not
+ * fill itself. Roughly half the town's stories carry an image and none of the
+ * university's do, so leading strictly by recency gives a flat screen most
+ * mornings.
+ *
+ * Thirty-six hours is the compromise. Long enough to almost always find art,
+ * short enough that the hero is never yesterday's news while today's sits
+ * below it — and whatever it passed over becomes the first row of "More from
+ * town" rather than disappearing.
+ */
+const LEAD_PHOTO_WINDOW_MS = 36 * 60 * 60 * 1000
+
+export function pickLead(
+  stories: readonly StoryItem[],
+  nowMs: number,
+): StoryItem | undefined {
+  const withPhoto = stories.find(
+    (s) => s.imageUrl && nowMs - new Date(s.publishedAt).getTime() <= LEAD_PHOTO_WINDOW_MS,
+  )
+  return withPhoto ?? stories[0]
+}
+
 export function assembleToday(input: AssembleInput): TodayPayload {
   const { now, town, items, creations, sources } = input
   const tz = town.timezone
@@ -305,14 +331,13 @@ export function assembleToday(input: AssembleInput): TodayPayload {
     readingMinutes: readingMinutes(s.body || s.description),
   })
 
-  const leadItem = stories[0]
+  const leadItem = pickLead(stories, nowMs)
   const lead: TodayStory | null = leadItem ? asStory(leadItem) : null
 
-  // The rest of the recent news. Ordered by recency like the lead, not shuffled
-  // to surface the ones with photos: a screen that promotes a story because it
-  // came with an image is making an editorial call on the strength of the
-  // newspaper's art budget.
-  const more = stories.slice(1, 5).map(asStory)
+  // Everything else recent, newest first. If the hero reached past a newer
+  // story to find a photo, that newer story is the first row here — the
+  // preference costs it the big slot, never the screen.
+  const more = stories.filter((s) => s.id !== leadItem?.id).slice(0, 4).map(asStory)
 
   // ── Happening today ────────────────────────────────────────────────────
   // Today's calendar day in the town's timezone, and only what has not already
