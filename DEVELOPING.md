@@ -317,6 +317,27 @@ queue, so the featured card reads "made by a neighbor" and shows no initials.
 It does *not* fall back to initials of the creation's own name: "The Burrito
 Index" becoming a "TI" avatar reads as a person who does not exist.
 
+## Running the boundary suite without lying to yourself
+
+Two ways to get a meaningless result, both hit for real:
+
+**Reusing servers that lack the fixtures.** `reuseExistingServer` is on outside
+CI, so a suite run against any servers already on 3030/3031/5173 will reuse
+them. If those were started without `TOWNSQUARE_EXTRA_EXAMPLES`, the e2e fixture
+creations do not exist, every test that opens `Neighborhood Watch` falls through
+to the sandbox explainer page, and the CSP assertion compares against the
+explainer's four directives instead of a bundle's. **Check `GET
+/api/creations` returns both `The Burrito Index` and `Neighborhood Watch` before
+trusting a single tick.** A green security suite that proves nothing is worse
+than a red one.
+
+**Setting `CI=true` "to make it deterministic".** Do not, in a worktree. The
+config's webServer commands are `pnpm tsx …`; pnpm sees `node_modules` is a
+symlink and wants to purge and reinstall it. It aborts only for want of a TTY.
+With a TTY, or with `confirmModulesPurge: false`, **it would delete the
+node_modules another checkout is also using.** Run with servers already up and
+`CI` unset.
+
 ## Testing a gated path
 
 `seedCohort` sets `verifiedResident: true` on every account it touches. That is
