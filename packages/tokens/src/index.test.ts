@@ -36,6 +36,21 @@ describe('the token contract', () => {
       '--ts-text-caption',
       '--ts-font-serif',
       '--ts-font-sans',
+      // Added by hi-fi v2. Elevation, motion and the focus ring were being
+      // hand-rolled per component before they had names; now that a creation
+      // can say `box-shadow: var(--ts-shadow-lifted)`, they are contract too.
+      '--ts-shadow-flat',
+      '--ts-shadow-raised',
+      '--ts-shadow-lifted',
+      '--ts-shadow-overlay',
+      '--ts-shadow-navy',
+      '--ts-ease',
+      '--ts-ease-out',
+      '--ts-dur-1',
+      '--ts-dur-2',
+      '--ts-dur-3',
+      '--ts-dur-4',
+      '--ts-focus',
     ]
     const actual = cssVariables()
     for (const name of published) {
@@ -43,15 +58,43 @@ describe('the token contract', () => {
     }
   })
 
-  it('emits every colour, space, radius and size as a variable', () => {
+  it('emits every colour, space, radius, size, shadow and motion value', () => {
     const vars = cssVariables()
     const counted =
       Object.keys(tokens.color).length +
       Object.keys(tokens.space).length +
       Object.keys(tokens.radius).length +
       Object.keys(tokens.type).length +
-      Object.keys(tokens.font).length
+      Object.keys(tokens.font).length +
+      Object.keys(tokens.shadow).length +
+      Object.keys(tokens.motion).length +
+      1 // focus, which is one value rather than a group
     expect(Object.keys(vars).length).toBe(counted)
+  })
+
+  /**
+   * The short motion names are the ones the design and every builder will
+   * type. A mechanical flattening would have produced `--ts-motion-dur1`, and
+   * this is the test that catches somebody tidying the emitter later.
+   */
+  it('emits motion under its short names, not under a motion- prefix', () => {
+    const vars = cssVariables()
+    expect(vars['--ts-dur-3']).toBe('260ms')
+    expect(vars['--ts-ease-out']).toContain('cubic-bezier')
+    expect(vars['--ts-motion-dur1']).toBeUndefined()
+  })
+
+  /**
+   * Elevation that resolves to a literal colour is elevation that stops
+   * matching the town it sits in. Every shadow is ink or navy at alpha,
+   * referenced by name.
+   */
+  it('builds every shadow out of other tokens, never a literal colour', () => {
+    for (const [name, value] of Object.entries(tokens.shadow)) {
+      expect(value, `${name} has a raw hex`).not.toMatch(/#[0-9a-f]{3,8}/i)
+      expect(value, `${name} has a raw rgb()`).not.toMatch(/\brgba?\(/)
+      expect(value, `${name} references no token`).toContain('var(--ts-')
+    }
   })
 
   it('gives every variable the --ts- prefix, which is the namespace guests trust', () => {

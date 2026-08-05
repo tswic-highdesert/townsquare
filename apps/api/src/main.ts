@@ -63,7 +63,19 @@ import {
   Review,
 } from '@townsquare/review'
 import { BundleStorePublisher } from '@townsquare/sandbox'
+import {
+  Contributions,
+  Drafts,
+  MemoryAttemptLog,
+  MemoryContributionStore,
+  MemoryDraftStore,
+  MemoryRecordStore,
+  NoListingOwners,
+  NoOrganisations,
+  type CorrectionField,
+} from '@townsquare/contributions'
 import { createConnectRoutes } from './connectRoutes.js'
+import { createContributionRoutes } from './contributionRoutes.js'
 import { createReportRoutes } from './reportRoutes.js'
 import { createReviewRoutes } from './reviewRoutes.js'
 import { createIdentityRoutes } from './identityRoutes.js'
@@ -178,11 +190,75 @@ async function main(): Promise<void> {
     log: new MemoryModerationLogStore(),
   })
 
+  /**
+   * Contributing: the other direction, from a resident into the town's record.
+   *
+   * Memory stores, same as identity, storage, saving and the queue — they land
+   * on the interfaces the Drizzle implementations will, so restarting the API
+   * empties every proposal and every draft and nothing above them changes when
+   * that stops being true.
+   *
+   * Three of the ports are wired to honest emptiness rather than to a stub with
+   * plausible data in it. Nobody is attached to an organisation, because Town
+   * Square has no organisation model, so every resident meets the notice gate.
+   * Nobody has claimed a listing, so every correction routes to a moderator.
+   * Both are the real state of the world, and both change in one line the day
+   * they stop being.
+   */
+  const contributions = new Contributions({
+    contributions: new MemoryContributionStore(),
+    records: new MemoryRecordStore(),
+    attempts: new MemoryAttemptLog(),
+    orgs: new NoOrganisations(),
+    ownership: new NoListingOwners(),
+    listings: {
+      /**
+       * The value a correction is arguing with, read out of the directory the
+       * screen is actually showing.
+       *
+       * `businesses` is imported by its deep path rather than through
+       * `@townsquare/feed`'s barrel, which re-exports the scrapers — see the
+       * note on `FEED_MODULE` above. A correction to a listing that has left
+       * the directory is refused rather than applied to nothing.
+       */
+      async current(_townId: string, listingId: string, field: CorrectionField) {
+        const listing = businesses.find((b) => b.id === listingId)
+        if (!listing) return null
+        const label = listing.name ?? listing.title ?? listingId
+        // "Closed for good" has no column in the scrape, so the value it is
+        // correcting is the absence of one. Empty rather than null, because
+        // null here means "no such listing" and that is a different answer.
+        if (field === 'closed') return { label, value: '' }
+        const value = listing[field]
+        return { label, value: typeof value === 'string' ? value : '' }
+      },
+    },
+    alerts: {
+      // "A moderator is told" means whatever is wired here, and with no
+      // notification system in Town Square yet the honest version is a line in
+      // this service's log. Naming it out loud beats a silent no-op that reads
+      // like a feature.
+      raise: ({ handle, message }) => console.warn(`contribution ladder: ${handle}: ${message}`),
+    },
+  })
+
+  const drafts = new Drafts({ store: new MemoryDraftStore() })
+
+  const contributionRoutes = createContributionRoutes({
+    identity,
+    contributions,
+    drafts,
+    shellOrigin: SHELL_ORIGIN,
+    townId: TOWN.id,
+    timezone: TOWN.timezone,
+  })
+
   const reviewRoutes = createReviewRoutes({
     identity,
     review,
     reports,
     moderation,
+    contributions,
     shellOrigin: SHELL_ORIGIN,
     townId: TOWN.id,
   })
@@ -297,6 +373,7 @@ async function main(): Promise<void> {
       .then((handled) => (handled ? true : connectRoutes(req, res, url)))
       .then((handled) => (handled ? true : reviewRoutes(req, res, url)))
       .then((handled) => (handled ? true : reportRoutes(req, res, url)))
+      .then((handled) => (handled ? true : contributionRoutes(req, res, url)))
       .then((handled) => (handled ? true : savesRoutes(req, res, url)))
       .then((handled) => (handled ? true : todayRoutes(req, res, url)))
       .then((handled) => (handled ? true : nearbyRoutes(req, res, url)))

@@ -2,14 +2,15 @@ import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import { cssVariables, fontFaceCss } from '@townsquare/tokens'
 import { App } from './App.js'
-import './theme.css'
+import './ui/ui.css'
+import './styles/index.css'
 
 /**
  * The shell takes its palette from the same tokens a creation gets.
  *
  * Injected at startup rather than duplicated into a stylesheet, so the shell
  * and everything running inside it are the same colour by construction. A
- * hand-copied hex in `theme.css` is exactly how a shell and its creations drift
+ * hand-copied hex in `styles/` is exactly how a shell and its creations drift
  * apart, and the drift is invisible until you put them side by side.
  */
 const style = document.createElement('style')

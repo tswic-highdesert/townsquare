@@ -24,6 +24,7 @@ const r = (p: string) => fileURLToPath(new URL(p, import.meta.url))
 const SHELL_PORT = 5173
 const FONTS_DIR = r('../../packages/tokens/fonts')
 const BRAND_DIR = r('../../brand/png')
+const SPRITE_FILE = r('../../design/hifi-v2/icons.svg')
 
 /**
  * Serve the typefaces from `@townsquare/tokens`, not from a copy.
@@ -78,11 +79,38 @@ function brand(): Plugin {
   }
 }
 
+/**
+ * Serve the icon sprite from `design/hifi-v2`, for the third time and the same
+ * reason: one file, one source of truth, and no copy in `public/` to drift.
+ *
+ * It comes from our own origin, so `<use href="/icons.svg#i-home">` is a
+ * same-origin reference needing no CORS, no widened `img-src`, and no third
+ * party in the load path of the town's home screen. Cached for an hour rather
+ * than forever, because unlike a font file this one is still being drawn.
+ */
+function icons(): Plugin {
+  return {
+    name: 'townsquare-icons',
+    configureServer(server) {
+      server.middlewares.use('/icons.svg', (_req, res, next) => {
+        readFile(SPRITE_FILE).then(
+          (bytes) => {
+            res.setHeader('Content-Type', 'image/svg+xml')
+            res.setHeader('Cache-Control', 'public, max-age=3600')
+            res.end(bytes)
+          },
+          () => next(),
+        )
+      })
+    },
+  }
+}
+
 const API_PORT = Number(process.env['API_PORT'] ?? 3030)
 
 export default defineConfig({
   root: r('.'),
-  plugins: [react(), fonts(), brand()],
+  plugins: [react(), fonts(), brand(), icons()],
   resolve: {
     alias: {
       '@townsquare/manifest': r('../../packages/manifest/src/index.ts'),

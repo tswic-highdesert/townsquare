@@ -108,6 +108,78 @@ export const tokens = {
 
   /** 17px body, from the hi-fi. Larger than the web default, and deliberately. */
   type: { h1: 24, h2: 21, cardTitle: 18, body: 17, label: 15, caption: 13, eyebrow: 11 },
+
+  /**
+   * Five steps, each naming a distance from the page rather than a mood.
+   *
+   * Elevation was being hand-rolled per component, and a shadow picked to look
+   * right beside the last one is how a system stops being a system. Every
+   * shadow is ink at alpha, never black: black over warm cream reads as a
+   * bruise. `navy` is the exception and it earns it, because a neutral shadow
+   * under the one dark card on a screen goes grey and dirty, so that one tints
+   * with the card it falls from.
+   *
+   * These are CSS values rather than numbers, because a shadow is a whole
+   * shorthand and splitting it into offsets nobody would set individually buys
+   * nothing. They reference other tokens, so a town reskin moves them too.
+   */
+  shadow: {
+    /** A card resting on the page. Directory rows, article rows, list items. */
+    flat: '0 1px 2px var(--ts-ink08)',
+    /** The hover state of a flat card, and the resting state of anything tappable that stands alone. */
+    raised: '0 1px 2px var(--ts-ink08), 0 6px 16px -8px var(--ts-ink26)',
+    /** A card that has been picked up: dragged, expanded, or the lead story. */
+    lifted: '0 2px 4px var(--ts-ink08), 0 14px 30px -14px var(--ts-ink26)',
+    /**
+     * Sheets, dialogs, menus. The only step with a long, soft second layer.
+     *
+     * That second layer needs ink at 34%, which is not a step on the ramp and
+     * does not deserve to become one. `color-mix` from `--ts-ink` rather than a
+     * literal, so a town that warms or cools its ink takes its overlay shadow
+     * with it. The hi-fi sheet writes this one as a raw rgba, and that is the
+     * single value in it that would not survive a reskin.
+     */
+    overlay:
+      '0 8px 12px -6px var(--ts-ink08), 0 28px 60px -20px color-mix(in srgb, var(--ts-ink) 34%, transparent)',
+    navy: '0 2px 4px var(--ts-ink08), 0 16px 30px -16px var(--ts-navy80)',
+  },
+
+  /**
+   * Two curves and four durations, and that is the whole vocabulary.
+   *
+   * `ease` is the general one: quick out of the gate, settled at the end.
+   * `easeOut` overshoots nothing but decelerates hard, which is what a sheet
+   * rising 400px needs and what a 90ms colour change does not.
+   *
+   * The durations are named by rank rather than by milliseconds, so a town
+   * that wants a calmer app can slow all four without every component being
+   * edited, and so nobody writes `220ms` because it felt about right.
+   */
+  motion: {
+    ease: 'cubic-bezier(0.2, 0, 0, 1)',
+    easeOut: 'cubic-bezier(0.16, 1, 0.3, 1)',
+    /** 90ms. A press responding. Below this a transition reads as a glitch. */
+    dur1: '90ms',
+    /** 160ms. Something leaving, a modal arriving, a route change. */
+    dur2: '160ms',
+    /** 260ms. Something arriving that you did not ask to see. */
+    dur3: '260ms',
+    /** 420ms. Full-height travel, and the determinate progress fill. */
+    dur4: '420ms',
+  },
+
+  /**
+   * The focus ring, as one value, because it is one decision.
+   *
+   * 2px of the page colour then 2px of terracotta. The halo is what keeps the
+   * ring from fusing with whatever is behind it, and it does its real work on
+   * navy; on white it is nearly invisible, which is fine because the terracotta
+   * is carrying it there. Drawn as a box-shadow so it never changes layout, and
+   * never animated. On a dark card the halo has to become the card colour
+   * instead, which the shell does by redefining this variable on that scope, so
+   * a component still just says `box-shadow: var(--ts-focus)`.
+   */
+  focus: '0 0 0 2px var(--ts-cream), 0 0 0 4px var(--ts-terracotta)',
 } as const
 
 export type Tokens = typeof tokens
@@ -122,6 +194,25 @@ export function cssVariables(t: Tokens = tokens): Record<string, string> {
   for (const [k, v] of Object.entries(t.space)) out[`--ts-space-${k}`] = `${v}px`
   for (const [k, v] of Object.entries(t.radius)) out[`--ts-radius-${kebab(k)}`] = `${v}px`
   for (const [k, v] of Object.entries(t.type)) out[`--ts-text-${kebab(k)}`] = `${v}px`
+
+  for (const [k, v] of Object.entries(t.shadow)) out[`--ts-shadow-${kebab(k)}`] = v
+
+  /**
+   * Motion flattens by hand, because the names are not a family.
+   *
+   * `ease` and `ease-out` are curves, `dur-1` through `dur-4` are a ranked
+   * scale, and forcing both through one mechanical rule would give
+   * `--ts-motion-ease` and `--ts-motion-dur1`. The design references the short
+   * names, a builder will type the short names, and names are the contract.
+   */
+  out['--ts-ease'] = t.motion.ease
+  out['--ts-ease-out'] = t.motion.easeOut
+  out['--ts-dur-1'] = t.motion.dur1
+  out['--ts-dur-2'] = t.motion.dur2
+  out['--ts-dur-3'] = t.motion.dur3
+  out['--ts-dur-4'] = t.motion.dur4
+
+  out['--ts-focus'] = t.focus
 
   out['--ts-font-serif'] = t.font.serif
   out['--ts-font-sans'] = t.font.sans
