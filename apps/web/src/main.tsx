@@ -1,6 +1,6 @@
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
-import { cssVariables, fontFaceCss } from '@townsquare/tokens'
+import { cssVariables, fontFaceCss, townCss } from '@townsquare/tokens'
 import { App } from './App.js'
 import './ui/ui.css'
 import './styles/index.css'
@@ -19,6 +19,12 @@ style.textContent = [
   `:root {\n${Object.entries(cssVariables())
     .map(([k, v]) => `  ${k}: ${v};`)
     .join('\n')}\n}`,
+  // The theming seam, shipped rather than described. Setting data-town on any
+  // ancestor reskins everything below it, including a creation in a frame,
+  // without reloading it or telling it. A seam nothing exercises is a seam
+  // that breaks silently, so it is in the shell even though the shell only
+  // ever renders one town.
+  townCss(),
 ].join('\n\n')
 document.head.prepend(style)
 

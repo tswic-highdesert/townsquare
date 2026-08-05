@@ -64,7 +64,17 @@ export const tokens = {
     cream14: 'rgba(248,246,241,0.14)',
 
     terracotta: '#C4714E',
-    terracottaHover: '#B15F3B',
+    /**
+     * One step darker than it used to be, and the reason is measured.
+     *
+     * This is the accent's *text* colour as well as the primary button's hover
+     * fill, and at #B15F3B it came out at 4.26 on cream and 3.83 on its own
+     * 10% wash — both under AA for the 12.5px inline error and the stale-data
+     * strip that use it. #9F5535 clears 4.5 on every ground it appears on, in
+     * all three towns, and the change to the hover fill is one shade on a
+     * state that was already meant to read as darker. `contrast.test.ts`.
+     */
+    terracottaHover: '#9F5535',
     terracottaTint: '#FFF3EC',
     terracotta10: 'rgba(196,113,78,0.10)',
     terracotta14: 'rgba(196,113,78,0.14)',
@@ -73,7 +83,15 @@ export const tokens = {
     gold14: 'rgba(231,174,46,0.18)',
     goldText: '#8A6510',
 
-    sage: '#4C6B4B',
+    /**
+     * Nudged 4% darker, so the verified pill clears AA.
+     *
+     * Sage's most common appearance is its own name on its own 18% tint, and
+     * at #4C6B4B that composite was 4.34 in Russellville and 3.85 in Delta —
+     * under AA for 12px text in every town. This is the smallest change that
+     * clears it everywhere, and it is imperceptible beside the old value.
+     */
+    sage: '#496748',
     sageLight: '#86A585',
     sage14: 'rgba(76,107,75,0.18)',
 
@@ -390,3 +408,36 @@ a:hover { color: var(--ts-terracotta); }
 *, *::before, *::after { box-sizing: border-box; }
 `
 }
+
+/**
+ * The theming seam and its contrast audit, re-exported so a consumer only ever
+ * imports `@townsquare/tokens`.
+ *
+ * At the bottom, and deliberately: `towns.ts` imports `tokens` from this file.
+ * Nothing in it touches `tokens` at module scope, so the cycle resolves, but
+ * moving these lines to the top would make that a matter of luck rather than
+ * of structure.
+ */
+export {
+  DELTA,
+  HARBOR,
+  RUSSELLVILLE,
+  TOWNS,
+  townCss,
+  townTokens,
+  type Town,
+  type TownId,
+} from './towns.js'
+export {
+  PAIRS,
+  auditContrast,
+  contrastRatio,
+  formatAudit,
+  luminance,
+  measure,
+  over,
+  parseColor,
+  type Pair,
+  type PairKind,
+  type Result,
+} from './contrast.js'

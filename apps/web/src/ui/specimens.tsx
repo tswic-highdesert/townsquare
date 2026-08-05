@@ -1,6 +1,6 @@
-import { StrictMode, useState } from 'react'
+import { StrictMode, useEffect, useState } from 'react'
 import { createRoot } from 'react-dom/client'
-import { cssVariables, fontFaceCss } from '@townsquare/tokens'
+import { auditContrast, cssVariables, fontFaceCss, townCss, TOWNS, townTokens, type TownId } from '@townsquare/tokens'
 import { Icon, SPRITE_ICONS } from '../Icon.js'
 // Same two, in the same order, as `main.tsx`: the primitives layer first so a
 // screen can override it. This page reviews the primitives, so it has to load
@@ -73,6 +73,7 @@ style.textContent = [
   `:root {\n${Object.entries(cssVariables())
     .map(([k, v]) => `  ${k}: ${v};`)
     .join('\n')}\n}`,
+  townCss(),
 ].join('\n\n')
 document.head.prepend(style)
 
@@ -927,7 +928,89 @@ function Icons() {
   )
 }
 
+/**
+ * The seam, driven live.
+ *
+ * Switching the town sets one attribute on <html>. Nothing below it is
+ * re-rendered, no component is told, and every primitive on this page changes
+ * with it — which is the property the whole token contract exists to buy, and
+ * the only way to know it holds is to watch it happen.
+ */
+function Towns({ town, onTown }: { town: TownId; onTown: (t: TownId) => void }) {
+  return (
+    <Spec
+      title="The theming seam"
+      why="three towns, one component set, zero component changes. Values move, names never do"
+    >
+      <SegmentedControl
+        label="Town"
+        value={town}
+        onChange={onTown}
+        options={TOWNS.map((t) => ({ value: t.id, label: t.name }))}
+      />
+      <p className="sp-note">
+        Every specimen on this page is now rendering in {TOWNS.find((t) => t.id === town)!.name}.
+        Delta moves fifteen values, Harbor fourteen, and neither touches a component, a class name,
+        or a token name. Harbor is the one that makes the case for the semantic layer on its own:
+        its action colour is a teal, so a creation there asking for <code>--ts-terracotta</code> gets
+        blue-green and has to know the lore to understand why.
+      </p>
+    </Spec>
+  )
+}
+
+/**
+ * The contrast audit, rendered rather than only asserted.
+ *
+ * The test in `packages/tokens` is what actually guards this; the table is here
+ * so somebody reskinning a town can see which pair they broke and why it
+ * matters, instead of reading a failed expectation.
+ */
+function Contrast({ town }: { town: TownId }) {
+  const t = TOWNS.find((x) => x.id === town)!
+  const results = auditContrast(townTokens(t))
+  const failing = results.filter((r) => !r.passes).length
+  return (
+    <Spec
+      title="Contrast, measured"
+      why="a bad token value reaches every creation in town, not just our screens"
+    >
+      <div className="sp-roles">
+        {results.map((r) => (
+          <div className="sp-role sp-contrast" key={`${r.fg}-${r.bg.join('-')}`}>
+            <span className="sp-role-chip" style={{ background: `var(--ts-${kebab(r.bg[0]!)})` }} />
+            <code>
+              {kebab(r.fg)} on {r.bg.map(kebab).join(' over ')}
+            </code>
+            <span className="sp-ratio" data-kind={r.kind} data-pass={r.passes}>
+              {r.ratio.toFixed(2)}
+            </span>
+            <span className="sp-role-means">
+              {r.use}
+              {r.kind === 'waived' ? <em> — waived: {r.rule}</em> : null}
+            </span>
+          </div>
+        ))}
+      </div>
+      <p className="sp-note">
+        {failing === 0
+          ? 'Every pair holds in this town. The three waived pairs are under their WCAG bar on purpose, ship with a written rule constraining where they may appear, and carry a regression floor so a reskin cannot quietly make them worse.'
+          : `${failing} pairs are failing in this town.`}
+      </p>
+    </Spec>
+  )
+}
+
+function kebab(s: string): string {
+  return s.replace(/([a-z0-9])([A-Z])/g, '$1-$2').toLowerCase()
+}
+
 function Page() {
+  const [town, setTown] = useState<TownId>('russellville')
+  useEffect(() => {
+    document.documentElement.setAttribute('data-town', town)
+  }, [town])
+
   return (
     <main className="sp-page">
       <header className="sp-top">
@@ -942,6 +1025,8 @@ function Page() {
       <Chips />
       <Fields />
       <Choices />
+      <Towns town={town} onTown={setTown} />
+      <Contrast town={town} />
       <Roles />
       <Structure />
       <Identity />

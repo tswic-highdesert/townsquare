@@ -27,8 +27,16 @@ export type TownId = 'russellville' | 'delta' | 'harbor'
 export interface Town {
   id: TownId
   name: string
-  color: Partial<Tokens['color']>
-  font?: Partial<Tokens['font']>
+  /**
+   * Keys are constrained to the palette, values are not.
+   *
+   * `Tokens` is `as const`, so `Partial<Tokens['color']>` would demand a town
+   * assign the *same literal* Russellville uses, which is every value and no
+   * town. Widening the value to `string` while pinning the key is the actual
+   * contract: a town may move any colour and may invent none.
+   */
+  color: Partial<Record<keyof Tokens['color'], string>>
+  font?: Partial<Record<keyof Tokens['font'], string>>
 }
 
 /** The default. Named rather than implicit, so all three read the same way. */
@@ -62,7 +70,9 @@ export const DELTA: Town = {
     terracotta14: 'rgba(168,100,47,0.14)',
     cream: '#F7F5EE',
     gold: '#CF9A2C',
-    sage: '#5B7150',
+    // Darkened with the base sage, for the same reason: the verified pill
+    // sets sage on its own 18% tint and the original missed AA here too.
+    sage: '#526648',
   },
   font: { serif: "'Newsreader', Georgia, serif" },
 }
@@ -91,7 +101,7 @@ export const HARBOR: Town = {
     terracotta14: 'rgba(61,125,140,0.14)',
     cream: '#F4F6F6',
     gold: '#D9A441',
-    sage: '#46736A',
+    sage: '#3F675F',
   },
 }
 
@@ -103,7 +113,7 @@ export function townTokens(town: Town): Tokens {
     ...tokens,
     color: { ...tokens.color, ...town.color },
     font: { ...tokens.font, ...town.font },
-  }
+  } as Tokens
 }
 
 /**

@@ -227,3 +227,37 @@
   .sp-role { grid-template-columns: 22px 1fr; }
   .sp-role-raw, .sp-role-means { grid-column: 2; }
 }
+
+/* The contrast table. Ratio, then the pair, then what it is for. */
+.sp-contrast { grid-template-columns: 22px 260px 62px 1fr; }
+
+.sp-ratio {
+  font-family: var(--ts-font-mono);
+  font-size: 12px;
+  font-variant-numeric: tabular-nums;
+  text-align: right;
+  color: var(--ts-ink);
+}
+
+/* A waived pair is stated, not softened: outlined rather than filled, because
+ * a solid alarm row would read as an incident and these are known, documented
+ * limits with rules attached. */
+.sp-ratio[data-kind='waived'] { color: var(--ts-action-hover); }
+.sp-ratio[data-pass='false'] {
+  color: var(--ts-cream);
+  background: var(--ts-alarm);
+  border-radius: 4px;
+  padding: 0 4px;
+}
+
+.sp-contrast .sp-role-means em {
+  display: block;
+  font-style: italic;
+  color: var(--ts-ink45);
+  margin-top: 2px;
+}
+
+@media (max-width: 720px) {
+  .sp-contrast { grid-template-columns: 22px 1fr; }
+  .sp-contrast .sp-ratio { grid-column: 2; text-align: left; }
+}
