@@ -72,7 +72,7 @@ export function Today(props: TodayProps) {
                 <span className="more-text">
                   <span className="more-title">{story.title}</span>
                   <span className="more-byline">
-                    {story.source} · {story.timeLabel} · {story.readingMinutes} min
+                    {story.source} · {story.timeLabel}
                   </span>
                 </span>
                 {/*
@@ -282,6 +282,15 @@ function SectionHead({
   )
 }
 
+/*
+ * No reading time on the byline.
+ *
+ * Every story this town publishes arrives with `body` identical to
+ * `description` — the sources syndicate a summary, not an article — so the
+ * estimate is one minute for all 81 of them. A number that is always the same
+ * is not an estimate, it is decoration that looks like information. The
+ * calculation stays in `today.ts` for the day a source gives us real bodies.
+ */
 function LeadStory({ story }: { story: TodayStory }) {
   return (
     <section className="today-section">
@@ -321,7 +330,7 @@ function LeadStory({ story }: { story: TodayStory }) {
             <span className="lead-source">{story.source}</span>
             <span className="lead-dot" />
             <span className="lead-meta">
-              {story.timeLabel} · {story.readingMinutes} min
+              {story.timeLabel}
             </span>
           </span>
         </span>
