@@ -1,105 +1,125 @@
 /**
- * The shell's icons, drawn here rather than fetched.
+ * The shell's icons, from one sprite served off our own origin.
  *
- * `design/hifi` uses Material Symbols, which is a ~3.5MB variable font. Neither
- * way of getting it is acceptable: a Google Fonts link puts a third party in the
- * load path of the town's home screen and would need a `font-src` hole that
- * `packages/tokens` deliberately does not have, and vendoring the whole family
- * to draw sixteen glyphs is worse. Subsetting it properly needs a build step
- * that does not exist yet — when it does, this file is the thing to delete.
+ * This file used to hand-draw eighteen glyphs, because the alternative on the
+ * table was Material Symbols: a ~3.5MB variable font, fetched either from
+ * Google (a third party in the load path of the town's home screen, and a
+ * `font-src` hole `packages/tokens` deliberately does not have) or vendored
+ * whole to draw sixteen shapes. Both were worse than drawing them.
  *
- * Until then: one coherent stroked set on a 24px grid, sized and coloured by
- * `currentColor` so a caller styles it like text. This is a deliberate,
- * documented deviation from the hi-fi's icon style, and the only one.
+ * `design/hifi-v2/icons.svg` changed the arithmetic. It is 121 symbols on the
+ * same 24px stroked grid, it is ours, and it is one request that caches. It is
+ * still not a webfont and there is still no third party: the dev server serves
+ * the file straight out of `design/` (see `vite.config.ts`), for the same
+ * reason the typefaces come from `packages/tokens/fonts` and the mark comes
+ * from `brand/png` — a copy in `public/` is a second source of truth that
+ * drifts the first time one side is edited.
+ *
+ * Two glyphs are still drawn here, and the comments on them say why.
  */
-
-export type IconName =
-  | 'add'
-  | 'arrow-out'
-  | 'bag'
-  | 'bookmark'
-  | 'bookmarks'
-  | 'calendar'
-  | 'chevron-right'
-  | 'clock'
-  | 'compass'
-  | 'cutlery'
-  | 'document'
-  | 'gavel'
-  | 'group'
-  | 'heartbeat'
-  | 'home'
-  | 'leaf'
-  | 'list'
-  | 'minus'
-  | 'music'
-  | 'newspaper'
-  | 'pin'
-  | 'search'
-  | 'sport'
-  | 'storefront'
-  | 'target'
-  | 'toolbox'
-  | 'verified'
-  | 'warning'
 
 /**
- * Every path is drawn in a 24×24 box and stroked, never filled.
+ * Every symbol in `design/hifi-v2/icons.svg`, by name.
  *
- * Mixing filled and stroked glyphs is what makes a hand-rolled set look
- * hand-rolled. One weight, one join, one grid.
+ * Kept as a value and not only a type so the specimen page can render all of
+ * them, which is also how a symbol that goes missing gets noticed. The `i-`
+ * prefix lives in the sprite, not in the name a caller types.
  */
-const PATHS: Record<IconName, string> = {
-  add: 'M12 5v14M5 12h14',
-  'arrow-out': 'M7 17 17 7M9 7h8v8',
-  bag: 'M5 8h14l1 12H4zM9 8V6.2a3 3 0 0 1 6 0V8',
+export const SPRITE_ICONS = [
+  'home', 'compass', 'calendar', 'group', 'grid', 'search', 'menu', 'close',
+  'chevron-right', 'chevron-left', 'chevron-down', 'chevron-up',
+  'arrow-right', 'arrow-left', 'arrow-up', 'arrow-down', 'arrow-out',
+  'plus', 'minus', 'check', 'more-horizontal', 'more-vertical',
+  'filter', 'sort', 'refresh', 'drag', 'expand', 'collapse',
+  'newspaper', 'document', 'bookmark', 'bookmark-filled', 'share', 'link',
+  'quote', 'image', 'play', 'pause', 'mic', 'headphones', 'video',
+  'tag', 'list', 'layers', 'book', 'storefront', 'map-pin', 'map', 'directions',
+  'phone', 'mail', 'globe', 'clock', 'ticket', 'coffee', 'utensils', 'gavel',
+  'megaphone', 'warning', 'shield', 'flag', 'vote', 'building', 'bus', 'tree',
+  'sun', 'cloud-rain', 'user', 'users', 'user-plus', 'badge-check', 'handshake',
+  'heart', 'star', 'sparkle', 'code', 'terminal', 'puzzle', 'plug', 'package',
+  'wand', 'key', 'lock', 'unlock', 'eye', 'eye-off', 'database', 'cloud-upload',
+  'download', 'git-branch', 'history', 'settings', 'sliders', 'trash', 'edit',
+  'copy', 'external', 'bell', 'bell-off', 'leaf', 'music', 'sport', 'camera',
+  'dollar', 'chart', 'info', 'help', 'check-circle', 'alert-circle', 'x-circle',
+  'loader', 'pin', 'archive', 'send', 'message', 'thumb-up', 'inbox',
+  'lightbulb', 'scale', 'wrench', 'zap',
+] as const
+
+export type SpriteIcon = (typeof SPRITE_ICONS)[number]
+
+type LocalIcon = 'heartbeat' | 'target'
+
+/**
+ * The two shapes the sprite does not have, still drawn by hand.
+ *
+ * Both were deliberate choices when this file drew everything, and the reasons
+ * did not stop being true when the sprite arrived. Falling back to the nearest
+ * sprite glyph would quietly reverse a decision somebody made on purpose,
+ * which is a worse outcome than two paths.
+ */
+const LOCAL_PATHS: Record<LocalIcon, string> = {
   /**
-   * Saved is a colour, not a fill.
-   *
-   * The obvious way to show a bookmark is set is to fill it, and this set has
-   * exactly one weight and one treatment — a single filled glyph among twenty
-   * stroked ones is what makes a hand-rolled set look hand-rolled. Terracotta
-   * on the same outline says it just as clearly.
+   * A pulse trace, not a heart. The sprite's nearest glyph is `heart`, and a
+   * heart at 18px beside a business name reads as "like this place" rather
+   * than "this is the health category".
    */
-  bookmark: 'M6 4h12v16l-6-4-6 4z',
-  bookmarks: 'M8 3h8v14l-4-2.5L8 17zM5 7v13l3-2',
-  calendar: 'M4 6h16v14H4zM4 10h16M8 3v4M16 3v4',
-  'chevron-right': 'm9 5 7 7-7 7',
-  clock: 'M12 3a9 9 0 1 0 0 18 9 9 0 0 0 0-18zM12 7v5l3.5 2',
-  compass: 'M12 3a9 9 0 1 0 0 18 9 9 0 0 0 0-18zm3.5 5.5-2 5-5 2 2-5z',
-  // A fork and a knife. A single plate reads as a circle at 18px.
-  cutlery: 'M7 3v5a2 2 0 0 0 4 0V3M9 8v13M16.5 21V3c2 1.5 3 4.5 3 7.5s-1 4.5-3 4.5',
-  document: 'M6 3h8l4 4v14H6zM14 3v4h4M9 12h6M9 16h6',
-  // A gavel reads as civic business at 18px only if the head is unmistakable.
-  gavel: 'm4 20 7-7M9 4l7 7M13.5 2.5 18 7M11 5.5 15.5 10M4.5 16.5 9 21',
-  group: 'M9 11a3 3 0 1 0 0-6 3 3 0 0 0 0 6zM3 19a6 6 0 0 1 12 0M16 6.5a3 3 0 0 1 0 5M17 19a6 6 0 0 0-2-4.3',
-  // A pulse trace, not a heart. A heart at this size reads as a "like".
   heartbeat: 'M3 12h4l2.5-5 3.5 10 2.5-5h5.5',
-  home: 'M4 10.5 12 4l8 6.5V20H4zM10 20v-6h4v6',
-  leaf: 'M5 19C5 11 10 6 19 5c1 9-4 14-12 14zM5 19c3-4 6-6.5 10-8',
-  list: 'M4 7h16M4 12h16M4 17h10',
-  minus: 'M5 12h14',
-  music: 'M9 18a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5zM11.5 15.5V5l8-2v10.5M19.5 16a2.5 2.5 0 1 1-5 0 2.5 2.5 0 0 1 5 0z',
-  newspaper: 'M3 5h14v15H5a2 2 0 0 1-2-2zM17 9h4v9a2 2 0 0 1-2 2h-2zM6 8h8M6 12h8M6 16h5',
-  pin: 'M12 21.5S19 15 19 10a7 7 0 0 0-14 0c0 5 7 11.5 7 11.5zM12 8.2a2 2 0 1 0 0 4 2 2 0 0 0 0-4z',
-  search: 'M11 4a7 7 0 1 0 0 14 7 7 0 0 0 0-14zM16.2 16.2 21 21',
-  sport: 'M12 3a9 9 0 1 0 0 18 9 9 0 0 0 0-18zM12 3c3 4 3 14 0 18M12 3c-3 4-3 14 0 18M3.5 9h17M3.5 15h17',
-  storefront: 'M4 9h16v11H4zM4 9 5.5 4h13L20 9M4 9a2.7 2.7 0 0 0 5.3 0 2.7 2.7 0 0 0 5.4 0 2.7 2.7 0 0 0 5.3 0M9.5 20v-6h5v6',
-  // The crosshair on a recenter control, which is the only thing it labels.
-  target: 'M12 5a7 7 0 1 0 0 14 7 7 0 0 0 0-14zM12 2v3M12 19v3M2 12h3M19 12h3M12 10.7a1.3 1.3 0 1 0 0 2.6 1.3 1.3 0 0 0 0-2.6z',
-  toolbox: 'M3 9h18v10a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1zM3 13h18M9 9V6.5A1.5 1.5 0 0 1 10.5 5h3A1.5 1.5 0 0 1 15 6.5V9',
-  verified: 'M12 3l7 3v5.6c0 4.3-3 7.6-7 9.4-4-1.8-7-5.1-7-9.4V6zM9 12l2.2 2.2L15.5 10',
-  warning: 'M12 4 2.5 20h19zM12 10v4.5M12 17.5v.01',
+  /**
+   * The crosshair on the map's recenter control, which is the only thing it
+   * labels. The sprite has `map-pin` and `pin`, and both of those mean "a
+   * place". This button means "the place you are".
+   */
+  target:
+    'M12 5a7 7 0 1 0 0 14 7 7 0 0 0 0-14zM12 2v3M12 19v3M2 12h3M19 12h3M12 10.7a1.3 1.3 0 1 0 0 2.6 1.3 1.3 0 0 0 0-2.6z',
 }
+
+/**
+ * Names the shipped screens already use, pointed at their sprite equivalents.
+ *
+ * Three screens are live and more agents are writing against this API right
+ * now, so the old names keep working rather than turning a sprite swap into a
+ * rename across six files. New code should use the sprite name.
+ */
+const ALIASES = {
+  add: 'plus',
+  bag: 'package',
+  /** The saved tab and a saved card should be the same glyph, and now are. */
+  bookmarks: 'bookmark',
+  cutlery: 'utensils',
+  /** In the Map/List switch this labels the map, not a pushpin. */
+  pin: 'map-pin',
+  toolbox: 'wrench',
+  /** The ring is the badge on a person. This is the badge on everything else. */
+  verified: 'badge-check',
+} as const satisfies Record<string, SpriteIcon>
+
+export type IconName = SpriteIcon | LocalIcon | keyof typeof ALIASES
+
+/** One path, so a host that relocates the sprite relocates it once. */
+export const SPRITE_HREF = '/icons.svg'
 
 export interface IconProps {
   name: IconName
   /** Matches the surrounding text size unless the caller says otherwise. */
   size?: number
   className?: string
+  /**
+   * Give the glyph a name when it is the only thing saying what a control does.
+   *
+   * The default is silence, because an icon in this app almost always sits
+   * beside a text label that already says it, and a screen reader announcing
+   * "newspaper newspaper" is worse than nothing. When an icon is genuinely
+   * alone the label usually belongs on the button rather than the glyph, which
+   * is what `IconButton` in `src/ui/` does.
+   */
+  label?: string
 }
 
-export function Icon({ name, size = 20, className }: IconProps) {
+export function Icon({ name, size = 20, className, label }: IconProps) {
+  const resolved: string = name in ALIASES ? ALIASES[name as keyof typeof ALIASES] : name
+  const local = LOCAL_PATHS[resolved as LocalIcon]
+
   return (
     <svg
       className={className}
@@ -107,17 +127,19 @@ export function Icon({ name, size = 20, className }: IconProps) {
       height={size}
       viewBox="0 0 24 24"
       fill="none"
+      // The sprite's symbols carry no stroke attributes of their own. These are
+      // what make a sprite glyph and a locally drawn one indistinguishable, and
+      // what lets a caller colour an icon by setting `color` on its parent.
       stroke="currentColor"
       strokeWidth={1.7}
       strokeLinecap="round"
       strokeLinejoin="round"
-      // Decorative in every current use: each icon sits beside a text label
-      // that already says what it means, and a screen reader announcing
-      // "newspaper newspaper" is worse than silence.
-      aria-hidden="true"
+      aria-hidden={label ? undefined : true}
+      role={label ? 'img' : undefined}
+      aria-label={label}
       focusable="false"
     >
-      <path d={PATHS[name]} />
+      {local ? <path d={local} /> : <use href={`${SPRITE_HREF}#i-${resolved}`} />}
     </svg>
   )
 }
@@ -125,9 +147,9 @@ export function Icon({ name, size = 20, className }: IconProps) {
 /**
  * The Town Square mark.
  *
- * Kept out of `PATHS` because it is not an icon: it is the brand, it is the one
- * thing on the screen a creation must never be able to draw, and it comes from
- * `brand/mark.png` rather than from anybody's hand. See the warning in
+ * Kept out of the sprite because it is not an icon: it is the brand, it is the
+ * one thing on the screen a creation must never be able to draw, and it comes
+ * from `brand/mark.png` rather than from anybody's hand. See the warning in
  * `brand/README.md` — a previous pass shipped a `build.py` approximation of it
  * and that was wrong.
  */

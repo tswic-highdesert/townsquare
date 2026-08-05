@@ -1,0 +1,51 @@
+/* The creations gallery. Split out of theme.css, unchanged. */
+
+/* ── gallery ──────────────────────────────────────────────────────────── */
+
+.gallery {
+  display: grid;
+  gap: var(--ts-space-3);
+  margin-top: var(--ts-space-6);
+  padding: 0;
+  list-style: none;
+}
+
+.card {
+  display: flex;
+  gap: var(--ts-space-4);
+  align-items: flex-start;
+  width: 100%;
+  text-align: left;
+  padding: var(--ts-space-4);
+  background: var(--ts-surface);
+  border: 1px solid var(--ts-hairline);
+  border-radius: var(--ts-radius-card);
+  box-shadow: 0 1px 2px var(--ts-ink26);
+  transition: box-shadow 120ms ease, transform 120ms ease;
+}
+
+.card:hover {
+  box-shadow: 0 6px 16px var(--ts-ink26);
+  transform: translateY(-1px);
+}
+
+.card-icon {
+  flex: none;
+  width: 44px;
+  height: 44px;
+  border-radius: var(--ts-radius-input);
+  background: var(--ts-terracotta14);
+  object-fit: cover;
+}
+
+.card-name {
+  font-family: var(--ts-font-serif);
+  font-size: var(--ts-text-card-title);
+  font-weight: 600;
+}
+
+.card-tagline {
+  color: var(--ts-ink60);
+  font-size: var(--ts-text-label);
+  margin-top: 2px;
+}

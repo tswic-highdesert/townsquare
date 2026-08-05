@@ -1,0 +1,59 @@
+/*
+ * The shell's own look.
+ *
+ * Every colour, radius and size here is `var(--ts-*)`, injected at startup from
+ * `@townsquare/tokens` — the same values a creation receives inside its frame.
+ * There is deliberately not a single hex literal in this file: a hand-copied
+ * colour is how a shell and the creations it hosts drift apart, and the drift
+ * is invisible until you see them side by side.
+ *
+ * Structure and copy follow `design/hifi/`, sections 6a, 6b and 6d.
+ */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: var(--ts-cream);
+  color: var(--ts-ink);
+  font-family: var(--ts-font-sans);
+  font-size: var(--ts-text-body);
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+
+h1,
+h2,
+h3 {
+  font-family: var(--ts-font-serif);
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+
+button {
+  font: inherit;
+  cursor: pointer;
+}
+
+.shell {
+  max-width: 680px;
+  margin: 0 auto;
+  padding: var(--ts-space-8) var(--ts-space-5) var(--ts-space-16);
+}
+
+.eyebrow {
+  font-family: var(--ts-font-mono);
+  font-size: var(--ts-text-eyebrow);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ts-ink45);
+}
+
+.lede {
+  color: var(--ts-ink60);
+  max-width: 46ch;
+}

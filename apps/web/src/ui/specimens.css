@@ -1,0 +1,187 @@
+/*
+ * Chrome for the specimen page only.
+ *
+ * Nothing here is a primitive and nothing here ships. It is deliberately plain,
+ * because a specimen sheet that has a look of its own makes it hard to tell
+ * which decisions belong to the component. Same colour rule as everywhere
+ * else: `var(--ts-*)` only, no literals, so the page follows a reskin too.
+ */
+
+.sp-page {
+  max-width: 1080px;
+  margin: 0 auto;
+  padding: var(--ts-space-10) var(--ts-space-6) var(--ts-space-16);
+}
+
+.sp-top {
+  padding-bottom: var(--ts-space-6);
+  border-bottom: 1px solid var(--ts-ink13);
+  margin-bottom: var(--ts-space-10);
+}
+
+.sp-top h1 {
+  font-size: var(--ts-text-h1);
+  margin: var(--ts-space-2) 0;
+}
+
+.sp-eyebrow {
+  font-family: var(--ts-font-mono);
+  font-size: 10px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--ts-ink45);
+  margin: 0;
+}
+
+.sp-lede {
+  font-family: var(--ts-font-serif);
+  font-size: var(--ts-text-body);
+  line-height: 1.55;
+  color: var(--ts-ink60);
+  max-width: 62ch;
+  margin: 0;
+}
+
+.sp-spec + .sp-spec { margin-top: var(--ts-space-12); }
+
+/* The label and its rationale, as the design sheet sets them: the reason sits
+ * on the right of the caption and is the most useful thing on the line. */
+.sp-label {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--ts-space-5);
+  flex-wrap: wrap;
+  padding-bottom: var(--ts-space-2);
+  margin: 0 0 var(--ts-space-5);
+  border-bottom: 1px solid var(--ts-ink13);
+  font-family: var(--ts-font-sans);
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  color: var(--ts-ink);
+}
+
+.sp-label em {
+  font-family: var(--ts-font-serif);
+  font-style: italic;
+  font-weight: 400;
+  font-size: 13.5px;
+  color: var(--ts-ink45);
+  text-align: right;
+}
+
+.sp-body { display: grid; gap: var(--ts-space-5); }
+
+.sp-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--ts-space-3);
+}
+.sp-row-top { align-items: flex-start; }
+
+.sp-stack { display: grid; gap: var(--ts-space-2); }
+
+.sp-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: var(--ts-space-5);
+  align-items: start;
+}
+
+.sp-matrix {
+  display: grid;
+  gap: var(--ts-space-3) var(--ts-space-4);
+  align-items: center;
+  overflow-x: auto;
+}
+
+.sp-head {
+  font-family: var(--ts-font-mono);
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--ts-ink45);
+  margin: 0;
+}
+
+.sp-rowlabel {
+  font-family: var(--ts-font-sans);
+  font-size: 12.5px;
+  font-weight: 500;
+  color: var(--ts-ink60);
+}
+
+.sp-plate {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ts-space-3);
+  flex: 1 1 260px;
+  padding: var(--ts-space-4);
+  background: var(--ts-surface);
+  border: 1px solid var(--ts-hairline);
+  border-radius: var(--ts-radius-card);
+}
+
+/* The one dark plate, so the on-navy variants and the dark focus halo can be
+ * reviewed against the surface they actually sit on. */
+.sp-dark {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--ts-space-3);
+  padding: var(--ts-space-5);
+  background: var(--ts-navy);
+  border-radius: var(--ts-radius-card);
+}
+
+.sp-note {
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--ts-ink60);
+  margin: 0;
+  max-width: 68ch;
+}
+
+.sp-note code {
+  font-family: var(--ts-font-mono);
+  font-size: 0.9em;
+  background: var(--ts-ink08);
+  padding: 1px 4px;
+  border-radius: 4px;
+}
+
+.sp-mark-cell,
+.sp-icon-cell {
+  display: grid;
+  justify-items: center;
+  gap: var(--ts-space-2);
+  margin: 0;
+}
+
+.sp-mark-cell figcaption,
+.sp-icon-cell figcaption {
+  font-family: var(--ts-font-mono);
+  font-size: 9.5px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ts-ink45);
+}
+
+.sp-icons {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(96px, 1fr));
+  gap: var(--ts-space-4);
+}
+
+.sp-icon-cell {
+  padding: var(--ts-space-3) var(--ts-space-2);
+  border: 1px solid var(--ts-hairline);
+  border-radius: var(--ts-radius-input);
+  background: var(--ts-surface);
+  color: var(--ts-ink);
+}
+
+/* The two glyphs that are not in the sprite, marked so the difference is
+ * visible rather than a footnote. */
+.sp-icon-cell[data-local] { border-color: var(--ts-ui-terra-line); }

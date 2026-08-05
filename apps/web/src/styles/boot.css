@@ -1,0 +1,53 @@
+/* A creation booting, and a creation that did not (design 6d). Split out of theme.css, unchanged. */
+
+/* ── boot and failure (design 6d) ─────────────────────────────────────── */
+
+.skeleton {
+  display: grid;
+  place-items: center;
+  min-height: 320px;
+  color: var(--ts-ink45);
+  font-size: var(--ts-text-label);
+}
+
+.failure {
+  padding: var(--ts-space-8) var(--ts-space-6);
+  text-align: center;
+}
+
+.failure h2 {
+  margin: 0 0 var(--ts-space-2);
+  font-size: var(--ts-text-h2);
+}
+
+.failure p {
+  color: var(--ts-ink60);
+  margin: 0 auto var(--ts-space-5);
+  max-width: 42ch;
+}
+
+.failure .meta {
+  font-family: var(--ts-font-mono);
+  font-size: var(--ts-text-eyebrow);
+  color: var(--ts-ink45);
+  margin-top: var(--ts-space-4);
+}
+
+/*
+ * The frame and its skeleton share a cell, so the skeleton covers the frame
+ * without taking it out of the layout. An iframe that is not laid out is an
+ * iframe the browser never loads.
+ */
+.frame-stack {
+  display: grid;
+  min-height: 320px;
+}
+
+.frame-stack > * {
+  grid-area: 1 / 1;
+}
+
+.skeleton-overlay {
+  background: var(--ts-surface);
+  z-index: 1;
+}

@@ -1,0 +1,1490 @@
+/*
+ * The primitives layer.
+ *
+ * Everything a screen composes rather than restyles: buttons, chips, fields,
+ * choice controls, avatars, the loading atoms, toasts and overlays. Ported
+ * from `design/hifi-v2/sections/01-foundations.css` and `10-states.css`, which
+ * carry the rationale for most of what is here; where a decision is not
+ * obvious from the rule, the comment above it says why.
+ *
+ * Two rules hold everywhere in this file:
+ *
+ * **Not one hex literal, not one rgb(), not one named colour.** Every value is
+ * a `var(--ts-*)`, or a `color-mix()` derived from one. This is the seam a
+ * town reskins through, and it is also what lets a creation inside a frame use
+ * the same palette without being changed. A single hard-coded colour here is a
+ * pixel that will not follow the town.
+ *
+ * **Hit targets clear 44px even when the box does not.** A 34px chip in a
+ * dense filter row is the right visual weight and the wrong touch target, so
+ * several controls below pad their hit area out with a pseudo-element rather
+ * than growing.
+ */
+
+/* ── local aliases ──────────────────────────────────────────────────────────
+ *
+ * Each is derived from a token, so a reskin moves them all. They exist because
+ * "ink at 30%" appears in nine places, and writing the mix nine times is how
+ * two of them end up at 28.
+ */
+
+:root {
+  --ts-ui-line: color-mix(in srgb, var(--ts-ink) 30%, transparent);
+  --ts-ui-dash: color-mix(in srgb, var(--ts-ink) 20%, transparent);
+  --ts-ui-skel: color-mix(in srgb, var(--ts-ink) 7%, transparent);
+  --ts-ui-sweep: color-mix(in srgb, var(--ts-surface) 78%, transparent);
+  --ts-ui-terra-line: color-mix(in srgb, var(--ts-terracotta) 80%, transparent);
+  --ts-ui-scrim: color-mix(in srgb, var(--ts-ink) 42%, transparent);
+}
+
+/*
+ * On a dark card the focus halo has to become the card colour, or the
+ * terracotta ring sits on navy with nothing between them and fuses into it.
+ *
+ * Redefining `--ts-focus` on the scope rather than overriding every control's
+ * box-shadow is what keeps every component's rule the same one line. Put
+ * `data-on-dark` on any navy container and its contents focus correctly.
+ */
+[data-on-dark] {
+  --ts-focus: 0 0 0 2px var(--ts-navy-dark), 0 0 0 4px var(--ts-terracotta);
+}
+
+/* Visible to a screen reader, to nothing else. */
+.ts-sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* ── buttons ────────────────────────────────────────────────────────────────
+ *
+ * One base, five intents, three sizes. Destructive is an outlined terracotta
+ * and never brick; the reason is on `Button.tsx` and it is the load-bearing
+ * one in this file.
+ */
+
+.ts-btn {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--ts-space-2);
+  font-family: var(--ts-font-sans);
+  font-weight: 500;
+  line-height: 1;
+  white-space: nowrap;
+  border: 1px solid transparent;
+  border-radius: var(--ts-radius-button);
+  cursor: pointer;
+  text-decoration: none;
+  transition: background-color var(--ts-dur-1) var(--ts-ease),
+    border-color var(--ts-dur-1) var(--ts-ease), color var(--ts-dur-1) var(--ts-ease),
+    box-shadow var(--ts-dur-2) var(--ts-ease), transform var(--ts-dur-1) var(--ts-ease);
+}
+
+/*
+ * A 34px button is the right visual weight in a dense row and the wrong touch
+ * target everywhere. This pads the hit area out to 44px without touching the
+ * layout around it.
+ */
+.ts-btn::after {
+  content: '';
+  position: absolute;
+  inset: 50% 0 auto;
+  transform: translateY(-50%);
+  height: max(100%, 44px);
+}
+
+.ts-btn[data-size='sm'] {
+  height: 34px;
+  padding: 0 var(--ts-space-3);
+  font-size: 13.5px;
+}
+
+.ts-btn[data-size='md'] {
+  height: 40px;
+  padding: 0 var(--ts-space-4);
+  font-size: 14.5px;
+}
+
+.ts-btn[data-size='lg'] {
+  height: 48px;
+  padding: 0 var(--ts-space-5);
+  font-size: var(--ts-text-label);
+}
+
+.ts-btn[data-icon-only] {
+  padding: 0;
+  width: 40px;
+}
+.ts-btn[data-icon-only][data-size='sm'] { width: 34px; }
+.ts-btn[data-icon-only][data-size='lg'] { width: 48px; }
+
+.ts-btn[data-full] {
+  display: flex;
+  width: 100%;
+}
+
+.ts-btn[data-variant='primary'] {
+  background: var(--ts-terracotta);
+  color: var(--ts-surface);
+  box-shadow: var(--ts-shadow-flat);
+}
+.ts-btn[data-variant='primary']:hover:not(:disabled) { background: var(--ts-terracotta-hover); }
+.ts-btn[data-variant='primary']:active:not(:disabled) {
+  background: var(--ts-terracotta-hover);
+  box-shadow: none;
+  transform: translateY(1px);
+}
+
+.ts-btn[data-variant='secondary'] {
+  background: var(--ts-surface);
+  border-color: var(--ts-ink13);
+  color: var(--ts-ink);
+  box-shadow: var(--ts-shadow-flat);
+}
+.ts-btn[data-variant='secondary']:hover:not(:disabled) {
+  border-color: var(--ts-ink26);
+  background: color-mix(in srgb, var(--ts-cream) 60%, var(--ts-surface));
+}
+.ts-btn[data-variant='secondary']:active:not(:disabled) {
+  background: var(--ts-cream);
+  border-color: var(--ts-ink26);
+  box-shadow: none;
+  transform: translateY(1px);
+}
+
+.ts-btn[data-variant='quiet'] {
+  background: transparent;
+  color: var(--ts-ink60);
+}
+.ts-btn[data-variant='quiet']:hover:not(:disabled) {
+  background: var(--ts-ink08);
+  color: var(--ts-ink);
+}
+.ts-btn[data-variant='quiet']:active:not(:disabled) {
+  background: var(--ts-ink13);
+  color: var(--ts-ink);
+  transform: translateY(1px);
+}
+
+/* Terracotta wearing an outline. Shape carries the warning, so the alarm
+ * register stays unspent for the day the river is up. */
+.ts-btn[data-variant='destructive'] {
+  background: transparent;
+  border-color: var(--ts-terracotta);
+  color: var(--ts-terracotta-hover);
+}
+.ts-btn[data-variant='destructive']:hover:not(:disabled) {
+  background: var(--ts-terracotta10);
+  border-color: var(--ts-terracotta-hover);
+}
+.ts-btn[data-variant='destructive']:active:not(:disabled) {
+  background: var(--ts-terracotta14);
+  border-color: var(--ts-terracotta-hover);
+  transform: translateY(1px);
+}
+
+/* The secondary button, sitting on the one dark card. */
+.ts-btn[data-variant='on-navy'] {
+  background: var(--ts-cream14);
+  border-color: color-mix(in srgb, var(--ts-cream) 32%, transparent);
+  color: var(--ts-cream);
+}
+.ts-btn[data-variant='on-navy']:hover:not(:disabled) {
+  background: color-mix(in srgb, var(--ts-cream) 24%, transparent);
+}
+.ts-btn[data-variant='on-navy']:focus-visible {
+  box-shadow: 0 0 0 2px var(--ts-navy-dark), 0 0 0 4px var(--ts-terracotta);
+}
+
+/* Disabled last, so it beats every hover rule above it. */
+.ts-btn:disabled {
+  background: var(--ts-ink08);
+  border-color: transparent;
+  color: var(--ts-ink26);
+  box-shadow: none;
+  transform: none;
+  cursor: not-allowed;
+}
+
+/* Loading is a disabled button that is still telling you something. */
+.ts-btn[data-loading]:disabled {
+  background: color-mix(in srgb, var(--ts-terracotta) 45%, transparent);
+  color: var(--ts-surface);
+  cursor: progress;
+}
+.ts-btn[data-variant='secondary'][data-loading]:disabled,
+.ts-btn[data-variant='quiet'][data-loading]:disabled {
+  background: var(--ts-ink08);
+  color: var(--ts-ink60);
+}
+.ts-btn[data-variant='destructive'][data-loading]:disabled {
+  background: var(--ts-terracotta10);
+  border-color: var(--ts-ink26);
+  color: var(--ts-ink60);
+}
+
+/* A quiet text action. The empties and inline retries use it. */
+.ts-act {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 44px;
+  padding: 0 2px;
+  border: 0;
+  background: none;
+  color: var(--ts-terracotta);
+  font-family: var(--ts-font-sans);
+  font-size: 14.5px;
+  font-weight: 500;
+  border-radius: 6px;
+  cursor: pointer;
+}
+.ts-act:hover {
+  color: var(--ts-terracotta-hover);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+/* ── focus, everywhere ──────────────────────────────────────────────────────
+ *
+ * One ring: 2px of the page colour, then 2px of terracotta. The halo is what
+ * keeps it from fusing with whatever is behind it. Drawn as a box-shadow so it
+ * never changes layout, only on `:focus-visible` so a mouse press does not
+ * leave one behind, and never animated.
+ */
+
+.ts-btn:focus-visible,
+.ts-act:focus-visible,
+.ts-chip:focus-visible,
+.ts-tag-x:focus-visible,
+.ts-search-clear:focus-visible,
+.ts-seg-btn:focus-visible,
+.ts-step-btn:focus-visible,
+.ts-check input:focus-visible + .ts-check-box,
+.ts-radio input:focus-visible + .ts-radio-dot,
+.ts-switch input:focus-visible + .ts-switch-track,
+.ts-modal-t:focus-visible,
+.ts-sheet-t:focus-visible {
+  outline: none;
+  box-shadow: var(--ts-focus);
+}
+
+.ts-modal-t:focus-visible,
+.ts-sheet-t:focus-visible {
+  border-radius: 6px;
+}
+
+/* ── spinner ────────────────────────────────────────────────────────────── */
+
+.ts-spinner {
+  display: inline-block;
+  flex: none;
+  border: 2px solid color-mix(in srgb, var(--ts-ink) 16%, transparent);
+  border-top-color: currentColor;
+  border-radius: var(--ts-radius-full);
+  animation: ts-spin 720ms linear infinite;
+}
+
+@keyframes ts-spin {
+  to { transform: rotate(360deg); }
+}
+
+/* ── chips, pills, tags ─────────────────────────────────────────────────── */
+
+.ts-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--ts-space-2);
+  height: 34px;
+  padding: 0 var(--ts-space-3);
+  background: var(--ts-surface);
+  border: 1px solid var(--ts-ink13);
+  border-radius: var(--ts-radius-chip);
+  font-family: var(--ts-font-sans);
+  font-size: 13.5px;
+  color: var(--ts-ink);
+  cursor: pointer;
+  transition: background-color var(--ts-dur-1) var(--ts-ease),
+    border-color var(--ts-dur-1) var(--ts-ease), color var(--ts-dur-1) var(--ts-ease);
+}
+
+.ts-chip:hover:not(:disabled) { border-color: var(--ts-ink26); }
+
+/* Selection is navy, not terracotta: terracotta means "this does something",
+ * and a filter chip has already done it. */
+.ts-chip[aria-pressed='true'] {
+  background: var(--ts-navy);
+  border-color: var(--ts-navy);
+  color: var(--ts-cream);
+}
+
+.ts-chip-count {
+  font-family: var(--ts-font-mono);
+  font-size: 10.5px;
+  color: var(--ts-ink45);
+  font-variant-numeric: tabular-nums;
+}
+.ts-chip[aria-pressed='true'] .ts-chip-count { color: var(--ts-cream-muted); }
+
+/* A zero-result filter is disabled rather than hidden, so the count stays honest. */
+.ts-chip:disabled {
+  background: transparent;
+  border-color: var(--ts-ink08);
+  color: var(--ts-ink26);
+  cursor: not-allowed;
+}
+.ts-chip:disabled .ts-chip-count { color: var(--ts-ink26); }
+
+.ts-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 3px var(--ts-space-2) 3px 6px;
+  border-radius: var(--ts-radius-chip);
+  font-family: var(--ts-font-sans);
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 1.5;
+}
+
+.ts-pill[data-tone='sage'] { background: var(--ts-sage14); color: var(--ts-sage); }
+.ts-pill[data-tone='gold'] { background: var(--ts-gold14); color: var(--ts-gold-text); }
+.ts-pill[data-tone='live'] { background: var(--ts-terracotta14); color: var(--ts-terracotta-hover); }
+.ts-pill[data-tone='quiet'] { background: var(--ts-ink08); color: var(--ts-ink60); }
+/* Waiting for the committee is not a warning, so pending is ink on stone. */
+.ts-pill[data-tone='pending'] { background: var(--ts-stone); color: var(--ts-ink60); }
+/* The alarm. Filled, because an emergency does not whisper. In a normal week
+ * this rule is not rendered at all. */
+.ts-pill[data-tone='brick'] { background: var(--ts-brick); color: var(--ts-cream); }
+
+.ts-live-dot {
+  width: 7px;
+  height: 7px;
+  margin: 0 2px;
+  border-radius: var(--ts-radius-full);
+  background: var(--ts-terracotta);
+  animation: ts-pulse 2s var(--ts-ease) infinite;
+}
+
+@keyframes ts-pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.35; }
+}
+
+.ts-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  height: 30px;
+  padding: 0 4px 0 var(--ts-space-3);
+  background: var(--ts-navy10);
+  border-radius: var(--ts-radius-chip);
+  font-family: var(--ts-font-sans);
+  font-size: 13px;
+  color: var(--ts-navy);
+}
+.ts-tag:hover { background: color-mix(in srgb, var(--ts-navy) 16%, transparent); }
+
+/* The X is its own 22px target inside a 30px tag, and it says what it removes. */
+.ts-tag-x {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  padding: 0;
+  border: 0;
+  border-radius: var(--ts-radius-full);
+  background: transparent;
+  color: var(--ts-navy60);
+  cursor: pointer;
+}
+.ts-tag-x:hover { background: var(--ts-navy10); color: var(--ts-navy); }
+
+/* The one mark a creation can never draw for itself. */
+.ts-appchip {
+  display: inline-flex;
+  align-items: center;
+  height: 20px;
+  padding: 0 7px;
+  border-radius: 5px;
+  background: var(--ts-ink);
+  color: var(--ts-cream);
+  font-family: var(--ts-font-mono);
+  font-size: 9.5px;
+  font-weight: 500;
+  letter-spacing: 0.16em;
+}
+.ts-appchip[data-inverse] {
+  background: var(--ts-cream14);
+  color: var(--ts-ink);
+  border: 1px solid var(--ts-ink26);
+}
+
+/* ── fields ─────────────────────────────────────────────────────────────── */
+
+.ts-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 0;
+}
+
+.ts-field-label {
+  font-family: var(--ts-font-sans);
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--ts-ink);
+}
+
+.ts-input,
+.ts-textarea,
+.ts-select {
+  width: 100%;
+  font-family: var(--ts-font-sans);
+  font-size: var(--ts-text-label);
+  color: var(--ts-ink);
+  background: var(--ts-surface);
+  border: 1px solid var(--ts-ink13);
+  border-radius: var(--ts-radius-input);
+  transition: border-color var(--ts-dur-1) var(--ts-ease),
+    box-shadow var(--ts-dur-2) var(--ts-ease);
+}
+
+.ts-input { height: 44px; padding: 0 var(--ts-space-3); }
+.ts-textarea { padding: var(--ts-space-3); line-height: 1.5; resize: vertical; }
+
+.ts-input::placeholder,
+.ts-textarea::placeholder { color: var(--ts-ink26); }
+
+.ts-input:hover:not(:disabled),
+.ts-textarea:hover:not(:disabled) { border-color: var(--ts-ink26); }
+
+/*
+ * A field focuses with a warm border and a soft wash rather than the two-band
+ * ring. The ring is for things you press; a field you are typing into wants
+ * its own edge lit, not a halo pushing the next field down the form.
+ */
+.ts-input:focus,
+.ts-textarea:focus,
+.ts-select:focus {
+  outline: none;
+  border-color: var(--ts-terracotta);
+  box-shadow: 0 0 0 3px var(--ts-terracotta14);
+}
+
+/*
+ * The invalid border is 1.5px so it reads against the 1px hairline of a
+ * resting field without a colour comparison, and it never travels alone:
+ * `aria-invalid`, a described-by message, and an icon all come with it.
+ */
+.ts-field[data-state='error'] .ts-input,
+.ts-field[data-state='error'] .ts-textarea,
+.ts-field[data-state='error'] .ts-select {
+  border-width: 1.5px;
+  border-color: var(--ts-terracotta);
+  background: var(--ts-terracotta-tint);
+}
+.ts-field[data-state='ok'] .ts-input { border-color: var(--ts-sage-light); }
+
+.ts-input:disabled,
+.ts-textarea:disabled,
+.ts-select:disabled {
+  background: var(--ts-ink08);
+  border-color: transparent;
+  color: var(--ts-ink45);
+  cursor: not-allowed;
+}
+
+.ts-field-help {
+  margin: 0;
+  font-family: var(--ts-font-sans);
+  font-size: 12.5px;
+  line-height: 1.45;
+  color: var(--ts-ink60);
+}
+
+.ts-field-err,
+.ts-field-ok {
+  display: flex;
+  align-items: flex-start;
+  gap: 6px;
+  margin: 0;
+  font-family: var(--ts-font-sans);
+  font-size: 12.5px;
+  line-height: 1.45;
+}
+.ts-field-err { color: var(--ts-terracotta-hover); }
+.ts-field-ok { color: var(--ts-sage); }
+.ts-field-err svg,
+.ts-field-ok svg { margin-top: 1px; flex: none; }
+
+.ts-textarea-wrap { position: relative; }
+
+/* Silent until it matters, then warm. A counter that shouts at character 12 of
+ * 280 has taught somebody to stop reading it by 260. */
+.ts-counter {
+  position: absolute;
+  right: var(--ts-space-2);
+  bottom: 6px;
+  padding: 1px 5px;
+  border-radius: 4px;
+  background: var(--ts-surface);
+  font-family: var(--ts-font-mono);
+  font-size: 10.5px;
+  font-variant-numeric: tabular-nums;
+  color: var(--ts-ink45);
+}
+.ts-counter[data-near] { color: var(--ts-terracotta-hover); }
+
+.ts-select-wrap { position: relative; }
+.ts-select {
+  height: 44px;
+  padding: 0 var(--ts-space-8) 0 var(--ts-space-3);
+  appearance: none;
+  cursor: pointer;
+}
+.ts-select-arrow {
+  position: absolute;
+  right: var(--ts-space-3);
+  top: 50%;
+  transform: translateY(-50%);
+  pointer-events: none;
+  color: var(--ts-ink45);
+}
+
+.ts-search { position: relative; display: flex; align-items: center; }
+.ts-search-icon {
+  position: absolute;
+  left: var(--ts-space-3);
+  color: var(--ts-ink45);
+  pointer-events: none;
+}
+.ts-search-input {
+  padding-left: var(--ts-space-10);
+  padding-right: var(--ts-space-10);
+}
+.ts-search-input::-webkit-search-cancel-button { display: none; }
+
+/* A real 32px button, not a decorative glyph the finger keeps missing. */
+.ts-search-clear {
+  position: absolute;
+  right: 6px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  border: 0;
+  border-radius: var(--ts-radius-full);
+  background: var(--ts-ink08);
+  color: var(--ts-ink60);
+  cursor: pointer;
+}
+.ts-search-clear:hover { background: var(--ts-ink13); color: var(--ts-ink); }
+
+/* ── choice controls ────────────────────────────────────────────────────── */
+
+.ts-check,
+.ts-radio,
+.ts-switch {
+  display: flex;
+  align-items: center;
+  gap: var(--ts-space-3);
+  min-height: 44px;
+  font-family: var(--ts-font-sans);
+  font-size: 14.5px;
+  color: var(--ts-ink);
+  cursor: pointer;
+}
+
+/*
+ * The real input is hidden, not replaced. Label association, keyboard
+ * behaviour, form participation and the screen-reader role all come with it,
+ * and all get reimplemented badly by a div with a click handler.
+ */
+.ts-check input,
+.ts-radio input,
+.ts-switch input {
+  position: absolute;
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.ts-check-box {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: none;
+  width: 20px;
+  height: 20px;
+  border: 1.5px solid var(--ts-ink26);
+  border-radius: 6px;
+  background: var(--ts-surface);
+  color: transparent;
+  transition: background-color var(--ts-dur-1) var(--ts-ease),
+    border-color var(--ts-dur-1) var(--ts-ease);
+}
+.ts-check input:checked + .ts-check-box {
+  background: var(--ts-terracotta);
+  border-color: var(--ts-terracotta);
+  color: var(--ts-surface);
+}
+
+.ts-radio-dot {
+  position: relative;
+  flex: none;
+  width: 20px;
+  height: 20px;
+  border: 1.5px solid var(--ts-ink26);
+  border-radius: var(--ts-radius-full);
+  background: var(--ts-surface);
+  transition: border-color var(--ts-dur-1) var(--ts-ease);
+}
+.ts-radio input:checked + .ts-radio-dot {
+  border-color: var(--ts-terracotta);
+  border-width: 6px;
+}
+
+.ts-check input:disabled + .ts-check-box,
+.ts-radio input:disabled + .ts-radio-dot,
+.ts-switch input:disabled + .ts-switch-track {
+  background: var(--ts-ink08);
+  border-color: var(--ts-ink13);
+  opacity: 0.7;
+}
+.ts-check input:disabled ~ span,
+.ts-radio input:disabled ~ span,
+.ts-switch input:disabled ~ span { color: var(--ts-ink45); }
+
+.ts-switch-track {
+  position: relative;
+  flex: none;
+  width: 42px;
+  height: 24px;
+  border-radius: var(--ts-radius-full);
+  background: var(--ts-ink26);
+  transition: background-color var(--ts-dur-2) var(--ts-ease);
+}
+.ts-switch-knob {
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 20px;
+  height: 20px;
+  border-radius: var(--ts-radius-full);
+  background: var(--ts-surface);
+  box-shadow: var(--ts-shadow-flat);
+  transition: transform var(--ts-dur-2) var(--ts-ease-out);
+}
+/* Sage, not terracotta. A switch that is already on is a state, not an action. */
+.ts-switch input:checked + .ts-switch-track { background: var(--ts-sage); }
+.ts-switch input:checked + .ts-switch-track .ts-switch-knob { transform: translateX(18px); }
+
+.ts-seg {
+  display: inline-flex;
+  padding: 3px;
+  background: var(--ts-ink08);
+  border-radius: var(--ts-radius-input);
+}
+
+.ts-seg-btn {
+  height: 34px;
+  padding: 0 var(--ts-space-4);
+  border: 0;
+  border-radius: 7px;
+  background: transparent;
+  font-family: var(--ts-font-sans);
+  font-size: 13.5px;
+  font-weight: 500;
+  color: var(--ts-ink60);
+  cursor: pointer;
+  transition: background-color var(--ts-dur-1) var(--ts-ease), color var(--ts-dur-1) var(--ts-ease);
+}
+.ts-seg-btn:hover[aria-selected='false'] { color: var(--ts-ink); }
+.ts-seg-btn[aria-selected='true'] {
+  background: var(--ts-surface);
+  color: var(--ts-ink);
+  box-shadow: var(--ts-shadow-flat);
+}
+
+.ts-stepper {
+  display: inline-flex;
+  align-items: center;
+  background: var(--ts-surface);
+  border: 1px solid var(--ts-ink13);
+  border-radius: var(--ts-radius-input);
+  overflow: hidden;
+}
+
+.ts-step-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  border: 0;
+  background: transparent;
+  color: var(--ts-ink);
+  cursor: pointer;
+}
+.ts-step-btn:hover:not(:disabled) { background: var(--ts-ink08); }
+.ts-step-btn:disabled { color: var(--ts-ink26); cursor: not-allowed; }
+
+/* Tabular figures so the box does not twitch between 9 and 10. */
+.ts-step-val {
+  min-width: 44px;
+  text-align: center;
+  font-family: var(--ts-font-sans);
+  font-size: var(--ts-text-label);
+  font-variant-numeric: tabular-nums;
+  border-left: 1px solid var(--ts-ink13);
+  border-right: 1px solid var(--ts-ink13);
+  line-height: 44px;
+}
+
+/* ── avatars ────────────────────────────────────────────────────────────── */
+
+.ts-av {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: none;
+  border-radius: var(--ts-radius-full);
+  color: var(--ts-cream);
+  font-family: var(--ts-font-sans);
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  user-select: none;
+}
+
+.ts-av[data-tone='navy'] { background: var(--ts-navy); }
+.ts-av[data-tone='terracotta'] { background: var(--ts-terracotta); }
+.ts-av[data-tone='sage'] { background: var(--ts-sage); }
+.ts-av[data-tone='ink'] { background: var(--ts-ink); }
+
+.ts-av[data-size='24'] { width: 24px; height: 24px; font-size: 9.5px; }
+.ts-av[data-size='34'] { width: 34px; height: 34px; font-size: 12.5px; }
+.ts-av[data-size='48'] { width: 48px; height: 48px; font-size: var(--ts-text-label); }
+
+/*
+ * The ring IS the badge. A separate tick would be a mark a creation could draw
+ * for itself, and it would read as "official" in a town where verification
+ * only ever means neighbours vouched.
+ */
+.ts-av[data-verified] {
+  box-shadow: 0 0 0 2px var(--ts-cream), 0 0 0 4px var(--ts-sage);
+}
+
+.ts-av-stack { display: inline-flex; }
+.ts-av-stack .ts-av { box-shadow: 0 0 0 2px var(--ts-cream); }
+.ts-av-stack .ts-av + .ts-av { margin-left: -10px; }
+
+.ts-av[data-overflow] {
+  background: var(--ts-stone);
+  color: var(--ts-ink60);
+  font-family: var(--ts-font-mono);
+  font-size: 11px;
+}
+
+/* A creation's tile degrades to initials rather than a broken-image glyph. */
+.ts-tile {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  border-radius: var(--ts-radius-input);
+  background: var(--ts-terracotta14);
+  color: var(--ts-terracotta-hover);
+  font-family: var(--ts-font-mono);
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: 0.06em;
+}
+.ts-tile[data-fallback] { background: var(--ts-stone); color: var(--ts-ink60); }
+
+/* ── dividers ───────────────────────────────────────────────────────────── */
+
+.ts-divider {
+  height: 1px;
+  background: var(--ts-ink13);
+  margin: var(--ts-space-4) 0;
+}
+
+.ts-divider[data-labelled] {
+  display: flex;
+  align-items: center;
+  gap: var(--ts-space-3);
+  height: auto;
+  background: transparent;
+}
+.ts-divider[data-labelled]::before,
+.ts-divider[data-labelled]::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--ts-ink13);
+}
+.ts-divider[data-labelled] span {
+  font-family: var(--ts-font-mono);
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ts-ink45);
+}
+
+/* ── skeletons and progress ─────────────────────────────────────────────── */
+
+/*
+ * The shimmer travels over a flat fill rather than fading the whole block,
+ * because a pulsing block reads as broken and a travelling one reads as
+ * working. Under reduced motion the sweep is removed and the fill is left,
+ * which still reads as pending.
+ */
+.ts-skel {
+  position: relative;
+  display: block;
+  overflow: hidden;
+  background: var(--ts-ui-skel);
+  border-radius: 5px;
+}
+
+.ts-skel::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, transparent, var(--ts-ui-sweep), transparent);
+  transform: translateX(-100%);
+  animation: ts-shimmer 1400ms linear infinite;
+}
+
+@keyframes ts-shimmer {
+  to { transform: translateX(100%); }
+}
+
+.ts-skel[data-shape='line'] { height: 11px; width: 100%; }
+.ts-skel[data-shape='circle'] {
+  width: 34px;
+  height: 34px;
+  flex: none;
+  border-radius: var(--ts-radius-full);
+}
+.ts-skel[data-shape='block'] { height: 76px; border-radius: var(--ts-radius-input); }
+
+.ts-bar {
+  position: relative;
+  height: 6px;
+  border-radius: var(--ts-radius-full);
+  background: var(--ts-ink13);
+  overflow: hidden;
+}
+
+.ts-bar-fill {
+  display: block;
+  height: 100%;
+  width: 100%;
+  border-radius: inherit;
+  background: var(--ts-terracotta);
+  transition: width var(--ts-dur-4) var(--ts-ease);
+}
+
+.ts-bar[data-state='done'] .ts-bar-fill { background: var(--ts-sage); }
+/* The failed bar keeps the ground it covered. Seven of eleven photos really
+ * did upload, and resetting the bar would say otherwise. */
+.ts-bar[data-state='failed'] .ts-bar-fill {
+  background: var(--ts-ink26);
+  border-right: 2px solid var(--ts-terracotta);
+}
+
+.ts-bar[data-state='indeterminate'] .ts-bar-fill {
+  width: 38%;
+  animation: ts-run 1600ms var(--ts-ease) infinite;
+}
+
+@keyframes ts-run {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(300%); }
+}
+
+/* ── empties ────────────────────────────────────────────────────────────── */
+
+.ts-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: var(--ts-space-2);
+  padding: var(--ts-space-8) var(--ts-space-4);
+}
+
+/* A centred empty inside a 180px card reads as a broken card. */
+.ts-empty[data-align='start'] {
+  align-items: flex-start;
+  text-align: left;
+  padding: var(--ts-space-5) 0;
+}
+
+.ts-empty-line {
+  font-family: var(--ts-font-serif);
+  font-size: var(--ts-text-card-title);
+  font-weight: 500;
+  line-height: 1.3;
+  letter-spacing: -0.01em;
+  color: var(--ts-ink);
+  margin: var(--ts-space-2) 0 0;
+  max-width: 30ch;
+  text-wrap: pretty;
+}
+
+.ts-empty-sub {
+  font-size: var(--ts-text-label);
+  line-height: 1.45;
+  color: var(--ts-ink60);
+  margin: 0;
+  max-width: 34ch;
+  text-wrap: pretty;
+}
+
+.ts-empty .ts-act { margin-top: var(--ts-space-1); }
+
+/* The cleared moderation queue is the one empty where nothing here is the
+ * outcome somebody was working toward, so its accent says done. */
+.ts-empty[data-tone='good'] .ts-empty-line { color: var(--ts-sage); }
+
+/* ── the marks ──────────────────────────────────────────────────────────────
+ *
+ * CSS only, ink plus one accent, drawn with a pen rather than a mascot. Three
+ * shapes maximum per mark, because each is the element and its two pseudo
+ * elements, and that limit is what stops this becoming an illustration
+ * library. Strokes are 1.5px, the same weight as an icon, so a mark beside a
+ * chip does not look like a different product. Each sits at a 1 to 5 degree
+ * off-axis rotation, which is the whole difference between "drawn" and "an
+ * image that failed to load".
+ */
+
+.ts-mark {
+  position: relative;
+  display: block;
+  width: 56px;
+  height: 56px;
+  flex: none;
+  color: var(--ts-ui-line);
+}
+.ts-mark::before,
+.ts-mark::after { content: ''; position: absolute; }
+
+.ts-mark--news { transform: rotate(-3deg); }
+.ts-mark--news::before {
+  left: 6px; top: 20px; width: 44px; height: 26px;
+  background-image:
+    linear-gradient(currentColor, currentColor),
+    linear-gradient(currentColor, currentColor),
+    linear-gradient(currentColor, currentColor);
+  background-size: 44px 1.5px, 36px 1.5px, 26px 1.5px;
+  background-position: 0 0, 0 10px, 0 20px;
+  background-repeat: no-repeat;
+}
+.ts-mark--news::after {
+  left: 6px; top: 9px; width: 30px; height: 2px;
+  background: var(--ts-ui-terra-line);
+  border-radius: 1px;
+}
+
+.ts-mark--calendar { transform: rotate(2deg); }
+.ts-mark--calendar::before {
+  left: 7px; top: 9px; width: 42px; height: 38px;
+  border: 1.5px solid currentColor;
+  border-radius: 6px;
+  box-shadow: inset 0 10px 0 -8.5px currentColor;
+  background-image: radial-gradient(circle, currentColor 1.2px, transparent 1.3px);
+  background-size: 10px 10px;
+  background-position: 7px 18px;
+  background-repeat: repeat;
+}
+.ts-mark--calendar::after {
+  left: 22px; top: 30px; width: 6px; height: 6px;
+  border-radius: var(--ts-radius-full);
+  background: var(--ts-terracotta);
+}
+
+.ts-mark--bookmark { transform: rotate(-2deg); }
+.ts-mark--bookmark::before {
+  left: 16px; top: 7px; width: 26px; height: 40px;
+  border: 1.5px solid currentColor;
+  border-radius: 4px;
+}
+.ts-mark--bookmark::after {
+  left: 22px; top: 39px; width: 14px; height: 14px;
+  background: var(--ts-surface);
+  border-top: 1.5px solid var(--ts-terracotta);
+  border-right: 1.5px solid var(--ts-terracotta);
+  transform: rotate(-45deg);
+}
+
+.ts-mark--shelf { transform: rotate(1.5deg); }
+.ts-mark--shelf::before {
+  left: 6px; top: 44px; width: 44px; height: 1.5px;
+  background: currentColor;
+}
+.ts-mark--shelf::after {
+  left: 11px; top: 18px; width: 36px; height: 26px;
+  background-image:
+    linear-gradient(currentColor, currentColor),
+    linear-gradient(currentColor, currentColor),
+    linear-gradient(var(--ts-terracotta), var(--ts-terracotta));
+  background-size: 1.5px 18px, 1.5px 12px, 1.5px 26px;
+  background-position: 0 100%, 13px 100%, 26px 100%;
+  background-repeat: no-repeat;
+}
+
+.ts-mark--lens { transform: rotate(-2deg); }
+.ts-mark--lens::before {
+  left: 8px; top: 8px; width: 30px; height: 30px;
+  border: 1.5px solid currentColor;
+  border-radius: var(--ts-radius-full);
+}
+.ts-mark--lens::after {
+  left: 34px; top: 36px; width: 16px; height: 2px;
+  background: var(--ts-ui-terra-line);
+  border-radius: 1px;
+  transform: rotate(45deg);
+  transform-origin: left center;
+}
+
+.ts-mark--sprout { transform: rotate(-1deg); }
+.ts-mark--sprout::before {
+  left: 14px; top: 20px; width: 18px; height: 26px;
+  border-left: 1.5px solid currentColor;
+  border-bottom: 1.5px solid currentColor;
+  border-bottom-left-radius: 16px;
+}
+.ts-mark--sprout::after {
+  left: 30px; top: 12px; width: 18px; height: 12px;
+  border: 1.5px solid var(--ts-terracotta);
+  border-radius: 0 100% 0 100%;
+  background: var(--ts-terracotta10);
+  transform: rotate(-16deg);
+}
+
+.ts-mark--grid { transform: rotate(2deg); }
+.ts-mark--grid::before {
+  left: 8px; top: 8px; width: 40px; height: 40px;
+  background-image: radial-gradient(circle, currentColor 1.3px, transparent 1.4px);
+  background-size: 13px 13px;
+  background-position: 0 0;
+}
+.ts-mark--grid::after {
+  left: 25px; top: 25px; width: 18px; height: 18px;
+  background-image:
+    linear-gradient(var(--ts-terracotta), var(--ts-terracotta)),
+    linear-gradient(var(--ts-terracotta), var(--ts-terracotta));
+  background-size: 18px 2px, 2px 18px;
+  background-position: center, center;
+  background-repeat: no-repeat;
+}
+
+/* The sage tick is the one accent exception in the whole mark set. */
+.ts-mark--tray { transform: rotate(-1.5deg); }
+.ts-mark--tray::before {
+  left: 8px; top: 26px; width: 40px; height: 20px;
+  border: 1.5px solid currentColor;
+  border-top: 0;
+  border-radius: 0 0 6px 6px;
+  box-shadow: inset 0 1.5px 0 0 currentColor;
+}
+.ts-mark--tray::after {
+  left: 20px; top: 8px; width: 16px; height: 9px;
+  border-left: 2px solid var(--ts-sage);
+  border-bottom: 2px solid var(--ts-sage);
+  border-radius: 1px;
+  transform: rotate(-45deg);
+}
+
+/* ── failures ───────────────────────────────────────────────────────────── */
+
+/*
+ * A failed block is bounded by a dashed hairline and holds its own height, so
+ * nothing below it moves when the retry succeeds. It does not shout: a library
+ * feed being down is not news.
+ */
+.ts-sect-fail {
+  border: 1px dashed var(--ts-ui-dash);
+  border-radius: var(--ts-radius-card);
+  background: color-mix(in srgb, var(--ts-ink) 2.5%, transparent);
+  padding: var(--ts-space-4);
+  min-height: 132px;
+  display: grid;
+  align-content: center;
+  gap: 6px;
+}
+
+.ts-sect-fail-line {
+  font-family: var(--ts-font-serif);
+  font-size: var(--ts-text-label);
+  font-weight: 500;
+  color: var(--ts-ink);
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: var(--ts-space-2);
+}
+
+.ts-sect-fail-sub {
+  font-size: 13.5px;
+  line-height: 1.4;
+  color: var(--ts-ink60);
+  margin: 0;
+  max-width: 40ch;
+}
+
+.ts-sect-fail .ts-act { justify-self: start; }
+
+.ts-screen-fail {
+  display: grid;
+  justify-items: center;
+  text-align: center;
+  gap: var(--ts-space-2);
+  padding: var(--ts-space-6) var(--ts-space-3) var(--ts-space-5);
+}
+
+.ts-screen-fail-line {
+  font-family: var(--ts-font-serif);
+  font-size: var(--ts-text-card-title);
+  font-weight: 500;
+  line-height: 1.28;
+  margin: var(--ts-space-2) 0 0;
+  max-width: 26ch;
+  text-wrap: pretty;
+}
+
+.ts-screen-fail-sub {
+  font-size: 13.5px;
+  line-height: 1.45;
+  color: var(--ts-ink60);
+  margin: 0 0 var(--ts-space-2);
+  max-width: 34ch;
+  text-wrap: pretty;
+}
+
+/* Time, reference, status page. A resident who has to ring somebody about this
+ * needs something to read out. */
+.ts-screen-meta {
+  font-family: var(--ts-font-mono);
+  font-size: 10.5px;
+  letter-spacing: 0.06em;
+  color: var(--ts-ink45);
+  margin: var(--ts-space-3) 0 0;
+}
+
+/* ── banners ────────────────────────────────────────────────────────────────
+ *
+ * A condition, not an event. If the statement is still true in thirty seconds
+ * a toast is the wrong shape, because in thirty seconds the toast is gone and
+ * the truth is not.
+ */
+
+.ts-banner {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--ts-space-3);
+  padding: var(--ts-space-4);
+  border-radius: var(--ts-radius-card);
+  animation: ts-enter var(--ts-dur-3) var(--ts-ease-out) both;
+}
+
+.ts-banner > svg { flex: none; margin-top: 2px; }
+.ts-banner > div { flex: 1; min-width: 0; }
+
+.ts-banner[data-tone='stale'] {
+  border: 1px solid var(--ts-ui-terra-line);
+  background: var(--ts-terracotta-tint);
+  color: var(--ts-ink);
+}
+.ts-banner[data-tone='stale'] > svg { color: var(--ts-terracotta); }
+
+/* Offline is navy rather than terracotta: the app is not broken and nothing
+ * failed, the signal left. */
+.ts-banner[data-tone='offline'] { background: var(--ts-navy); color: var(--ts-cream); }
+.ts-banner[data-tone='slow'] { background: var(--ts-navy80); color: var(--ts-cream); }
+.ts-banner[data-tone='back'] { background: var(--ts-sage); color: var(--ts-cream); }
+
+.ts-banner[data-tone='offline'] .ts-banner-s,
+.ts-banner[data-tone='slow'] .ts-banner-s,
+.ts-banner[data-tone='back'] .ts-banner-s { color: var(--ts-cream); }
+
+.ts-banner-t {
+  font-family: var(--ts-font-serif);
+  font-size: var(--ts-text-card-title);
+  font-weight: 500;
+  margin: 0 0 4px;
+}
+.ts-banner-s {
+  font-size: 13.5px;
+  line-height: 1.45;
+  color: var(--ts-ink60);
+  margin: 0;
+  max-width: 56ch;
+}
+
+/*
+ * The stale strip is the single line standing between "the app is quietly
+ * serving you Tuesday" and a resident driving to a meeting that was cancelled.
+ * It always carries the time of the copy, never just the word stale.
+ */
+.ts-stale-strip {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--ts-space-2);
+  padding: var(--ts-space-2) var(--ts-space-3);
+  border-radius: 8px;
+  background: var(--ts-terracotta10);
+  color: var(--ts-terracotta-hover);
+  font-size: 12.5px;
+  line-height: 1.35;
+  margin: 0 0 var(--ts-space-2);
+}
+.ts-stale-strip svg { flex: none; margin-top: 1px; }
+
+/* ── toasts ─────────────────────────────────────────────────────────────────
+ *
+ * Bottom left, above the tab bar, newest at the bottom: the eye is already at
+ * the bottom of a phone, so a new toast lands where the eye is and pushes the
+ * older ones up.
+ */
+
+.ts-toast-stack {
+  position: fixed;
+  left: var(--ts-space-4);
+  right: var(--ts-space-4);
+  /* Clear of the tab bar, which is the one thing a toast must never cover. */
+  bottom: calc(var(--ts-space-16) + var(--ts-space-4));
+  z-index: 60;
+  display: grid;
+  gap: var(--ts-space-2);
+  max-width: 520px;
+  /* The stack is not a surface. Only the toasts in it take the pointer. */
+  pointer-events: none;
+}
+.ts-toast-stack > * { pointer-events: auto; }
+
+.ts-toast {
+  display: flex;
+  align-items: center;
+  gap: var(--ts-space-3);
+  padding: var(--ts-space-3) var(--ts-space-3) var(--ts-space-3) var(--ts-space-4);
+  border-radius: var(--ts-radius-card);
+  border-left: 3px solid var(--ts-ink26);
+  background: var(--ts-ink);
+  color: var(--ts-cream);
+  box-shadow: var(--ts-shadow-overlay);
+  animation: ts-enter var(--ts-dur-3) var(--ts-ease-out) both;
+}
+
+.ts-toast[data-kind='info'] { border-left-color: var(--ts-cream14); }
+.ts-toast[data-kind='good'] { border-left-color: var(--ts-sage-light); }
+.ts-toast[data-kind='good'] > svg { color: var(--ts-sage-light); }
+.ts-toast[data-kind='warn'] { border-left-color: var(--ts-gold); }
+.ts-toast[data-kind='warn'] > svg { color: var(--ts-gold); }
+.ts-toast[data-kind='problem'] { border-left-color: var(--ts-terracotta); }
+.ts-toast[data-kind='problem'] > svg { color: var(--ts-terracotta); }
+
+.ts-toast > svg { flex: none; }
+.ts-toast-t { flex: 1; font-size: 14px; line-height: 1.35; }
+
+.ts-toast-act {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  flex: none;
+  min-height: 36px;
+  padding: 0 var(--ts-space-3);
+  border: 1px solid var(--ts-cream14);
+  border-radius: var(--ts-radius-button);
+  background: none;
+  color: var(--ts-cream);
+  font-family: var(--ts-font-sans);
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+}
+.ts-toast-act:hover { background: var(--ts-cream14); }
+
+/* A 16px glyph in a 44px button. The glyph is the mark, the button is the target. */
+.ts-toast-x {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: none;
+  width: 44px;
+  height: 44px;
+  margin: -4px 0;
+  border: 0;
+  border-radius: var(--ts-radius-button);
+  background: none;
+  color: var(--ts-cream-muted);
+  cursor: pointer;
+}
+.ts-toast-x:hover { color: var(--ts-cream); background: var(--ts-cream14); }
+
+/* On ink, the cream halo would vanish. The ring's inner band becomes the toast. */
+.ts-toast-act:focus-visible,
+.ts-toast-x:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 2px var(--ts-ink), 0 0 0 4px var(--ts-terracotta);
+}
+
+@keyframes ts-enter {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: none; }
+}
+
+/* ── overlays ───────────────────────────────────────────────────────────── */
+
+.ts-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 80;
+  display: flex;
+}
+.ts-overlay[data-layer='modal'] { align-items: center; justify-content: center; padding: var(--ts-space-5); }
+.ts-overlay[data-layer='sheet'] { align-items: flex-end; }
+
+.ts-scrim {
+  position: absolute;
+  inset: 0;
+  background: var(--ts-ui-scrim);
+  animation: ts-fade var(--ts-dur-3) var(--ts-ease) both;
+}
+
+@keyframes ts-fade {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.ts-modal {
+  position: relative;
+  width: 100%;
+  max-width: 420px;
+  padding: var(--ts-space-5);
+  border-radius: var(--ts-radius-sheet);
+  background: var(--ts-surface);
+  box-shadow: var(--ts-shadow-overlay);
+  animation: ts-modal-in var(--ts-dur-2) var(--ts-ease-out) both;
+}
+
+@keyframes ts-modal-in {
+  from { opacity: 0; transform: scale(0.98); }
+  to { opacity: 1; transform: none; }
+}
+
+.ts-modal-t,
+.ts-sheet-t {
+  font-family: var(--ts-font-serif);
+  font-weight: 500;
+  line-height: 1.28;
+  text-wrap: pretty;
+}
+.ts-modal-t { font-size: var(--ts-text-card-title); margin: 0 0 var(--ts-space-2); }
+.ts-sheet-t { font-size: var(--ts-text-h2); margin: 0 0 var(--ts-space-3); }
+
+.ts-modal-s,
+.ts-sheet-p {
+  font-size: 14px;
+  line-height: 1.45;
+  color: var(--ts-ink60);
+  margin: 0 0 var(--ts-space-5);
+  text-wrap: pretty;
+}
+
+/* The safe choice is first, so it is the easy target under a thumb. */
+.ts-modal-acts,
+.ts-sheet-acts {
+  display: flex;
+  gap: var(--ts-space-2);
+  justify-content: flex-end;
+  flex-wrap: wrap;
+  margin-top: var(--ts-space-5);
+}
+
+.ts-sheet {
+  position: relative;
+  width: 100%;
+  padding: var(--ts-space-3) var(--ts-space-5) var(--ts-space-5);
+  border-radius: var(--ts-radius-sheet) var(--ts-radius-sheet) 0 0;
+  background: var(--ts-surface);
+  box-shadow: var(--ts-shadow-overlay);
+  max-height: 88vh;
+  overflow-y: auto;
+  animation: ts-rise var(--ts-dur-4) var(--ts-ease-out) both;
+}
+
+@keyframes ts-rise {
+  from { transform: translateY(100%); }
+  to { transform: none; }
+}
+
+.ts-sheet-grab {
+  display: block;
+  width: 36px;
+  height: 4px;
+  margin: 0 auto var(--ts-space-4);
+  border-radius: var(--ts-radius-full);
+  background: var(--ts-ink26);
+}
+
+/* A sheet becomes a centred dialog on anything wider than a phone. Same
+ * markup, one media query, which is the whole reason it is one component. */
+@media (min-width: 640px) {
+  .ts-overlay[data-layer='sheet'] {
+    align-items: center;
+    justify-content: center;
+    padding: var(--ts-space-5);
+  }
+  .ts-sheet {
+    max-width: 480px;
+    border-radius: var(--ts-radius-sheet);
+    animation: ts-modal-in var(--ts-dur-2) var(--ts-ease-out) both;
+  }
+  .ts-sheet-grab { display: none; }
+}
+
+/* ── reduced motion ─────────────────────────────────────────────────────────
+ *
+ * Not "everything off". Opacity and colour changes stay, because they are not
+ * vestibular and removing them removes information. What goes is travel,
+ * scale, and anything looping: the sheet appears rather than rises, the
+ * shimmer and the pulse stop, and the press response survives as an opacity
+ * change because losing the feedback that a tap landed is worse than the
+ * motion was.
+ */
+
+@media (prefers-reduced-motion: reduce) {
+  .ts-skel::after { display: none; }
+  .ts-live-dot { animation: none; }
+  .ts-spinner { animation-duration: 2s; }
+  .ts-bar[data-state='indeterminate'] .ts-bar-fill {
+    animation: none;
+    width: 100%;
+    background: repeating-linear-gradient(
+      110deg,
+      var(--ts-terracotta) 0 8px,
+      var(--ts-terracotta10) 8px 16px
+    );
+  }
+  .ts-toast,
+  .ts-banner { animation: ts-fade var(--ts-dur-1) var(--ts-ease) both; }
+  .ts-modal,
+  .ts-sheet { animation: ts-fade 120ms var(--ts-ease) both; }
+  .ts-btn:active:not(:disabled) { transform: none; opacity: 0.7; }
+}

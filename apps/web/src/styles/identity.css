@@ -1,0 +1,80 @@
+/* Sign-in, handles, and the vouch surfaces (design 6c). Split out of theme.css, unchanged. */
+
+/* ── identity (design 6c) ─────────────────────────────────────────────── */
+
+.account-bar {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: var(--ts-space-6);
+}
+
+.form {
+  display: grid;
+  gap: var(--ts-space-5);
+  max-width: 42ch;
+  margin-top: var(--ts-space-6);
+}
+
+.form label {
+  display: grid;
+  gap: var(--ts-space-2);
+}
+
+.form label > span {
+  font-size: var(--ts-text-label);
+  color: var(--ts-ink60);
+}
+
+.form input {
+  font: inherit;
+  color: var(--ts-ink);
+  background: var(--ts-surface);
+  border: 1px solid var(--ts-hairline);
+  border-radius: var(--ts-radius-button);
+  padding: var(--ts-space-3);
+}
+
+.form input:focus-visible {
+  outline: 2px solid var(--ts-terracotta);
+  outline-offset: 1px;
+}
+
+.form small {
+  color: var(--ts-ink45);
+  font-size: var(--ts-text-label);
+}
+
+.form-actions {
+  display: flex;
+  align-items: center;
+  gap: var(--ts-space-4);
+}
+
+.note,
+.problem {
+  max-width: 46ch;
+  font-size: var(--ts-text-label);
+}
+
+.note {
+  color: var(--ts-ink60);
+}
+
+.problem {
+  color: var(--ts-terracotta);
+}
+
+/*
+ * Only ever rendered against a development API. The link inside it is a
+ * working sign-in, so it is styled to look like the temporary thing it is
+ * rather than like part of the product.
+ */
+.dev-note {
+  margin-top: var(--ts-space-6);
+  padding: var(--ts-space-4);
+  border: 1px dashed var(--ts-hairline);
+  border-radius: var(--ts-radius-button);
+  font-family: var(--ts-font-mono);
+  font-size: var(--ts-text-label);
+  word-break: break-all;
+}

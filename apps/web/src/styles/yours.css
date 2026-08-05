@@ -1,0 +1,109 @@
+/* Yours, the resident's own corner (design 5b). Split out of theme.css, unchanged. */
+
+/* ── Yours (design 5b) ────────────────────────────────────────────────────
+ *
+ * Deliberately short. Most of the hi-fi's version of this screen — posts,
+ * follows, usage bars on the app you built — has no source, and the table in
+ * Yours.tsx says which and why. What is left is you, what you saved, and what
+ * you built.
+ */
+
+.yours-head {
+  display: flex;
+  align-items: center;
+  gap: var(--ts-space-3);
+  padding: var(--ts-space-5) var(--ts-space-5) 0;
+}
+
+.yours-avatar {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 58px;
+  height: 58px;
+  border-radius: var(--ts-radius-sheet);
+  background: var(--ts-navy);
+  color: var(--ts-cream);
+  font-size: var(--ts-text-card-title);
+  font-weight: 500;
+}
+
+/* The same ring the bar's avatar wears, at the size this one is. */
+.yours-avatar[data-verified] {
+  box-shadow: 0 0 0 2px var(--ts-cream), 0 0 0 4px var(--ts-navy40);
+}
+
+.yours-handle {
+  font-family: var(--ts-font-serif);
+  font-weight: 400;
+  font-size: 23px;
+  line-height: 1.1;
+  letter-spacing: -0.015em;
+  margin: 0 0 var(--ts-space-2);
+}
+
+.verified-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--ts-space-1);
+  padding: var(--ts-space-1) var(--ts-space-2);
+  border-radius: var(--ts-radius-chip);
+  background: var(--ts-stone);
+  color: var(--ts-ink60);
+  font-family: var(--ts-font-mono);
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+/*
+ * Sage only when it is true. Being unverified is an ordinary state — reading
+ * needs nothing, building needs an email, and only publishing needs a vouch —
+ * so it is grey rather than a warning colour.
+ */
+.verified-chip[data-verified] {
+  background: var(--ts-sage14);
+  color: var(--ts-sage);
+}
+
+/* The count the hi-fi's tile row used to carry, on the heading instead. */
+.section-count {
+  margin-left: auto;
+  font-family: var(--ts-font-mono);
+  font-size: 10px;
+  color: var(--ts-ink45);
+}
+
+.yours-signedout {
+  padding: var(--ts-space-12) var(--ts-space-5);
+  text-align: center;
+}
+
+.yours-signedout-icon {
+  display: grid;
+  place-items: center;
+  width: 52px;
+  height: 52px;
+  margin: 0 auto var(--ts-space-4);
+  border-radius: var(--ts-radius-sheet);
+  background: var(--ts-terracotta14);
+  color: var(--ts-terracotta-hover);
+}
+
+.yours-signedout h1 {
+  font-family: var(--ts-font-serif);
+  font-weight: 400;
+  font-size: 25px;
+  line-height: 1.15;
+  letter-spacing: -0.015em;
+  margin: 0;
+}
+
+.yours-signedout p {
+  font-family: var(--ts-font-serif);
+  font-size: var(--ts-text-label);
+  line-height: 1.5;
+  color: var(--ts-ink60);
+  margin: var(--ts-space-3) 0 var(--ts-space-6);
+}

@@ -15,6 +15,7 @@
     "packages/saves/src/**/*",
     "packages/mcp/src/**/*",
     "packages/review/src/**/*",
+    "packages/contributions/src/**/*",
     "apps/*/src/**/*"
   ],
   "exclude": ["**/node_modules", "**/dist"],
@@ -37,7 +38,8 @@
       "@townsquare/storage": ["./packages/storage/src/index.ts"],
       "@townsquare/saves": ["./packages/saves/src/index.ts"],
       "@townsquare/mcp": ["./packages/mcp/src/index.ts"],
-      "@townsquare/review": ["./packages/review/src/index.ts"]
+      "@townsquare/review": ["./packages/review/src/index.ts"],
+      "@townsquare/contributions": ["./packages/contributions/src/index.ts"]
     }
   }
 }

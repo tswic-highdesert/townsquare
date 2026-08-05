@@ -1,0 +1,73 @@
+/* Host chrome: the bar a creation runs under and can never draw over. Split out of theme.css, unchanged. */
+
+/* ── host chrome (design 6b) ──────────────────────────────────────────── */
+
+.chrome {
+  display: flex;
+  align-items: center;
+  gap: var(--ts-space-3);
+  padding: var(--ts-space-3) 0 var(--ts-space-4);
+  border-bottom: 1px solid var(--ts-hairline);
+}
+
+.chrome-title {
+  font-family: var(--ts-font-serif);
+  font-size: var(--ts-text-card-title);
+  font-weight: 600;
+  margin: 0;
+  line-height: 1.2;
+}
+
+.chrome-by {
+  font-size: var(--ts-text-caption);
+  color: var(--ts-ink60);
+}
+
+/*
+ * The one piece of chrome a creation can never draw over, which is what makes
+ * it unable to credibly imitate Town Square.
+ */
+.badge {
+  margin-left: auto;
+  flex: none;
+  font-family: var(--ts-font-mono);
+  font-size: var(--ts-text-eyebrow);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ts-navy);
+  background: var(--ts-sage14);
+  border-radius: var(--ts-radius-chip);
+  padding: 4px 10px;
+}
+
+.live-title {
+  font-size: var(--ts-text-caption);
+  color: var(--ts-ink60);
+  padding-top: var(--ts-space-2);
+}
+
+.frame-wrap {
+  margin-top: var(--ts-space-3);
+  border: 1px solid var(--ts-hairline);
+  border-radius: var(--ts-radius-card);
+  overflow: hidden;
+  background: var(--ts-surface);
+}
+
+.footer-chrome {
+  display: flex;
+  align-items: center;
+  gap: var(--ts-space-3);
+  padding: var(--ts-space-3) 2px;
+  font-size: var(--ts-text-caption);
+  color: var(--ts-ink45);
+}
+
+.footer-chrome button {
+  background: none;
+  border: 0;
+  color: var(--ts-ink60);
+  text-decoration: underline;
+  padding: 0;
+  font-size: var(--ts-text-caption);
+}

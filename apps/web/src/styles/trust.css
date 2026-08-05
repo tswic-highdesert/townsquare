@@ -1,0 +1,74 @@
+/* The trust page (design 6a): what a creation asked for, in plain English. Split out of theme.css, unchanged. */
+
+/* ── trust page (design 6a) ───────────────────────────────────────────── */
+
+.trust {
+  margin: var(--ts-space-5) 0;
+  padding: 0;
+  list-style: none;
+  background: var(--ts-surface);
+  border: 1px solid var(--ts-hairline);
+  border-radius: var(--ts-radius-card);
+  overflow: hidden;
+}
+
+.trust li {
+  padding: var(--ts-space-4);
+  border-bottom: 1px solid var(--ts-hairline);
+}
+
+.trust li:last-child {
+  border-bottom: 0;
+}
+
+.trust-title {
+  font-weight: 500;
+  font-size: var(--ts-text-label);
+}
+
+.trust-detail {
+  color: var(--ts-ink60);
+  font-size: var(--ts-text-caption);
+  margin-top: 2px;
+}
+
+/*
+ * Anything that outlives the visit, or leaves town, is marked. The rest is
+ * background reassurance and should read that way.
+ */
+.trust li[data-weight='consequential'] {
+  box-shadow: inset 3px 0 0 var(--ts-terracotta);
+  background: var(--ts-terracotta-tint);
+}
+
+.primary {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--ts-space-2);
+  background: var(--ts-terracotta);
+  color: var(--ts-surface);
+  border: 0;
+  border-radius: var(--ts-radius-button);
+  padding: var(--ts-space-3) var(--ts-space-5);
+  font-weight: 500;
+}
+
+.primary:hover {
+  background: var(--ts-terracotta-hover);
+}
+
+.secondary {
+  background: none;
+  border: 1px solid var(--ts-hairline);
+  border-radius: var(--ts-radius-button);
+  padding: var(--ts-space-3) var(--ts-space-5);
+  color: var(--ts-ink);
+}
+
+.back {
+  background: none;
+  border: 0;
+  padding: 0;
+  color: var(--ts-ink60);
+  font-size: var(--ts-text-label);
+}

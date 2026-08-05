@@ -21,6 +21,7 @@ export default defineConfig({
       '@townsquare/saves': r('./packages/saves/src/index.ts'),
       '@townsquare/mcp': r('./packages/mcp/src/index.ts'),
       '@townsquare/review': r('./packages/review/src/index.ts'),
+      '@townsquare/contributions': r('./packages/contributions/src/index.ts'),
     },
   },
   test: {
