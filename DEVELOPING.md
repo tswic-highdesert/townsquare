@@ -317,6 +317,69 @@ queue, so the featured card reads "made by a neighbor" and shows no initials.
 It does *not* fall back to initials of the creation's own name: "The Burrito
 Index" becoming a "TI" avatar reads as a person who does not exist.
 
+## Testing a gated path
+
+`seedCohort` sets `verifiedResident: true` on every account it touches. That is
+deliberate and load-bearing: vouching is a closure, so somebody has to be
+verified without a voucher, and the seed cohort is that somebody.
+
+The side effect is that **a seeded account can never exercise a gate.** Seed two
+handles expecting one of them to be a newcomer and both come back
+`allowed: true`; the hold, the pause and the declined states are unreachable and
+the gate looks broken when it is working.
+
+| To test | Use |
+|---|---|
+| An ungated identity, or a moderator | `TOWNSQUARE_SEED_COHORT` |
+| Anything behind verification | `POST /api/auth/signup`, then confirm |
+
+A normal signup is unverified, which is the whole point of it. In development
+the API prints the confirmation link to its own terminal, so a second identity
+costs nothing.
+
+## Cascade layers, and why a screen can override a primitive
+
+`ui.css` is in `@layer ts-primitives`, `styles/base.css` in `@layer ts-base`, and
+every screen stylesheet is **unlayered on purpose**. Unlayered CSS beats layered
+CSS regardless of source order and regardless of specificity, so a screen
+overrides a primitive by writing an ordinary rule.
+
+This replaced an import-order convention that did not survive contact with six
+people. `main.tsx` imported `App` above `ui.css`, and `App` pulls in every
+screen, so screen CSS evaluated first and every screen-level override lost
+silently — no error, no warning. The failure was found by reading a screenshot,
+not by a test.
+
+Two consequences worth knowing before changing any of it:
+
+- **The resets had to move down a layer.** An unlayered `button { cursor: pointer }`
+  beats `.ts-btn:disabled { cursor: not-allowed }`, because layer order outranks
+  specificity.
+- **A screen that wraps itself in `@layer` drops below the primitives and
+  loses.** `apps/web/src/ui/layer.test.ts` asserts that none do, and that the
+  layer order is declared before it is used.
+
+## Contrast is a property of the token set
+
+`packages/tokens/src/contrast.test.ts` computes real WCAG ratios for the pairs
+that actually ship, across all three towns, and fails per pair on the threshold
+its role earns rather than one blanket number. Composites are measured rather
+than declared values, because every muted colour in this palette is an alpha.
+
+The reason it is a test rather than a design review: **a bad token value reaches
+every creation in town.** Fifty independently built mini-apps inherit
+`--ts-navy` and not one of their authors will check it. A test is also the only
+form of this that survives a town reskinning itself with nobody from this
+project in the room.
+
+It found four failures on its first run, three of them shipping — including
+`terracotta-hover` on its own wash at 3.83, which is the stale-data strip and
+the failed-action message, the line standing between a resident and driving to a
+meeting that was cancelled.
+
+A waiver is allowed and must carry a written rule saying what makes shipping it
+defensible. The test refuses one without.
+
 ## Why three processes
 
 | Process | Holds | Must never hold |
