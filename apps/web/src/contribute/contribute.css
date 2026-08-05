@@ -4,13 +4,19 @@
  * Imported from `Contribute.tsx` rather than from the shell's stylesheet, so
  * this file arrives with the screen and leaves with it.
  *
- * Every colour is a token. The one worth naming: `--ts-brick` does not appear
- * in this file at all. A validation error is not an alarm, being turned down is
- * not an alarm, and a delete confirmation is not an alarm. Brick is the single
- * register the product has left for an actual emergency, and spending it on a
- * character counter is how it stops meaning anything at 6am when the river is
- * up. Everything that needs to say "careful" here says it in terracotta or in
- * words.
+ * Colours are role tokens where the colour means something and raw palette
+ * tokens where it is only a colour. `--ts-verified` on a live status, because
+ * that green is the same claim the badge on a handle makes; `--ts-terracotta10`
+ * behind a wash, because that is a tint and not a role.
+ *
+ * The one worth naming: **`--ts-alarm` does not appear in this file at all.** A
+ * validation error is not an alarm, being turned down is not an alarm, and a
+ * discard confirmation is not an alarm. It is the single register the product
+ * has left for an actual emergency, and a form is exactly where that rule gets
+ * broken first. Everything here that needs to say "careful" says it in the
+ * action colour or in words. `Button`'s `destructive` variant covers the one
+ * genuinely destructive control, discarding a draft, so there is never a reason
+ * to reach past it.
  */
 
 .cn-screen {
@@ -111,12 +117,13 @@
   color: var(--ts-navy);
 }
 .cn-choose-ic[data-type='notice'] {
+  /* Civic: the town speaking, rather than a resident. */
   background: var(--ts-gold14);
-  color: var(--ts-gold-text);
+  color: var(--ts-civic-text);
 }
 .cn-choose-ic[data-type='correction'] {
-  background: var(--ts-terracotta10);
-  color: var(--ts-terracotta);
+  background: var(--ts-action-quiet);
+  color: var(--ts-action);
 }
 
 .cn-choose-text {
@@ -147,7 +154,9 @@
 .cn-choose-hold {
   font-family: var(--ts-font-sans);
   font-size: var(--ts-text-caption);
-  color: var(--ts-sage);
+  /* The same green as a verified badge, because it is the same claim: this
+     posts once your neighbours have vouched. */
+  color: var(--ts-verified);
   margin-top: 2px;
 }
 .cn-mini-lock {
@@ -252,7 +261,7 @@
   min-height: 20px;
 }
 .cn-save[data-state='saved'] {
-  color: var(--ts-sage);
+  color: var(--ts-verified);
 }
 .cn-save[data-state='offline'] {
   color: var(--ts-ink60);
@@ -352,9 +361,10 @@
   gap: var(--ts-space-2);
   padding: var(--ts-space-3);
   border-radius: var(--ts-radius-button);
-  /* Terracotta, not brick. Something is missing from a form. */
-  background: var(--ts-terracotta10);
-  color: var(--ts-terracotta);
+  /* The action colour, never the alarm. Something is missing from a form,
+     which is a thing to fix and not a thing to be frightened of. */
+  background: var(--ts-action-quiet);
+  color: var(--ts-action);
   font-family: var(--ts-font-sans);
   font-size: var(--ts-text-label);
   margin: 0;
@@ -433,7 +443,7 @@
   border-color: var(--ts-action);
 }
 .cn-nl[data-bad] {
-  border-color: var(--ts-terracotta);
+  border-color: var(--ts-action);
 }
 .cn-nl-ic {
   color: var(--ts-ink45);
@@ -464,8 +474,10 @@
   background: var(--ts-gold14);
   color: var(--ts-ink);
 }
+/* Could not read it. The action colour, because the next move is the
+   resident's and it is a small one. */
 .cn-parse[data-tone='bad'] {
-  background: var(--ts-terracotta10);
+  background: var(--ts-action-quiet);
   color: var(--ts-ink);
 }
 .cn-parse-read {
@@ -521,8 +533,8 @@
   cursor: pointer;
 }
 .cn-chip[data-on] {
-  background: var(--ts-navy);
-  border-color: var(--ts-navy);
+  background: var(--ts-structure);
+  border-color: var(--ts-structure);
   color: var(--ts-cream);
 }
 .cn-chip:focus-visible {
@@ -734,7 +746,7 @@
   height: 56px;
   border-radius: var(--ts-radius-full);
   background: var(--ts-gold14);
-  color: var(--ts-gold-text);
+  color: var(--ts-civic-text);
 }
 .cn-gate-title {
   font-family: var(--ts-font-serif);
@@ -818,12 +830,12 @@
   cursor: pointer;
 }
 .cn-sev-opt[data-on] {
-  border-color: var(--ts-navy);
+  border-color: var(--ts-structure);
 }
 /* The loud one is gold, not brick: it is the loudest thing a person may send
    and it is still not an emergency, which is a rung nobody types into a form. */
 .cn-sev-opt[data-loud][data-on] {
-  border-color: var(--ts-gold);
+  border-color: var(--ts-civic);
   background: var(--ts-gold14);
 }
 .cn-sev-opt input {
@@ -840,8 +852,8 @@
   margin-top: 2px;
 }
 .cn-sev-opt[data-on] .cn-sev-mark {
-  border-color: var(--ts-navy);
-  box-shadow: inset 0 0 0 4px var(--ts-navy);
+  border-color: var(--ts-structure);
+  box-shadow: inset 0 0 0 4px var(--ts-structure);
 }
 .cn-sev-opt:focus-within {
   box-shadow: var(--ts-focus);
@@ -932,13 +944,11 @@
   display: grid;
   gap: var(--ts-space-3);
 }
+/* `Card` owns the surface, border, radius and inset. This adds only the
+   stacking, which is the part a card has no opinion about. */
 .cn-mine-row {
   display: grid;
   gap: var(--ts-space-2);
-  padding: var(--ts-space-4);
-  background: var(--ts-surface);
-  border: 1px solid var(--ts-hairline);
-  border-radius: var(--ts-radius-card);
 }
 .cn-mine-head {
   display: flex;
@@ -971,11 +981,11 @@
 }
 .cn-status[data-tone='live'] {
   background: var(--ts-sage14);
-  color: var(--ts-sage);
+  color: var(--ts-verified);
 }
 .cn-status[data-tone='sched'] {
   background: var(--ts-gold14);
-  color: var(--ts-gold-text);
+  color: var(--ts-civic-text);
 }
 /* Turned down is ink, not brick and not even terracotta. Being told no is not
    an emergency and it is not a warning; it is an answer. */
@@ -1019,10 +1029,6 @@
   display: grid;
   gap: var(--ts-space-3);
   justify-items: start;
-  padding: var(--ts-space-5);
-  background: var(--ts-surface);
-  border: 1px solid var(--ts-hairline);
-  border-radius: var(--ts-radius-card);
 }
 
 .cn-pause {
@@ -1085,7 +1091,7 @@
   color: var(--ts-ink60);
 }
 .cn-pause-list svg {
-  color: var(--ts-sage);
+  color: var(--ts-verified);
   flex: none;
 }
 
@@ -1146,7 +1152,8 @@
   display: flex;
   align-items: center;
   gap: var(--ts-space-1);
-  color: var(--ts-terracotta) !important;
+  /* What is stopping it going up, not a warning about it. */
+  color: var(--ts-action) !important;
 }
 .cn-draft-old {
   display: flex;
@@ -1159,11 +1166,6 @@
   font-size: var(--ts-text-caption);
   color: var(--ts-ink45);
   margin: 0;
-}
-
-.cn-danger {
-  border-color: var(--ts-terracotta);
-  color: var(--ts-terracotta);
 }
 
 /* ── history ─────────────────────────────────────────────────────────────── */
@@ -1189,7 +1191,7 @@
   background: var(--ts-ink26);
 }
 .cn-hist-row[data-current] .cn-hist-dot {
-  background: var(--ts-sage);
+  background: var(--ts-verified);
 }
 .cn-hist-card {
   display: grid;
@@ -1212,7 +1214,7 @@
   font-size: 10px;
   letter-spacing: 0.1em;
   text-transform: uppercase;
-  color: var(--ts-sage);
+  color: var(--ts-verified);
 }
 .cn-hist-what {
   font-family: var(--ts-font-sans);
@@ -1327,7 +1329,7 @@
   padding: 2px var(--ts-space-2);
   border-radius: var(--ts-radius-full);
   background: var(--ts-sage14);
-  color: var(--ts-sage);
+  color: var(--ts-verified);
   font-family: var(--ts-font-sans);
   font-size: var(--ts-text-caption);
 }

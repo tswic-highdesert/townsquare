@@ -19,7 +19,7 @@
  * anything at 6am when the river is up.
  */
 
-import { Button, EmptyState } from '../ui/index.js'
+import { Button, Card, EmptyState } from '../ui/index.js'
 import { Icon } from '../Icon.js'
 import type { Contribution, PauseState, SubmitResult } from './contributeData.js'
 
@@ -33,7 +33,7 @@ export function OutcomePanel(props: {
 
   if (result.duplicate) {
     return (
-      <div className="cn-outcome" data-tone="wait">
+      <Card className="cn-outcome" elevation="raised">
         <StatusLine icon="check-circle" tone="wait" label="Already sent" />
         <p className="cn-gate-say">
           <b>You already sent this one.</b> We kept the first one rather than making a second, so a
@@ -42,13 +42,13 @@ export function OutcomePanel(props: {
         <Button variant="secondary" onClick={props.onDone}>
           Back
         </Button>
-      </div>
+      </Card>
     )
   }
 
   if (result.outcome === 'published') {
     return (
-      <div className="cn-outcome" data-tone="live">
+      <Card className="cn-outcome" elevation="raised">
         <StatusLine icon="check-circle" tone="live" label="Live" />
         <p className="cn-gate-say">
           <b>It is up.</b> Editing it makes a new version, and the old one stays where it is.
@@ -63,13 +63,13 @@ export function OutcomePanel(props: {
             Done
           </Button>
         </div>
-      </div>
+      </Card>
     )
   }
 
   if (result.outcome === 'held_for_verification') {
     return (
-      <div className="cn-outcome" data-tone="need">
+      <Card className="cn-outcome" elevation="raised">
         <StatusLine icon="user-plus" tone="need" label="Needs vouching" />
         <p className="cn-gate-say">
           <b>Saved, and it will post the moment you are verified.</b> Adding this is for verified
@@ -79,14 +79,14 @@ export function OutcomePanel(props: {
         <Button variant="secondary" onClick={props.onDone}>
           Back
         </Button>
-      </div>
+      </Card>
     )
   }
 
   if (result.outcome === 'scheduled') {
     const when = result.contribution.scheduledFor
     return (
-      <div className="cn-outcome" data-tone="sched">
+      <Card className="cn-outcome" elevation="raised">
         <StatusLine icon="calendar" tone="sched" label="Scheduled" />
         <p className="cn-gate-say">
           <b>{when ? `Goes out ${fullWhen(when)}.` : 'Goes out at the time you set.'}</b> Nobody can
@@ -96,12 +96,12 @@ export function OutcomePanel(props: {
         <Button variant="secondary" onClick={props.onDone}>
           Back
         </Button>
-      </div>
+      </Card>
     )
   }
 
   return (
-    <div className="cn-outcome" data-tone="wait">
+    <Card className="cn-outcome" elevation="raised">
       <StatusLine icon="clock" tone="wait" label="Being read" />
       <p className="cn-gate-say">
         <b>A moderator has this.</b> Corrections are read by a person before they change the town's
@@ -110,7 +110,7 @@ export function OutcomePanel(props: {
       <Button variant="secondary" onClick={props.onDone}>
         Back
       </Button>
-    </div>
+    </Card>
   )
 }
 
@@ -131,8 +131,13 @@ export function ContributionRow(props: {
   const title = titleOf(c)
 
   return (
-    <li className="cn-mine-row" data-status={c.status}>
-      <div className="cn-mine-head">
+    <li>
+      {/* A `Card`, not a `Row`: `Row` is one target for the whole row and this
+          one carries a History and a Withdraw button. `Row`'s own note says a
+          trailing slot is not a second tap target, and Nearby's Call and
+          Directions are the pattern for a card that genuinely has two. */}
+      <Card className="cn-mine-row" elevation="flat">
+      <div className="cn-mine-head" data-status={c.status}>
         <StatusLine {...statusFor(c.status)} />
         <span className="cn-mine-age">{ago(c.updatedAt)}</span>
       </div>
@@ -167,6 +172,7 @@ export function ContributionRow(props: {
           </Button>
         ) : null}
       </div>
+      </Card>
     </li>
   )
 }

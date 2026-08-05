@@ -217,7 +217,22 @@ export function ContributeScreen(props: ContributeScreenProps) {
     }
     setProblem(null)
 
-    const result = await submit(draftId ? { type, content, draftId } : { type, content })
+    /**
+     * Publish what is on screen, never the last autosave.
+     *
+     * Sending `draftId` makes the server load, validate and publish the stored
+     * draft, which is right when somebody publishes from the drafts list and
+     * wrong here: autosave is debounced, so a resident who confirms a date and
+     * presses Post inside that window would publish a copy of their work from
+     * a second and a half ago. That is exactly the class of gap the queue's
+     * "approve one exact version" rule exists to close, and it showed up here
+     * as an event refusing to post with its start time visibly confirmed on
+     * the screen.
+     *
+     * The draft is scratch space; the composer is the truth. So the content
+     * goes up as it stands and the draft is thrown away afterwards.
+     */
+    const result = await submit({ type, content })
     if (isError(result)) {
       // The pause is its own screen rather than an error line, because it is
       // not a refusal and should not read as one.
@@ -225,6 +240,11 @@ export function ContributeScreen(props: ContributeScreenProps) {
       else setProblem(result.message)
       return
     }
+    // Only once the proposal exists: a draft deleted before the submit landed
+    // is work lost to a network blip. Awaited rather than fired off, because
+    // the reload underneath reads the drafts list and a racing discard leaves
+    // "1 draft, not posted yet" sitting under something that just went live.
+    if (draftId) await discardDraft(draftId)
     setDraftId(null)
     setView({ at: 'outcome', result })
     void reload()
