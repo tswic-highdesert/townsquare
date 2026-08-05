@@ -14,6 +14,7 @@ import {
   greetingFor,
   hoursToday,
   openState,
+  isRoutineRecord,
   pickLead,
   readingMinutes,
   rotate,
@@ -128,9 +129,31 @@ describe('hoursToday', () => {
   })
 })
 
+describe('isRoutineRecord', () => {
+  it('catches the standing records the paper files daily', () => {
+    // All real titles from The Courier.
+    expect(isRoutineRecord({ title: 'Bond hearings Aug. 5, 2026' })).toBe(true)
+    expect(isRoutineRecord({ title: 'News Briefs for Aug. 5' })).toBe(true)
+    expect(isRoutineRecord({ title: 'Weather' })).toBe(true)
+    expect(isRoutineRecord({ title: 'State Capitol Week in Review' })).toBe(true)
+  })
+
+  it('leaves reporting alone, including a story that ends in a date', () => {
+    // The tempting "title ends in a date" rule would bury this one.
+    expect(isRoutineRecord({ title: 'Hispanic Heritage Festival set for Sept. 26' })).toBe(false)
+    expect(isRoutineRecord({ title: 'Bavarian Circus coming to Russellville this weekend' })).toBe(
+      false,
+    )
+    expect(isRoutineRecord({ title: "'Not enough land' to build data center in Russellville" })).toBe(
+      false,
+    )
+    expect(isRoutineRecord({ title: 'Pottsville council investigating allegations' })).toBe(false)
+  })
+})
+
 describe('pickLead', () => {
   const at = (iso: string, imageUrl?: string) =>
-    ({ id: iso, publishedAt: iso, imageUrl }) as never
+    ({ id: iso, title: 'A reported story', publishedAt: iso, imageUrl }) as never
   const NOW = Date.parse('2026-08-05T14:00:00.000Z')
 
   it('reaches past a newer story to find one with art', () => {
@@ -157,6 +180,17 @@ describe('pickLead', () => {
 
   it('is undefined when the town published nothing', () => {
     expect(pickLead([], NOW)).toBeUndefined()
+  })
+
+  it('passes over a records post with art for reporting without it', () => {
+    const blotter = { id: 'blotter', title: 'Bond hearings Aug. 5, 2026', publishedAt: '2026-08-05T12:00:00.000Z', imageUrl: 'mug.jpg' } as never
+    const reported = { id: 'reported', title: 'Council delays paving bid', publishedAt: '2026-08-05T09:00:00.000Z' } as never
+    expect((pickLead([blotter, reported], NOW) as { id: string }).id).toBe('reported')
+  })
+
+  it('still leads with a records post when it is all the town has', () => {
+    const blotter = { id: 'blotter', title: 'Bond hearings Aug. 5, 2026', publishedAt: '2026-08-05T12:00:00.000Z', imageUrl: 'mug.jpg' } as never
+    expect((pickLead([blotter], NOW) as { id: string }).id).toBe('blotter')
   })
 })
 

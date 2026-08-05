@@ -70,6 +70,17 @@ so leading strictly by recency gives a flat screen most mornings. Whatever the
 hero passes over becomes the first row of More from town, so the preference
 costs a newer story the big slot and never the screen.
 
+**The hero passes over published records and standing columns.** The Courier
+files a bond-hearing roundup most days and it carries a booking photo, so a
+hero picked purely on "newest with art" opened the town's home screen on a
+mugshot most mornings. The objection is not the subject — it is public record
+and it stays in More from town — it is that a records listing is not the top of
+town. `isRoutineRecord` matches by explicit phrase rather than by "title ends
+in a date", because that rule also catches `Hispanic Heritage Festival set for
+Sept. 26`, which is reporting about a future event. A miss costs the hero some
+sparkle; a false positive would quietly bury a story. **Nothing is filtered off
+the screen — this affects the hero slot only.**
+
 **When nothing in town has art, the lead becomes a typographic hero** — a
 panel, a rule in the brand colour, a larger headline, and the summary doing the
 work the photo would have. Not the photo layout with a hole in it.

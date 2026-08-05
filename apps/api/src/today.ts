@@ -284,14 +284,46 @@ export interface AssembleInput {
  */
 const LEAD_PHOTO_WINDOW_MS = 36 * 60 * 60 * 1000
 
+/**
+ * Published records and standing columns, which the hero passes over.
+ *
+ * The Courier files a bond-hearing roundup most days, and it carries a booking
+ * photo, so a hero picked purely on "newest with art" opened the town's home
+ * screen on a mugshot most mornings. The objection is not the subject — this is
+ * public record and it stays in More from town. It is that a records listing is
+ * not the top of town, any more than the classifieds are the front page.
+ *
+ * Matched by explicit phrase, deliberately. The tempting rule is "title ends in
+ * a date", which also catches `Hispanic Heritage Festival set for Sept. 26` —
+ * a real story about a future event. A miss here only costs the hero some
+ * sparkle; a false positive would quietly bury reporting.
+ *
+ * This applies to the **hero slot only**. Nothing is filtered out of the screen.
+ */
+const ROUTINE_RECORD =
+  /\b(bond hearings?|court dockets?|arrest (reports?|logs?)|jail logs?|police reports?|incident reports?|marriage licen[sc]es?|property transfers?|news briefs?|week in review)\b/i
+
+export function isRoutineRecord(story: { title: string }): boolean {
+  const title = story.title.trim()
+  // A bare standing head — `Weather` — is a column slot, not a story.
+  if (/^(weather|obituaries|news briefs?)$/i.test(title)) return true
+  return ROUTINE_RECORD.test(title)
+}
+
 export function pickLead(
   stories: readonly StoryItem[],
   nowMs: number,
 ): StoryItem | undefined {
-  const withPhoto = stories.find(
-    (s) => s.imageUrl && nowMs - new Date(s.publishedAt).getTime() <= LEAD_PHOTO_WINDOW_MS,
-  )
-  return withPhoto ?? stories[0]
+  const fresh = (s: StoryItem) =>
+    nowMs - new Date(s.publishedAt).getTime() <= LEAD_PHOTO_WINDOW_MS
+
+  const withPhoto = stories.find((s) => s.imageUrl && fresh(s) && !isRoutineRecord(s))
+  if (withPhoto) return withPhoto
+
+  // Nothing reported has art. Prefer a reported story with no photo over a
+  // records post with one: the typographic hero exists precisely for this.
+  const reported = stories.find((s) => !isRoutineRecord(s))
+  return reported ?? stories[0]
 }
 
 export function assembleToday(input: AssembleInput): TodayPayload {
