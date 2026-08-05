@@ -16,7 +16,7 @@
 import { useEffect, useState } from 'react'
 import { AppBar } from '../AppBar.js'
 import { Icon } from '../Icon.js'
-import { Skeleton } from '../ui/index.js'
+import { Card, Skeleton } from '../ui/index.js'
 import type { AccountView } from '../session.js'
 import {
   fetchNews,
@@ -390,7 +390,14 @@ function Row({ story, onOpen }: { story: NewsStory; onOpen: () => void }) {
  */
 function Cluster({ cluster, onOpen }: { cluster: NewsCluster; onOpen: (id: string) => void }) {
   return (
-    <article className="nw-cluster">
+    /*
+      `Card` supplies the surface, border, radius and raised shadow; the only
+      thing `.nw-cluster` adds is `padding: 0`, because this card's body is a
+      full-bleed list with its own dividers rather than padded copy. `Card` has
+      no unpadded variant, which is the one gap worth naming: a card whose
+      content is a `RowList` is a shape more than one section wants.
+    */
+    <Card elevation="raised" className="nw-cluster">
       <div className="nw-cluster-head">
         <span className="nw-cluster-eyebrow">
           <Icon name="layers" size={13} />
@@ -419,7 +426,7 @@ function Cluster({ cluster, onOpen }: { cluster: NewsCluster; onOpen: (id: strin
           </li>
         ))}
       </ul>
-    </article>
+    </Card>
   )
 }
 

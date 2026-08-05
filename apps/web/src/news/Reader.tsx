@@ -18,9 +18,9 @@
 
 import { useEffect, useState } from 'react'
 import { Icon } from '../Icon.js'
-import { Skeleton } from '../ui/index.js'
+import { Card, RowItem, RowList, Skeleton } from '../ui/index.js'
 import { Byline, Mark, SectionHead } from './News.js'
-import { fetchStory, type NewsStory, type ReaderPayload } from './newsData.js'
+import { fetchStory, type ReaderPayload } from './newsData.js'
 import './news.css'
 
 export interface ReaderProps {
@@ -178,7 +178,13 @@ export function Reader(props: ReaderProps) {
           </a>
         )}
 
-        <div className="nw-src" data-inline="true">
+        {/*
+          `Card` from the primitives, unmodified. A padded surface holding a
+          mark and three lines is exactly what it is for, and the alternative
+          was a `.nw-src` that reimplemented its border, radius, padding and
+          shadow to land in the same place.
+        */}
+        <Card className="nw-src">
           <Mark story={story} large />
           <div className="nw-src-text">
             <div className="nw-src-name">{source.name}</div>
@@ -192,7 +198,7 @@ export function Reader(props: ReaderProps) {
               {source.storyCount} {source.storyCount === 1 ? 'story' : 'stories'} in the feed
             </div>
           </div>
-        </div>
+        </Card>
 
         {/*
           On every story, not buried in settings, because the honest answer is
@@ -221,22 +227,27 @@ export function Reader(props: ReaderProps) {
         {alsoCovering.length > 0 && (
           <div className="nw-sec nw-sec-flush">
             <SectionHead label="Also covering this" />
-            <div className="nw-list">
-              {alsoCovering.map((other: NewsStory) => (
-                <button
+            {/*
+              `RowList` from the primitives, at the compact density, which is a
+              token override rather than a second component. This list is the
+              one place in the section where the shape matches exactly: no
+              thumbnail, a chevron because the row goes somewhere, and a title
+              over a byline. The feed's rows do not — see the note on `Row` in
+              `News.tsx`.
+
+              Unframed, because it sits inline under a section rule rather than
+              standing on its own as a card.
+            */}
+            <RowList density="compact" framed={false} label="Also covering this">
+              {alsoCovering.map((other) => (
+                <RowItem
                   key={other.id}
-                  className="nw-row"
-                  data-density="compact"
+                  title={other.title}
+                  meta={<Byline story={other} small />}
                   onClick={() => props.onOpenStory(other.id)}
-                >
-                  <span className="nw-row-text">
-                    <span className="nw-row-title">{other.title}</span>
-                    <Byline story={other} small />
-                  </span>
-                  <Icon name="chevron-right" size={16} className="nw-out" />
-                </button>
+                />
               ))}
-            </div>
+            </RowList>
           </div>
         )}
       </article>

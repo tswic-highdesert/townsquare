@@ -154,9 +154,19 @@
   margin: var(--ts-space-3) var(--ts-space-5) 0;
   padding: var(--ts-space-3);
   border-radius: var(--ts-radius-card);
-  /* Gold, the civic register. Stale news is not the alarm register: --ts-brick
-   * is for the river being up, and spending it here spends the one colour that
-   * is supposed to still mean something at 6am. */
+  /*
+   * Gold, and deliberately the raw pigment rather than `--ts-civic`.
+   *
+   * The role means "the town speaking: notices, closures, official postings".
+   * This banner is Town Square admitting its own scrapers have stopped
+   * answering, which is us speaking about ourselves. Taking the civic token
+   * would say the city posted it, and in a town where a gold card is how a
+   * boil-water notice looks, that is a meaningful thing to get wrong.
+   *
+   * Not the alarm register either: --ts-brick is for the river being up, and
+   * spending it on stale data spends the one colour still supposed to mean
+   * something at 6am.
+   */
   background: var(--ts-gold14);
   color: var(--ts-gold-text);
 }
@@ -500,11 +510,20 @@
 
 /* ── the cluster ────────────────────────────────────────────────────────── */
 
-.nw-cluster {
-  border: 1px solid var(--ts-hairline);
-  border-radius: var(--ts-radius-card);
-  background: var(--ts-surface);
-  box-shadow: var(--ts-shadow-raised);
+/*
+ * The frame is `Card elevation="raised"`. All this adds is the padding reset:
+ * the card's body is a full-bleed list with its own dividers, not padded copy,
+ * so the rows have to reach the border.
+ *
+ * Written as `.ts-card.nw-cluster`, and the doubled selector is load-bearing.
+ * A stylesheet imported from its own component is injected *before* the entry
+ * imports `ui/ui.css`, so at equal specificity the primitive wins and this
+ * reset silently does nothing. Measured, not assumed: the injected order in
+ * dev is nav.css, news.css, ui.css, index.css. The extra class makes the
+ * override independent of where the bundler decides to put us.
+ */
+.ts-card.nw-cluster {
+  padding: 0;
   overflow: hidden;
 }
 
@@ -649,15 +668,12 @@
 
 /* ── source card ────────────────────────────────────────────────────────── */
 
-.nw-src {
+/* `Card` supplies the surface, border, radius, padding and shadow. This is the
+ * arrangement of what is inside it and nothing else. Doubled selector for the
+ * same load-order reason as `.ts-card.nw-cluster` above. */
+.ts-card.nw-src {
   display: flex;
   gap: var(--ts-space-3);
-  width: 100%;
-  padding: var(--ts-space-4);
-  background: var(--ts-surface);
-  border: 1px solid var(--ts-hairline);
-  border-radius: var(--ts-radius-card);
-  box-shadow: var(--ts-shadow-flat);
 }
 
 .nw-src-text {
