@@ -26,7 +26,7 @@ import { ContributionError } from './errors.js'
 import {
   CORRECTION_FIELDS,
   EVENT_CATEGORIES,
-  NOTICE_SEVERITIES,
+  COMPOSABLE_SEVERITIES,
   type CollectionContent,
   type CollectionItem,
   type ContributionContent,
@@ -147,7 +147,10 @@ function correction(body: Record<string, unknown>): CorrectionContent {
 }
 
 function notice(body: Record<string, unknown>, now: number): NoticeContent {
-  const severity = oneOf(body['severity'], NOTICE_SEVERITIES, 'severity') as NoticeSeverity
+  // Composable rungs only. `emergency` is refused here rather than in the gate
+  // matrix, because it is not a question of who is allowed to send one: nobody
+  // types an emergency into a form. See `COMPOSABLE_SEVERITIES`.
+  const severity = oneOf(body['severity'], COMPOSABLE_SEVERITIES, 'severity') as NoticeSeverity
   const raw = body['publishAt']
   let publishAt: number | null = null
   if (raw !== undefined && raw !== null) {

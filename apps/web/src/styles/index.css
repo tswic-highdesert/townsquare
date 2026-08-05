@@ -1,2 +1,28 @@
-@import '../ui/ui.css';
+/*
+ * The shell's screen styles, in the order they were written.
+ *
+ * This was one 2200-line `theme.css` until six people needed to write into it
+ * at once. The split is by screen, and the import order below reproduces the
+ * old file line for line: cascade order in CSS is meaning, so a file that
+ * moves up this list changes what wins, not just where it lives. Add a new
+ * screen at the end; put a rule everything depends on in `base.css`.
+ *
+ * The primitives layer, `ui/ui.css`, is deliberately not imported from here.
+ * It has to load *before* this file, so a screen can override a primitive and
+ * never the other way round, and `main.tsx` does both imports in that order.
+ * It cannot be an `@import` here at all: postcss will not follow a parent
+ * traversal out of this directory, and fails with an ENOENT that names the
+ * path but not the reason.
+ */
+
 @import './base.css';
+@import './gallery.css';
+@import './chrome.css';
+@import './trust.css';
+@import './boot.css';
+@import './identity.css';
+@import './review.css';
+@import './today.css';
+@import './nearby.css';
+@import './yours.css';
+@import './map.css';

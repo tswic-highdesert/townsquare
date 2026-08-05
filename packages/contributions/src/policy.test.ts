@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import { availabilityFor, PUBLISH_GATES, resolveGate, routeFor } from './policy.js'
-import { CONTRIBUTION_TYPES } from './model.js'
+import { COMPOSABLE_SEVERITIES, CONTRIBUTION_TYPES, NOTICE_SEVERITIES, type NoticeSeverity } from './model.js'
 
 describe('the publish gate matrix', () => {
   it('has a row for every type the chooser offers, and no others', () => {
@@ -25,7 +25,7 @@ describe('the publish gate matrix', () => {
   })
 
   it('sends only an urgent notice to a human', () => {
-    const route = (severity: 'notice' | 'time_sensitive' | 'urgent') =>
+    const route = (severity: NoticeSeverity) =>
       resolveGate('notice', {
         kind: 'notice',
         title: 't',
@@ -34,13 +34,28 @@ describe('the publish gate matrix', () => {
         publishAt: null,
       }).route
 
-    expect(route('notice')).toBe('immediate')
-    expect(route('time_sensitive')).toBe('immediate')
+    expect(route('informational')).toBe('immediate')
+    expect(route('advisory')).toBe('immediate')
     expect(route('urgent')).toBe('moderator')
+    // Unreachable from any composer, and a human anyway if it ever is written.
+    expect(route('emergency')).toBe('moderator')
   })
 
   it('defaults a notice with no severity to the quiet route, never the loud one', () => {
+    // Section 9's rule for an ambiguous upstream source, applied to an
+    // ambiguous body: round down, and let the resident raise their own
+    // threshold. Rounding up is how a leaf-pickup schedule wakes somebody.
     expect(resolveGate('notice', null).route).toBe('immediate')
+  })
+
+  it('uses the same four rungs as the civic ladder, and lets a composer reach three', () => {
+    // One ladder, not two. The rung on a notice an organisation wrote and the
+    // rung on a notice scraped from the water utility are the same object,
+    // because they reach a resident through the same channel.
+    expect(NOTICE_SEVERITIES).toEqual(['informational', 'advisory', 'urgent', 'emergency'])
+    expect(COMPOSABLE_SEVERITIES).toEqual(['informational', 'advisory', 'urgent'])
+    // The one nobody can turn off is the one nobody can type.
+    expect(COMPOSABLE_SEVERITIES).not.toContain('emergency')
   })
 
   it('routes a correction to the owner only when somebody has claimed the listing', () => {

@@ -87,17 +87,30 @@ function brand(): Plugin {
  * same-origin reference needing no CORS, no widened `img-src`, and no third
  * party in the load path of the town's home screen. Cached for an hour rather
  * than forever, because unlike a font file this one is still being drawn.
+ *
+ * The two rewrites below are the price of not keeping a second copy, and both
+ * are real. The sprite is authored to be **inlined** into the built design
+ * sheet, where the HTML parser hands it the SVG namespace and `display:none`
+ * only hides a block that was never going to render. Fetched as its own
+ * document it is parsed as XML, where a missing `xmlns` leaves every `<symbol>`
+ * in no namespace and `<use>` silently resolves to nothing: no console error,
+ * no failed request, just icons with a zero-size box. Adding the namespace and
+ * dropping the `display:none` here keeps `design/hifi-v2/icons.svg` correct for
+ * its own purpose and correct for ours.
  */
 function icons(): Plugin {
   return {
     name: 'townsquare-icons',
     configureServer(server) {
       server.middlewares.use('/icons.svg', (_req, res, next) => {
-        readFile(SPRITE_FILE).then(
-          (bytes) => {
+        readFile(SPRITE_FILE, 'utf8').then(
+          (text) => {
+            const doc = text
+              .replace(/^(\s*<svg\b)(?![^>]*\bxmlns=)/, '$1 xmlns="http://www.w3.org/2000/svg"')
+              .replace(/^(\s*<svg\b[^>]*?)\s*style="display:none"/, '$1')
             res.setHeader('Content-Type', 'image/svg+xml')
             res.setHeader('Cache-Control', 'public, max-age=3600')
-            res.end(bytes)
+            res.end(doc)
           },
           () => next(),
         )

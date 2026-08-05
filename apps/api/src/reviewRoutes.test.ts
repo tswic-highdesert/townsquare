@@ -26,6 +26,14 @@ import {
   Reports,
   Review,
 } from '@townsquare/review'
+import {
+  Contributions,
+  MemoryAttemptLog,
+  MemoryContributionStore,
+  MemoryRecordStore,
+  NoListingOwners,
+  NoOrganisations,
+} from '@townsquare/contributions'
 import { CreationStorage, MemoryStorageStore } from '@townsquare/storage'
 import { createIdentityRoutes } from './identityRoutes.js'
 import { createReviewRoutes } from './reviewRoutes.js'
@@ -125,6 +133,18 @@ beforeEach(() => {
     review,
     reports,
     moderation,
+    contributions: new Contributions({
+      contributions: new MemoryContributionStore(),
+      records: new MemoryRecordStore(),
+      attempts: new MemoryAttemptLog(),
+      orgs: new NoOrganisations(),
+      ownership: new NoListingOwners(),
+      listings: {
+        async current() {
+          return null
+        },
+      },
+    }),
     shellOrigin: SHELL_ORIGIN,
     townId: TOWN,
   })

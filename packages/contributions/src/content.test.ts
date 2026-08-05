@@ -115,7 +115,7 @@ describe('a notice', () => {
   it('treats a send time that has slipped past as now, rather than an error', () => {
     const content = validateContent(
       'notice',
-      { title: 'Supper is early', body: 'In the gym.', severity: 'notice', publishAt: NOW - 5000 },
+      { title: 'Supper is early', body: 'In the gym.', severity: 'informational', publishAt: NOW - 5000 },
       NOW,
     )
     if (content.kind !== 'notice') throw new Error('expected a notice')
@@ -129,7 +129,7 @@ describe('a notice', () => {
         {
           title: 'Supper is early',
           body: 'In the gym.',
-          severity: 'notice',
+          severity: 'informational',
           publishAt: NOW + 200 * 24 * 60 * 60 * 1000,
         },
         NOW,
@@ -149,5 +149,20 @@ describe('the pin', () => {
     const a = validateContent('event', anEvent, NOW)
     const b = validateContent('event', { ...anEvent, title: `${anEvent.title}.` }, NOW)
     expect(digestContent(a)).not.toBe(digestContent(b))
+  })
+})
+
+describe('the emergency rung', () => {
+  it('cannot be typed into a form, at any standing', () => {
+    // Section 9: emergency breaks through a silent phone and is the one channel
+    // a resident cannot turn off. Refused in validation rather than in the gate
+    // matrix, because this is not a question of who is allowed to send one.
+    expect(() =>
+      validateContent(
+        'notice',
+        { title: 'Tornado warning', body: 'Take shelter now.', severity: 'emergency' },
+        NOW,
+      ),
+    ).toThrowError(/severity must be one of informational, advisory, urgent/)
   })
 })

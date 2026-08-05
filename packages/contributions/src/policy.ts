@@ -89,11 +89,17 @@ export interface PublishGate {
  * The difference is that one of them wakes up every phone in Russellville
  * tonight, and that is a difference a human should look at rather than a
  * difference in who is allowed to type.
+ *
+ * `emergency` is here for completeness and is unreachable from any composer —
+ * `COMPOSABLE_SEVERITIES` refuses it before this table is ever consulted. It is
+ * mapped to `moderator` rather than left out so that the day an ingest path
+ * does write one, the fallback is a human and not an accident.
  */
 const NOTICE_ROUTES: Record<NoticeSeverity, PublishRoute> = {
-  notice: 'immediate',
-  time_sensitive: 'immediate',
+  informational: 'immediate',
+  advisory: 'immediate',
   urgent: 'moderator',
+  emergency: 'moderator',
 }
 
 export const PUBLISH_GATES: Record<ContributionType, PublishGate> = {

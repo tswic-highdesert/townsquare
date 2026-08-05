@@ -100,7 +100,7 @@ describe('the gate matrix decides what happens, per type', () => {
       service.submit(dana, {
         townId: TOWN,
         type: 'notice',
-        content: { title: 'Supper moves to 5:30', body: 'The hall is being refinished.', severity: 'notice' },
+        content: { title: 'Supper moves to 5:30', body: 'The hall is being refinished.', severity: 'informational' },
       }),
     ).rejects.toMatchObject({ code: 'forbidden' })
   })
@@ -111,7 +111,7 @@ describe('the gate matrix decides what happens, per type', () => {
     const routine = await service.submit(dana, {
       townId: TOWN,
       type: 'notice',
-      content: { title: 'Supper moves to 5:30', body: 'The hall is being refinished.', severity: 'notice' },
+      content: { title: 'Supper moves to 5:30', body: 'The hall is being refinished.', severity: 'informational' },
     })
     expect(routine.outcome).toBe('published')
     expect(routine.contribution.attribution).toMatchObject({
@@ -139,7 +139,7 @@ describe('the gate matrix decides what happens, per type', () => {
       content: {
         title: 'Vacation bible school sign ups open Friday',
         body: 'Forms are in the office.',
-        severity: 'notice',
+        severity: 'informational',
         publishAt: MONDAY + 4 * 60 * 60 * 1000,
       },
     })

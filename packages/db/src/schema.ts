@@ -467,6 +467,24 @@ export const recordVersions = pgTable(
     data: jsonb('data').$type<Record<string, unknown>>().notNull(),
     authorUserId: uuid('author_user_id'),
     authorCreationId: uuid('author_creation_id'),
+    /**
+     * Set when an organisation is the author in public. The staff handle is
+     * still `author_user_id`, so accountability inside the building survives.
+     */
+    authorOrgId: uuid('author_org_id'),
+    /**
+     * What produced this version when no resident did: the directory import, or
+     * a moderator acting as a role rather than as a named person.
+     *
+     * This is the other half of dual attribution, and it is what lets a
+     * corrected listing say both things at once — that version 1 of the hours
+     * came from the March 2025 scrape and version 2 came from the neighbour who
+     * read the sign taped to the door. Without it the town's record has to
+     * either drop the source or pretend a resident wrote it.
+     */
+    authorSourceLabel: text('author_source_label'),
+    /** The proposal this version came out of, when it came out of one. */
+    contributionId: uuid('contribution_id'),
     revertedFrom: integer('reverted_from'),
     createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
   },
@@ -489,6 +507,126 @@ export const creationStorage = pgTable(
     updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
   },
   (t) => ({ pk: primaryKey({ columns: [t.creationId, t.userId, t.key] }) }),
+)
+
+// ── contributing ────────────────────────────────────────────────────────────
+
+/**
+ * A proposal, which is not a publication.
+ *
+ * The same shape as `creation_versions` in the queue and for the same reason:
+ * the row carries its own content and a digest of it, and the digest is checked
+ * again at the moment it publishes. A draft is scratch space its owner keeps
+ * editing, so a queue that merely pointed at one would let the words change
+ * between the moderator reading them and the publish landing.
+ *
+ * `attribution` is jsonb rather than a set of nullable columns because it is a
+ * closed discriminated union — a resident, a resident through a creation, an
+ * organisation, a creation on a schedule, or the source that was already there
+ * — and five nullable id columns with a comment about which combinations are
+ * legal is the version of this that goes wrong.
+ */
+export const contributions = pgTable(
+  'contributions',
+  {
+    id: uuid('id').primaryKey().defaultRandom(),
+    townId: text('town_id').notNull(),
+    /** 'event' | 'correction' | 'notice' | 'collection' | 'photo' */
+    type: text('type').notNull(),
+    content: jsonb('content').$type<Record<string, unknown>>().notNull(),
+    /** sha256 over the canonical content. Re-checked at publish. */
+    contentDigest: text('content_digest').notNull(),
+    attribution: jsonb('attribution').$type<Record<string, unknown>>().notNull(),
+    /** Denormalised out of `attribution` so the scoping queries have an index. */
+    contributorId: uuid('contributor_id'),
+    /**
+     * 'held_for_verification' | 'queued' | 'scheduled' | 'published' |
+     * 'declined' | 'withdrawn'
+     */
+    status: text('status').notNull(),
+    /** 'none' | 'owner' | 'moderator'. Which desk it is on. */
+    route: text('route').notNull().default('none'),
+    /** Copied off the gate at submit, so a later policy change cannot re-price
+     * what somebody already posted. */
+    countsTowardPause: boolean('counts_toward_pause').notNull().default(true),
+    recordId: uuid('record_id'),
+    recordVersion: integer('record_version'),
+    scheduledFor: timestamp('scheduled_for', { withTimezone: true }),
+    /** Null means the platform decided, not a person. Nobody can be rung about
+     * a system decline, and a note signed by a moderator who never wrote it
+     * would be a lie in the one place a resident is owed a straight answer. */
+    decidedBy: uuid('decided_by'),
+    decisionNote: text('decision_note'),
+    decidedAt: timestamp('decided_at', { withTimezone: true }),
+    createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+    updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
+  },
+  (t) => ({
+    queueIdx: index('contributions_queue_idx').on(t.townId, t.status, t.route, t.createdAt),
+    mineIdx: index('contributions_contributor_idx').on(t.contributorId, t.createdAt),
+    dueIdx: index('contributions_scheduled_idx').on(t.status, t.scheduledFor),
+    /**
+     * One open correction per resident, per field, per target.
+     *
+     * Partial on `decided_at is null`, exactly as `reports_open_dup_uq` is, and
+     * for the same argument: Send correction is not a "send this again" button,
+     * so twenty presses are one row a moderator reads once. Once the first has
+     * been decided the resident may file again, because that is a new claim
+     * about a new situation rather than a second copy of the old one.
+     */
+    openCorrectionUq: uniqueIndex('contributions_open_correction_uq')
+      .on(t.contributorId, t.townId, sql`(content->>'targetRef')`, sql`(content->>'field')`)
+      .where(sql`type = 'correction' and decided_at is null`),
+  }),
+)
+
+/**
+ * Scratch space, and the only thing in this schema that is ever really deleted.
+ *
+ * Everything published is versioned forever because the town has a stake in it.
+ * A draft was never published, so there is no history to keep, and retaining
+ * something a resident asked us to throw away would be the wrong kind of
+ * carefulness. Private to its author: no moderator surface reads this table.
+ */
+export const contributionDrafts = pgTable(
+  'contribution_drafts',
+  {
+    id: uuid('id').primaryKey().defaultRandom(),
+    townId: text('town_id').notNull(),
+    userId: uuid('user_id').notNull(),
+    type: text('type').notNull(),
+    /** Deliberately unvalidated. Autosave that refused half-finished work would
+     * fire on every keystroke and lose the race every time. */
+    content: jsonb('content').$type<Record<string, unknown>>().notNull(),
+    title: text('title').notNull(),
+    createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+    updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
+  },
+  (t) => ({
+    mineIdx: index('contribution_drafts_user_idx').on(t.townId, t.userId, t.updatedAt),
+    /** The ninety-day tidy-away sweep. */
+    staleIdx: index('contribution_drafts_stale_idx').on(t.updatedAt),
+  }),
+)
+
+/**
+ * Every publish somebody tried, refused ones included.
+ *
+ * The narrowest table here on purpose: who, when, and whether it landed.
+ * Separate from `contributions` because a refused attempt creates no
+ * contribution, and step four of the ladder — a moderator is told at fifteen
+ * attempts — is about attempts rather than about what got through. Prunable:
+ * nothing reads a row older than the rolling day.
+ */
+export const contributionAttempts = pgTable(
+  'contribution_attempts',
+  {
+    id: uuid('id').primaryKey().defaultRandom(),
+    userId: uuid('user_id').notNull(),
+    allowed: boolean('allowed').notNull(),
+    createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+  },
+  (t) => ({ userIdx: index('contribution_attempts_user_idx').on(t.userId, t.createdAt) }),
 )
 
 // ── moderation ──────────────────────────────────────────────────────────────
@@ -630,6 +768,9 @@ export type CreationRow = typeof creations.$inferSelect
 export type CreationVersionRow = typeof creationVersions.$inferSelect
 export type RecordRow = typeof records.$inferSelect
 export type RecordVersionRow = typeof recordVersions.$inferSelect
+export type ContributionRow = typeof contributions.$inferSelect
+export type NewContributionRow = typeof contributions.$inferInsert
+export type ContributionDraftRow = typeof contributionDrafts.$inferSelect
 export type ReportRow = typeof reports.$inferSelect
 export type ModerationActionRow = typeof moderationActions.$inferSelect
 export type McpTokenRow = typeof mcpTokens.$inferSelect

@@ -20,6 +20,7 @@
 
 import type { IncomingMessage, ServerResponse } from 'node:http'
 import type { Identity } from '@townsquare/identity'
+import { ContributionError, type Contributions } from '@townsquare/contributions'
 import {
   ReviewError,
   type Decision,
@@ -35,6 +36,16 @@ export interface ReviewRoutesConfig {
   review: Review
   reports: Reports
   moderation: Moderation
+  /**
+   * The other queue.
+   *
+   * Contributions are reviewed here rather than behind a gate of their own, on
+   * the argument at the top of this file: everything moderator-facing sits
+   * behind one check so there is one place for it to be right. What a resident
+   * proposed, and what a moderator did about it, is the same class of
+   * information as who reported whom.
+   */
+  contributions: Contributions
   shellOrigin: string
   townId: string
 }
@@ -45,6 +56,17 @@ const STATUS: Record<ReviewError['code'], number> = {
   conflict: 409,
   invalid: 400,
   stale: 409,
+}
+
+/** The contribution package's codes, which overlap but are not identical. */
+const CONTRIBUTION_STATUS: Record<ContributionError['code'], number> = {
+  forbidden: 403,
+  not_found: 404,
+  conflict: 409,
+  invalid: 400,
+  stale: 409,
+  paused: 409,
+  unavailable: 501,
 }
 
 const DECISIONS: readonly Decision[] = ['approve', 'reject', 'request_changes']
@@ -206,9 +228,68 @@ export function createReviewRoutes(cfg: ReviewRoutesConfig) {
         sendJson(res, await cfg.moderation.act(reviewer, moderate[1]!, action, note))
         return true
       }
+
+      // ── what residents proposed ────────────────────────────────────────────
+
+      if (path === '/api/review/contributions' && method === 'GET') {
+        sendJson(res, { items: await cfg.contributions.queue(reviewer, cfg.townId) })
+        return true
+      }
+
+      const contribution = new RegExp(`^/api/review/contributions/${ID}$`).exec(path)
+      if (contribution && method === 'GET') {
+        // The detail carries what the listing says *right now* beside what the
+        // correction claims it said, so a moderator reads a diff rather than a
+        // claim, and reads it against the town as it is at this moment.
+        sendJson(res, await cfg.contributions.detail(reviewer, contribution[1]!))
+        return true
+      }
+
+      const decideContribution = new RegExp(`^/api/review/contributions/${ID}/decide$`).exec(path)
+      if (decideContribution && method === 'POST') {
+        const body = await readFields(req)
+        const decision = str(body, 'decision')
+        if (decision !== 'approve' && decision !== 'decline') {
+          sendJson(res, { error: 'invalid', message: 'decision must be approve or decline' }, 400)
+          return true
+        }
+        // The note requirement lives in the service rather than here: a decline
+        // with no reason is a dead end for the contributor either way, and the
+        // rule has to hold for whatever the second door onto deciding turns out
+        // to be.
+        const note = str(body, 'note').slice(0, 4000)
+        sendJson(
+          res,
+          await cfg.contributions.decide(reviewer, decideContribution[1]!, decision, note),
+        )
+        return true
+      }
+
+      const revertRecord = new RegExp(`^/api/review/records/${ID}/revert$`).exec(path)
+      if (revertRecord && method === 'POST') {
+        const body = await readFields(req)
+        const version = Number(body['version'])
+        if (!Number.isInteger(version) || version < 1) {
+          sendJson(res, { error: 'invalid', message: 'reverting needs a version number' }, 400)
+          return true
+        }
+        sendJson(res, {
+          version: await cfg.contributions.revert(
+            reviewer,
+            revertRecord[1]!,
+            version,
+            str(body, 'note').slice(0, 4000),
+          ),
+        })
+        return true
+      }
     } catch (err) {
       if (err instanceof ReviewError) {
         sendJson(res, { error: err.code, message: err.message }, STATUS[err.code])
+        return true
+      }
+      if (err instanceof ContributionError) {
+        sendJson(res, { error: err.code, message: err.message }, CONTRIBUTION_STATUS[err.code])
         return true
       }
       throw err

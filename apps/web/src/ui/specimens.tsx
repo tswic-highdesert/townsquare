@@ -2,6 +2,10 @@ import { StrictMode, useState } from 'react'
 import { createRoot } from 'react-dom/client'
 import { cssVariables, fontFaceCss } from '@townsquare/tokens'
 import { Icon, SPRITE_ICONS } from '../Icon.js'
+// Same two, in the same order, as `main.tsx`: the primitives layer first so a
+// screen can override it. This page reviews the primitives, so it has to load
+// exactly what the shell loads, not a convenient subset.
+import './ui.css'
 import '../styles/index.css'
 import './specimens.css'
 import {

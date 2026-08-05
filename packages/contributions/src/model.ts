@@ -39,15 +39,55 @@ export const CONTRIBUTION_TYPES: readonly ContributionType[] = [
 /**
  * How far a notice goes, in the level's own words.
  *
- * The consequence is the definition, not the label: `urgent` is the one that
- * wakes up a phone at night, which is why it is the only one a human reads
- * first. See `policy.ts` — the routing lives there, as data.
+ * These are the four rungs of `design/hifi-v2` section 9's severity ladder, and
+ * they are deliberately the *same four* rather than a second vocabulary for
+ * composed notices. The ladder is one object: it names the rung on the card, it
+ * is what the subscription threshold slides through, and it decides whether a
+ * phone makes a sound. A notice an organisation writes and a notice scraped
+ * from the water utility arrive at a resident through the same channel, so
+ * inventing a parallel three-level scale for the composer would mean two things
+ * called "urgent" that mean different things one screen apart.
+ *
+ * The composer's own labels differ from these identifiers, on purpose: a person
+ * writing to their congregation picks "A notice", "Time sensitive", "Urgent",
+ * which are section 12's words. That is a wording decision for the shell. The
+ * rung underneath is what this package stores and routes on.
+ *
+ * The consequence is the definition, not the label:
+ *
+ *   `informational`  in the app only, nobody's phone makes a sound
+ *   `advisory`       a quiet push, and pinned to Today until it passes
+ *   `urgent`         a push, the alert bar, and the takeover
+ *   `emergency`      breaks through silent mode, and cannot be turned off
  */
-export type NoticeSeverity = 'notice' | 'time_sensitive' | 'urgent'
+export type NoticeSeverity = 'informational' | 'advisory' | 'urgent' | 'emergency'
 
 export const NOTICE_SEVERITIES: readonly NoticeSeverity[] = [
-  'notice',
-  'time_sensitive',
+  'informational',
+  'advisory',
+  'urgent',
+  'emergency',
+]
+
+/**
+ * The rungs a person is allowed to reach for, which is not all of them.
+ *
+ * **`emergency` is ingest-only and there is no composer path to it.** Section 9
+ * is explicit that it is the one channel a resident cannot turn off, and every
+ * emergency specimen on that sheet is sourced from the National Weather
+ * Service. A rung that overrides a silent phone at 3am, that nobody can mute,
+ * and that a human being can type into a form is a combination this product
+ * should not own — not because an organisation would abuse it, but because the
+ * first time somebody reaches for it in good faith and is wrong, the channel is
+ * spent for the night the river actually comes up.
+ *
+ * So the ceiling on an authored notice is `urgent`, which already wakes the
+ * town and is already held for a moderator. Anything above that has to come
+ * from an authority with its own siren.
+ */
+export const COMPOSABLE_SEVERITIES: readonly NoticeSeverity[] = [
+  'informational',
+  'advisory',
   'urgent',
 ]
 
