@@ -636,6 +636,24 @@ details > pre {
  * multi-column dashboard was the obvious move and the wrong one — Today is a
  * read, and a read has one column.
  *
+ * ## Where the small type diverges from the hi-fi
+ *
+ * The hi-fi sets every small label in DM Mono at 9.5–11px. On a real screen
+ * with real content that reads as terminal output rather than as a byline —
+ * monospace letter-spacing is doing the damage more than the size is, so
+ * simply enlarging it made the problem louder. Reviewed against the running
+ * app 2026-08-05 and changed to a three-way split:
+ *
+ * | Voice | Face | Where |
+ * |---|---|---|
+ * | Editorial | Newsreader 13.5–14.5px | bylines, attributions, the timestamp |
+ * | Structural | DM Mono 10–11px | section eyebrows, the date, the APP chip |
+ * | Utility | DM Sans 11–12.5px | AM/PM, directory hours |
+ *
+ * The serif is the same face as the headlines, so a byline now reads as part
+ * of the story it sits under. Mono survives only where it is labelling the
+ * page rather than saying something.
+ *
  * Same rule as everything above: not one hex literal.
  */
 
@@ -663,8 +681,8 @@ details > pre {
 }
 
 .today-place {
-  font-family: var(--ts-font-mono);
-  font-size: var(--ts-text-eyebrow);
+  font-family: var(--ts-font-serif);
+  font-size: 13.5px;
   color: var(--ts-ink45);
 }
 
@@ -882,8 +900,8 @@ details > pre {
 }
 
 .lead-meta {
-  font-family: var(--ts-font-mono);
-  font-size: var(--ts-text-eyebrow);
+  font-family: var(--ts-font-serif);
+  font-size: 14.5px;
   color: var(--ts-ink45);
 }
 
@@ -928,8 +946,8 @@ details > pre {
 
 .event-meridiem {
   display: block;
-  font-family: var(--ts-font-mono);
-  font-size: 9.5px;
+  font-family: var(--ts-font-sans);
+  font-size: 11px;
   color: var(--ts-ink45);
   margin-top: 2px;
   text-transform: uppercase;
@@ -1018,8 +1036,8 @@ details > pre {
 }
 
 .featured-by {
-  font-family: var(--ts-font-mono);
-  font-size: var(--ts-text-eyebrow);
+  font-family: var(--ts-font-serif);
+  font-size: 14.5px;
   line-height: 1.35;
   color: var(--ts-cream-muted);
 }
@@ -1032,7 +1050,7 @@ details > pre {
 .featured-kind {
   margin-left: auto;
   font-family: var(--ts-font-mono);
-  font-size: 9.5px;
+  font-size: 10px;
   font-weight: 500;
   letter-spacing: 0.08em;
   background: var(--ts-cream14);
@@ -1225,8 +1243,8 @@ details > pre {
 
 .civic-detail {
   display: block;
-  font-family: var(--ts-font-mono);
-  font-size: var(--ts-text-eyebrow);
+  font-family: var(--ts-font-serif);
+  font-size: 14.5px;
   color: var(--ts-ink45);
   margin-top: 2px;
 }
@@ -1242,14 +1260,64 @@ details > pre {
 .directory-card {
   display: flex;
   flex-direction: column;
-  gap: var(--ts-space-1);
   padding: var(--ts-space-3);
   background: var(--ts-surface);
   border: 1px solid var(--ts-hairline);
   border-radius: var(--ts-radius-sheet);
   box-shadow: 0 1px 2px var(--ts-ink08);
+}
+
+.directory-head {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ts-space-1);
   color: inherit;
   text-decoration: none;
+}
+
+/*
+ * Call and Directions are separate targets from the card itself, because they
+ * go somewhere else entirely — the phone app and a map. Burying them inside one
+ * big link would make "open the website" and "start driving" the same tap.
+ */
+.directory-actions {
+  display: flex;
+  gap: var(--ts-space-4);
+  margin-top: var(--ts-space-3);
+  padding-top: var(--ts-space-2);
+  border-top: 1px solid var(--ts-hairline);
+}
+
+.directory-action {
+  font-size: 12.5px;
+  font-weight: 500;
+  color: var(--ts-terracotta-hover);
+  text-decoration: none;
+}
+
+.directory-action:hover {
+  text-decoration: underline;
+}
+
+/*
+ * Green only when we genuinely know. `openNow` is null whenever the hours
+ * string could not be read, and then the row shows a clock and the raw range
+ * instead of a dot that would be asserting something.
+ */
+.open-dot {
+  width: 7px;
+  height: 7px;
+  flex: none;
+  border-radius: var(--ts-radius-full);
+  background: var(--ts-ink26);
+}
+
+.directory-detail[data-open='true'] {
+  color: var(--ts-sage);
+}
+
+.directory-detail[data-open='true'] .open-dot {
+  background: var(--ts-sage);
 }
 
 .directory-icon {
@@ -1273,7 +1341,8 @@ details > pre {
   display: flex;
   align-items: center;
   gap: var(--ts-space-1);
-  font-size: var(--ts-text-eyebrow);
+  font-family: var(--ts-font-sans);
+  font-size: 12.5px;
   color: var(--ts-ink60);
 }
 
@@ -1302,8 +1371,8 @@ details > pre {
  * resident can tell.
  */
 .today-updated {
-  font-family: var(--ts-font-mono);
-  font-size: var(--ts-text-eyebrow);
+  font-family: var(--ts-font-serif);
+  font-size: 13.5px;
   color: var(--ts-ink45);
   margin-top: var(--ts-space-1);
 }
@@ -1352,4 +1421,68 @@ details > pre {
 
 .today-state .problem {
   margin: 0 auto var(--ts-space-4);
+}
+
+/* ── more from town ──────────────────────────────────────────────────────
+ *
+ * The news under the lead. Roughly half the town's stories carry a photo, so
+ * the thumbnail is an enhancement and never the layout: a row with no image
+ * reads the same, just narrower.
+ */
+
+.more-list {
+  display: flex;
+  flex-direction: column;
+}
+
+.more-list > * + * {
+  border-top: 1px solid var(--ts-ink13);
+}
+
+.more-row {
+  display: flex;
+  align-items: center;
+  gap: var(--ts-space-3);
+  padding: var(--ts-space-3) 2px;
+  color: inherit;
+  text-decoration: none;
+}
+
+.more-text {
+  flex: 1;
+  min-width: 0;
+}
+
+.more-title {
+  display: block;
+  font-family: var(--ts-font-serif);
+  font-size: var(--ts-text-label);
+  font-weight: 500;
+  line-height: 1.28;
+  letter-spacing: -0.008em;
+  text-wrap: pretty;
+}
+
+.more-byline {
+  display: block;
+  font-family: var(--ts-font-serif);
+  font-size: 13.5px;
+  color: var(--ts-ink45);
+  margin-top: 3px;
+}
+
+.more-thumb {
+  flex: none;
+  width: 68px;
+  height: 68px;
+  border-radius: var(--ts-radius-input);
+  overflow: hidden;
+  background: var(--ts-stone);
+}
+
+.more-thumb img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 }

@@ -13,8 +13,10 @@ import {
   categorize,
   greetingFor,
   hoursToday,
+  openState,
   readingMinutes,
   rotate,
+  storyStamp,
   townDay,
   type TodaySource,
   type TownSquareItem,
@@ -125,6 +127,78 @@ describe('hoursToday', () => {
   })
 })
 
+describe('storyStamp', () => {
+  const TZ = 'America/Chicago'
+  const TODAY = '2026-08-05'
+
+  it('gives a clock time only for today', () => {
+    expect(storyStamp('2026-08-05T12:41:00.000Z', TZ, TODAY)).toBe('7:41am')
+  })
+
+  it("names the day instead, so yesterday afternoon cannot read as this afternoon", () => {
+    // 21:51Z on the 4th is 4:51pm Chicago. Shown as "4:51pm" at 10am on the
+    // 5th it looks like something that has not happened yet.
+    expect(storyStamp('2026-08-04T21:51:00.000Z', TZ, TODAY)).toBe('Yesterday')
+    expect(storyStamp('2026-08-02T21:51:00.000Z', TZ, TODAY)).toBe('Sunday')
+  })
+
+  it('falls back to a date once the weekday stops being useful', () => {
+    expect(storyStamp('2026-07-20T15:00:00.000Z', TZ, TODAY)).toBe('Jul 20')
+  })
+})
+
+describe('hoursToday with split shifts', () => {
+  // 82 listings carry a second clause with no weekday of its own.
+  const split = 'Mon 11 AM to 2 PM, 4 to 9 PM, Tue 11 AM to 9 PM'
+
+  it('keeps both halves of a split day, and stops at the next weekday', () => {
+    expect(hoursToday(split, 'Mon')).toBe('11 AM to 2 PM, 4 to 9 PM')
+    expect(hoursToday(split, 'Tue')).toBe('11 AM to 9 PM')
+  })
+})
+
+describe('openState', () => {
+  const at = (h: number, m = 0) => h * 60 + m
+  const week = 'Mon Closed, Tue 10 AM to 6 PM, Wed 11 AM to 2 PM, 4 to 9 PM, Thu Open 24 hours'
+
+  it('says open, and when it shuts', () => {
+    expect(openState(week, 'Tue', at(13))).toEqual({ open: true, label: 'Open until 6 PM' })
+    expect(openState(week, 'Thu', at(3))).toEqual({ open: true, label: 'Open 24 hours' })
+  })
+
+  it('handles a split shift on both sides of the gap', () => {
+    expect(openState(week, 'Wed', at(12))).toEqual({ open: true, label: 'Open until 2 PM' })
+    expect(openState(week, 'Wed', at(15))).toEqual({ open: false, label: 'Closed \u00b7 opens 4' })
+    expect(openState(week, 'Wed', at(20))).toEqual({ open: true, label: 'Open until 9 PM' })
+  })
+
+  it('distinguishes not-yet-open from done for the day', () => {
+    expect(openState(week, 'Tue', at(9))).toEqual({ open: false, label: 'Closed \u00b7 opens 10 AM' })
+    expect(openState(week, 'Tue', at(19))).toEqual({ open: false, label: 'Closed now' })
+    expect(openState(week, 'Mon', at(12))).toEqual({ open: false, label: 'Closed today' })
+  })
+
+  it('reads a missing opening meridiem as noon, not midnight', () => {
+    // `12 to 5 PM` appears 75 times. Taking the start as 12 AM would call a
+    // shop open all morning when it has not unlocked the door.
+    const sunday = 'Sun 12 to 5 PM'
+    expect(openState(sunday, 'Sun', at(9))?.open).toBe(false)
+    expect(openState(sunday, 'Sun', at(13))?.open).toBe(true)
+  })
+
+  it('treats a midnight close as the end of the night', () => {
+    // `9 AM to 12 AM` is a fifteen-hour day, not a zero-minute one.
+    const late = 'Sat 9 AM to 12 AM'
+    expect(openState(late, 'Sat', at(23))).toEqual({ open: true, label: 'Open until 12 AM' })
+  })
+
+  it('returns null rather than guessing when it cannot read the hours', () => {
+    expect(openState(undefined, 'Mon', at(12))).toBeNull()
+    expect(openState('Mon by appointment', 'Mon', at(12))).toBeNull()
+    expect(openState(week, 'Sun', at(12))).toBeNull()
+  })
+})
+
 describe('rotate', () => {
   it('is stable within a day and moves between days', () => {
     const list = ['a', 'b', 'c', 'd', 'e']
@@ -162,6 +236,8 @@ describe('assembleToday', () => {
     expect(today.lead?.title).toBe('Newest')
     expect(today.lead?.source).toBe('The Courier')
     expect(today.lead?.timeLabel).toBe('6:40am')
+    // Older stories in `more` are stamped by day, not by clock.
+    expect(today.more.map((m) => m.timeLabel)).toEqual(['Saturday'])
   })
 
   it("counts everything today but only shows what has not finished", () => {
@@ -286,6 +362,18 @@ describe('assembleToday', () => {
     })
     expect(today.neighbors.featured?.author).toBeNull()
     expect(today.neighbors.featured?.authorInitials).toBeNull()
+  })
+
+  it('carries the rest of the recent news after the lead', () => {
+    const today = base({
+      items: [
+        story({ id: 'a', publishedAt: '2026-08-03T11:00:00.000Z' }),
+        story({ id: 'b', publishedAt: '2026-08-03T10:00:00.000Z' }),
+        story({ id: 'c', publishedAt: '2026-08-03T09:00:00.000Z' }),
+      ],
+    })
+    expect(today.lead?.id).toBe('a')
+    expect(today.more.map((m) => m.id)).toEqual(['b', 'c'])
   })
 
   it('counts the sources behind the screen', () => {

@@ -91,6 +91,11 @@ export interface TodayBusiness {
   category: string
   detail: string
   url: string | null
+  /** True, false, or null when the hours cannot be read honestly. */
+  openNow: boolean | null
+  phone: string | null
+  /** A directions link, built from the address the scrape already has. */
+  mapUrl: string | null
 }
 
 export interface TodayCreation {
@@ -109,6 +114,8 @@ export interface TodayPayload {
   dateLabel: string
   dayName: string
   lead: TodayStory | null
+  /** The rest of the recent news, after the lead. Carries photos where the source published one. */
+  more: TodayStory[]
   events: { items: TodayEvent[]; total: number }
   neighbors: { featured: TodayCreation | null; rest: TodayCreation[] }
   cityHall: { notice: TodayNotice | null; items: TodayCivicItem[] }
@@ -181,6 +188,27 @@ function compactTime(iso: string, timezone: string): string {
   return `${time}${meridiem.toLowerCase()}`
 }
 
+/**
+ * When a story ran, said the way a person would.
+ *
+ * A bare clock time is only honest for today. `4:51pm` on a story filed
+ * yesterday afternoon reads, at ten in the morning, as something that has not
+ * happened yet — which is worse than useless on a screen whose entire promise
+ * is that it is current. So the time is for today, the weekday for the last
+ * week, and a date beyond that.
+ */
+export function storyStamp(iso: string, timezone: string, todayKey: string): string {
+  const day = townDay(iso, timezone)
+  if (day === todayKey) return compactTime(iso, timezone)
+
+  const daysBack = Math.round(
+    (Date.parse(`${todayKey}T00:00:00Z`) - Date.parse(`${day}T00:00:00Z`)) / 86_400_000,
+  )
+  if (daysBack === 1) return 'Yesterday'
+  if (daysBack > 1 && daysBack < 7) return parts(iso, timezone, { weekday: 'long' })
+  return parts(iso, timezone, { month: 'short', day: 'numeric' })
+}
+
 export function greetingFor(iso: string, timezone: string): string {
   const hour = Number(parts(iso, timezone, { hour: 'numeric', hour12: false }))
   if (hour < 12) return 'Good morning'
@@ -245,6 +273,13 @@ export function assembleToday(input: AssembleInput): TodayPayload {
   const tz = town.timezone
   const nowMs = new Date(now).getTime()
   const dayKey = townDay(now, tz)
+  const weekdayShort = parts(now, tz, { weekday: 'short' })
+  const [nowHour = '0', nowMinute = '0'] = parts(now, tz, {
+    hour: '2-digit',
+    minute: '2-digit',
+    hour12: false,
+  }).split(':')
+  const minutesNow = Number(nowHour) * 60 + Number(nowMinute)
 
   const sourceName = (id: string): string => sources.get(id)?.name ?? id
   const sourceType = (id: string): string => sources.get(id)?.type ?? 'community'
@@ -257,21 +292,27 @@ export function assembleToday(input: AssembleInput): TodayPayload {
     .filter((s) => new Date(s.publishedAt).getTime() <= nowMs)
     .sort((a, b) => b.publishedAt.localeCompare(a.publishedAt))
 
+  const asStory = (s: StoryItem): TodayStory => ({
+    id: s.id,
+    title: s.title,
+    summary: s.description,
+    url: s.url ?? null,
+    imageUrl: s.imageUrl ?? null,
+    source: sourceName(s.source),
+    sourceInitial: (sourceName(s.source)[0] ?? '\u00b7').toUpperCase(),
+    publishedAt: s.publishedAt,
+    timeLabel: storyStamp(s.publishedAt, tz, dayKey),
+    readingMinutes: readingMinutes(s.body || s.description),
+  })
+
   const leadItem = stories[0]
-  const lead: TodayStory | null = leadItem
-    ? {
-        id: leadItem.id,
-        title: leadItem.title,
-        summary: leadItem.description,
-        url: leadItem.url ?? null,
-        imageUrl: leadItem.imageUrl ?? null,
-        source: sourceName(leadItem.source),
-        sourceInitial: (sourceName(leadItem.source)[0] ?? '·').toUpperCase(),
-        publishedAt: leadItem.publishedAt,
-        timeLabel: compactTime(leadItem.publishedAt, tz),
-        readingMinutes: readingMinutes(leadItem.body || leadItem.description),
-      }
-    : null
+  const lead: TodayStory | null = leadItem ? asStory(leadItem) : null
+
+  // The rest of the recent news. Ordered by recency like the lead, not shuffled
+  // to surface the ones with photos: a screen that promotes a story because it
+  // came with an image is making an editorial call on the strength of the
+  // newspaper's art budget.
+  const more = stories.slice(1, 5).map(asStory)
 
   // ── Happening today ────────────────────────────────────────────────────
   // Today's calendar day in the town's timezone, and only what has not already
@@ -375,13 +416,24 @@ export function assembleToday(input: AssembleInput): TodayPayload {
     items.filter(isBusiness),
     dayKey,
     2,
-  ).map((b) => ({
-    id: b.id,
-    name: b.name,
-    category: b.category,
-    detail: hoursToday(b.hours, parts(now, tz, { weekday: 'short' })) ?? b.category,
-    url: b.website ?? null,
-  }))
+  ).map((b) => {
+    const state = openState(b.hours, weekdayShort, minutesNow)
+    return {
+      id: b.id,
+      name: b.name,
+      category: b.category,
+      // Whether it is open right now beats a printed range someone has to
+      // compare against their own watch. Falls back to the range, then to the
+      // category, so the card always says something true.
+      detail: state?.label ?? hoursToday(b.hours, weekdayShort) ?? b.category,
+      openNow: state ? state.open : null,
+      phone: b.phone ?? null,
+      mapUrl: b.address
+        ? `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(b.address)}`
+        : null,
+      url: b.website ?? null,
+    }
+  })
 
   return {
     town,
@@ -389,6 +441,7 @@ export function assembleToday(input: AssembleInput): TodayPayload {
     dayName: parts(now, tz, { weekday: 'long' }),
     dateLabel: parts(now, tz, { weekday: 'long', month: 'short', day: 'numeric' }),
     lead,
+    more,
     events,
     neighbors,
     cityHall,
@@ -413,16 +466,113 @@ function severityRank(s: string): number {
  * is reading on Wednesday. Wrong opening hours are worse than none: they send a
  * neighbour to a closed door.
  *
+ * A day can carry more than one clause. `Mon 11 AM to 2 PM, 4 to 9 PM` is a
+ * split shift, and the second clause has no weekday of its own — it belongs to
+ * the day above it until the next weekday appears. 82 listings do this.
+ *
  * Returns null when the string does not carry today, so the caller falls back
  * to the category rather than guessing.
  */
 export function hoursToday(hours: string | undefined, weekdayShort: string): string | null {
-  if (!hours) return null
-  for (const clause of hours.split(',')) {
-    const text = clause.trim()
-    if (text.toLowerCase().startsWith(weekdayShort.toLowerCase())) {
-      return text.slice(weekdayShort.length).trim() || text
+  const clauses = clausesForDay(hours, weekdayShort)
+  return clauses.length > 0 ? clauses.join(', ') : null
+}
+
+const WEEKDAY = /^(Mon|Tue|Wed|Thu|Fri|Sat|Sun)\b/i
+
+function clausesForDay(hours: string | undefined, weekdayShort: string): string[] {
+  if (!hours) return []
+  const out: string[] = []
+  let collecting = false
+
+  for (const raw of hours.split(',')) {
+    const text = raw.trim()
+    if (!text) continue
+    const day = WEEKDAY.exec(text)
+    if (day) {
+      collecting = day[0].toLowerCase() === weekdayShort.toLowerCase()
+      if (collecting) out.push(text.slice(day[0].length).trim() || text)
+      continue
     }
+    // No weekday: a continuation of whatever day we are inside.
+    if (collecting) out.push(text)
   }
-  return null
+  return out
+}
+
+/** Minutes past midnight, or null if this is not a time we recognise. */
+function toMinutes(text: string, inheritedMeridiem: string | null): number | null {
+  const m = /^(\d{1,2})(?::(\d{2}))?\s*(AM|PM)?$/i.exec(text.trim())
+  if (!m) return null
+  const meridiem = (m[3] ?? inheritedMeridiem)?.toUpperCase()
+  if (!meridiem) return null
+
+  let hour = Number(m[1])
+  if (hour < 1 || hour > 12) return null
+  if (meridiem === 'AM' && hour === 12) hour = 0
+  if (meridiem === 'PM' && hour !== 12) hour += 12
+  return hour * 60 + Number(m[2] ?? 0)
+}
+
+export interface OpenState {
+  open: boolean
+  label: string
+}
+
+/**
+ * Whether a business is open at this minute, and what to say about it.
+ *
+ * Every branch that cannot be answered honestly returns null, and the card
+ * falls back to showing the raw hours. "Open now" is a claim a neighbour will
+ * act on by driving somewhere, so a guess is not a cheaper version of an
+ * answer — it is a worse one.
+ *
+ * Two shapes in the data need care. `12 to 5 PM` omits the opening meridiem and
+ * means noon, so a start with no meridiem inherits the end's. And `9 AM to
+ * 12 AM` closes at midnight rather than opening and closing in the same
+ * minute, so an end at or before the start rolls into the next day.
+ */
+export function openState(
+  hours: string | undefined,
+  weekdayShort: string,
+  minutesNow: number,
+): OpenState | null {
+  const clauses = clausesForDay(hours, weekdayShort)
+  if (clauses.length === 0) return null
+
+  if (clauses.some((c) => /^closed$/i.test(c))) return { open: false, label: 'Closed today' }
+  if (clauses.some((c) => /open 24 hours/i.test(c))) return { open: true, label: 'Open 24 hours' }
+
+  const ranges: Array<{ start: number; end: number; startText: string; endText: string }> = []
+  for (const clause of clauses) {
+    const parts = clause.split(/\s+to\s+/i)
+    if (parts.length !== 2) continue
+    const startText = (parts[0] ?? '').trim()
+    const endText = (parts[1] ?? '').trim()
+    // `12 to 5 PM` is noon, not midnight: a start with no meridiem takes the
+    // end's. Doing it the other way round opens the shop twelve hours early.
+    const endMeridiem = /\b(AM|PM)\b/i.exec(endText)?.[1] ?? null
+    const start = toMinutes(startText, endMeridiem)
+    let end = toMinutes(endText, null)
+    if (start === null || end === null) continue
+    if (end <= start) end += 24 * 60
+    ranges.push({ start, end, startText, endText })
+  }
+  if (ranges.length === 0) return null
+
+  const current = ranges.find((r) => minutesNow >= r.start && minutesNow < r.end)
+  if (current) return { open: true, label: `Open until ${tidy(current.endText)}` }
+
+  const next = ranges
+    .filter((r) => r.start > minutesNow)
+    .sort((a, b) => a.start - b.start)[0]
+  if (next) return { open: false, label: `Closed · opens ${tidy(next.startText)}` }
+
+  return { open: false, label: 'Closed now' }
+}
+
+/** Normalise `9:30 pm` to `9:30 PM`, and never hand back an empty string. */
+function tidy(text: string): string {
+  const t = text.trim().replace(/\s+/g, ' ').replace(/\b(am|pm)\b/gi, (s) => s.toUpperCase())
+  return t || 'later'
 }

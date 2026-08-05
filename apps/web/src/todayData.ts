@@ -55,6 +55,10 @@ export interface TodayBusiness {
   category: string
   detail: string
   url: string | null
+  /** True, false, or null when the hours could not be read honestly. */
+  openNow: boolean | null
+  phone: string | null
+  mapUrl: string | null
 }
 
 export interface TodayCreation {
@@ -73,6 +77,7 @@ export interface TodayPayload {
   dateLabel: string
   dayName: string
   lead: TodayStory | null
+  more: TodayStory[]
   events: { items: TodayEvent[]; total: number }
   neighbors: { featured: TodayCreation | null; rest: TodayCreation[] }
   cityHall: { notice: TodayNotice | null; items: TodayCivicItem[] }

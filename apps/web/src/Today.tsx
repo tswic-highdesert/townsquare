@@ -87,6 +87,41 @@ export function Today(props: TodayProps) {
 
       {today.lead && <LeadStory story={today.lead} />}
 
+      {today.more.length > 0 && (
+        <section className="today-section">
+          <SectionHead label="More from town" />
+          <div className="more-list">
+            {today.more.map((story) => (
+              <Outside key={story.id} href={story.url} className="more-row">
+                <span className="more-text">
+                  <span className="more-title">{story.title}</span>
+                  <span className="more-byline">
+                    {story.source} · {story.timeLabel} · {story.readingMinutes} min
+                  </span>
+                </span>
+                {/*
+                  Roughly half the town's stories come with a photo and the rest
+                  do not, so the thumbnail is an enhancement rather than the
+                  layout: the row reads the same without one.
+                */}
+                {story.imageUrl && (
+                  <span className="more-thumb">
+                    <img
+                      src={story.imageUrl}
+                      alt=""
+                      loading="lazy"
+                      onError={(e) => {
+                        e.currentTarget.parentElement?.style.setProperty('display', 'none')
+                      }}
+                    />
+                  </span>
+                )}
+              </Outside>
+            ))}
+          </div>
+        </section>
+      )}
+
       {today.events.items.length > 0 && (
         <section className="today-section">
           <SectionHead
@@ -181,16 +216,44 @@ export function Today(props: TodayProps) {
           <SectionHead label="In the directory" />
           <div className="directory-strip">
             {today.directory.map((business) => (
-              <Outside key={business.id} href={business.url} className="directory-card">
-                <span className="directory-icon">
-                  <Icon name="storefront" size={22} />
-                </span>
-                <span className="directory-name">{business.name}</span>
-                <span className="directory-detail">
-                  <Icon name="clock" size={13} />
-                  {business.detail}
-                </span>
-              </Outside>
+              <div key={business.id} className="directory-card">
+                <Outside href={business.url} className="directory-head">
+                  <span className="directory-icon">
+                    <Icon name="storefront" size={22} />
+                  </span>
+                  <span className="directory-name">{business.name}</span>
+                  {/*
+                    Open right now, not a printed range the reader has to compare
+                    against their own watch. `openNow` is null when the hours
+                    could not be parsed honestly, and then this is just the text.
+                  */}
+                  <span className="directory-detail" data-open={business.openNow ?? undefined}>
+                    {business.openNow === null ? (
+                      <Icon name="clock" size={13} />
+                    ) : (
+                      <span className="open-dot" />
+                    )}
+                    {business.detail}
+                  </span>
+                </Outside>
+                <div className="directory-actions">
+                  {business.phone && (
+                    <a className="directory-action" href={`tel:${business.phone.replace(/[^\d+]/g, '')}`}>
+                      Call
+                    </a>
+                  )}
+                  {business.mapUrl && (
+                    <a
+                      className="directory-action"
+                      href={business.mapUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      Directions
+                    </a>
+                  )}
+                </div>
+              </div>
             ))}
           </div>
         </section>

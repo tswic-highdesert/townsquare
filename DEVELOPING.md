@@ -56,10 +56,30 @@ actually built.
 | Section | Comes from |
 |---|---|
 | Top of town | newest published story across the news sources |
+| More from town | the next four, with the photo the source published where there is one |
 | Happening today | events on the town's calendar day that have not finished |
 | From your neighbors | creations, featured one at a time |
 | From city hall | an active notice, plus what government sources have scheduled next |
-| In the directory | `businesses.ts`, rotated by the day |
+| In the directory | `businesses.ts`, rotated by the day, open/closed computed live |
+
+**More from town is ordered by recency, not by which stories have art.** Roughly
+half do. Promoting the ones that do would be an editorial call made on the
+strength of a newspaper's photo budget, so the thumbnail is an enhancement of a
+row that reads the same without one.
+
+**A story's timestamp is a clock time only if it ran today.** Otherwise it is
+"Yesterday", a weekday, or a date. `4:51pm` on a story filed yesterday
+afternoon reads, at ten the next morning, as something that has not happened
+yet — which is the one impression this screen cannot afford.
+
+**Directory cards say whether a business is open right now**, computed from the
+hours string against the town's clock, rather than printing a range the reader
+has to compare against their own watch. `openState` returns null on anything it
+cannot parse honestly and the card falls back to the range, then to the
+category. Two shapes in that data need care and both are tested: `12 to 5 PM`
+omits the opening meridiem and means noon, and `9 AM to 12 AM` closes at
+midnight rather than opening and closing in the same minute. 82 listings also
+carry a split shift as a second clause with no weekday of its own.
 
 Three things about it are decisions rather than details.
 
