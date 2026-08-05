@@ -164,6 +164,7 @@ attacker-controlled input.
 |---|---|
 | Which listings are placeable, and their bucket | `apps/api/src/nearby.ts` |
 | Measuring, ranking, formatting a distance | `apps/web/src/nearbyData.ts` |
+| Projecting the town onto the map | `apps/web/src/mapProjection.ts` |
 
 Both are pure and unit-tested. Ranking is client-side because the position is,
 and that does not make it any less the business logic of the screen.
@@ -184,11 +185,67 @@ each — and it says "Everywhere in Russellville" rather than a radius. Ranking
 from the middle of town would print "0.4 mi" beside a row for someone standing
 four miles away, which is the same class of lie as inventing the data.
 
+### The map draws itself, and talks to nobody
+
+5a leads with a map, and every ordinary way to get one — OpenStreetMap's public
+tiles, MapTiler, Stadia, Mapbox — puts a **third-party origin in the load path
+of the screen holding the town's session cookie.** A pan is then a stream of
+requests to that host, each naming a square of Russellville at a zoom level,
+which together describe where somebody lives and what they were looking for.
+`packages/tokens` self-hosts four typefaces rather than accept a Google Fonts
+link for a much smaller version of the same trade.
+
+The self-hosted answer is vector tiles: a Protomaps extract of Pope County is
+roughly fifty megabytes of static file plus ~800 KB of MapLibre, and it needs an
+asset pipeline this repo does not have. So Town Square does the third thing,
+which is the thing this codebase keeps reaching for: **it draws the map, from
+data it already holds.** `Icon.tsx` draws sixteen glyphs rather than fetch a
+3.5MB icon font; `apps/api/src/townMap.ts` derives the town's street corridors
+from the 741 addresses in the directory.
+
+**The shell's CSP is unchanged by this screen.** No `img-src`, no `connect-src`,
+no tile host, no API key, no attribution beacon, and no request of any kind
+leaving our origin. A resident panning around their own town tells nobody
+anything.
+
+| Piece | Lives in |
+|---|---|
+| Corridors and the framing box | `apps/api/src/townMap.ts` |
+| Projection, camera, clamping | `apps/web/src/mapProjection.ts` |
+| The SVG itself | `apps/web/src/TownMap.tsx` |
+
+**A corridor is not a street centreline, and it is drawn so you can tell.** A
+business's coordinate is its storefront, which on a commercial strip sits one to
+three hundred feet back from the road behind a parking lot. So each corridor
+carries its measured RMS spread and the map draws it as a band exactly that
+wide: the width of the line is the precision of the data behind it. A hairline
+would be a claim to a survey nobody did. The map also carries one caption saying
+what it was drawn from, because a drawn town a resident cannot tell was drawn is
+the one way this could mislead somebody.
+
+Three rules keep it honest, and all three are tested. A corridor needs **five
+addresses** — four can be a coincidence of buildings sharing a road name.
+Addresses are fitted with a **polyline, not a straight line**; the straight
+version put North Arkansas Avenue, which bends over five miles, six hundred feet
+away from half the businesses on it. And a spread over **900 feet is refused
+outright**, because that is a name being used for an area rather than a road.
+
+The framing box trims the outer 1% each way: two listings in the directory are
+geocoded to the far side of the state, and framing on the true extremes opens
+the map on Arkansas with the town as a speck in it. Those two are still in the
+list with an honest distance; they are simply off the edge of the map.
+
+There is no river, park or railway on it. The directory says nothing about any
+of those, and the hi-fi's versions of them are drawing.
+
+**The List half is the default and stands alone.** The Map/List switch is only
+rendered when the payload carries `bounds`, which needs placeable listings — a
+town with none is a list, exactly as it was.
+
 ### What is deliberately not on the screen
 
 | Missing | Why |
 |---|---|
-| The map, the pins, the Map/List switch | a tile layer puts a third party in the load path of the origin holding the session cookie. **Open question for Tal** |
 | A creation's layer ("#1 on Luis's Burrito Index") | needs `records`, which is specified and not built |
 | Events | see below |
 
@@ -590,7 +647,7 @@ fails loudly at startup rather than working only here.
 ## Tests
 
 ```bash
-pnpm test        # 764 tests
+pnpm test        # 788 tests
 pnpm typecheck
 ```
 
@@ -628,7 +685,7 @@ in two jobs split by cost:
 
 | Job | Runs | Roughly |
 |---|---|---|
-| `checks` | typecheck, generated-docs drift, 764 unit tests | under a minute |
+| `checks` | typecheck, generated-docs drift, 788 unit tests | under a minute |
 | `boundary` | the Playwright suite, three origins in Chromium | two to three minutes |
 
 Neither is configured as a **required** status check, on purpose. This repo is

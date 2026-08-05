@@ -34,10 +34,27 @@ export interface NearbyPlace {
   openNow: boolean | null
 }
 
+/** Derived from the directory's own addresses. See `apps/api/src/townMap.ts`. */
+export interface StreetCorridor {
+  name: string
+  points: Array<[number, number]>
+  spreadFt: number
+  count: number
+}
+
+export interface TownBounds {
+  minLat: number
+  maxLat: number
+  minLng: number
+  maxLng: number
+}
+
 export interface NearbyPayload {
   town: { id: string; name: string; timezone: string }
   places: NearbyPlace[]
   counts: Record<PlaceKind, number>
+  streets: StreetCorridor[]
+  bounds: TownBounds | null
   updatedLabel: string
 }
 

@@ -2016,3 +2016,204 @@ details > pre {
   color: var(--ts-ink60);
   margin: var(--ts-space-3) 0 var(--ts-space-6);
 }
+
+/* ── the map (design 5a) ──────────────────────────────────────────────────
+ *
+ * Every mark here is an SVG element drawn from the payload. There is no tile,
+ * no raster, no external image and no font beyond the three already self-hosted
+ * — which is the whole point of the map, and the reason this screen adds
+ * nothing to the shell's CSP.
+ *
+ * The ground is stone rather than white so the corridors, which are a lighter
+ * value, read as roads cut through it rather than lines drawn on paper.
+ */
+
+/*
+ * Grows into whatever the column has left. `.today` is a flex column at least
+ * as tall as the window, so on a phone the map runs to the tab bar instead of
+ * sitting in a 420px letterbox with cream underneath it.
+ */
+.map-wrap {
+  position: relative;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 420px;
+  margin: var(--ts-space-4) var(--ts-space-5) var(--ts-space-4);
+  border: 1px solid var(--ts-hairline);
+  border-radius: var(--ts-radius-sheet);
+  overflow: hidden;
+  box-shadow: 0 1px 2px var(--ts-ink08), 0 14px 30px -20px var(--ts-ink26);
+}
+
+.map {
+  display: block;
+  width: 100%;
+  flex: 1;
+  min-height: 0;
+  touch-action: none; /* The pan is ours; the browser must not also scroll. */
+  cursor: grab;
+}
+
+.map:active {
+  cursor: grabbing;
+}
+
+.map-ground {
+  fill: var(--ts-stone);
+}
+
+/*
+ * A band, not a hairline. Its width is the corridor's measured spread — see
+ * `townMap.ts` — so the drawing is exactly as precise as the addresses behind
+ * it and never pretends to a survey.
+ */
+.map-street {
+  fill: none;
+  stroke: var(--ts-cream);
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.map-street-label {
+  paint-order: stroke;
+  stroke: var(--ts-stone);
+  font-family: var(--ts-font-mono);
+  font-weight: 500;
+  letter-spacing: 0.12em;
+  fill: var(--ts-ink45);
+  text-anchor: middle;
+  dominant-baseline: middle;
+  pointer-events: none;
+}
+
+.map-pin {
+  stroke: var(--ts-cream);
+  cursor: pointer;
+}
+
+/* The same five tints as the list rows, so a chip and a pin agree. */
+.map-pin[data-kind='eat'] {
+  fill: var(--ts-terracotta);
+}
+
+.map-pin[data-kind='shop'] {
+  fill: var(--ts-navy);
+}
+
+.map-pin[data-kind='care'] {
+  fill: var(--ts-sage);
+}
+
+.map-pin[data-kind='civic'] {
+  fill: var(--ts-gold-text);
+}
+
+.map-pin[data-kind='service'] {
+  fill: var(--ts-ink45);
+}
+
+.map-pin[data-selected] {
+  stroke: var(--ts-ink);
+}
+
+/*
+ * The resident's own position, and the only mark on the map that is about the
+ * person rather than the town. Navy with a halo, never the brand terracotta —
+ * terracotta is what a place is.
+ *
+ * `pointer-events: none` is load-bearing. The halo is a filled circle twenty
+ * pixels across drawn on top of everything, so without this it silently ate
+ * every tap on a pin near the resident — which is to say on the nearest places,
+ * the ones this screen exists to show them.
+ */
+.map-me {
+  pointer-events: none;
+}
+
+.map-me-dot {
+  fill: var(--ts-navy);
+  stroke: var(--ts-cream);
+}
+
+.map-me-halo {
+  fill: var(--ts-navy10);
+}
+
+.map-controls {
+  position: absolute;
+  top: var(--ts-space-3);
+  right: var(--ts-space-3);
+  display: flex;
+  flex-direction: column;
+  gap: var(--ts-space-2);
+}
+
+.map-control {
+  display: grid;
+  place-items: center;
+  width: 38px;
+  height: 38px;
+  border: 1px solid var(--ts-hairline);
+  border-radius: var(--ts-radius-input);
+  background: var(--ts-cream);
+  color: var(--ts-navy);
+  box-shadow: 0 2px 8px var(--ts-ink08);
+}
+
+/*
+ * Said on the map itself rather than buried in a settings screen. A drawn town
+ * that a resident cannot tell was drawn is the one way this could mislead
+ * somebody, and the sentence costs one line.
+ */
+.map-provenance {
+  margin: 0;
+  padding: var(--ts-space-2) var(--ts-space-3);
+  border-top: 1px solid var(--ts-hairline);
+  background: var(--ts-cream);
+  font-family: var(--ts-font-serif);
+  font-size: 13px;
+  line-height: 1.35;
+  color: var(--ts-ink45);
+}
+
+/*
+ * `flex: none`, because `.today` is a flex column and `.map-wrap` grows into
+ * it. Without this the selected card is a flex item that shrinks to nothing,
+ * and tapping a pin appears to do nothing at all.
+ */
+.map-selected {
+  flex: none;
+  margin-top: var(--ts-space-2);
+  padding-bottom: var(--ts-space-3);
+}
+
+/* The Map/List switch, in the search bar as the hi-fi has it. */
+.view-switch {
+  display: flex;
+  flex: none;
+  gap: 2px;
+  padding: 2px;
+  border-radius: var(--ts-radius-input);
+  background: var(--ts-stone);
+}
+
+.view-switch button {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  border: 0;
+  border-radius: 8px;
+  padding: var(--ts-space-1) var(--ts-space-2);
+  background: none;
+  font-family: var(--ts-font-sans);
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--ts-ink60);
+}
+
+.view-switch button[data-on] {
+  background: var(--ts-surface);
+  color: var(--ts-navy);
+  box-shadow: 0 1px 2px var(--ts-ink08);
+}

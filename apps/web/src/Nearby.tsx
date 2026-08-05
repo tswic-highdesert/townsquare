@@ -9,16 +9,20 @@
  * that carries a location, which is why the permission prompt can say so
  * plainly, and why saying no costs a resident the distances and nothing else.
  *
- * ## Three things in the hi-fi are not here
+ * ## The map talks to nobody either
  *
- * **The map.** 5a leads with a map surface and typed pins, and a real one means
- * a tile provider: the shell — the origin holding the session cookie — issuing
- * requests to a third party, on the town's own app, revealing which corner of
- * town a resident is looking at with every pan. That is a decision about this
- * repo's security posture rather than a piece of layout, so the List half
- * shipped first and the map is an open question for Tal. Everything the map
- * would have shown is real and already in the payload: `lat`, `lng` and a kind
- * for every row.
+ * 5a leads with a map, and the ordinary way to get one puts a tile host in the
+ * load path of this origin — the one holding the session cookie — with every
+ * pan naming the square of town a resident is looking at. So Town Square draws
+ * its own, out of the street corridors implied by the directory's 741
+ * addresses. **The shell's CSP is unchanged by this screen.** `TownMap.tsx` and
+ * `apps/api/src/townMap.ts` carry the reasoning and the limits.
+ *
+ * The List half is the default and stands alone: the switch only appears when
+ * the payload carries bounds to draw, so a town with nothing placeable is a
+ * list, exactly as it was.
+ *
+ * ## Two things in the hi-fi are not here
  *
  * **A creation's layer.** The hi-fi pins "#1 on Luis's Burrito Index" to a
  * restaurant. That is a creation writing into the town's shared record store,
@@ -34,6 +38,7 @@ import { useEffect, useMemo, useState } from 'react'
 import { AppBar } from './AppBar.js'
 import { Icon, type IconName } from './Icon.js'
 import { TabBar, type TabName } from './TabBar.js'
+import { TownMap } from './TownMap.js'
 import {
   fetchNearby,
   formatDistance,
@@ -42,6 +47,7 @@ import {
   reachLabel,
   requestPosition,
   type NearbyPayload,
+  type NearbyPlace,
   type PlaceKind,
   type Position,
   type RankedPlace,
@@ -88,6 +94,17 @@ const KIND_LABEL: Record<PlaceKind, string> = {
 /** Services last. It is the honest default bucket and a third of the town. */
 const CHIP_ORDER: readonly PlaceKind[] = ['eat', 'shop', 'care', 'civic', 'service']
 
+/**
+ * The map draws every match; the list draws the first forty of them.
+ *
+ * Forty rows is as far as anybody scrolls, and forty dots is not a town — the
+ * first pass limited both to forty and produced a map with roads out to the
+ * edges and every pin in one downtown clot. A map is scanned rather than read,
+ * so it takes the whole filtered set: 741 circles is nothing for an SVG, and
+ * the shape of the place is the entire reason to look at one.
+ */
+const MAPPED = Number.MAX_SAFE_INTEGER
+
 export function Nearby(props: NearbyProps) {
   const [payload, setPayload] = useState<NearbyPayload | null>(null)
   const [failed, setFailed] = useState(false)
@@ -97,6 +114,8 @@ export function Nearby(props: NearbyProps) {
   const [locating, setLocating] = useState(false)
   const [kind, setKind] = useState<PlaceKind | null>(null)
   const [query, setQuery] = useState('')
+  const [view, setView] = useState<'map' | 'list'>('list')
+  const [selected, setSelected] = useState<NearbyPlace | null>(null)
 
   useEffect(() => {
     void fetchNearby().then(setPayload, () => setFailed(true))
@@ -119,11 +138,10 @@ export function Nearby(props: NearbyProps) {
 
   const ranked = useMemo(
     () =>
-      payload
-        ? rankPlaces(payload.places, { position, kind, query, limit: SHOWN })
-        : [],
+      payload ? rankPlaces(payload.places, { position, kind, query, limit: MAPPED }) : [],
     [payload, position, kind, query],
   )
+  const listed = ranked.slice(0, SHOWN)
 
   const savedRefs = useMemo(
     () => new Set(props.saved.map((s) => `${s.kind}:${s.refId}`)),
@@ -188,7 +206,8 @@ export function Nearby(props: NearbyProps) {
     )
   }
 
-  const reach = reachLabel(ranked)
+  // Measured from the rows underneath it, not from the far end of the map.
+  const reach = reachLabel(listed)
 
   return (
     <div className="today">
@@ -204,6 +223,33 @@ export function Nearby(props: NearbyProps) {
             aria-label={`Search ${payload.town.name}`}
             type="search"
           />
+
+          {/*
+            The switch lives in the search bar, as the hi-fi has it, and is only
+            drawn when there is something to draw — `bounds` needs placeable
+            listings, and a Map button that opens an empty rectangle is worse
+            than no Map button.
+          */}
+          {payload.bounds && (
+            <span className="view-switch">
+              <button
+                data-on={view === 'map' || undefined}
+                onClick={() => setView('map')}
+                aria-pressed={view === 'map'}
+              >
+                <Icon name="pin" size={13} />
+                Map
+              </button>
+              <button
+                data-on={view === 'list' || undefined}
+                onClick={() => setView('list')}
+                aria-pressed={view === 'list'}
+              >
+                <Icon name="list" size={13} />
+                List
+              </button>
+            </span>
+          )}
         </div>
 
         <div className="nearby-chips">
@@ -236,11 +282,18 @@ export function Nearby(props: NearbyProps) {
         </div>
       </div>
 
+      {/*
+        The heading describes what is actually on the screen. "Within 0.1 mi ·
+        40+" over a map of the whole town was a caption for the other half of
+        this screen — the map draws every match, so it says so.
+      */}
       <div className="nearby-head">
-        <h1 className="nearby-reach">{reach ?? `Everywhere in ${payload.town.name}`}</h1>
+        <h1 className="nearby-reach">
+          {view === 'map' ? `Everywhere in ${payload.town.name}` : (reach ?? `Everywhere in ${payload.town.name}`)}
+        </h1>
         <span className="nearby-count">
-          {ranked.length}
-          {ranked.length === SHOWN ? '+' : ''}
+          {view === 'map' ? ranked.length : listed.length}
+          {view === 'list' && ranked.length > listed.length ? '+' : ''}
         </span>
       </div>
 
@@ -274,13 +327,44 @@ export function Nearby(props: NearbyProps) {
         </div>
       )}
 
-      {ranked.length === 0 ? (
+      {view === 'map' && payload.bounds ? (
+        <>
+          <TownMap
+            bounds={payload.bounds}
+            streets={payload.streets}
+            places={ranked}
+            position={position}
+            selectedId={selected?.id ?? null}
+            onSelect={setSelected}
+            kindIcon={KIND_ICON}
+          />
+          {/*
+            One card, for the pin that was tapped. The hi-fi's sheet lists the
+            nearest few underneath the map as well; that is the List half, one
+            press away, and two scrolling lists of the same rows on one screen is
+            a screen arguing with itself.
+          */}
+          {selected && (
+            <ul className="place-list map-selected">
+              <PlaceRow
+                place={ranked.find((p) => p.id === selected.id) ?? { ...selected, miles: null }}
+                saved={savedRefs.has(`business:${selected.id}`)}
+                canSave={props.account !== null}
+                onToggleSave={() => {
+                  const place = ranked.find((p) => p.id === selected.id)
+                  if (place) void toggleSave(place)
+                }}
+              />
+            </ul>
+          )}
+        </>
+      ) : listed.length === 0 ? (
         <p className="nearby-empty">
           Nothing in the directory matches that.
         </p>
       ) : (
         <ul className="place-list">
-          {ranked.map((place) => (
+          {listed.map((place) => (
             <PlaceRow
               key={place.id}
               place={place}

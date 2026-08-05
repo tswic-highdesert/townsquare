@@ -46,6 +46,7 @@
 /** Deep path, not the barrel. Same reason as `today.ts` — see the note there. */
 import type { BusinessItem, TownSquareItem } from '../../../packages/feed/src/lib/types.js'
 import { clockParts, hoursToday, openState } from './today.js'
+import { deriveStreets, townBounds, type StreetCorridor, type TownBounds } from './townMap.js'
 
 const isBusiness = (i: TownSquareItem): i is BusinessItem => i.type === 'business'
 
@@ -80,6 +81,13 @@ export interface NearbyPayload {
   places: NearbyPlace[]
   /** How many of each kind are in `places`, so the chips can carry counts. */
   counts: Record<PlaceKind, number>
+  /**
+   * The map, such as it is: street corridors derived from the same addresses,
+   * and the rectangle to frame them in. About 4 KB, and it is the entire reason
+   * this screen needs no tile host. See `townMap.ts`.
+   */
+  streets: StreetCorridor[]
+  bounds: TownBounds | null
   updatedLabel: string
 }
 
@@ -212,7 +220,14 @@ export function assembleNearby(input: AssembleNearbyInput): NearbyPayload {
   for (const p of places) counts[p.kind] += 1
 
   const { time, meridiem } = clockParts(now, tz)
-  return { town, places, counts, updatedLabel: `${time}${meridiem.toLowerCase()}` }
+  return {
+    town,
+    places,
+    counts,
+    streets: deriveStreets(items),
+    bounds: townBounds(places),
+    updatedLabel: `${time}${meridiem.toLowerCase()}`,
+  }
 }
 
 /**

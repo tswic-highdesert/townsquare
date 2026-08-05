@@ -30,6 +30,8 @@ export type IconName =
   | 'heartbeat'
   | 'home'
   | 'leaf'
+  | 'list'
+  | 'minus'
   | 'music'
   | 'newspaper'
   | 'pin'
@@ -75,6 +77,8 @@ const PATHS: Record<IconName, string> = {
   heartbeat: 'M3 12h4l2.5-5 3.5 10 2.5-5h5.5',
   home: 'M4 10.5 12 4l8 6.5V20H4zM10 20v-6h4v6',
   leaf: 'M5 19C5 11 10 6 19 5c1 9-4 14-12 14zM5 19c3-4 6-6.5 10-8',
+  list: 'M4 7h16M4 12h16M4 17h10',
+  minus: 'M5 12h14',
   music: 'M9 18a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5zM11.5 15.5V5l8-2v10.5M19.5 16a2.5 2.5 0 1 1-5 0 2.5 2.5 0 0 1 5 0z',
   newspaper: 'M3 5h14v15H5a2 2 0 0 1-2-2zM17 9h4v9a2 2 0 0 1-2 2h-2zM6 8h8M6 12h8M6 16h5',
   pin: 'M12 21.5S19 15 19 10a7 7 0 0 0-14 0c0 5 7 11.5 7 11.5zM12 8.2a2 2 0 1 0 0 4 2 2 0 0 0 0-4z',
