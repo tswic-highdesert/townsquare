@@ -40,7 +40,15 @@ export type TabName = 'today' | 'nearby' | 'creations' | 'yours'
 
 const TABS: ReadonlyArray<{ name: TabName; label: string; icon: IconName }> = [
   { name: 'today', label: 'Today', icon: 'home' },
-  { name: 'nearby', label: 'Nearby', icon: 'compass' },
+  /*
+    The word matches the heading it lands on. `Directory` titles its own bar
+    "Directory" and opens with "There are 741 places in this directory", and a
+    tab labelled Nearby that arrives on a page called Directory is the same
+    small lie as a You tab landing on a screen called Yours. The internal key
+    stays `nearby` because `Directory` renders `TabBar current="nearby"` and
+    that file is not ours to change.
+  */
+  { name: 'nearby', label: 'Directory', icon: 'compass' },
   { name: 'creations', label: 'Creations', icon: 'puzzle' },
   /*
     "Yours" rather than the hi-fi's "You". The screen behind it is titled Yours

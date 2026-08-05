@@ -24,20 +24,25 @@
  */
 
 import { useEffect, useMemo, useState } from 'react'
-import { describeManifest } from '@townsquare/host'
 import { AccountScreen } from './Account.js'
 import { AppBar } from './AppBar.js'
-import { ReportPanel } from './ReportPanel.js'
 import { ReviewScreen } from './Review.js'
 import { resolveInitialAccount, type AccountView } from './session.js'
-import { CreationFrame } from './CreationFrame.js'
 import { ContributeScreen } from './contribute/Contribute.js'
-import { Nearby } from './Nearby.js'
+import {
+  BuilderDoor,
+  CreationDetail,
+  Gallery,
+  RunningCreation,
+  TrustScreen,
+} from './creations/index.js'
+import { Directory } from './directory/Directory.js'
+import { EventDetailScreen } from './events/EventDetail.js'
+import { EventsScreen } from './events/Events.js'
 import { News, Reader } from './news/index.js'
 import { Today } from './Today.js'
 import { Yours } from './Yours.js'
 import { TabBar, type TabName } from './TabBar.js'
-import { BackTo, PageHeader } from './nav/PageHeader.js'
 import { SearchOverlay } from './nav/Search.js'
 import { ShellContext } from './nav/shellContext.js'
 import {
@@ -74,12 +79,30 @@ type Screen =
    */
   | { name: 'contribute'; startOpen: boolean }
   /**
+   * The calendar, and one event. Reached from the head of "Happening today",
+   * the same way news is reached from "More from town": the door to more of a
+   * thing is in the section that already showed you some of it.
+   *
+   * `day` survives a round trip into an event and back out, so a resident who
+   * opened Saturday, read one thing and pressed back lands on Saturday rather
+   * than on today.
+   */
+  | { name: 'events'; day?: string }
+  | { name: 'event'; id: string; from?: string }
+  /**
    * `from` is carried rather than assumed. A trust page is reachable from Today
    * and from the gallery, and a back button that always lands on the gallery
    * silently moves a resident somewhere they were not.
    */
   | { name: 'trust'; creation: CreationSummary; from: BackDestination }
+  /** The fuller page about one creation, behind the trust page rather than in front of it. */
+  | { name: 'detail'; creation: CreationSummary; from: BackDestination }
   | { name: 'running'; creation: CreationSummary; from: BackDestination }
+  /**
+   * The build layer's front door. Reached by asking, never sprung: there is no
+   * route to it from anywhere a resident lands by accident.
+   */
+  | { name: 'builder' }
 
 /**
  * Where the back button lands: the tab you came from, whichever it was.
@@ -281,8 +304,15 @@ export function App() {
 
   function renderScreen() {
     if (screen.name === 'nearby') {
+      /*
+        The Nearby tab lands on the directory. `Directory` renders
+        `TabBar current="nearby"` itself and takes exactly the prop set Nearby
+        took, which is a component telling you which slot it belongs in — it is
+        a discovery surface for the same 741 places, ordered from "show me
+        something" down to "I know what I want" rather than from a map.
+      */
       return (
-        <Nearby
+        <Directory
           account={account}
           canReview={canReview}
           saved={saved}
@@ -332,6 +362,7 @@ export function App() {
           onOpenCreation={openBySlug}
           onBrowseCreations={() => setScreen({ name: 'gallery' })}
           onOpenNews={() => setScreen({ name: 'news' })}
+          onOpenEvents={() => setScreen({ name: 'events' })}
           onTab={goToTab}
           onAccount={() => setScreen({ name: 'account' })}
           onReview={() => setScreen({ name: 'review' })}
@@ -357,12 +388,50 @@ export function App() {
         <Reader
           storyId={screen.id}
           /*
+            The reader and Yours read the same list, so they cannot disagree
+            about what is saved. `App` already held it for Nearby and Yours;
+            this is a third door onto the same state, not a fourth copy.
+          */
+          account={account}
+          onSignIn={() => setScreen({ name: 'account' })}
+          saved={saved}
+          onSavedChange={setSaved}
+          /*
             Back to the news screen, not to Today. A resident who opened this
             from a list is going back to that list; sending them to the home
             screen is the app deciding it knows better than their own history.
           */
           onBack={() => setScreen({ name: 'news' })}
           onOpenStory={(id) => setScreen({ name: 'story', id })}
+        />
+      )
+    }
+
+    if (screen.name === 'events') {
+      return (
+        <EventsScreen
+          account={account}
+          canReview={canReview}
+          {...(screen.day ? { day: screen.day } : {})}
+          onOpenEvent={(id) => setScreen({ name: 'event', id, ...(screen.day ? { from: screen.day } : {}) })}
+          onBack={() => setScreen({ name: 'today' })}
+          onAccount={() => setScreen({ name: 'account' })}
+          onReview={() => setScreen({ name: 'review' })}
+        />
+      )
+    }
+
+    if (screen.name === 'event') {
+      return (
+        <EventDetailScreen
+          id={screen.id}
+          account={account}
+          saved={saved}
+          onSavedChange={setSaved}
+          /* Back to the day you came from, not to today. */
+          onBack={() => setScreen({ name: 'events', ...(screen.from ? { day: screen.from } : {}) })}
+          onOpenEvent={(id) => setScreen({ name: 'event', id, ...(screen.from ? { from: screen.from } : {}) })}
+          onOpenDay={(day) => setScreen({ name: 'events', day })}
         />
       )
     }
@@ -392,10 +461,11 @@ export function App() {
 
     if (screen.name === 'gallery') {
       /*
-        A destination now, so it wears the shell the other destinations wear:
-        the same bar, the same nav, and an editorial header rather than a back
-        button. A tab you can reach from the nav and leave only by pressing
-        back is a tab that is really still a sub-page.
+        A destination, so it wears what the other destinations wear: the same
+        bar, the same nav. `Gallery` draws its own header and its own back
+        control, which is one control more than a tab needs — flagged rather
+        than worked around, because reaching into another screen to hide a
+        button is how two agents end up disagreeing about who owns a header.
       */
       return (
         <div className="today">
@@ -408,168 +478,76 @@ export function App() {
             onReview={() => setScreen({ name: 'review' })}
           />
 
-          <div className="gallery-body">
-            <PageHeader
-              register="editorial"
-              eyebrow={town.name}
-              title="Built by neighbors"
-              subtitle="Everything here was made by someone who lives in town, runs sandboxed on Town Square, and can only reach what it says it can."
-            />
-
-            {creations === null ? (
-              <p className="eyebrow" style={{ marginTop: 32 }}>
-                Loading…
-              </p>
-            ) : creations.length === 0 ? (
-              <p className="lede" style={{ marginTop: 32 }}>
-                Nobody has built anything yet. You could be first.
-              </p>
-            ) : (
-              <ul className="gallery">
-                {creations.map((creation) => (
-                  <li key={creation.slug}>
-                    <button
-                      className="card"
-                      onClick={() => setScreen({ name: 'trust', creation, from: 'creations' })}
-                    >
-                      <img
-                        className="card-icon"
-                        src={`${creation.origin}/${creation.manifest.icon}`}
-                        alt=""
-                      />
-                      <span>
-                        <span className="card-name">{creation.name}</span>
-                        <span className="card-tagline" style={{ display: 'block' }}>
-                          {creation.tagline}
-                        </span>
-                      </span>
-                    </button>
-                  </li>
-                ))}
-              </ul>
-            )}
-          </div>
+          <Gallery
+            creations={creations}
+            townName={town.name}
+            onOpen={(creation) => setScreen({ name: 'trust', creation, from: 'creations' })}
+            onBack={() => setScreen({ name: 'today' })}
+            onHowItWorks={() => setScreen({ name: 'builder' })}
+          />
 
           <TabBar current="creations" onChange={goToTab} />
         </div>
       )
     }
 
-    if (screen.name === 'trust') {
-      const { creation, from } = screen
-      const lines = describeManifest(creation.manifest)
-
+    if (screen.name === 'builder') {
       return (
-        <div className="shell">
-          {/* The label names where the control goes, not the word "Back". */}
-          <BackTo label={BACK_LABEL[from]} onClick={() => setScreen(SCREENS[from])} />
-
-          <h1 style={{ marginBottom: 4 }}>{creation.name}</h1>
-          <p className="lede" style={{ marginTop: 0 }}>{creation.tagline}</p>
-          <p>{creation.description}</p>
-
-          <div className="eyebrow" style={{ marginTop: 28 }}>
-            What it can touch
-          </div>
-          <ul className="trust">
-            {lines.map((line) => (
-              <li key={line.kind} data-weight={line.weight}>
-                <div className="trust-title">{line.title}</div>
-                <div className="trust-detail">{line.detail}</div>
-              </li>
-            ))}
-          </ul>
-
-          <button
-            className="primary"
-            onClick={() => setScreen({ name: 'running', creation, from })}
-          >
-            Open
-          </button>
-        </div>
+        <BuilderDoor
+          account={actingUser}
+          onBack={() => setScreen({ name: 'gallery' })}
+          onSignIn={() => setScreen({ name: 'account' })}
+          /*
+            Omitted rather than guessed while the catalogue is in flight. A
+            count that starts at zero and jumps is a number the page was not
+            entitled to yet.
+          */
+          {...(creations ? { creationCount: creations.length } : {})}
+        />
       )
     }
 
-    const { creation } = screen
+    if (screen.name === 'trust') {
+      const { creation, from } = screen
+      return (
+        <TrustScreen
+          creation={creation}
+          /* The label names where the control goes, not the word "Back". */
+          backLabel={BACK_LABEL[from]}
+          onBack={() => setScreen(SCREENS[from])}
+          onOpen={() => setScreen({ name: 'running', creation, from })}
+          onDetail={() => setScreen({ name: 'detail', creation, from })}
+        />
+      )
+    }
+
+    if (screen.name === 'detail') {
+      const { creation, from } = screen
+      return (
+        <CreationDetail
+          creation={creation}
+          /*
+            Back to the trust page, not to the gallery. Detail sits behind the
+            decision screen, so leaving it returns the resident to the decision
+            they were in the middle of making.
+          */
+          onBack={() => setScreen({ name: 'trust', creation, from })}
+          onOpen={() => setScreen({ name: 'running', creation, from })}
+        />
+      )
+    }
+
+    const { creation, from } = screen
     return (
-      <div className="shell">
-        {/*
-          The chrome above a creation is not decoration. It is the reason a
-          creation cannot credibly imitate Town Square: a resident always has a
-          frame of reference that the creation cannot draw over, and there is no
-          login form anywhere inside a creation for one to imitate.
-
-          It is the one header in the product set on navy, and the close control
-          is a cross rather than a chevron, because you are leaving something
-          rather than going back up a level.
-        */}
-        <PageHeader
-          register="host"
-          title={creation.name}
-          /*
-            "by a neighbor" and not initials of the creation's own name: a
-            creation's author is platform-assigned at approval, and nothing in
-            development has been through the queue. "TB" for The Burrito Index
-            would be an avatar for a person who does not exist.
-          */
-          subtitle="by a neighbor · sandboxed"
-          back={{
-            label: BACK_LABEL[screen.from],
-            onClick: () => {
-              setLiveTitle(null)
-              setReporting(false)
-              setScreen({ name: 'trust', creation, from: screen.from })
-            },
-          }}
-          icon={
-            <img
-              className="card-icon"
-              style={{ width: 28, height: 28, flex: 'none' }}
-              src={`${creation.origin}/${creation.manifest.icon}`}
-              alt=""
-            />
-          }
-          /*
-            No action on the right. The hi-fi puts an "about this creation"
-            control there, and the screen it would open is the trust page the
-            resident pressed Open on a second ago — which the close control
-            already goes back to.
-          */
-        />
-
-        {/* Set by the creation through app.setTitle. Rendered as a text node. */}
-        {liveTitle && <div className="live-title">{liveTitle}</div>}
-
-        <CreationFrame
-          guestOrigin={creation.origin}
-          manifest={creation.manifest}
-          slug={creation.slug}
-          user={actingUser}
-          town={town}
-          onTitleChange={setLiveTitle}
-          onIncident={(kind, detail) => console.warn('creation incident', kind, detail)}
-        />
-
-        <div className="footer-chrome">
-          <span>running on Town Square</span>
-          <button onClick={() => setReporting((open) => !open)}>Report</button>
-        </div>
-
-        {/*
-          Rendered under the chrome, outside the frame. A creation cannot draw
-          here, so a resident reporting one is always talking to Town Square and
-          never to the thing they are reporting.
-        */}
-        {reporting && (
-          <ReportPanel
-            slug={creation.slug}
-            name={creation.name}
-            version={creation.manifest.version}
-            account={actingUser}
-            onClose={() => setReporting(false)}
-          />
-        )}
-      </div>
+      <RunningCreation
+        creation={creation}
+        town={town}
+        user={actingUser}
+        /* Back to the trust page they came through. */
+        onBack={() => setScreen({ name: 'trust', creation, from })}
+        /* All the way out, offered when the creation misbehaved. */
+        onLeave={() => setScreen(SCREENS[from])}
+      />
     )
   }
 }

@@ -33,6 +33,8 @@ export interface TodayProps {
   onBrowseCreations: () => void
   /** The news screen, reached from the head of "More from town". */
   onOpenNews: () => void
+  /** The calendar, reached from the head of "Happening today". */
+  onOpenEvents: () => void
   onTab: (tab: TabName) => void
   onAccount: () => void
   onReview: () => void
@@ -121,6 +123,9 @@ export function Today(props: TodayProps) {
             // resident deciding whether to go looking needs to know there are
             // nine, and the honest place to say so is the affordance itself.
             action={today.events.total > today.events.items.length ? `All ${today.events.total}` : null}
+            // Now a real control rather than a static count. The head of the
+            // section is the door to the rest of it, the same as "All news".
+            onAction={props.onOpenEvents}
           />
           <ul className="event-list">
             {today.events.items.map((event) => (

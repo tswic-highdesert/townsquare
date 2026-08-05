@@ -787,153 +787,17 @@
   }
 }
 
-/* ── page headers ────────────────────────────────────────────────────────────
+/* ── what used to be here ───────────────────────────────────────────────────
  *
- * Editorial has no chrome because the title is the page. Utility has a back
- * and exactly one action. Host is the one header set on navy, because a
- * resident needs to feel the boundary of the sandbox without reading a word.
- */
-
-.ts-ph[data-register='editorial'] {
-  padding: var(--ts-space-5) 0 var(--ts-space-2);
-}
-
-.ts-ph-eyebrow {
-  font-family: var(--ts-font-mono);
-  font-size: var(--ts-text-eyebrow);
-  font-weight: 500;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  color: var(--ts-terracotta-hover);
-}
-
-.ts-ph[data-register='editorial'] .ts-ph-title {
-  margin: var(--ts-space-2) 0 0;
-  font-family: var(--ts-font-serif);
-  font-size: 28px;
-  font-weight: 400;
-  line-height: 1.08;
-  letter-spacing: -0.015em;
-}
-
-.ts-ph-sub {
-  margin: var(--ts-space-2) 0 0;
-  max-width: 46ch;
-  font-family: var(--ts-font-serif);
-  font-size: var(--ts-text-label);
-  line-height: 1.4;
-  color: var(--ts-ink60);
-}
-
-.ts-ph[data-register='utility'],
-.ts-ph[data-register='host'] {
-  display: flex;
-  align-items: center;
-  gap: var(--ts-space-3);
-  padding: var(--ts-space-2) var(--ts-space-2) var(--ts-space-2) 0;
-}
-
-.ts-ph-stack {
-  flex: 1;
-  min-width: 0;
-}
-
-.ts-ph[data-register='utility'] .ts-ph-title,
-.ts-ph[data-register='host'] .ts-ph-title {
-  margin: 0;
-  font-family: var(--ts-font-sans);
-  font-size: var(--ts-text-body);
-  font-weight: 500;
-  line-height: 1.2;
-  letter-spacing: 0;
-}
-
-.ts-ph[data-register='utility'] .ts-ph-sub,
-.ts-ph[data-register='host'] .ts-ph-sub {
-  margin-top: 1px;
-  font-family: var(--ts-font-sans);
-  font-size: 12.5px;
-}
-
-.ts-ph-back {
-  display: grid;
-  place-items: center;
-  flex: none;
-  width: 44px;
-  height: 44px;
-  padding: 0;
-  border: 0;
-  border-radius: var(--ts-radius-full);
-  background: none;
-  color: var(--ts-ink60);
-}
-
-.ts-ph-back:hover {
-  background: var(--ts-ink08);
-  color: var(--ts-ink);
-}
-
-.ts-ph-back:focus-visible {
-  outline: none;
-  box-shadow: var(--ts-focus);
-}
-
-/* The one place a header goes dark. A creation that looked exactly like the
-   rest of the app would be more elegant and much worse. */
-.ts-ph[data-register='host'] {
-  padding: var(--ts-space-2);
-  border-radius: var(--ts-radius-card);
-  background: var(--ts-structure);
-  color: var(--ts-cream);
-}
-
-.ts-ph[data-register='host'] .ts-ph-back {
-  color: var(--ts-cream-muted);
-}
-
-.ts-ph[data-register='host'] .ts-ph-back:hover {
-  background: var(--ts-cream14);
-  color: var(--ts-cream);
-}
-
-.ts-ph[data-register='host'] .ts-ph-sub {
-  color: var(--ts-cream-muted);
-}
-
-/* ── the Creations destination ───────────────────────────────────────────────
+ * Three page-header registers, a standalone back control, and the gallery's
+ * padding. All three had exactly one consumer — the gallery, trust and running
+ * screens that `App.tsx` used to draw itself — and `creations/` now ships those
+ * screens with their own headers and their own back control.
  *
- * The gallery moved out of `.shell`, which is a centred 680px page, and into
- * the same `.today` column the other destinations use. It needs the padding
- * that page was giving it, and nothing else: the cards themselves are still
- * `gallery.css`.
+ * Deleted rather than kept "in case". A second header component nobody renders
+ * is the thing the next person reaches for by accident, and then there are two
+ * ways to draw a page header in one app.
  */
-
-.gallery-body {
-  padding: 0 var(--ts-space-5) var(--ts-space-8);
-}
-
-/* ── back on its own ─────────────────────────────────────────────────────── */
-
-.ts-back {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--ts-space-1);
-  min-height: 44px;
-  margin: 0 0 var(--ts-space-2) calc(var(--ts-space-2) * -1);
-  padding: 0 var(--ts-space-3) 0 var(--ts-space-2);
-  border: 0;
-  border-radius: var(--ts-radius-button);
-  background: none;
-  font-family: var(--ts-font-sans);
-  font-size: var(--ts-text-label);
-  font-weight: 500;
-  color: var(--ts-ink60);
-}
-
-.ts-back:hover {
-  background: var(--ts-ink08);
-  color: var(--ts-ink);
-}
 
 /* ── motion ──────────────────────────────────────────────────────────────────
  *
