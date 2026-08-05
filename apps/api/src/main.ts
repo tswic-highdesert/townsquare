@@ -22,7 +22,10 @@ import {
   seedCohort,
 } from '@townsquare/identity'
 import { CreationStorage, MemoryStorageStore } from '@townsquare/storage'
+import { MemorySaveStore, Saves } from '@townsquare/saves'
 import { businesses } from '../../../packages/feed/src/data/businesses.js'
+import { createNearbyRoutes } from './nearbyRoutes.js'
+import { createSavesRoutes } from './savesRoutes.js'
 import { createTodayRoutes } from './todayRoutes.js'
 import type { TownSquareItem } from './today.js'
 
@@ -232,6 +235,34 @@ async function main(): Promise<void> {
   })
   todayRoutes.warm()
 
+  // Nearby reads no cookie either, for a reason that is the screen's whole
+  // design rather than an optimisation: it hands over the town and the browser
+  // ranks it, so a resident's position is never sent anywhere. See `nearby.ts`.
+  const nearbyRoutes = createNearbyRoutes({ town: TOWN, loadItems })
+
+  // Saving is the one thing on Yours with a real source. Memory store, same as
+  // identity and storage — the interface is the one the Drizzle implementation
+  // lands on, so restarting the API empties every resident's list and nothing
+  // above it changes when that stops being true.
+  const savesRoutes = createSavesRoutes({
+    identity,
+    saves: new Saves({ store: new MemorySaveStore() }),
+    // Ownership is real — `Creation.ownerId` is set at approval — so this is a
+    // query rather than a placeholder. It is empty in development because
+    // nothing here has been through the review queue, which is the same seam
+    // the queue and the moderation list already have.
+    listBuilt: async (userId) =>
+      (await creations.listForOwner(userId)).map((c) => ({
+        slug: c.slug,
+        name: c.name,
+        tagline: c.tagline,
+        status: c.status,
+        updatedAt: c.updatedAt,
+      })),
+    shellOrigin: SHELL_ORIGIN,
+    townId: TOWN.id,
+  })
+
   const server = createServer((req: IncomingMessage, res: ServerResponse) => {
     // CORS admits the shell only. Never `*`, and never a bundle origin: a
     // creation reaching this service directly is exactly what the bridge
@@ -266,7 +297,9 @@ async function main(): Promise<void> {
       .then((handled) => (handled ? true : connectRoutes(req, res, url)))
       .then((handled) => (handled ? true : reviewRoutes(req, res, url)))
       .then((handled) => (handled ? true : reportRoutes(req, res, url)))
+      .then((handled) => (handled ? true : savesRoutes(req, res, url)))
       .then((handled) => (handled ? true : todayRoutes(req, res, url)))
+      .then((handled) => (handled ? true : nearbyRoutes(req, res, url)))
       .then((handled) => {
         if (!handled) readRoutes(url, store, json)
       })

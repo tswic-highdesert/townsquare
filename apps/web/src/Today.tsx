@@ -13,7 +13,9 @@
  * information service cannot come back from.
  */
 
+import { AppBar } from './AppBar.js'
 import { Icon, Mark, type IconName } from './Icon.js'
+import { TabBar, type TabName } from './TabBar.js'
 import type {
   EventCategory,
   TodayCreation,
@@ -29,50 +31,24 @@ export interface TodayProps {
   canReview: boolean
   onOpenCreation: (slug: string) => void
   onBrowseCreations: () => void
+  onTab: (tab: TabName) => void
   onAccount: () => void
   onReview: () => void
 }
 
 export function Today(props: TodayProps) {
-  const { today, account, canReview } = props
+  const { today } = props
 
   return (
     <div className="today">
-      <header className="today-bar">
-        <Mark size={22} />
-        <span className="today-wordmark">Town Square</span>
-        <span className="today-place">{today.town.name}</span>
-
-        <div className="today-bar-actions">
-          {canReview && (
-            <button className="back" onClick={props.onReview}>
-              Review queue
-            </button>
-          )}
-          {/*
-            The label carries the handle, not the initials on the tile. "BT" is
-            a visual shorthand for someone who can already see the screen and is
-            meaningless to anyone who cannot.
-          */}
-          <button
-            className="avatar-button"
-            onClick={props.onAccount}
-            aria-label={
-              account
-                ? `${account.handle}${account.verified ? ', verified' : ''} — your account`
-                : 'Sign in'
-            }
-          >
-            {account ? (
-              <span className="avatar" data-verified={account.verified || undefined}>
-                {initials(account.handle)}
-              </span>
-            ) : (
-              <span className="today-signin">Sign in</span>
-            )}
-          </button>
-        </div>
-      </header>
+      <AppBar
+        label="Town Square"
+        place={today.town.name}
+        account={props.account}
+        canReview={props.canReview}
+        onAccount={props.onAccount}
+        onReview={props.onReview}
+      />
 
       <div className="today-greeting">
         <div className="today-date">
@@ -272,26 +248,7 @@ export function Today(props: TodayProps) {
         <Mark size={26} />
       </footer>
 
-      {/*
-        Today is the only tab that exists. Nearby and Yours are `design/hifi`
-        t5 and are rendered disabled rather than omitted: the shape of the app
-        is part of what the home screen communicates, and a button that says
-        what it will be beats one that silently does nothing.
-      */}
-      <nav className="today-nav" aria-label="Sections">
-        <span className="nav-item" aria-current="page">
-          <Icon name="home" size={23} />
-          Today
-        </span>
-        <button className="nav-item" disabled title="Not built yet">
-          <Icon name="compass" size={23} />
-          Nearby
-        </button>
-        <button className="nav-item" disabled title="Not built yet">
-          <Icon name="bookmarks" size={23} />
-          Yours
-        </button>
-      </nav>
+      <TabBar current="today" onChange={props.onTab} />
     </div>
   )
 }

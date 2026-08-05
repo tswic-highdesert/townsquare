@@ -75,6 +75,9 @@ importers:
       '@townsquare/sandbox':
         specifier: workspace:*
         version: link:../../packages/sandbox
+      '@townsquare/saves':
+        specifier: workspace:*
+        version: link:../../packages/saves
       '@townsquare/sdk':
         specifier: workspace:*
         version: link:../../packages/sdk
@@ -277,6 +280,8 @@ importers:
       '@townsquare/tokens':
         specifier: workspace:*
         version: link:../tokens
+
+  packages/saves: {}
 
   packages/sdk:
     dependencies:

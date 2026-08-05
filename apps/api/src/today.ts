@@ -604,15 +604,21 @@ export function openState(
   for (const clause of clauses) {
     const parts = clause.split(/\s+to\s+/i)
     if (parts.length !== 2) continue
-    const startText = (parts[0] ?? '').trim()
+    const rawStart = (parts[0] ?? '').trim()
     const endText = (parts[1] ?? '').trim()
     // `12 to 5 PM` is noon, not midnight: a start with no meridiem takes the
     // end's. Doing it the other way round opens the shop twelve hours early.
     const endMeridiem = /\b(AM|PM)\b/i.exec(endText)?.[1] ?? null
-    const start = toMinutes(startText, endMeridiem)
+    const start = toMinutes(rawStart, endMeridiem)
     let end = toMinutes(endText, null)
     if (start === null || end === null) continue
     if (end <= start) end += 24 * 60
+    // The inherited meridiem has to survive into the label as well as the
+    // arithmetic. `Wed 2 to 8 PM` was rendering as "Closed · opens 2", which is
+    // a sentence a reader has to guess at — and half the guesses send them to a
+    // closed door twelve hours early.
+    const startText =
+      endMeridiem && !/\b(AM|PM)\b/i.test(rawStart) ? `${rawStart} ${endMeridiem}` : rawStart
     ranges.push({ start, end, startText, endText })
   }
   if (ranges.length === 0) return null

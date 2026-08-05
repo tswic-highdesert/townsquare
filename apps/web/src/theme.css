@@ -92,7 +92,7 @@ button {
   width: 44px;
   height: 44px;
   border-radius: var(--ts-radius-input);
-  background: var(--ts-terracotta-14);
+  background: var(--ts-terracotta14);
   object-fit: cover;
 }
 
@@ -143,7 +143,7 @@ button {
   letter-spacing: 0.08em;
   text-transform: uppercase;
   color: var(--ts-navy);
-  background: var(--ts-sage-14);
+  background: var(--ts-sage14);
   border-radius: var(--ts-radius-chip);
   padding: 4px 10px;
 }
@@ -438,7 +438,7 @@ button {
 
 /* The one thing on the queue that is allowed to shout. */
 .flag.escalates {
-  background: var(--ts-terracotta-14);
+  background: var(--ts-terracotta14);
   color: var(--ts-terracotta);
 }
 
@@ -657,10 +657,20 @@ details > pre {
  * Same rule as everything above: not one hex literal.
  */
 
+/*
+ * A column at least as tall as the window, so the tab bar has a floor to stick
+ * to. `position: sticky; bottom: 0` only pins to the viewport once the content
+ * is taller than it — on a short screen it simply sits wherever the content
+ * stopped, which on Yours with three saved rows left the nav floating in the
+ * middle of the page with nothing under it. Today never showed this because
+ * Today is always long.
+ */
 .today {
   max-width: 480px;
   margin: 0 auto;
-  padding-bottom: var(--ts-space-16);
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
 }
 
 /* ── the bar ─────────────────────────────────────────────────────────── */
@@ -1439,8 +1449,9 @@ details > pre {
   display: flex;
   justify-content: space-around;
   gap: var(--ts-space-2);
-  margin-top: var(--ts-space-6);
-  padding: var(--ts-space-2) var(--ts-space-5);
+  /* Pushed to the floor of the column when the content does not reach it. */
+  margin-top: auto;
+  padding: var(--ts-space-4) var(--ts-space-5) var(--ts-space-2);
   border-top: 1px solid var(--ts-hairline);
   background: var(--ts-cream);
 }
@@ -1455,14 +1466,18 @@ details > pre {
   border: 0;
   padding: var(--ts-space-1) 0;
   font-size: 10px;
-  font-weight: 500;
-  color: var(--ts-navy);
+  font-weight: 400;
+  color: var(--ts-ink45);
 }
 
-.nav-item:disabled {
-  color: var(--ts-ink45);
-  font-weight: 400;
-  cursor: not-allowed;
+/*
+ * The tab you are on is the only one in the brand colour. Until Nearby and
+ * Yours existed this was carried by `:disabled` on the other two, and lifting
+ * the bar into a shared component quietly left all three looking identical.
+ */
+.nav-item[aria-current] {
+  color: var(--ts-navy);
+  font-weight: 500;
 }
 
 /* ── loading and failure ─────────────────────────────────────────────── */
@@ -1541,4 +1556,463 @@ details > pre {
   width: 100%;
   height: 100%;
   object-fit: cover;
+}
+
+/* ── Nearby (design 5a) ───────────────────────────────────────────────────
+ *
+ * The list half. Same one-column phone-first shape as Today, on the same
+ * three-way type split documented at the top of that block: serif for anything
+ * that reads as a sentence, mono only where it labels the page, sans for the
+ * small utility text. The distance chip is mono because it is a measurement,
+ * and the row's detail line is sans because it is a fact about opening hours.
+ *
+ * The map surface, the Map/List switch and the pins in the hi-fi are not here.
+ * A tile layer is a third party in the load path of the origin holding the
+ * session cookie, which is a decision rather than a stylesheet. See the note at
+ * the top of Nearby.tsx.
+ *
+ * Same rule as everything above: not one hex literal.
+ */
+
+.nearby-controls {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  gap: var(--ts-space-2);
+  padding: var(--ts-space-3) var(--ts-space-5);
+  background: var(--ts-cream);
+  border-bottom: 1px solid var(--ts-ink13);
+}
+
+.nearby-search {
+  display: flex;
+  align-items: center;
+  gap: var(--ts-space-2);
+  padding: var(--ts-space-2) var(--ts-space-3);
+  background: var(--ts-surface);
+  border: 1px solid var(--ts-hairline);
+  border-radius: var(--ts-radius-card);
+  box-shadow: 0 1px 2px var(--ts-ink08);
+  color: var(--ts-ink45);
+}
+
+.nearby-search input {
+  flex: 1;
+  min-width: 0;
+  border: 0;
+  background: none;
+  font-family: var(--ts-font-sans);
+  font-size: var(--ts-text-label);
+  color: var(--ts-ink);
+}
+
+.nearby-search input:focus {
+  outline: none;
+}
+
+/*
+ * Horizontally scrollable rather than wrapped. Six chips wrap to two lines on a
+ * phone and push the list below the fold, and the whole value of a filter row
+ * is that the thing it filters is visible while you use it.
+ */
+.nearby-chips {
+  display: flex;
+  gap: var(--ts-space-2);
+  overflow-x: auto;
+  scrollbar-width: none;
+  margin: 0 calc(var(--ts-space-5) * -1);
+  padding: 0 var(--ts-space-5);
+}
+
+.nearby-chips::-webkit-scrollbar {
+  display: none;
+}
+
+.chip {
+  display: flex;
+  align-items: center;
+  gap: var(--ts-space-1);
+  flex: none;
+  padding: var(--ts-space-2) var(--ts-space-3);
+  border: 1px solid var(--ts-hairline);
+  border-radius: var(--ts-radius-chip);
+  background: var(--ts-surface);
+  font-family: var(--ts-font-sans);
+  font-size: 12.5px;
+  font-weight: 500;
+  color: var(--ts-ink60);
+  white-space: nowrap;
+}
+
+/*
+ * The on state is navy, not a tint of the bucket's own colour. A chip that took
+ * its category's tint when selected would make "on" and "food" the same signal,
+ * and the row of icons already says which bucket is which.
+ */
+.chip[data-on] {
+  background: var(--ts-navy);
+  border-color: var(--ts-navy);
+  color: var(--ts-cream);
+}
+
+.chip-count {
+  font-family: var(--ts-font-mono);
+  font-size: 10px;
+  color: var(--ts-ink45);
+}
+
+.chip[data-on] .chip-count {
+  color: var(--ts-cream-muted);
+}
+
+.nearby-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--ts-space-3);
+  padding: var(--ts-space-5) var(--ts-space-5) 0;
+}
+
+.nearby-reach {
+  font-family: var(--ts-font-serif);
+  font-weight: 400;
+  font-size: 21px;
+  line-height: 1.1;
+  letter-spacing: -0.015em;
+  margin: 0;
+}
+
+.nearby-count {
+  font-family: var(--ts-font-mono);
+  font-size: 10.5px;
+  color: var(--ts-ink45);
+}
+
+/*
+ * The permission prompt, said in the same words the code means.
+ *
+ * Terracotta-tinted rather than the gold notice card from Today: this is an
+ * offer, not an advisory, and the one tinted card on Today earns its weight by
+ * being rare.
+ */
+.locate {
+  display: flex;
+  align-items: center;
+  gap: var(--ts-space-3);
+  margin: var(--ts-space-4) var(--ts-space-5) 0;
+  padding: var(--ts-space-3);
+  border: 1px solid var(--ts-terracotta14);
+  border-radius: var(--ts-radius-sheet);
+  background: var(--ts-terracotta10);
+}
+
+.locate-icon {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 32px;
+  height: 32px;
+  border-radius: var(--ts-radius-input);
+  background: var(--ts-terracotta14);
+  color: var(--ts-terracotta-hover);
+}
+
+.locate-text {
+  min-width: 0;
+}
+
+.locate-title {
+  font-size: var(--ts-text-caption);
+  font-weight: 500;
+  line-height: 1.3;
+}
+
+.locate-detail {
+  font-family: var(--ts-font-serif);
+  font-size: 13.5px;
+  line-height: 1.35;
+  color: var(--ts-ink60);
+  margin-top: 2px;
+}
+
+.locate-go {
+  margin-left: auto;
+  flex: none;
+  border: 0;
+  border-radius: var(--ts-radius-chip);
+  padding: var(--ts-space-2) var(--ts-space-3);
+  background: var(--ts-terracotta);
+  color: var(--ts-cream);
+  font-family: var(--ts-font-sans);
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.locate-go:disabled {
+  background: var(--ts-ink26);
+}
+
+.place-list,
+.saved-list {
+  list-style: none;
+  margin: var(--ts-space-4) 0 0;
+  padding: 0 var(--ts-space-5);
+  display: flex;
+  flex-direction: column;
+}
+
+.place-row,
+.saved-row {
+  display: flex;
+  align-items: center;
+  gap: var(--ts-space-2);
+  padding: var(--ts-space-1) 0;
+}
+
+.place-row + .place-row,
+.saved-row + .saved-row {
+  border-top: 1px solid var(--ts-ink13);
+}
+
+.place-main {
+  display: flex;
+  align-items: center;
+  gap: var(--ts-space-3);
+  flex: 1;
+  min-width: 0;
+  padding: var(--ts-space-2) 0;
+  color: inherit;
+  text-decoration: none;
+}
+
+.place-icon {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 40px;
+  height: 40px;
+  border-radius: var(--ts-radius-input);
+}
+
+/*
+ * The five buckets, tinted from the same tokens the event rows on Today use.
+ * `service` is the default bucket and holds a third of the directory, so it
+ * gets the quietest tint: a colour that is on a third of the screen is not a
+ * signal. The navy tile is for a saved event on Yours, which is the only place
+ * an event kind appears — see the note in nearby.ts about why Nearby has none.
+ */
+.place-icon[data-kind='eat'] {
+  background: var(--ts-terracotta14);
+  color: var(--ts-terracotta-hover);
+}
+
+.place-icon[data-kind='shop'] {
+  background: var(--ts-navy10);
+  color: var(--ts-navy);
+}
+
+.place-icon[data-kind='care'] {
+  background: var(--ts-sage14);
+  color: var(--ts-sage);
+}
+
+.place-icon[data-kind='civic'] {
+  background: var(--ts-gold14);
+  color: var(--ts-gold-text);
+}
+
+.place-icon[data-kind='service'] {
+  background: var(--ts-stone);
+  color: var(--ts-ink60);
+}
+
+.saved-row .place-icon[data-kind='event'] {
+  background: var(--ts-navy);
+  color: var(--ts-cream);
+}
+
+.place-text {
+  min-width: 0;
+  flex: 1;
+}
+
+.place-name {
+  display: block;
+  font-size: var(--ts-text-label);
+  font-weight: 500;
+  line-height: 1.25;
+}
+
+.place-name a {
+  color: inherit;
+  text-decoration: none;
+}
+
+.place-detail {
+  display: flex;
+  align-items: center;
+  gap: var(--ts-space-1);
+  font-family: var(--ts-font-sans);
+  font-size: 12px;
+  color: var(--ts-ink60);
+  margin-top: 3px;
+  /* Scraped locations run to a full postal address. One line, then stop. */
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.place-detail[data-open='true'] {
+  color: var(--ts-sage);
+}
+
+.place-detail[data-open='true'] .open-dot {
+  background: var(--ts-sage);
+}
+
+.place-far {
+  flex: none;
+  font-family: var(--ts-font-mono);
+  font-size: 10px;
+  color: var(--ts-ink45);
+}
+
+/*
+ * Saved is terracotta on the same outline, never a filled glyph. See the note
+ * on `bookmark` in Icon.tsx — one filled icon in a stroked set is what makes a
+ * hand-rolled set look hand-rolled.
+ */
+.place-save {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  border: 0;
+  border-radius: var(--ts-radius-input);
+  background: none;
+  color: var(--ts-ink26);
+}
+
+.place-save[data-saved] {
+  color: var(--ts-terracotta);
+}
+
+.nearby-empty,
+.yours-empty {
+  margin: var(--ts-space-6) var(--ts-space-5) 0;
+  font-family: var(--ts-font-serif);
+  font-size: var(--ts-text-label);
+  line-height: 1.45;
+  color: var(--ts-ink60);
+}
+
+/* ── Yours (design 5b) ────────────────────────────────────────────────────
+ *
+ * Deliberately short. Most of the hi-fi's version of this screen — posts,
+ * follows, usage bars on the app you built — has no source, and the table in
+ * Yours.tsx says which and why. What is left is you, what you saved, and what
+ * you built.
+ */
+
+.yours-head {
+  display: flex;
+  align-items: center;
+  gap: var(--ts-space-3);
+  padding: var(--ts-space-5) var(--ts-space-5) 0;
+}
+
+.yours-avatar {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 58px;
+  height: 58px;
+  border-radius: var(--ts-radius-sheet);
+  background: var(--ts-navy);
+  color: var(--ts-cream);
+  font-size: var(--ts-text-card-title);
+  font-weight: 500;
+}
+
+/* The same ring the bar's avatar wears, at the size this one is. */
+.yours-avatar[data-verified] {
+  box-shadow: 0 0 0 2px var(--ts-cream), 0 0 0 4px var(--ts-navy40);
+}
+
+.yours-handle {
+  font-family: var(--ts-font-serif);
+  font-weight: 400;
+  font-size: 23px;
+  line-height: 1.1;
+  letter-spacing: -0.015em;
+  margin: 0 0 var(--ts-space-2);
+}
+
+.verified-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--ts-space-1);
+  padding: var(--ts-space-1) var(--ts-space-2);
+  border-radius: var(--ts-radius-chip);
+  background: var(--ts-stone);
+  color: var(--ts-ink60);
+  font-family: var(--ts-font-mono);
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+/*
+ * Sage only when it is true. Being unverified is an ordinary state — reading
+ * needs nothing, building needs an email, and only publishing needs a vouch —
+ * so it is grey rather than a warning colour.
+ */
+.verified-chip[data-verified] {
+  background: var(--ts-sage14);
+  color: var(--ts-sage);
+}
+
+/* The count the hi-fi's tile row used to carry, on the heading instead. */
+.section-count {
+  margin-left: auto;
+  font-family: var(--ts-font-mono);
+  font-size: 10px;
+  color: var(--ts-ink45);
+}
+
+.yours-signedout {
+  padding: var(--ts-space-12) var(--ts-space-5);
+  text-align: center;
+}
+
+.yours-signedout-icon {
+  display: grid;
+  place-items: center;
+  width: 52px;
+  height: 52px;
+  margin: 0 auto var(--ts-space-4);
+  border-radius: var(--ts-radius-sheet);
+  background: var(--ts-terracotta14);
+  color: var(--ts-terracotta-hover);
+}
+
+.yours-signedout h1 {
+  font-family: var(--ts-font-serif);
+  font-weight: 400;
+  font-size: 25px;
+  line-height: 1.15;
+  letter-spacing: -0.015em;
+  margin: 0;
+}
+
+.yours-signedout p {
+  font-family: var(--ts-font-serif);
+  font-size: var(--ts-text-label);
+  line-height: 1.5;
+  color: var(--ts-ink60);
+  margin: var(--ts-space-3) 0 var(--ts-space-6);
 }

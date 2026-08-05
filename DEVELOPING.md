@@ -102,6 +102,11 @@ omits the opening meridiem and means noon, and `9 AM to 12 AM` closes at
 midnight rather than opening and closing in the same minute. 82 listings also
 carry a split shift as a second clause with no weekday of its own.
 
+The inherited meridiem has to survive into the *label* as well as the
+arithmetic. `Wed 2 to 8 PM` rendered as "Closed · opens 2" until Nearby put the
+same string on a second screen — a sentence the reader has to guess at, and half
+the guesses send them to a closed door twelve hours early.
+
 Three things about it are decisions rather than details.
 
 **"Today" is a question about America/Chicago**, never about whatever timezone
@@ -129,7 +134,7 @@ the one failure mode a town information service cannot come back from.
 | The weather chip | a weather source; there is no ingest for one |
 | The neighbour stream, and the composer under it | `design/hifi` t11, and a posts table |
 
-Two smaller deviations, both intentional:
+One smaller deviation, intentional:
 
 - **Icons are drawn in `apps/web/src/Icon.tsx`, not Material Symbols.** The
   family is a ~3.5MB variable font, and neither way of getting it is
@@ -137,9 +142,114 @@ Two smaller deviations, both intentional:
   town's home screen and needs a `font-src` hole `packages/tokens` deliberately
   does not have. Subsetting it needs a build step that does not exist yet.
   When it does, delete that file.
-- **Nearby and Yours are rendered disabled**, not omitted. They are `design/hifi`
-  t5. The shape of the app is part of what the home screen communicates, and a
-  button that says what it will be beats one that silently does nothing.
+
+## Nearby
+
+`GET /api/nearby`, `design/hifi` 5a. One request, no cookie, and — the part
+that is the design rather than a detail — **no coordinates in either
+direction.** The API returns every placeable business in town, unsorted, and
+the resident's browser measures and ranks it.
+
+A server that sorts by distance has to be told where you are, on a request
+carrying your session cookie, every time you open the second tab of the town's
+app. Nothing on this screen is worth building that, so the permission prompt
+can say "your position stays on this device" and mean it literally.
+
+The price is measured, not guessed: 741 listings, 240 KB of JSON, **54 KB over
+the wire gzipped**. `nearbyRoutes.ts` compresses it, which is safe here
+specifically because the response holds nothing secret and takes no
+attacker-controlled input.
+
+| Piece | Lives in |
+|---|---|
+| Which listings are placeable, and their bucket | `apps/api/src/nearby.ts` |
+| Measuring, ranking, formatting a distance | `apps/web/src/nearbyData.ts` |
+
+Both are pure and unit-tested. Ranking is client-side because the position is,
+and that does not make it any less the business logic of the screen.
+
+**Two hundred and fifty categories become five buckets.** `placeKind` maps the
+scrape's free-text `category` — 251 distinct values, 140 of them appearing
+once — onto Food, Shops, Health, Civic and Services. `service` is the honest
+default and holds a third of the town. Two collisions are handled explicitly
+and both are tested: `care` never matches something that sells things ("Medical
+supply store" is a shop), and `shop` never matches a repair trade ("Auto repair
+shop" is a service). A third was a bug — `cardiolog` written inside a `\b(…)\b`
+group cannot match "Cardiologist", so fourteen categories of specialist
+silently fell through to `service` while the regex looked correct.
+
+**Refusing location costs the distances and nothing else.** With no position
+the list is ordered open, then unknown, then closed, alphabetically within
+each — and it says "Everywhere in Russellville" rather than a radius. Ranking
+from the middle of town would print "0.4 mi" beside a row for someone standing
+four miles away, which is the same class of lie as inventing the data.
+
+### What is deliberately not on the screen
+
+| Missing | Why |
+|---|---|
+| The map, the pins, the Map/List switch | a tile layer puts a third party in the load path of the origin holding the session cookie. **Open question for Tal** |
+| A creation's layer ("#1 on Luis's Burrito Index") | needs `records`, which is specified and not built |
+| Events | see below |
+
+**Events were built, screenshotted, and taken back out.** `packages/feed/src/
+lib/library.ts` and `state-parks.ts` both stamp every event they produce with
+one hardcoded pair — 35.2784, -93.1338, the middle of Russellville — whatever
+the venue, and the library scrape covers Dover, Atkins and Hector, up to fifteen
+miles out. A third source emits `{ lat: 0, lng: 0 }`. The finished screen
+reported five libraries in three different towns as fifty feet away. A distance
+is the one thing here a resident acts on by walking somewhere, so events are out
+until ingest geocodes a venue; what is on tonight is still on Today, where
+nothing claims a distance.
+
+`placeable()` now refuses `(0, 0)` and anything outside a valid lat/lng range,
+so a missing coordinate cannot sort to the top of a list ranked by distance.
+
+## Yours, and saving
+
+`GET /api/yours` and `POST /api/saves`, `design/hifi` 5b. Session-authenticated,
+scoped to one resident, and the scope comes from the cookie — there is no field
+in any body that would address another resident's list.
+
+`packages/saves` follows `packages/storage`: an interface plus a `Memory*`
+implementation, with the rules in the service layer rather than the route, so a
+second door onto saving inherits them. The cap (200), the closed set of kinds,
+the length limits and the url scheme check all live in `Saves`.
+
+Two behaviours are decisions rather than details.
+
+**A save is a snapshot, not a pointer.** The title and detail are stored as they
+read when the button was pressed. Resolving them live from the feed on every
+read is tidier and means a saved event disappears from your list the morning
+after it happened — a list that quietly deletes your things is worse than a
+stale title.
+
+**Saving twice is answered `200` with the original.** A bookmark pressed again
+is a person checking whether it worked, and "yes, it is saved" is both the
+friendlier answer and the true one. Same shape as a duplicate report.
+
+### What is deliberately not on the screen
+
+The hi-fi's version of Yours is mostly things Town Square does not know.
+
+| Missing | Needs |
+|---|---|
+| POSTED, and "You posted" | a posts table. `design/hifi` t11 |
+| Usage bars on the app you built | usage telemetry, which does not exist anywhere |
+| RESIDENTS / REPORTS / CITY FIXED | the same: counts of nothing |
+| "Ward 2" beside the handle | the town holds no address for anybody |
+| Following | there is nothing to follow yet |
+| "Build something else" | the builder door has no screen in the shell yet |
+
+The usage bars are the interesting refusal, because they are the most attractive
+part of that design — a sparkline is what makes a builder feel their app
+matters — and seven plausible bars drawn from nothing is inventing the one
+number a builder would repeat to somebody else.
+
+**"What you built" is real, and usually empty.** It is `Creation.ownerId`, set
+by the platform at approval and never claimed by a manifest. Nothing in
+development has been through the review queue, so the section does not render —
+the same seam the queue and the live-creations list already have.
 
 ### Attribution
 
@@ -480,7 +590,7 @@ fails loudly at startup rather than working only here.
 ## Tests
 
 ```bash
-pnpm test        # 651 tests
+pnpm test        # 764 tests
 pnpm typecheck
 ```
 
@@ -518,7 +628,7 @@ in two jobs split by cost:
 
 | Job | Runs | Roughly |
 |---|---|---|
-| `checks` | typecheck, generated-docs drift, 651 unit tests | under a minute |
+| `checks` | typecheck, generated-docs drift, 764 unit tests | under a minute |
 | `boundary` | the Playwright suite, three origins in Chromium | two to three minutes |
 
 Neither is configured as a **required** status check, on purpose. This repo is

@@ -15,6 +15,7 @@
     "@townsquare/mcp": "workspace:*",
     "@townsquare/review": "workspace:*",
     "@townsquare/sandbox": "workspace:*",
+    "@townsquare/saves": "workspace:*",
     "@townsquare/sdk": "workspace:*",
     "@townsquare/shared": "workspace:*"
   }

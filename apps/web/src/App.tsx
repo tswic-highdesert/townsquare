@@ -1,11 +1,12 @@
 /**
- * The shell: Today, a gallery, a trust page, and a running creation.
+ * The shell: three tabs, a gallery, a trust page, and a running creation.
  *
- * Today (`design/hifi` 4a) is home — it is what a resident opens, and the
- * gallery sits behind it as the full list. The other three match sections 6a,
- * 6b and 6d. The trust page is not a formality — it is the moment a resident
- * decides, and it is generated entirely from the frozen manifest by
- * `describeManifest`, so a creation cannot write its own.
+ * Today (`design/hifi` 4a) is home. Nearby and Yours (5a, 5b) sit beside it in
+ * the tab bar, and the gallery sits behind Today as the full list of creations.
+ * The other three screens match sections 6a, 6b and 6d. The trust page is not a
+ * formality — it is the moment a resident decides, and it is generated entirely
+ * from the frozen manifest by `describeManifest`, so a creation cannot write
+ * its own.
  */
 
 import { useEffect, useMemo, useState } from 'react'
@@ -15,12 +16,18 @@ import { ReportPanel } from './ReportPanel.js'
 import { ReviewScreen } from './Review.js'
 import { resolveInitialAccount, type AccountView } from './session.js'
 import { CreationFrame } from './CreationFrame.js'
+import { Nearby } from './Nearby.js'
 import { Today } from './Today.js'
+import { Yours } from './Yours.js'
+import type { TabName } from './TabBar.js'
+import { fetchYours, type BuiltCreation, type SavedThing } from './savesData.js'
 import { fetchToday, type TodayPayload } from './todayData.js'
 import { fetchCreations, fetchTown, type CreationSummary } from './townData.js'
 
 type Screen =
   | { name: 'today' }
+  | { name: 'nearby' }
+  | { name: 'yours' }
   | { name: 'gallery' }
   | { name: 'account' }
   | { name: 'review' }
@@ -29,8 +36,26 @@ type Screen =
    * and from the gallery, and a back button that always lands on the gallery
    * silently moves a resident somewhere they were not.
    */
-  | { name: 'trust'; creation: CreationSummary; from: 'today' | 'gallery' }
-  | { name: 'running'; creation: CreationSummary; from: 'today' | 'gallery' }
+  | { name: 'trust'; creation: CreationSummary; from: BackTo }
+  | { name: 'running'; creation: CreationSummary; from: BackTo }
+
+/** Where the back button lands. Today, the gallery, or the tab you came from. */
+type BackTo = 'today' | 'gallery' | 'yours'
+
+/**
+ * The screens that are only a name, keyed by that name.
+ *
+ * A table rather than a cast. `setScreen({ name: someUnion })` does not
+ * typecheck against a union of single-member objects, and the two ways past
+ * that are a lookup or an assertion — one of which stays correct if a screen
+ * later grows a field.
+ */
+const SCREENS = {
+  today: { name: 'today' },
+  nearby: { name: 'nearby' },
+  yours: { name: 'yours' },
+  gallery: { name: 'gallery' },
+} as const satisfies Record<TabName | 'gallery', Screen>
 
 export function App() {
   const [creations, setCreations] = useState<CreationSummary[] | null>(null)
@@ -41,6 +66,15 @@ export function App() {
   const [reporting, setReporting] = useState(false)
   const [today, setToday] = useState<TodayPayload | null>(null)
   const [todayFailed, setTodayFailed] = useState(false)
+  /**
+   * Saved things, held here rather than in Yours.
+   *
+   * The bookmark on a Nearby row and the list on Yours are the same set, and a
+   * copy in each is a copy that disagrees the moment somebody presses one. It is
+   * lifted no higher than it has to be: nothing outside those two tabs reads it.
+   */
+  const [saved, setSaved] = useState<SavedThing[]>([])
+  const [built, setBuilt] = useState<BuiltCreation[]>([])
 
   useEffect(() => {
     void fetchCreations().then(setCreations)
@@ -57,6 +91,26 @@ export function App() {
     // tells them what the header already says.
     void resolveInitialAccount().then(setAccount)
   }, [])
+
+  /**
+   * Re-read what is yours whenever who you are changes.
+   *
+   * Keyed on the handle rather than run once, because signing in and signing
+   * out both have to move this: a fresh session must pick up its own saves, and
+   * signing out must drop the previous resident's off the screen rather than
+   * leaving them visible until a reload.
+   */
+  useEffect(() => {
+    if (!account) {
+      setSaved([])
+      setBuilt([])
+      return
+    }
+    void fetchYours().then((yours) => {
+      setSaved(yours?.saves ?? [])
+      setBuilt(yours?.built ?? [])
+    }, () => undefined)
+  }, [account?.handle])
 
   /**
    * The permission view handed down to a running creation.
@@ -87,13 +141,46 @@ export function App() {
     </div>
   )
 
-  /** Opening from Today, which knows a slug and nothing else. */
-  const openBySlug = (slug: string) => {
+  /** Opening from a tab, which knows a slug and nothing else. */
+  const openBySlug = (slug: string, from: BackTo = 'today') => {
     const creation = creations?.find((c) => c.slug === slug)
     // The trust page, never straight into the creation. Today is a list of
     // things neighbours built; it is not a shortcut past the screen where a
     // resident reads what one of them is allowed to touch.
-    if (creation) setScreen({ name: 'trust', creation, from: 'today' })
+    if (creation) setScreen({ name: 'trust', creation, from })
+  }
+
+  const goToTab = (tab: TabName) => setScreen(SCREENS[tab])
+
+  if (screen.name === 'nearby') {
+    return (
+      <Nearby
+        account={account}
+        canReview={canReview}
+        saved={saved}
+        onSavedChange={setSaved}
+        onTab={goToTab}
+        onAccount={() => setScreen({ name: 'account' })}
+        onReview={() => setScreen({ name: 'review' })}
+      />
+    )
+  }
+
+  if (screen.name === 'yours') {
+    return (
+      <Yours
+        account={account}
+        canReview={canReview}
+        town={town}
+        saved={saved}
+        built={built}
+        onSavedChange={setSaved}
+        onOpenCreation={(slug) => openBySlug(slug, 'yours')}
+        onTab={goToTab}
+        onAccount={() => setScreen({ name: 'account' })}
+        onReview={() => setScreen({ name: 'review' })}
+      />
+    )
   }
 
   if (screen.name === 'today') {
@@ -116,6 +203,7 @@ export function App() {
         canReview={canReview}
         onOpenCreation={openBySlug}
         onBrowseCreations={() => setScreen({ name: 'gallery' })}
+        onTab={goToTab}
         onAccount={() => setScreen({ name: 'account' })}
         onReview={() => setScreen({ name: 'review' })}
       />
@@ -192,11 +280,8 @@ export function App() {
 
     return (
       <div className="shell">
-        <button
-          className="back"
-          onClick={() => setScreen(from === 'today' ? { name: 'today' } : { name: 'gallery' })}
-        >
-          ← {from === 'today' ? 'Today' : 'Back'}
+        <button className="back" onClick={() => setScreen(SCREENS[from])}>
+          ← {from === 'gallery' ? 'Back' : from === 'today' ? 'Today' : 'Yours'}
         </button>
 
         <h1 style={{ marginBottom: 4 }}>{creation.name}</h1>

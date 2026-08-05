@@ -235,7 +235,13 @@ describe('openState', () => {
 
   it('handles a split shift on both sides of the gap', () => {
     expect(openState(week, 'Wed', at(12))).toEqual({ open: true, label: 'Open until 2 PM' })
-    expect(openState(week, 'Wed', at(15))).toEqual({ open: false, label: 'Closed \u00b7 opens 4' })
+    // The meridiem is inherited into the label as well as into the arithmetic.
+    // "opens 4" is a sentence the reader has to guess at, and half the guesses
+    // send them to a closed door twelve hours early.
+    expect(openState(week, 'Wed', at(15))).toEqual({
+      open: false,
+      label: 'Closed \u00b7 opens 4 PM',
+    })
     expect(openState(week, 'Wed', at(20))).toEqual({ open: true, label: 'Open until 9 PM' })
   })
 

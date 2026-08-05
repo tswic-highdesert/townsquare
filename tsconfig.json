@@ -12,6 +12,7 @@
     "packages/host/src/**/*",
     "packages/identity/src/**/*",
     "packages/storage/src/**/*",
+    "packages/saves/src/**/*",
     "packages/mcp/src/**/*",
     "packages/review/src/**/*",
     "apps/*/src/**/*"
@@ -34,6 +35,7 @@
       "@townsquare/db": ["./packages/db/src/index.ts"],
       "@townsquare/identity": ["./packages/identity/src/index.ts"],
       "@townsquare/storage": ["./packages/storage/src/index.ts"],
+      "@townsquare/saves": ["./packages/saves/src/index.ts"],
       "@townsquare/mcp": ["./packages/mcp/src/index.ts"],
       "@townsquare/review": ["./packages/review/src/index.ts"]
     }
