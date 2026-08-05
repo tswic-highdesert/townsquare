@@ -55,6 +55,8 @@
 
 /* ── shared furniture ──────────────────────────────────────────────────── */
 
+/* Pulled left so the arrow lines up with the heading under it rather than with
+ * the button's own padding. */
 .id-back {
   margin-left: calc(var(--ts-space-3) * -1);
   margin-bottom: var(--ts-space-5);
@@ -289,8 +291,17 @@
 
 /* The surface, border, radius, padding and elevation come from `Card`. */
 
-/* Verified is an edge, not a tinted card. One tinted surface per screen, and on
- * this screen it is spent on the budget meter. */
+/*
+ * Verified is an edge, not a tinted card. One tinted surface per screen, and on
+ * this screen it is spent on the budget meter.
+ *
+ * This overrides `.ts-card`'s `border` shorthand from an ordinary single-class
+ * rule, which works because `ui.css` lives in `@layer ts-primitives` and this
+ * sheet is unlayered: unlayered CSS beats layered CSS whatever the source order
+ * and whatever the specificity. **Do not wrap this file in `@layer`** — it
+ * would drop below the primitives and every override here would silently stop
+ * applying.
+ */
 .id-rung-verified {
   border-left: 3px solid var(--ts-verified);
 }
@@ -615,14 +626,18 @@
 
 /* ── the report form ───────────────────────────────────────────────────── */
 
+/*
+ * The surface, border, radius and padding come from `Card`, and the stacking
+ * comes from `CardBody`. All this adds is a measure: a report form the width of
+ * a desktop window is a form nobody can scan.
+ */
 .id-report {
-  display: grid;
-  gap: var(--ts-space-4);
-  border: 1px solid var(--ts-hairline);
-  border-radius: var(--ts-radius-card);
-  background: var(--ts-surface);
-  padding: var(--ts-space-5);
   max-width: 46ch;
+}
+
+/* A form breathes wider than a card of prose. */
+.id-report .ts-card-body {
+  gap: var(--ts-space-4);
 }
 
 .id-report-h {
@@ -831,8 +846,8 @@
   gap: var(--ts-space-3);
 }
 
-/* The surface, border, radius and padding come from `Card`. The only thing
- * this adds is the edge on the version residents are running right now. */
+/* The surface, border, radius and padding come from `Card`. The only thing this
+ * adds is the edge on the version residents are running right now. */
 .mod-version-live {
   border-left: 3px solid var(--ts-verified);
 }
