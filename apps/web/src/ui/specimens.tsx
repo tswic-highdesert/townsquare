@@ -481,6 +481,52 @@ function Structure() {
             </RowList>
           </div>
         </div>
+        <div className="sp-grid">
+          <div>
+            <p className="sp-head">Headline leads, thumbnail trails, no chevron</p>
+            <RowList label="More from town">
+              <RowItem
+                title="Quorum court sends the Weir Road culvert back to committee"
+                meta="The Courier &middot; 6:41 a.m."
+                trailing={<span className="ts-row-thumb" aria-hidden="true" />}
+                chevron={false}
+                href="#row"
+              />
+              <RowItem
+                title="Tech moves fall move-in to August 17"
+                meta="Arkansas Tech University &middot; 2h"
+                chevron={false}
+                href="#row"
+              />
+              <RowItem
+                title="Main Street repaving starts at Denver Street Monday"
+                meta="City of Russellville &middot; 4h"
+                trailing={<span className="ts-row-thumb" aria-hidden="true" />}
+                chevron={false}
+                href="#row"
+              />
+            </RowList>
+            <p className="sp-note">
+              The feed shape. The headline leads because that is what a reader scans, the 68px
+              thumbnail trails, and rows two has none because roughly half the town's stories carry
+              no art. The chevron is off: a photo already says there is something here, and two
+              affordances in one corner is one too many.
+            </p>
+          </div>
+          <div>
+            <p className="sp-head">A bare card, holding a list</p>
+            <Card padded={false}>
+              <RowList framed={false} label="Tonight">
+                <RowItem lead={<RowDate weekday="Wed" day={5} />} title="City council work session" meta="6:30 p.m. &middot; Council chamber" href="#row" />
+                <RowItem lead={<RowDate weekday="Wed" day={5} />} title="Wonder Boys scrimmage" meta="6:00 p.m. &middot; Thone Stadium" href="#row" />
+              </RowList>
+            </Card>
+            <p className="sp-note">
+              <code>padded={'{false}'}</code> for a card whose children own their own edges. The row
+              list already pads itself, so the default 16px inset would double it.
+            </p>
+          </div>
+        </div>
         <p className="sp-note">
           Compact sets four variables and nothing else: <code>--ts-row-y</code>,{' '}
           <code>--ts-row-gap</code>, <code>--ts-row-lead</code>, <code>--ts-row-title</code>. The tap
