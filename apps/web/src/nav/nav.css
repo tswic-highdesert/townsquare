@@ -23,15 +23,24 @@
  * class invented here is checked against `ui/ui.css` first; the primitives
  * layer got the `ts-` prefix first and keeps it.
  *
+ * The same load order has a second consequence, and it is the more dangerous
+ * one: **a component stylesheet lands before `ui/ui.css`, so a rule here that
+ * tried to override a primitive would lose, silently.** Nothing in this file
+ * does — every class below is one this file invented — and the check that keeps
+ * that true is `comm -12` of the `.ts-*` classes in `ui/ui.css` against the
+ * ones here, which must stay empty. If a rule ever does need to reach a
+ * primitive, double the selector (`.ts-card.nav-thing`) rather than assume
+ * order.
+ *
  * Not one hex literal, the same as every other stylesheet here. Where a value
  * does not exist in the contract it is mixed from one that does.
  */
 
 /* ── the skip link ───────────────────────────────────────────────────────────
  *
- * A real link, first in the DOM, off screen until focused. The target id is
- * put on the bar's next sibling by `AppBar`, which is the first block of
- * content on every screen that has a bar.
+ * A real link, first in the DOM, off screen until focused. `#ts-main` is put
+ * on the first block of content by each screen, because the screen is the only
+ * thing that knows which block that is.
  */
 
 .ts-skip {
@@ -47,18 +56,22 @@
   z-index: 20;
   padding: var(--ts-space-2) var(--ts-space-4);
   border-radius: var(--ts-radius-button);
-  background: var(--ts-navy);
+  background: var(--ts-structure);
   font-family: var(--ts-font-sans);
   font-size: var(--ts-text-label);
   font-weight: 500;
   color: var(--ts-cream);
   text-decoration: none;
-  /* No shadow at rest. The pill itself parks exactly off the top edge, but a
-     lift cast downward from it still fell across the wordmark — a smudge over
-     the brand on every screen, from a control nobody had touched. */
-  /* The extra 2px is not superstition: the pill's height lands on a fraction
-     of a pixel at most text sizes, and a flush -100% left a hairline of navy
-     across the top of the window. */
+  /*
+   * No shadow at rest, and 2px of clearance beyond its own height.
+   *
+   * Both are bugs that shipped and were caught by reading a screenshot. The
+   * pill parks exactly off the top edge, but a lift cast downward from it
+   * still fell across the wordmark — a smudge over the brand on every screen,
+   * from a control nobody had touched. And the pill's height lands on a
+   * fraction of a pixel at most text sizes, so a flush -100% left a hairline
+   * of navy across the top of the window.
+   */
   transform: translateY(calc(-100% - 2px));
   transition: transform var(--ts-dur-2) var(--ts-ease-out);
 }
@@ -227,7 +240,10 @@
   width: 16px;
   height: 2px;
   border-radius: var(--ts-radius-full);
-  background: var(--ts-terracotta);
+  /* `--ts-action`, not raw terracotta. The role layer files an active tab in
+     the action family (`--ts-action-quiet` is documented as the wash behind
+     one); this is that family at full strength, drawn as a rule. */
+  background: var(--ts-action);
   transform: translateX(-50%) scaleX(0);
   transition: transform var(--ts-dur-2) var(--ts-ease-out);
 }
@@ -241,7 +257,7 @@
 }
 
 .nav-item.ts-tab[aria-current='page'] {
-  color: var(--ts-navy);
+  color: var(--ts-structure);
 }
 
 .nav-item.ts-tab[aria-current='page'] .ts-tab-ind {
@@ -298,6 +314,33 @@
       minmax(var(--ts-space-6), 1fr);
     column-gap: var(--ts-space-8);
     align-content: start;
+  }
+
+  /*
+   * Today gets a fourth column for the peripheral things.
+   *
+   * `Today.tsx` wraps city hall and the directory in one `<aside>`; this moves
+   * that element and nothing else. A resident can ignore that column forever
+   * without missing anything, which is the definition of what belongs in it —
+   * the lead story, what is on today, and what neighbours built all stay in
+   * the reading column where the eye starts.
+   */
+  .ts-shell[data-view='today'] .today {
+    grid-template-columns:
+      minmax(var(--ts-space-6), 1fr)
+      220px
+      minmax(0, 620px)
+      300px
+      minmax(var(--ts-space-6), 1fr);
+  }
+
+  .ts-shell[data-view='today'] .today > .today-aside {
+    grid-column: 4;
+    grid-row: 2 / span 100;
+    align-self: start;
+    position: sticky;
+    top: var(--ts-space-4);
+    margin-top: var(--ts-space-8);
   }
 
   /* Browsing wants breadth. Same rail, same bar, no reading cap. */
@@ -401,7 +444,7 @@
   }
 
   .ts-shell .nav-item.ts-tab[aria-current='page'] {
-    background: var(--ts-navy);
+    background: var(--ts-structure);
     color: var(--ts-cream);
   }
 
@@ -619,7 +662,7 @@
   font-family: var(--ts-font-sans);
   font-size: 12.5px;
   line-height: 1.35;
-  color: var(--ts-ink60);
+  color: var(--ts-quiet);
 }
 
 /* Points up and back into the field: press to fill, not to open. */
@@ -653,6 +696,59 @@
 
 .ts-omni-more:hover {
   background: var(--ts-terracotta10);
+}
+
+/*
+ * The offer under a dead end.
+ *
+ * The one tinted card in this overlay, and it is spent on the only thing here
+ * that changes the town rather than describing it.
+ */
+.ts-omni-offer {
+  margin: var(--ts-space-5) var(--ts-space-5) 0;
+  padding: var(--ts-space-4);
+  border-radius: var(--ts-radius-card);
+  background: var(--ts-terracotta-tint);
+}
+
+.ts-offer-t {
+  font-family: var(--ts-font-serif);
+  font-size: var(--ts-text-card-title);
+  font-weight: 500;
+  line-height: 1.2;
+}
+
+.ts-offer-s {
+  margin-top: var(--ts-space-1);
+  font-size: 13.5px;
+  line-height: 1.4;
+  color: var(--ts-quiet);
+}
+
+.ts-offer-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--ts-space-2);
+  min-height: 44px;
+  margin-top: var(--ts-space-3);
+  padding: 0 var(--ts-space-4);
+  border: 0;
+  border-radius: var(--ts-radius-button);
+  /* The one thing on this screen a finger is meant to press. */
+  background: var(--ts-action);
+  font-family: var(--ts-font-sans);
+  font-size: var(--ts-text-label);
+  font-weight: 500;
+  color: var(--ts-surface);
+}
+
+.ts-offer-btn:hover {
+  background: var(--ts-action-hover);
+}
+
+.ts-offer-btn:focus-visible {
+  outline: none;
+  box-shadow: var(--ts-focus);
 }
 
 .ts-omni-foot {
@@ -787,7 +883,7 @@
 .ts-ph[data-register='host'] {
   padding: var(--ts-space-2);
   border-radius: var(--ts-radius-card);
-  background: var(--ts-navy);
+  background: var(--ts-structure);
   color: var(--ts-cream);
 }
 

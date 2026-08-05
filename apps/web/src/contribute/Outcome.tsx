@@ -192,9 +192,12 @@ export function PausePanel(props: { pause: PauseState; message: string; onDraft:
       <div className="cn-pause-ic">
         <Icon name="coffee" size={32} />
       </div>
-      <h3 className="cn-pause-title">
-        That is {props.pause.count} things you have added today, and they were all good ones
-      </h3>
+      {/* The heading is a label; the body is the service's own sentence, which
+          already opens with the count. An earlier version wrote the count line
+          here as well and the screen said it twice in a row, which reads as a
+          system repeating itself at somebody it has just stopped. */}
+      <span className="cn-pause-kicker">Hold on a second</span>
+      <h3 className="cn-pause-title">{ordinalCount(props.pause.count)} today</h3>
       <p className="cn-pause-body">{props.message}</p>
       {props.pause.retryAt ? (
         <p className="cn-pause-when">
@@ -275,6 +278,12 @@ function titleOf(c: Contribution): string {
     if (typeof value === 'string' && value.trim()) return value
   }
   return c.type
+}
+
+/** "Nine today" rather than "9 today": a count being spoken, not tallied. */
+function ordinalCount(n: number): string {
+  const words = ['Nothing', 'One', 'Two', 'Three', 'Four', 'Five', 'Six', 'Seven', 'Eight', 'Nine']
+  return words[n] ?? String(n)
 }
 
 function fullWhen(at: number): string {

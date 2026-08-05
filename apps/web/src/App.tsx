@@ -31,7 +31,9 @@ import { ReportPanel } from './ReportPanel.js'
 import { ReviewScreen } from './Review.js'
 import { resolveInitialAccount, type AccountView } from './session.js'
 import { CreationFrame } from './CreationFrame.js'
+import { ContributeScreen } from './contribute/Contribute.js'
 import { Nearby } from './Nearby.js'
+import { News, Reader } from './news/index.js'
 import { Today } from './Today.js'
 import { Yours } from './Yours.js'
 import { TabBar, type TabName } from './TabBar.js'
@@ -57,6 +59,20 @@ type Screen =
   | { name: 'gallery' }
   | { name: 'account' }
   | { name: 'review' }
+  /**
+   * News, and one story. Reached from the head of "More from town" on Today,
+   * and deliberately not from the nav: four destinations is the resident path,
+   * and a fifth for a thing Today already summarises would be a navigation
+   * that describes our filing system rather than the town.
+   */
+  | { name: 'news' }
+  | { name: 'story'; id: string }
+  /**
+   * Adding something to the town. `startOpen` lands on the chooser rather than
+   * on the list of what you have already filed, which is what the resident who
+   * arrived from an empty search result is asking for.
+   */
+  | { name: 'contribute'; startOpen: boolean }
   /**
    * `from` is carried rather than assumed. A trust page is reachable from Today
    * and from the gallery, and a back button that always lands on the gallery
@@ -248,6 +264,16 @@ export function App() {
           loading={placesLoading}
           townName={town.name}
           onOpenCreation={(slug) => openBySlug(slug, TAB_OF[screen.name] ?? 'today')}
+          /*
+            The dead end becomes an invitation. The person who just searched
+            for the missing thing is the best-qualified person in town to add
+            it, and this is the one moment they are demonstrably thinking
+            about it.
+          */
+          onAddSomething={() => {
+            setSearchOpen(false)
+            setScreen({ name: 'contribute', startOpen: true })
+          }}
         />
       </div>
     </ShellContext.Provider>
@@ -305,9 +331,47 @@ export function App() {
           canReview={canReview}
           onOpenCreation={openBySlug}
           onBrowseCreations={() => setScreen({ name: 'gallery' })}
+          onOpenNews={() => setScreen({ name: 'news' })}
           onTab={goToTab}
           onAccount={() => setScreen({ name: 'account' })}
           onReview={() => setScreen({ name: 'review' })}
+        />
+      )
+    }
+
+    if (screen.name === 'news') {
+      return (
+        <News
+          account={account}
+          canReview={canReview}
+          onBack={() => setScreen({ name: 'today' })}
+          onOpenStory={(id) => setScreen({ name: 'story', id })}
+          onAccount={() => setScreen({ name: 'account' })}
+          onReview={() => setScreen({ name: 'review' })}
+        />
+      )
+    }
+
+    if (screen.name === 'story') {
+      return (
+        <Reader
+          storyId={screen.id}
+          /*
+            Back to the news screen, not to Today. A resident who opened this
+            from a list is going back to that list; sending them to the home
+            screen is the app deciding it knows better than their own history.
+          */
+          onBack={() => setScreen({ name: 'news' })}
+          onOpenStory={(id) => setScreen({ name: 'story', id })}
+        />
+      )
+    }
+
+    if (screen.name === 'contribute') {
+      return (
+        <ContributeScreen
+          onBack={() => setScreen({ name: 'today' })}
+          startOpen={screen.startOpen}
         />
       )
     }

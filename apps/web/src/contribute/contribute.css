@@ -168,8 +168,7 @@
   margin-top: var(--ts-space-2);
 }
 
-.cn-sheet-foot,
-.cn-drafts-link {
+.cn-sheet-foot {
   display: flex;
   align-items: center;
   gap: var(--ts-space-2);
@@ -179,6 +178,13 @@
   margin-top: var(--ts-space-4);
 }
 .cn-drafts-link {
+  display: flex;
+  align-items: center;
+  gap: var(--ts-space-2);
+  font-family: var(--ts-font-sans);
+  font-size: var(--ts-text-caption);
+  color: var(--ts-ink60);
+  margin-top: var(--ts-space-4);
   min-height: 44px;
   cursor: pointer;
   background: none;
@@ -1049,14 +1055,20 @@
   background: var(--ts-navy10);
   color: var(--ts-navy);
 }
+.cn-pause-kicker {
+  font-family: var(--ts-font-mono);
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ts-ink45);
+}
 .cn-pause-title {
   font-family: var(--ts-font-serif);
   font-size: var(--ts-text-h2);
   color: var(--ts-ink);
   margin: 0;
 }
-.cn-pause-body,
-.cn-pause-foot {
+.cn-pause-body {
   font-family: var(--ts-font-sans);
   font-size: var(--ts-text-label);
   color: var(--ts-ink60);
@@ -1064,7 +1076,11 @@
   line-height: 1.5;
 }
 .cn-pause-foot {
+  font-family: var(--ts-font-sans);
   font-size: var(--ts-text-caption);
+  color: var(--ts-ink60);
+  margin: 0;
+  line-height: 1.5;
 }
 .cn-pause-when {
   display: flex;
@@ -1247,8 +1263,7 @@
   display: grid;
   gap: var(--ts-space-3);
 }
-.cn-prev-note,
-.cn-prev-caveat {
+.cn-prev-note {
   font-family: var(--ts-font-sans);
   font-size: var(--ts-text-caption);
   color: var(--ts-ink60);
@@ -1258,6 +1273,10 @@
   display: grid;
   grid-template-columns: 16px 1fr;
   gap: var(--ts-space-2);
+  font-family: var(--ts-font-sans);
+  font-size: var(--ts-text-caption);
+  color: var(--ts-ink60);
+  margin: 0;
 }
 .cn-evcard {
   display: grid;
@@ -1306,8 +1325,7 @@
   color: var(--ts-ink);
   margin: 0;
 }
-.cn-evcard-where,
-.cn-evcard-body {
+.cn-evcard-where {
   display: flex;
   align-items: center;
   gap: var(--ts-space-1);
@@ -1317,7 +1335,10 @@
   margin: 0;
 }
 .cn-evcard-body {
-  display: block;
+  font-family: var(--ts-font-sans);
+  font-size: var(--ts-text-caption);
+  color: var(--ts-ink60);
+  margin: 0;
 }
 .cn-evcard-foot {
   display: flex;

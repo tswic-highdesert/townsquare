@@ -25,6 +25,9 @@ import { CreationStorage, MemoryStorageStore } from '@townsquare/storage'
 import { MemorySaveStore, Saves } from '@townsquare/saves'
 import { businesses } from '../../../packages/feed/src/data/businesses.js'
 import { createNearbyRoutes } from './nearbyRoutes.js'
+import { createNewsRoutes } from './newsRoutes.js'
+import { createEventsRoutes } from './eventsRoutes.js'
+import { createDirectoryRoutes } from './directoryRoutes.js'
 import { createSavesRoutes } from './savesRoutes.js'
 import { createTodayRoutes } from './todayRoutes.js'
 import type { TownSquareItem } from './today.js'
@@ -361,6 +364,14 @@ async function main(): Promise<void> {
   // ranks it, so a resident's position is never sent anywhere. See `nearby.ts`.
   const nearbyRoutes = createNearbyRoutes({ town: TOWN, loadItems })
 
+  // News, events and the directory read no cookie and are the same for every
+  // resident, so like Today they are cacheable and safe to warm before anybody
+  // asks. Each holds its own TTL for its own reason — the directory's is the
+  // resolution of every "closes in 40 minutes" on its screen.
+  const newsRoutes = createNewsRoutes({ town: TOWN, loadItems })
+  const eventsRoutes = createEventsRoutes({ town: TOWN, loadItems })
+  const directoryRoutes = createDirectoryRoutes({ town: TOWN, loadItems })
+
   // Saving is the one thing on Yours with a real source. Memory store, same as
   // identity and storage — the interface is the one the Drizzle implementation
   // lands on, so restarting the API empties every resident's list and nothing
@@ -423,6 +434,9 @@ async function main(): Promise<void> {
       .then((handled) => (handled ? true : savesRoutes(req, res, url)))
       .then((handled) => (handled ? true : todayRoutes(req, res, url)))
       .then((handled) => (handled ? true : nearbyRoutes(req, res, url)))
+      .then((handled) => (handled ? true : newsRoutes(req, res, url)))
+      .then((handled) => (handled ? true : eventsRoutes(req, res, url)))
+      .then((handled) => (handled ? true : directoryRoutes(req, res, url)))
       .then((handled) => {
         if (!handled) readRoutes(url, store, json)
       })

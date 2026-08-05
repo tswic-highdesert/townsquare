@@ -56,6 +56,8 @@ export interface SearchOverlayProps {
   loading: boolean
   /** The one kind of hit the shell can navigate to itself. */
   onOpenCreation: (slug: string) => void
+  /** The way out of a dead end: add the thing the town is missing. */
+  onAddSomething: () => void
   townName: string
 }
 
@@ -289,16 +291,29 @@ export function SearchOverlay(props: SearchOverlayProps) {
         ))}
 
         {/*
-          The dead end. "No results found" is a full stop, so this says what
-          was searched and what the index actually covers. There is no "add a
-          place" button under it yet: the contribution flow has no screen in
-          the shell, and a button that goes nowhere is worse than no button.
+          The dead end, and the screen that decides whether the directory
+          grows. "No results found" is a full stop; saying what the index
+          actually covers and then handing over the way to fill the gap is an
+          invitation. The 700 businesses we start with came from a scrape; the
+          ones that make it worth opening in year two come from here.
         */}
         {nothing && (
-          <p className="ts-omni-lede">
-            This searches today's stories, what is on today, every business in the directory, and
-            everything neighbours have built. It does not reach back through the archive.
-          </p>
+          <>
+            <p className="ts-omni-lede">
+              This searches today's stories, what is on today, every business in the directory, and
+              everything neighbours have built. It does not reach back through the archive.
+            </p>
+            <div className="ts-omni-offer">
+              <div className="ts-offer-t">Know something we are missing?</div>
+              <div className="ts-offer-s">
+                Add it and it is in {props.townName} for everyone, tonight.
+              </div>
+              <button className="ts-offer-btn" type="button" onClick={props.onAddSomething}>
+                <Icon name="plus" size={16} />
+                Add to the town
+              </button>
+            </div>
+          </>
         )}
 
         {props.loading && (

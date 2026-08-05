@@ -73,7 +73,7 @@ export function Yours(props: YoursProps) {
     return (
       <div className="today">
         {bar}
-        <div className="yours-signedout">
+        <div className="yours-signedout" id="ts-main" tabIndex={-1}>
           <span className="yours-signedout-icon">
             <Icon name="bookmarks" size={26} />
           </span>
@@ -101,7 +101,8 @@ export function Yours(props: YoursProps) {
     <div className="today">
       {bar}
 
-      <div className="yours-head">
+      {/* Where the skip link lands. See the note in `Today.tsx`. */}
+      <div className="yours-head" id="ts-main" tabIndex={-1}>
         <span className="yours-avatar" data-verified={account.verified || undefined}>
           {initials(account.handle)}
         </span>

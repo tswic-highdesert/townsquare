@@ -75,32 +75,21 @@ export function AppBar(props: AppBarProps) {
     return () => window.removeEventListener('scroll', onScroll)
   }, [])
 
-  /**
-   * The skip link needs something to skip to.
-   *
-   * The content after this bar is rendered by Today, Nearby and Yours, and none
-   * of them carries an id. Rather than fork three screens to add one, the bar
-   * marks its own next sibling — which is exactly the first block of content on
-   * every screen that renders a bar. The id is only ever added when nothing
-   * already claims it, so the day a screen labels its own main region, that
-   * wins and this does nothing.
-   *
-   * The link stays a real anchor rather than a button with a handler. In a
-   * client-rendered app there is no pre-script page for it to work on, but an
-   * anchor to an id is still what a screen reader announces as a skip link and
-   * what the browser's own focus handling understands.
-   */
-  useEffect(() => {
-    const next = bar.current?.nextElementSibling
-    if (!(next instanceof HTMLElement)) return
-    if (document.getElementById(SKIP_TARGET)) return
-    next.id = SKIP_TARGET
-    if (!next.hasAttribute('tabindex')) next.tabIndex = -1
-  })
-
   return (
     <>
-      {/* First in the DOM, off screen until focused. */}
+      {/*
+        First in the DOM, off screen until focused, and a real anchor rather
+        than a button with a handler: an anchor to an id is what a screen
+        reader announces as a skip link and what the browser's own focus
+        handling already understands.
+
+        The target is owned by the screen. Today, Nearby and Yours each put
+        `id="ts-main" tabIndex={-1}` on their first block of content, which is
+        the only place that knows which block that is. An earlier version had
+        this component reach out and stamp the id on its own next sibling; it
+        worked, and it was a component quietly writing attributes onto DOM it
+        does not own.
+      */}
       <a className="ts-skip" href={`#${SKIP_TARGET}`}>
         Skip to the top of {props.place || 'town'}
       </a>

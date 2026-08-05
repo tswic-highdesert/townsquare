@@ -31,6 +31,8 @@ export interface TodayProps {
   canReview: boolean
   onOpenCreation: (slug: string) => void
   onBrowseCreations: () => void
+  /** The news screen, reached from the head of "More from town". */
+  onOpenNews: () => void
   onTab: (tab: TabName) => void
   onAccount: () => void
   onReview: () => void
@@ -50,7 +52,13 @@ export function Today(props: TodayProps) {
         onReview={props.onReview}
       />
 
-      <div className="today-greeting">
+      {/*
+        Where the skip link lands. `tabIndex={-1}` makes a non-interactive
+        block focusable by that link and by nothing else, so a keyboard
+        resident arrives at the top of the town rather than at the third
+        control in the bar.
+      */}
+      <div className="today-greeting" id="ts-main" tabIndex={-1}>
         <div className="today-date">
           <Icon name="calendar" size={13} />
           {today.dateLabel}
@@ -65,7 +73,14 @@ export function Today(props: TodayProps) {
 
       {today.more.length > 0 && (
         <section className="today-section">
-          <SectionHead label="More from town" />
+          {/*
+            The door to the news screen, and the only one. News is not a tab:
+            four destinations is the resident path, and a fifth for a thing
+            already summarised here would be a nav that describes our filing
+            system. A resident who wants more of what they are reading asks
+            for it from the section they are reading.
+          */}
+          <SectionHead label="More from town" action="All news" onAction={props.onOpenNews} />
           <div className="more-list">
             {today.more.map((story) => (
               <Outside key={story.id} href={story.url} className="more-row">
@@ -150,6 +165,23 @@ export function Today(props: TodayProps) {
         </section>
       )}
 
+      {/*
+        City hall, wrapped so the desktop shell can put it in a third column.
+        `nav/nav.css` moves this whole element at 1040px and leaves it exactly
+        where it was below that: an `<aside>` with no styles of its own is a
+        block, so the phone screen is unchanged to the pixel.
+
+        A wrapper rather than a duplicate. Rendering the notice a second time
+        from the same payload would put it on one screen twice, and the copy
+        that drifts is always the one nobody is looking at.
+
+        The directory deliberately did not come with it. It is a horizontally
+        scrolling strip of fixed-width cards, and in a 300px column that is two
+        cramped cards with the business names wrapping mid-word — a component
+        put somewhere it was never drawn for. It stays in the reading column,
+        where it has the width it was designed against.
+      */}
+      <aside className="today-aside" aria-label="From city hall">
       {(today.cityHall.notice || today.cityHall.items.length > 0) && (
         <section className="today-section">
           <SectionHead label="From city hall" />
@@ -186,6 +218,7 @@ export function Today(props: TodayProps) {
           </div>
         </section>
       )}
+      </aside>
 
       {today.directory.length > 0 && (
         <section className="today-section">
