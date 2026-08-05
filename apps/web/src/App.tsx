@@ -1,10 +1,11 @@
 /**
- * The shell: a gallery, a trust page, and a running creation.
+ * The shell: Today, a gallery, a trust page, and a running creation.
  *
- * Three screens, matching `design/hifi` sections 6a, 6b and 6d. The trust page
- * is not a formality — it is the moment a resident decides, and it is generated
- * entirely from the frozen manifest by `describeManifest`, so a creation cannot
- * write its own.
+ * Today (`design/hifi` 4a) is home — it is what a resident opens, and the
+ * gallery sits behind it as the full list. The other three match sections 6a,
+ * 6b and 6d. The trust page is not a formality — it is the moment a resident
+ * decides, and it is generated entirely from the frozen manifest by
+ * `describeManifest`, so a creation cannot write its own.
  */
 
 import { useEffect, useMemo, useState } from 'react'
@@ -14,26 +15,41 @@ import { ReportPanel } from './ReportPanel.js'
 import { ReviewScreen } from './Review.js'
 import { resolveInitialAccount, type AccountView } from './session.js'
 import { CreationFrame } from './CreationFrame.js'
+import { Today } from './Today.js'
+import { fetchToday, type TodayPayload } from './todayData.js'
 import { fetchCreations, fetchTown, type CreationSummary } from './townData.js'
 
 type Screen =
+  | { name: 'today' }
   | { name: 'gallery' }
   | { name: 'account' }
   | { name: 'review' }
-  | { name: 'trust'; creation: CreationSummary }
-  | { name: 'running'; creation: CreationSummary }
+  /**
+   * `from` is carried rather than assumed. A trust page is reachable from Today
+   * and from the gallery, and a back button that always lands on the gallery
+   * silently moves a resident somewhere they were not.
+   */
+  | { name: 'trust'; creation: CreationSummary; from: 'today' | 'gallery' }
+  | { name: 'running'; creation: CreationSummary; from: 'today' | 'gallery' }
 
 export function App() {
   const [creations, setCreations] = useState<CreationSummary[] | null>(null)
   const [town, setTown] = useState({ id: '', name: 'Town Square', timezone: 'America/Chicago' })
-  const [screen, setScreen] = useState<Screen>({ name: 'gallery' })
+  const [screen, setScreen] = useState<Screen>({ name: 'today' })
   const [liveTitle, setLiveTitle] = useState<string | null>(null)
   const [account, setAccount] = useState<AccountView | null>(null)
   const [reporting, setReporting] = useState(false)
+  const [today, setToday] = useState<TodayPayload | null>(null)
+  const [todayFailed, setTodayFailed] = useState(false)
 
   useEffect(() => {
     void fetchCreations().then(setCreations)
     void fetchTown().then(setTown)
+
+    // A cold API assembles the whole town on first request, so this can take a
+    // few seconds. It is the only fetch on the critical path for the home
+    // screen, which is why Today is one endpoint rather than six.
+    void fetchToday().then(setToday, () => setTodayFailed(true))
 
     // A confirmation link lands on the gallery with the token in the query.
     // It is redeemed on the way in and the resident carries on where they were
@@ -71,8 +87,43 @@ export function App() {
     </div>
   )
 
+  /** Opening from Today, which knows a slug and nothing else. */
+  const openBySlug = (slug: string) => {
+    const creation = creations?.find((c) => c.slug === slug)
+    // The trust page, never straight into the creation. Today is a list of
+    // things neighbours built; it is not a shortcut past the screen where a
+    // resident reads what one of them is allowed to touch.
+    if (creation) setScreen({ name: 'trust', creation, from: 'today' })
+  }
+
+  if (screen.name === 'today') {
+    if (todayFailed) {
+      return (
+        <div className="today-state">
+          <p className="problem">Today could not be loaded.</p>
+          <button className="secondary" onClick={() => window.location.reload()}>
+            Try again
+          </button>
+        </div>
+      )
+    }
+    if (!today) return <div className="today-state">Loading today…</div>
+
+    return (
+      <Today
+        today={today}
+        account={account}
+        canReview={canReview}
+        onOpenCreation={openBySlug}
+        onBrowseCreations={() => setScreen({ name: 'gallery' })}
+        onAccount={() => setScreen({ name: 'account' })}
+        onReview={() => setScreen({ name: 'review' })}
+      />
+    )
+  }
+
   if (screen.name === 'review') {
-    return <ReviewScreen onBack={() => setScreen({ name: 'gallery' })} />
+    return <ReviewScreen onBack={() => setScreen({ name: 'today' })} />
   }
 
   if (screen.name === 'account') {
@@ -80,7 +131,7 @@ export function App() {
       <AccountScreen
         account={account}
         onAccountChange={setAccount}
-        onBack={() => setScreen({ name: 'gallery' })}
+        onBack={() => setScreen({ name: 'today' })}
       />
     )
   }
@@ -89,6 +140,9 @@ export function App() {
     return (
       <div className="shell">
         {header}
+        <button className="back" onClick={() => setScreen({ name: 'today' })}>
+          ← Today
+        </button>
         <div className="eyebrow">{town.name}</div>
         <h1>Built by neighbors</h1>
         <p className="lede">
@@ -108,7 +162,10 @@ export function App() {
           <ul className="gallery">
             {creations.map((creation) => (
               <li key={creation.slug}>
-                <button className="card" onClick={() => setScreen({ name: 'trust', creation })}>
+                <button
+                  className="card"
+                  onClick={() => setScreen({ name: 'trust', creation, from: 'gallery' })}
+                >
                   <img
                     className="card-icon"
                     src={`${creation.origin}/${creation.manifest.icon}`}
@@ -130,13 +187,16 @@ export function App() {
   }
 
   if (screen.name === 'trust') {
-    const { creation } = screen
+    const { creation, from } = screen
     const lines = describeManifest(creation.manifest)
 
     return (
       <div className="shell">
-        <button className="back" onClick={() => setScreen({ name: 'gallery' })}>
-          ← Back
+        <button
+          className="back"
+          onClick={() => setScreen(from === 'today' ? { name: 'today' } : { name: 'gallery' })}
+        >
+          ← {from === 'today' ? 'Today' : 'Back'}
         </button>
 
         <h1 style={{ marginBottom: 4 }}>{creation.name}</h1>
@@ -155,7 +215,7 @@ export function App() {
           ))}
         </ul>
 
-        <button className="primary" onClick={() => setScreen({ name: 'running', creation })}>
+        <button className="primary" onClick={() => setScreen({ name: 'running', creation, from })}>
           Open
         </button>
       </div>
@@ -177,7 +237,7 @@ export function App() {
           onClick={() => {
             setLiveTitle(null)
             setReporting(false)
-            setScreen({ name: 'trust', creation })
+            setScreen({ name: 'trust', creation, from: screen.from })
           }}
         >
           ←

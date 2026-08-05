@@ -30,7 +30,8 @@ bind to loopback and answer to the names; the OS resolver is never involved.
 
 ## What you should see
 
-The gallery lists the examples in `apps/sandbox/examples/`. Opening one shows
+**Today** — the resident home, `design/hifi` section 4a. Under it, **Browse**
+reaches the gallery of examples in `apps/sandbox/examples/`. Opening one shows
 the trust page generated from its manifest, and opening *that* mounts the
 creation in a sandboxed iframe, which handshakes over `postMessage`, gets a
 `MessagePort`, and reads the real Russellville business directory through the
@@ -39,6 +40,74 @@ bridge.
 The example ships no build output and no `node_modules`. `import { town } from
 '@townsquare/sdk'` resolves because the sandbox splices an import map into the
 entry document at serve time.
+
+## Today
+
+`GET /api/today`, one request, no cookie. Six sections from six unrelated
+sources, assembled server side by `apps/api/src/today.ts` — a pure function
+from the town's raw items to exactly what the screen renders, so the rules that
+decide what a resident sees first are testable without a browser or a live
+scrape.
+
+One rule runs through the whole thing: **a section with no real data does not
+appear.** Every field traces to something ingested or something a neighbour
+actually built.
+
+| Section | Comes from |
+|---|---|
+| Top of town | newest published story across the news sources |
+| Happening today | events on the town's calendar day that have not finished |
+| From your neighbors | creations, featured one at a time |
+| From city hall | an active notice, plus what government sources have scheduled next |
+| In the directory | `businesses.ts`, rotated by the day |
+
+Three things about it are decisions rather than details.
+
+**"Today" is a question about America/Chicago**, never about whatever timezone
+the server booted in, so every date goes through `Intl` with the town's zone.
+`townDay` is the whole of that rule and it is one function.
+
+**A failed scrape serves the last good screen, not an error.** This is where
+someone checks whether the council meets tonight; a stale answer is worth a
+great deal and a blank page is worth nothing. The staleness is visible, because
+the footer carries the time the screen was assembled.
+
+**The payload is cached for a minute and the in-flight promise is shared.** A
+cold build takes as long as the slowest scraper, and without sharing it a dozen
+residents opening the app at 7am would each start their own fetch of every
+source in town.
+
+### What is deliberately not on the screen
+
+The hi-fi shows two things that have no source yet, and both are **omitted
+rather than mocked**. Inventing a plausible boil-water notice to fill a card is
+the one failure mode a town information service cannot come back from.
+
+| Missing | Needs |
+|---|---|
+| The weather chip | a weather source; there is no ingest for one |
+| The neighbour stream, and the composer under it | `design/hifi` t11, and a posts table |
+
+Two smaller deviations, both intentional:
+
+- **Icons are drawn in `apps/web/src/Icon.tsx`, not Material Symbols.** The
+  family is a ~3.5MB variable font, and neither way of getting it is
+  acceptable: a Google Fonts link puts a third party in the load path of the
+  town's home screen and needs a `font-src` hole `packages/tokens` deliberately
+  does not have. Subsetting it needs a build step that does not exist yet.
+  When it does, delete that file.
+- **Nearby and Yours are rendered disabled**, not omitted. They are `design/hifi`
+  t5. The shape of the app is part of what the home screen communicates, and a
+  button that says what it will be beats one that silently does nothing.
+
+### Attribution
+
+A creation's author is **platform-assigned at approval**, never read from a
+manifest — `packages/manifest` rejects an `author` key outright as an
+impersonation attempt. Nothing in development has been through the review
+queue, so the featured card reads "made by a neighbor" and shows no initials.
+It does *not* fall back to initials of the creation's own name: "The Burrito
+Index" becoming a "TI" avatar reads as a person who does not exist.
 
 ## Why three processes
 

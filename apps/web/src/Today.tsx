@@ -1,0 +1,428 @@
+/**
+ * Today — the resident home. `design/hifi` section 4a.
+ *
+ * One screen a neighbour opens once a morning, so it is a read, not an app: it
+ * answers "what is happening in town" and gets out of the way. Every section
+ * comes from `GET /api/today` and every one of them disappears when there is
+ * nothing real behind it. A town screen that pads itself out on a quiet
+ * Tuesday teaches people it is padded on a loud one.
+ *
+ * Two things in the hi-fi are not here, on purpose, and both are noted in
+ * DEVELOPING.md: the weather chip and the neighbour stream. Neither has a
+ * source yet, and drawing them from invented data is the one thing a town
+ * information service cannot come back from.
+ */
+
+import { Icon, Mark, type IconName } from './Icon.js'
+import type {
+  EventCategory,
+  TodayCreation,
+  TodayEvent,
+  TodayPayload,
+  TodayStory,
+} from './todayData.js'
+import type { AccountView } from './session.js'
+
+export interface TodayProps {
+  today: TodayPayload
+  account: AccountView | null
+  canReview: boolean
+  onOpenCreation: (slug: string) => void
+  onBrowseCreations: () => void
+  onAccount: () => void
+  onReview: () => void
+}
+
+export function Today(props: TodayProps) {
+  const { today, account, canReview } = props
+
+  return (
+    <div className="today">
+      <header className="today-bar">
+        <Mark size={22} />
+        <span className="today-wordmark">Town Square</span>
+        <span className="today-place">{today.town.name}</span>
+
+        <div className="today-bar-actions">
+          {canReview && (
+            <button className="back" onClick={props.onReview}>
+              Review queue
+            </button>
+          )}
+          {/*
+            The label carries the handle, not the initials on the tile. "BT" is
+            a visual shorthand for someone who can already see the screen and is
+            meaningless to anyone who cannot.
+          */}
+          <button
+            className="avatar-button"
+            onClick={props.onAccount}
+            aria-label={
+              account
+                ? `${account.handle}${account.verified ? ', verified' : ''} — your account`
+                : 'Sign in'
+            }
+          >
+            {account ? (
+              <span className="avatar" data-verified={account.verified || undefined}>
+                {initials(account.handle)}
+              </span>
+            ) : (
+              <span className="today-signin">Sign in</span>
+            )}
+          </button>
+        </div>
+      </header>
+
+      <div className="today-greeting">
+        <div className="today-date">
+          <Icon name="calendar" size={13} />
+          {today.dateLabel}
+        </div>
+        <h1 className="today-hello">
+          {today.greeting},<br />
+          {today.town.name}.
+        </h1>
+      </div>
+
+      {today.lead && <LeadStory story={today.lead} />}
+
+      {today.events.items.length > 0 && (
+        <section className="today-section">
+          <SectionHead
+            label="Happening today"
+            // The count is of everything today, not of the three shown. A
+            // resident deciding whether to go looking needs to know there are
+            // nine, and the honest place to say so is the affordance itself.
+            action={today.events.total > today.events.items.length ? `All ${today.events.total}` : null}
+          />
+          <ul className="event-list">
+            {today.events.items.map((event) => (
+              <EventRow key={event.id} event={event} />
+            ))}
+          </ul>
+        </section>
+      )}
+
+      {today.neighbors.featured && (
+        <section className="today-section">
+          {/*
+            Unconditional, even when everything already fits on this screen.
+            The gallery is the only route to the full list and to what a
+            creation is allowed to touch; gating the link on a count of two
+            made it unreachable in a town with one app, which is every town on
+            its first day.
+          */}
+          <SectionHead
+            label="From your neighbors"
+            action="Browse"
+            onAction={props.onBrowseCreations}
+          />
+          <FeaturedCreation
+            creation={today.neighbors.featured}
+            onOpen={() => props.onOpenCreation(today.neighbors.featured!.slug)}
+          />
+          {today.neighbors.rest.map((creation) => (
+            <button
+              key={creation.slug}
+              className="creation-row"
+              onClick={() => props.onOpenCreation(creation.slug)}
+            >
+              <CreationIcon creation={creation} size={42} />
+              <span className="creation-row-text">
+                <span className="creation-row-name">{creation.name}</span>
+                <span className="creation-row-tagline">{creation.tagline}</span>
+              </span>
+              <Icon name="chevron-right" size={20} className="row-chevron" />
+            </button>
+          ))}
+        </section>
+      )}
+
+      {(today.cityHall.notice || today.cityHall.items.length > 0) && (
+        <section className="today-section">
+          <SectionHead label="From city hall" />
+          {today.cityHall.notice && (
+            <Outside
+              href={today.cityHall.notice.url}
+              className="notice"
+              data-severity={today.cityHall.notice.severity}
+            >
+              <span className="notice-icon">
+                <Icon name="warning" size={18} />
+              </span>
+              <span>
+                <span className="notice-title">{today.cityHall.notice.title}</span>
+                {today.cityHall.notice.detail && (
+                  <span className="notice-detail">{today.cityHall.notice.detail}</span>
+                )}
+              </span>
+            </Outside>
+          )}
+          <div className="civic-list">
+            {today.cityHall.items.map((item) => (
+              <Outside key={item.id} href={item.url} className="civic-row">
+                <span className="civic-icon">
+                  <Icon name="document" size={17} />
+                </span>
+                <span>
+                  <span className="civic-title">{item.title}</span>
+                  <span className="civic-detail">{item.detail}</span>
+                </span>
+                <Icon name="chevron-right" size={18} className="row-chevron" />
+              </Outside>
+            ))}
+          </div>
+        </section>
+      )}
+
+      {today.directory.length > 0 && (
+        <section className="today-section">
+          <SectionHead label="In the directory" />
+          <div className="directory-strip">
+            {today.directory.map((business) => (
+              <Outside key={business.id} href={business.url} className="directory-card">
+                <span className="directory-icon">
+                  <Icon name="storefront" size={22} />
+                </span>
+                <span className="directory-name">{business.name}</span>
+                <span className="directory-detail">
+                  <Icon name="clock" size={13} />
+                  {business.detail}
+                </span>
+              </Outside>
+            ))}
+          </div>
+        </section>
+      )}
+
+      <footer className="today-footer">
+        <div>
+          <div className="today-signoff">That&rsquo;s {today.dayName}.</div>
+          <div className="today-updated">
+            Updated {today.footer.updatedLabel} · {today.footer.sourceCount}{' '}
+            {plural(today.footer.sourceCount, 'source')} ·{' '}
+            {today.footer.creationCount} neighbor{' '}
+            {plural(today.footer.creationCount, 'app')}
+          </div>
+        </div>
+        <Mark size={26} />
+      </footer>
+
+      {/*
+        Today is the only tab that exists. Nearby and Yours are `design/hifi`
+        t5 and are rendered disabled rather than omitted: the shape of the app
+        is part of what the home screen communicates, and a button that says
+        what it will be beats one that silently does nothing.
+      */}
+      <nav className="today-nav" aria-label="Sections">
+        <span className="nav-item" aria-current="page">
+          <Icon name="home" size={23} />
+          Today
+        </span>
+        <button className="nav-item" disabled title="Not built yet">
+          <Icon name="compass" size={23} />
+          Nearby
+        </button>
+        <button className="nav-item" disabled title="Not built yet">
+          <Icon name="bookmarks" size={23} />
+          Yours
+        </button>
+      </nav>
+    </div>
+  )
+}
+
+function SectionHead({
+  label,
+  action,
+  onAction,
+}: {
+  label: string
+  action?: string | null
+  onAction?: () => void
+}) {
+  return (
+    <div className="section-head">
+      <span className="section-rule" />
+      <span className="section-label">{label}</span>
+      {action &&
+        (onAction ? (
+          <button className="section-action" onClick={onAction}>
+            {action}
+            <Icon name="chevron-right" size={14} />
+          </button>
+        ) : (
+          <span className="section-action" data-static="true">
+            {action}
+            <Icon name="chevron-right" size={14} />
+          </span>
+        ))}
+    </div>
+  )
+}
+
+function LeadStory({ story }: { story: TodayStory }) {
+  return (
+    <section className="today-section">
+      <SectionHead label="Top of town" />
+      <Outside href={story.url} className="lead">
+        {story.imageUrl && (
+          <span className="lead-image">
+            <img src={story.imageUrl} alt="" loading="lazy" />
+          </span>
+        )}
+        <span className="lead-kind">
+          <Icon name="newspaper" size={12} />
+          NEWS
+        </span>
+        <span className="lead-title">{story.title}</span>
+        <span className="lead-byline">
+          <span className="lead-source-mark">{story.sourceInitial}</span>
+          <span className="lead-source">{story.source}</span>
+          <span className="lead-dot" />
+          <span className="lead-meta">
+            {story.timeLabel} · {story.readingMinutes} min
+          </span>
+        </span>
+      </Outside>
+    </section>
+  )
+}
+
+const EVENT_ICON: Record<EventCategory, IconName> = {
+  civic: 'gavel',
+  music: 'music',
+  sport: 'sport',
+  community: 'group',
+}
+
+function EventRow({ event }: { event: TodayEvent }) {
+  return (
+    <li>
+      <Outside href={event.url} className="event-row">
+        <span className="event-time">
+          <span className="event-clock">{event.timeLabel}</span>
+          <span className="event-meridiem">{event.meridiem}</span>
+        </span>
+        <span className="event-icon" data-category={event.category}>
+          <Icon name={EVENT_ICON[event.category]} size={18} />
+        </span>
+        <span className="event-text">
+          <span className="event-title">{event.title}</span>
+          {event.detail && <span className="event-detail">{event.detail}</span>}
+        </span>
+      </Outside>
+    </li>
+  )
+}
+
+function FeaturedCreation({ creation, onOpen }: { creation: TodayCreation; onOpen: () => void }) {
+  return (
+    <div className="featured">
+      <div className="featured-head">
+        <CreationIcon creation={creation} size={28} onNavy />
+        {/*
+          With a name it is "made by your neighbor / Dana Whitfield", as the
+          hi-fi has it. Without one it collapses to a single line rather than
+          "made by your neighbor / a neighbor", which says the word twice and
+          reads like a bug. Attribution arrives when a creation goes through the
+          review queue; the examples never did.
+        */}
+        <div className="featured-by">
+          {creation.author ? (
+            <>
+              made by your neighbor
+              <span>{creation.author}</span>
+            </>
+          ) : (
+            'made by a neighbor'
+          )}
+        </div>
+        <span className="featured-kind">APP</span>
+      </div>
+      <div className="featured-name">{creation.name}</div>
+      <div className="featured-tagline">{creation.tagline}</div>
+      <button className="featured-open" onClick={onOpen}>
+        Open
+        <Icon name="arrow-out" size={14} />
+      </button>
+    </div>
+  )
+}
+
+/**
+ * A creation's own icon, which it supplied, or its initials if it has none.
+ *
+ * The icon is served from the creation's bundle origin, so a broken or missing
+ * one is a normal state rather than an error — and a broken image on the home
+ * screen looks like the town is broken. `onError` swaps in the fallback rather
+ * than leaving the browser's placeholder.
+ */
+function CreationIcon({
+  creation,
+  size,
+  onNavy,
+}: {
+  creation: TodayCreation
+  size: number
+  onNavy?: boolean
+}) {
+  return (
+    <span className="creation-icon" data-on-navy={onNavy || undefined} style={{ width: size, height: size }}>
+      {creation.icon ? (
+        <img
+          src={creation.icon}
+          alt=""
+          loading="lazy"
+          onError={(e) => {
+            e.currentTarget.style.display = 'none'
+          }}
+        />
+      ) : null}
+      <span className="creation-icon-fallback">{initials(creation.name)}</span>
+    </span>
+  )
+}
+
+/**
+ * A link that leaves town, or a plain box when there is nowhere to go.
+ *
+ * Every outbound link is `noopener noreferrer`: the shell holds the session
+ * cookie, and a source's page getting a handle on this window is not a risk
+ * worth taking to save an attribute.
+ */
+function Outside({
+  href,
+  className,
+  children,
+  ...rest
+}: {
+  href: string | null
+  className: string
+  children: React.ReactNode
+} & Record<string, unknown>) {
+  if (!href) {
+    return (
+      <div className={className} {...rest}>
+        {children}
+      </div>
+    )
+  }
+  return (
+    <a className={className} href={href} target="_blank" rel="noopener noreferrer" {...rest}>
+      {children}
+    </a>
+  )
+}
+
+function initials(name: string): string {
+  const words = name.trim().split(/\s+/).filter(Boolean)
+  const first = words[0]?.[0] ?? '·'
+  const second = words.length > 1 ? (words[words.length - 1]?.[0] ?? '') : (words[0]?.[1] ?? '')
+  return (first + second).toUpperCase()
+}
+
+function plural(n: number, word: string): string {
+  return n === 1 ? word : `${word}s`
+}

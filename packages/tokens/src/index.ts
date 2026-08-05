@@ -43,13 +43,25 @@ export const tokens = {
     ink60: 'rgba(29,27,22,0.60)',
     ink45: 'rgba(29,27,22,0.45)',
     ink26: 'rgba(29,27,22,0.26)',
+    /** The hi-fi's hairline divider, one step stronger than `hairline`. */
+    ink13: 'rgba(29,27,22,0.13)',
+    /** Card lift. `ink26` at a small blur is a bruise; this is a shadow. */
+    ink08: 'rgba(29,27,22,0.08)',
 
     navy: '#26405B',
     navyDark: '#22384E',
     navy80: 'rgba(38,64,91,0.80)',
     navy60: 'rgba(38,64,91,0.60)',
     navy40: 'rgba(38,64,91,0.40)',
+    navy10: 'rgba(38,64,91,0.10)',
     hairline: 'rgba(29,27,22,0.11)',
+
+    /**
+     * Text on a navy card. Cream at alpha, not ink at alpha — the muted rule
+     * elsewhere in this palette inverts once the surface is dark.
+     */
+    creamMuted: 'rgba(248,246,241,0.70)',
+    cream14: 'rgba(248,246,241,0.14)',
 
     terracotta: '#C4714E',
     terracottaHover: '#B15F3B',

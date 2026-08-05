@@ -23,6 +23,30 @@ import {
 } from '@townsquare/identity'
 import { CreationStorage, MemoryStorageStore } from '@townsquare/storage'
 import { businesses } from '../../../packages/feed/src/data/businesses.js'
+import { createTodayRoutes } from './todayRoutes.js'
+import type { TownSquareItem } from './today.js'
+
+/**
+ * The scrapers, loaded at runtime and invisible to `tsc`.
+ *
+ * `packages/feed`'s scrapers are checked under `tsconfig.ported.json`, which
+ * turns off `noUncheckedIndexedAccess` for ~149 sites of unguarded regex-match
+ * indexing. A static import here would pull all of that into this app's strict
+ * graph and the typecheck would fail on code nobody in this change touched.
+ *
+ * The specifier is a variable rather than a literal so TypeScript does not
+ * follow it. That is the whole trick, and it is deliberate: the boundary is the
+ * point, and it disappears the day the scrapers are fixed per the debt note in
+ * `tsconfig.ported.json`.
+ */
+const FEED_MODULE = '../../../packages/feed/src/data/index.js'
+
+async function loadItems(): Promise<readonly TownSquareItem[]> {
+  const mod = (await import(FEED_MODULE)) as {
+    getAllItemsAsync: () => Promise<TownSquareItem[]>
+  }
+  return mod.getAllItemsAsync()
+}
 import { loadExampleCreations } from '../../sandbox/src/examples.js'
 import { MemoryMcpTokenStore } from '@townsquare/mcp'
 import {
@@ -187,6 +211,27 @@ async function main(): Promise<void> {
       : {}),
   })
 
+  // Today reads no cookie and is the same for every resident, so it is the one
+  // route in this process that is cacheable and the one that may be warmed
+  // before anybody asks for it.
+  const todayRoutes = createTodayRoutes({
+    town: TOWN,
+    loadItems,
+    listCreations: () =>
+      store.list().map((c) => ({
+        slug: c.slug,
+        name: c.name,
+        tagline: c.manifest.tagline,
+        description: c.manifest.description,
+        icon: `http://${c.originKey}.${APPS_DOMAIN}:${SANDBOX_PORT}/${c.manifest.icon}`,
+        // No author. A manifest may not claim one — see the `author` refusal in
+        // `packages/manifest` — and nothing has been through the review queue
+        // here to be attributed by the platform. The screen says "a neighbor".
+        author: null,
+      })),
+  })
+  todayRoutes.warm()
+
   const server = createServer((req: IncomingMessage, res: ServerResponse) => {
     // CORS admits the shell only. Never `*`, and never a bundle origin: a
     // creation reaching this service directly is exactly what the bridge
@@ -221,6 +266,7 @@ async function main(): Promise<void> {
       .then((handled) => (handled ? true : connectRoutes(req, res, url)))
       .then((handled) => (handled ? true : reviewRoutes(req, res, url)))
       .then((handled) => (handled ? true : reportRoutes(req, res, url)))
+      .then((handled) => (handled ? true : todayRoutes(req, res, url)))
       .then((handled) => {
         if (!handled) readRoutes(url, store, json)
       })

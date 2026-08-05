@@ -628,3 +628,728 @@ details > pre {
   align-items: center;
   flex-wrap: wrap;
 }
+
+/* ── Today, the resident home (design 4a) ─────────────────────────────────
+ *
+ * The hi-fi is a phone screen. This is the same screen, laid out so it also
+ * works on a laptop: one column, capped, centred. Widening it into a
+ * multi-column dashboard was the obvious move and the wrong one — Today is a
+ * read, and a read has one column.
+ *
+ * Same rule as everything above: not one hex literal.
+ */
+
+.today {
+  max-width: 480px;
+  margin: 0 auto;
+  padding-bottom: var(--ts-space-16);
+}
+
+/* ── the bar ─────────────────────────────────────────────────────────── */
+
+.today-bar {
+  display: flex;
+  align-items: center;
+  gap: var(--ts-space-2);
+  padding: var(--ts-space-3) var(--ts-space-5);
+  border-bottom: 1px solid var(--ts-ink13);
+}
+
+.today-wordmark {
+  font-family: var(--ts-font-serif);
+  font-size: var(--ts-text-label);
+  font-weight: 500;
+  letter-spacing: 0.01em;
+}
+
+.today-place {
+  font-family: var(--ts-font-mono);
+  font-size: var(--ts-text-eyebrow);
+  color: var(--ts-ink45);
+}
+
+.today-bar-actions {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: var(--ts-space-3);
+}
+
+.avatar-button {
+  background: none;
+  border: 0;
+  padding: 0;
+  display: flex;
+}
+
+.today-signin {
+  font-size: var(--ts-text-label);
+  color: var(--ts-ink60);
+}
+
+.avatar {
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  border-radius: var(--ts-radius-input);
+  background: var(--ts-navy);
+  color: var(--ts-cream);
+  font-size: var(--ts-text-caption);
+  font-weight: 500;
+}
+
+/*
+ * The ring is the verified badge. A separate tick would be one more thing on a
+ * bar that already carries the mark, and vouching is a quiet fact about a
+ * neighbour rather than a decoration.
+ */
+.avatar[data-verified] {
+  box-shadow: 0 0 0 2px var(--ts-cream), 0 0 0 3.5px var(--ts-navy40);
+}
+
+/* ── greeting ────────────────────────────────────────────────────────── */
+
+.today-greeting {
+  padding: var(--ts-space-5) var(--ts-space-5) 0;
+}
+
+.today-date {
+  display: flex;
+  align-items: center;
+  gap: var(--ts-space-1);
+  font-family: var(--ts-font-mono);
+  font-size: var(--ts-text-eyebrow);
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ts-terracotta-hover);
+}
+
+.today-hello {
+  font-family: var(--ts-font-serif);
+  font-weight: 400;
+  font-size: 28px;
+  line-height: 1.08;
+  letter-spacing: -0.015em;
+  margin: var(--ts-space-2) 0 0;
+}
+
+/* ── section furniture ───────────────────────────────────────────────── */
+
+.today-section {
+  padding: var(--ts-space-6) var(--ts-space-5) 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--ts-space-3);
+}
+
+.section-head {
+  display: flex;
+  align-items: center;
+  gap: var(--ts-space-2);
+}
+
+.section-rule {
+  height: 1px;
+  width: 14px;
+  background: var(--ts-terracotta);
+}
+
+.section-label {
+  font-family: var(--ts-font-mono);
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ts-ink60);
+}
+
+.section-action {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  background: none;
+  border: 0;
+  padding: 0;
+  font-size: var(--ts-text-caption);
+  font-weight: 500;
+  color: var(--ts-terracotta-hover);
+}
+
+.section-action[data-static='true'] {
+  color: var(--ts-ink45);
+}
+
+.row-chevron {
+  margin-left: auto;
+  flex: none;
+  color: var(--ts-ink26);
+}
+
+/* ── the lead story ──────────────────────────────────────────────────── */
+
+.lead {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ts-space-2);
+  color: inherit;
+  text-decoration: none;
+}
+
+.lead-image {
+  position: relative;
+  display: block;
+  border-radius: var(--ts-radius-sheet);
+  overflow: hidden;
+  background: var(--ts-stone);
+  box-shadow: 0 2px 4px var(--ts-ink08), 0 12px 26px -12px var(--ts-ink26);
+}
+
+.lead-image img {
+  display: block;
+  width: 100%;
+  height: 186px;
+  object-fit: cover;
+}
+
+.lead-kind {
+  align-self: flex-start;
+  display: flex;
+  align-items: center;
+  gap: var(--ts-space-1);
+  font-family: var(--ts-font-mono);
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.07em;
+  color: var(--ts-ink60);
+}
+
+/*
+ * Over a photo the chip floats; with no photo it is a plain eyebrow. Sources
+ * supply an image perhaps a third of the time, so the no-photo case is the
+ * common one and has to look intentional rather than like a failed load.
+ */
+.lead-image + .lead-kind {
+  position: absolute;
+  top: var(--ts-space-3);
+  left: var(--ts-space-3);
+  background: var(--ts-ink);
+  color: var(--ts-cream);
+  padding: 5px var(--ts-space-2);
+  border-radius: var(--ts-radius-chip);
+}
+
+.lead-title {
+  font-family: var(--ts-font-serif);
+  font-size: 20.5px;
+  font-weight: 500;
+  line-height: 1.22;
+  letter-spacing: -0.012em;
+  text-wrap: pretty;
+}
+
+.lead-byline {
+  display: flex;
+  align-items: center;
+  gap: var(--ts-space-2);
+  flex-wrap: wrap;
+}
+
+.lead-source-mark {
+  display: grid;
+  place-items: center;
+  width: 17px;
+  height: 17px;
+  border-radius: 5px;
+  background: var(--ts-sage14);
+  color: var(--ts-sage);
+  font-size: 9px;
+  font-weight: 500;
+}
+
+.lead-source {
+  font-size: var(--ts-text-caption);
+  color: var(--ts-ink60);
+}
+
+.lead-dot {
+  width: 3px;
+  height: 3px;
+  border-radius: var(--ts-radius-full);
+  background: var(--ts-ink26);
+}
+
+.lead-meta {
+  font-family: var(--ts-font-mono);
+  font-size: var(--ts-text-eyebrow);
+  color: var(--ts-ink45);
+}
+
+/* ── happening today ─────────────────────────────────────────────────── */
+
+.event-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  background: var(--ts-surface);
+  border: 1px solid var(--ts-hairline);
+  border-radius: var(--ts-radius-sheet);
+  box-shadow: 0 1px 2px var(--ts-ink08);
+  overflow: hidden;
+}
+
+.event-list li + li {
+  border-top: 1px solid var(--ts-ink13);
+}
+
+.event-row {
+  display: flex;
+  align-items: center;
+  gap: var(--ts-space-3);
+  padding: var(--ts-space-3);
+  color: inherit;
+  text-decoration: none;
+}
+
+.event-time {
+  flex: none;
+  width: 40px;
+  text-align: center;
+}
+
+.event-clock {
+  display: block;
+  font-size: var(--ts-text-caption);
+  font-weight: 500;
+  letter-spacing: -0.02em;
+}
+
+.event-meridiem {
+  display: block;
+  font-family: var(--ts-font-mono);
+  font-size: 9.5px;
+  color: var(--ts-ink45);
+  margin-top: 2px;
+  text-transform: uppercase;
+}
+
+.event-icon {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 34px;
+  height: 34px;
+  border-radius: var(--ts-radius-input);
+}
+
+/*
+ * Four tints, and each one is a token rather than a shade picked to look nice
+ * beside the last. `categorize` in the API is deliberately conservative about
+ * which bucket something lands in — see the note there.
+ */
+.event-icon[data-category='civic'] {
+  background: var(--ts-gold14);
+  color: var(--ts-gold-text);
+}
+
+.event-icon[data-category='music'] {
+  background: var(--ts-sage14);
+  color: var(--ts-sage);
+}
+
+.event-icon[data-category='sport'] {
+  background: var(--ts-terracotta14);
+  color: var(--ts-terracotta-hover);
+}
+
+.event-icon[data-category='community'] {
+  background: var(--ts-navy10);
+  color: var(--ts-navy);
+}
+
+.event-text {
+  min-width: 0;
+}
+
+.event-title {
+  display: block;
+  font-size: var(--ts-text-label);
+  font-weight: 500;
+  line-height: 1.25;
+}
+
+.event-detail {
+  display: block;
+  font-size: var(--ts-text-caption);
+  color: var(--ts-ink60);
+  margin-top: 2px;
+  /* Scraped locations run to a full postal address. One line, then stop. */
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* ── from your neighbors ─────────────────────────────────────────────── */
+
+/*
+ * The one dark card on the screen.
+ *
+ * Creations are the reason Town Square is not a newsletter, so this section
+ * inverts rather than being one more white card in a stack of white cards.
+ */
+.featured {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: var(--ts-space-3);
+  padding: var(--ts-space-4);
+  border-radius: var(--ts-radius-sheet);
+  background: var(--ts-navy-dark);
+  color: var(--ts-cream);
+  box-shadow: 0 2px 4px var(--ts-ink08), 0 16px 30px -16px var(--ts-navy80);
+}
+
+.featured-head {
+  display: flex;
+  align-items: center;
+  gap: var(--ts-space-2);
+}
+
+.featured-by {
+  font-family: var(--ts-font-mono);
+  font-size: var(--ts-text-eyebrow);
+  line-height: 1.35;
+  color: var(--ts-cream-muted);
+}
+
+.featured-by span {
+  display: block;
+  color: var(--ts-cream);
+}
+
+.featured-kind {
+  margin-left: auto;
+  font-family: var(--ts-font-mono);
+  font-size: 9.5px;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  background: var(--ts-cream14);
+  padding: 5px var(--ts-space-2);
+  border-radius: var(--ts-radius-chip);
+}
+
+.featured-name {
+  font-size: 19px;
+  font-weight: 500;
+  line-height: 1.2;
+  letter-spacing: -0.01em;
+}
+
+.featured-tagline {
+  font-size: var(--ts-text-caption);
+  line-height: 1.5;
+  color: var(--ts-cream-muted);
+}
+
+.featured-open {
+  align-self: flex-start;
+  display: flex;
+  align-items: center;
+  gap: var(--ts-space-1);
+  background: var(--ts-cream);
+  color: var(--ts-navy-dark);
+  border: 0;
+  border-radius: var(--ts-radius-chip);
+  padding: var(--ts-space-2) var(--ts-space-4);
+  font-size: var(--ts-text-caption);
+  font-weight: 500;
+}
+
+.creation-row {
+  display: flex;
+  align-items: center;
+  gap: var(--ts-space-3);
+  width: 100%;
+  text-align: left;
+  padding: var(--ts-space-3);
+  background: var(--ts-surface);
+  border: 1px solid var(--ts-hairline);
+  border-radius: var(--ts-radius-sheet);
+  box-shadow: 0 1px 2px var(--ts-ink08);
+}
+
+.creation-row-text {
+  min-width: 0;
+}
+
+.creation-row-name {
+  display: block;
+  font-size: var(--ts-text-label);
+  font-weight: 500;
+  line-height: 1.2;
+}
+
+.creation-row-tagline {
+  display: block;
+  font-size: var(--ts-text-caption);
+  color: var(--ts-ink60);
+  margin-top: 2px;
+}
+
+/*
+ * A creation's icon sits on top of its own initials, so a bundle that never
+ * loads degrades to a readable tile instead of a broken-image glyph on the
+ * town's home screen.
+ */
+.creation-icon {
+  position: relative;
+  display: grid;
+  place-items: center;
+  flex: none;
+  border-radius: var(--ts-radius-input);
+  overflow: hidden;
+  background: var(--ts-terracotta14);
+  color: var(--ts-terracotta-hover);
+}
+
+.creation-icon[data-on-navy] {
+  background: var(--ts-cream14);
+  color: var(--ts-cream);
+}
+
+.creation-icon img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.creation-icon-fallback {
+  font-size: var(--ts-text-eyebrow);
+  font-weight: 500;
+}
+
+/* ── from city hall ──────────────────────────────────────────────────── */
+
+/*
+ * The only tinted card on the screen, and most days it is not rendered at all.
+ * That is what makes it mean something on the day it is.
+ */
+.notice {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--ts-space-3);
+  padding: var(--ts-space-3);
+  border-radius: var(--ts-radius-sheet);
+  border: 1px solid var(--ts-gold14);
+  background: var(--ts-gold14);
+  color: inherit;
+  text-decoration: none;
+}
+
+.notice-icon {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 30px;
+  height: 30px;
+  border-radius: var(--ts-radius-input);
+  background: var(--ts-gold);
+  color: var(--ts-gold-text);
+}
+
+/* An emergency is the one place the alarm register is allowed out. */
+.notice[data-severity='emergency'] {
+  border-color: var(--ts-brick);
+  background: var(--ts-terracotta10);
+}
+
+.notice[data-severity='emergency'] .notice-icon {
+  background: var(--ts-brick);
+  color: var(--ts-cream);
+}
+
+.notice-title {
+  display: block;
+  font-size: var(--ts-text-label);
+  font-weight: 500;
+  line-height: 1.28;
+}
+
+.notice-detail {
+  display: block;
+  font-size: var(--ts-text-caption);
+  line-height: 1.45;
+  color: var(--ts-ink60);
+  margin-top: 3px;
+}
+
+.civic-list {
+  display: flex;
+  flex-direction: column;
+}
+
+.civic-list > * + * {
+  border-top: 1px solid var(--ts-ink13);
+}
+
+.civic-row {
+  display: flex;
+  align-items: center;
+  gap: var(--ts-space-3);
+  padding: var(--ts-space-3) 2px;
+  color: inherit;
+  text-decoration: none;
+}
+
+.civic-icon {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 28px;
+  height: 28px;
+  border-radius: 9px;
+  background: var(--ts-navy10);
+  color: var(--ts-navy);
+}
+
+.civic-title {
+  display: block;
+  font-size: var(--ts-text-caption);
+  font-weight: 500;
+  line-height: 1.3;
+}
+
+.civic-detail {
+  display: block;
+  font-family: var(--ts-font-mono);
+  font-size: var(--ts-text-eyebrow);
+  color: var(--ts-ink45);
+  margin-top: 2px;
+}
+
+/* ── the directory strip ─────────────────────────────────────────────── */
+
+.directory-strip {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--ts-space-3);
+}
+
+.directory-card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ts-space-1);
+  padding: var(--ts-space-3);
+  background: var(--ts-surface);
+  border: 1px solid var(--ts-hairline);
+  border-radius: var(--ts-radius-sheet);
+  box-shadow: 0 1px 2px var(--ts-ink08);
+  color: inherit;
+  text-decoration: none;
+}
+
+.directory-icon {
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  border-radius: var(--ts-radius-input);
+  background: var(--ts-sage14);
+  color: var(--ts-sage);
+  margin-bottom: var(--ts-space-1);
+}
+
+.directory-name {
+  font-size: var(--ts-text-caption);
+  font-weight: 500;
+  line-height: 1.2;
+}
+
+.directory-detail {
+  display: flex;
+  align-items: center;
+  gap: var(--ts-space-1);
+  font-size: var(--ts-text-eyebrow);
+  color: var(--ts-ink60);
+}
+
+/* ── sign-off and nav ────────────────────────────────────────────────── */
+
+.today-footer {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: var(--ts-space-4);
+  margin: var(--ts-space-6) var(--ts-space-5) 0;
+  padding-top: var(--ts-space-6);
+  border-top: 1px solid var(--ts-ink13);
+}
+
+.today-signoff {
+  font-family: var(--ts-font-serif);
+  font-size: var(--ts-text-label);
+  line-height: 1.35;
+  color: var(--ts-ink60);
+}
+
+/*
+ * The timestamp is load-bearing, not decoration. When a scrape fails the API
+ * serves the last good screen rather than an error, and this line is how a
+ * resident can tell.
+ */
+.today-updated {
+  font-family: var(--ts-font-mono);
+  font-size: var(--ts-text-eyebrow);
+  color: var(--ts-ink45);
+  margin-top: var(--ts-space-1);
+}
+
+.today-nav {
+  position: sticky;
+  bottom: 0;
+  display: flex;
+  justify-content: space-around;
+  gap: var(--ts-space-2);
+  margin-top: var(--ts-space-6);
+  padding: var(--ts-space-2) var(--ts-space-5);
+  border-top: 1px solid var(--ts-hairline);
+  background: var(--ts-cream);
+}
+
+.nav-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+  width: 70px;
+  background: none;
+  border: 0;
+  padding: var(--ts-space-1) 0;
+  font-size: 10px;
+  font-weight: 500;
+  color: var(--ts-navy);
+}
+
+.nav-item:disabled {
+  color: var(--ts-ink45);
+  font-weight: 400;
+  cursor: not-allowed;
+}
+
+/* ── loading and failure ─────────────────────────────────────────────── */
+
+.today-state {
+  max-width: 480px;
+  margin: 0 auto;
+  padding: var(--ts-space-16) var(--ts-space-5);
+  text-align: center;
+  color: var(--ts-ink60);
+}
+
+.today-state .problem {
+  margin: 0 auto var(--ts-space-4);
+}

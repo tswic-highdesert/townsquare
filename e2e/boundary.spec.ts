@@ -30,7 +30,12 @@ interface AttackResults {
 }
 
 /**
- * Walk the shell: gallery → trust page → running, and hand back the guest frame.
+ * Walk the shell: Today → gallery → trust page → running, and hand back the
+ * guest frame.
+ *
+ * The landing screen is Today, which features one creation rather than listing
+ * them all, so the walk goes through the gallery — that is the screen that can
+ * name a specific creation, and these tests each want a specific one.
  *
  * Frames are re-queried rather than captured once. React StrictMode mounts
  * effects twice in development, so the host builds a frame, tears it down, and
@@ -40,6 +45,7 @@ interface AttackResults {
  */
 async function openCreation(page: Page, name: string): Promise<Frame> {
   await page.goto('/')
+  await page.getByRole('button', { name: 'Browse' }).click()
   await page.getByRole('button', { name: new RegExp(name, 'i') }).click()
   await expect(page.getByText('What it can touch')).toBeVisible()
   await page.getByRole('button', { name: 'Open' }).click()

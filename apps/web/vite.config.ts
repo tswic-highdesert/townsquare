@@ -23,6 +23,7 @@ const r = (p: string) => fileURLToPath(new URL(p, import.meta.url))
 
 const SHELL_PORT = 5173
 const FONTS_DIR = r('../../packages/tokens/fonts')
+const BRAND_DIR = r('../../brand/png')
 
 /**
  * Serve the typefaces from `@townsquare/tokens`, not from a copy.
@@ -51,11 +52,37 @@ function fonts(): Plugin {
     },
   }
 }
+/**
+ * Serve the mark from `brand/png`, for the same reason the fonts come from
+ * `packages/tokens/fonts`: a copy in `public/` is a second source of truth for
+ * the one asset that must never be approximated. `brand/README.md` records what
+ * happened the last time a near-enough version of the logo shipped.
+ */
+function brand(): Plugin {
+  return {
+    name: 'townsquare-brand',
+    configureServer(server) {
+      server.middlewares.use('/brand', (req, res, next) => {
+        const name = (req.url ?? '').replace(/^\//, '').split('?')[0] ?? ''
+        if (!/^[a-z0-9-]{1,40}\.png$/.test(name)) return next()
+        readFile(join(BRAND_DIR, name)).then(
+          (bytes) => {
+            res.setHeader('Content-Type', 'image/png')
+            res.setHeader('Cache-Control', 'public, max-age=3600')
+            res.end(bytes)
+          },
+          () => next(),
+        )
+      })
+    },
+  }
+}
+
 const API_PORT = Number(process.env['API_PORT'] ?? 3030)
 
 export default defineConfig({
   root: r('.'),
-  plugins: [react(), fonts()],
+  plugins: [react(), fonts(), brand()],
   resolve: {
     alias: {
       '@townsquare/manifest': r('../../packages/manifest/src/index.ts'),
