@@ -51,6 +51,23 @@ describe('the token contract', () => {
       '--ts-dur-3',
       '--ts-dur-4',
       '--ts-focus',
+      // The semantic layer. Pinned the day it landed, because an alias nobody
+      // pinned is an alias somebody deletes on a tidy-up, and it will be in
+      // creations within the week.
+      '--ts-action',
+      '--ts-action-hover',
+      '--ts-action-quiet',
+      '--ts-civic',
+      '--ts-civic-text',
+      '--ts-verified',
+      '--ts-alarm',
+      '--ts-quiet',
+      '--ts-structure',
+      // Density. A container sets these; a row reads them with fallbacks.
+      '--ts-row-y',
+      '--ts-row-gap',
+      '--ts-row-lead',
+      '--ts-row-title',
     ]
     const actual = cssVariables()
     for (const name of published) {
@@ -58,7 +75,7 @@ describe('the token contract', () => {
     }
   })
 
-  it('emits every colour, space, radius, size, shadow and motion value', () => {
+  it('emits every group as a variable, and nothing besides', () => {
     const vars = cssVariables()
     const counted =
       Object.keys(tokens.color).length +
@@ -68,8 +85,39 @@ describe('the token contract', () => {
       Object.keys(tokens.font).length +
       Object.keys(tokens.shadow).length +
       Object.keys(tokens.motion).length +
+      Object.keys(tokens.semantic).length +
+      Object.keys(tokens.density).length +
       1 // focus, which is one value rather than a group
     expect(Object.keys(vars).length).toBe(counted)
+  })
+
+  /**
+   * The whole point of the semantic layer is that it is an alias, not a copy.
+   *
+   * A resolved hex here would look identical on day one and then quietly stop
+   * following the town the first time somebody overrode `--ts-terracotta`,
+   * which is the exact failure the layer exists to prevent.
+   */
+  it('keeps semantic tokens as references, so a reskin moves them too', () => {
+    const vars = cssVariables()
+    expect(vars['--ts-action']).toBe('var(--ts-terracotta)')
+    expect(vars['--ts-verified']).toBe('var(--ts-sage)')
+    expect(vars['--ts-alarm']).toBe('var(--ts-brick)')
+    for (const [name, value] of Object.entries(tokens.semantic)) {
+      expect(value, `${name} resolved a value instead of aliasing one`).toMatch(/^var\(--ts-[a-z0-9-]+\)$/)
+    }
+  })
+
+  /**
+   * Every semantic name must point at a token that actually exists. An alias
+   * to a typo resolves to nothing and the component silently loses its colour.
+   */
+  it('never aliases a token that does not exist', () => {
+    const vars = cssVariables()
+    for (const [name, value] of Object.entries(tokens.semantic)) {
+      const target = value.slice('var('.length, -1)
+      expect(vars[target], `--ts-${name} points at ${target}, which is not published`).toBeTruthy()
+    }
   })
 
   /**

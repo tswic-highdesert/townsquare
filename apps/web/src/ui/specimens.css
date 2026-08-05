@@ -185,3 +185,45 @@
 /* The two glyphs that are not in the sprite, marked so the difference is
  * visible rather than a footnote. */
 .sp-icon-cell[data-local] { border-color: var(--ts-ui-terra-line); }
+
+/* The role table. A swatch, the alias, what it resolves to, and what it means. */
+.sp-roles {
+  display: grid;
+  gap: 1px;
+  border: 1px solid var(--ts-ink13);
+  border-radius: var(--ts-radius-button);
+  overflow: hidden;
+  background: var(--ts-ink13);
+}
+
+.sp-role {
+  display: grid;
+  grid-template-columns: 22px 150px 170px 1fr;
+  align-items: center;
+  gap: var(--ts-space-3);
+  padding: var(--ts-space-3) var(--ts-space-4);
+  background: var(--ts-surface);
+  font-size: 13px;
+}
+
+.sp-role code {
+  font-family: var(--ts-font-mono);
+  font-size: 11px;
+  color: var(--ts-ink);
+  white-space: nowrap;
+}
+
+.sp-role-raw { color: var(--ts-ink45) !important; }
+.sp-role-means { color: var(--ts-quiet); }
+
+.sp-role-chip {
+  width: 22px;
+  height: 22px;
+  border-radius: 6px;
+  border: 1px solid var(--ts-hairline);
+}
+
+@media (max-width: 720px) {
+  .sp-role { grid-template-columns: 22px 1fr; }
+  .sp-role-raw, .sp-role-means { grid-column: 2; }
+}

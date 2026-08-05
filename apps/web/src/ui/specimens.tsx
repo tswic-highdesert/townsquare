@@ -12,6 +12,16 @@ import {
   AlertRegion,
   AppChip,
   Avatar,
+  Card,
+  CardBody,
+  CardEyebrow,
+  CardMedia,
+  CardMeta,
+  CardTitle,
+  RowDate,
+  RowIcon,
+  RowItem,
+  RowList,
   AvatarStack,
   Banner,
   BottomSheet,
@@ -355,6 +365,169 @@ function Choices() {
         <Stepper value={1} onChange={() => {}} min={1} max={12} unit="volunteer" />
         <Stepper value={12} onChange={() => {}} min={1} max={12} unit="volunteer" />
       </div>
+    </Spec>
+  )
+}
+
+function Structure() {
+  return (
+    <>
+      <Spec
+        title="Card"
+        why="one card is one target, even when it holds a headline, a source and a time"
+      >
+        <div className="sp-grid">
+          <Card href="#card">
+            <CardMedia />
+            <CardBody>
+              <CardEyebrow>Downtown</CardEyebrow>
+              <CardTitle>Old Bank Building reopens as a market hall</CardTitle>
+              <CardMeta>The Courier &middot; 6:41 a.m.</CardMeta>
+            </CardBody>
+          </Card>
+          <Card elevation="raised">
+            <CardBody>
+              <CardEyebrow>Lead story</CardEyebrow>
+              <CardTitle>Quorum court sends the Weir Road culvert back to committee</CardTitle>
+              <CardMeta>
+                The vote was 8 to 5 after ninety minutes of public comment, most of it from people
+                who live on the bayou side.
+              </CardMeta>
+            </CardBody>
+          </Card>
+          <Card dark elevation="lifted">
+            <CardBody>
+              <CardEyebrow>From your neighbours</CardEyebrow>
+              <CardTitle>The Burrito Index</CardTitle>
+              <CardMeta>Fourteen taquerias, ranked by whoever shows up</CardMeta>
+              <div className="sp-row">
+                <Button variant="on-navy" size="sm" trailingIcon="arrow-out">
+                  Open
+                </Button>
+              </div>
+            </CardBody>
+          </Card>
+          <Card tone="civic">
+            <CardBody>
+              <CardEyebrow>From city hall</CardEyebrow>
+              <CardTitle>Weir Road closed Thursday, 7 a.m. to 4 p.m.</CardTitle>
+              <CardMeta>City of Russellville &middot; posted yesterday</CardMeta>
+            </CardBody>
+          </Card>
+        </div>
+        <p className="sp-note">
+          One dark card per screen and one tinted card per screen. Both are drawn here so the
+          treatments can be reviewed; a screen with three of either has no lead. The dark card
+          carries <code>--ts-shadow-navy</code>, because a neutral shadow under navy reads grey.
+        </p>
+      </Spec>
+
+      <Spec
+        title="Row, and density as a token override"
+        why="comfortable and compact are the same component; two variants of one row is how a system rots"
+      >
+        <div className="sp-grid">
+          <div>
+            <p className="sp-head">Comfortable, the default</p>
+            <RowList label="Directory, comfortable">
+              <RowItem
+                lead={<RowIcon name="utensils" />}
+                title="Old South Restaurant"
+                meta="Diner &middot; 1330 E Main St"
+                trailing={<StatusPill tone="sage" icon="check">Open</StatusPill>}
+                href="#row"
+              />
+              <RowItem
+                lead={<RowIcon name="wrench" />}
+                title="Dardanelle Ace Hardware"
+                meta="Hardware &middot; 210 Union St"
+                trailing={<StatusPill tone="sage" icon="check">Open</StatusPill>}
+                href="#row"
+              />
+              <RowItem
+                lead={<RowIcon name="utensils" />}
+                title="Fat Daddy's Bar-B-Que"
+                meta="Barbecue &middot; 2818 W Main St"
+                trailing={<StatusPill tone="quiet" icon="clock">Closed</StatusPill>}
+                href="#row"
+              />
+            </RowList>
+          </div>
+          <div>
+            <p className="sp-head">Compact, for a 712 business directory</p>
+            <RowList density="compact" label="Directory, compact">
+              <RowItem lead={<RowIcon name="utensils" />} title="Old South Restaurant" meta="Diner &middot; 1330 E Main St" href="#row" />
+              <RowItem lead={<RowIcon name="wrench" />} title="Dardanelle Ace Hardware" meta="Hardware &middot; 210 Union St" href="#row" />
+              <RowItem lead={<RowIcon name="utensils" />} title="Fat Daddy's Bar-B-Que" meta="Barbecue &middot; 2818 W Main St" href="#row" />
+              <RowItem lead={<RowIcon name="music" />} title="River Valley Music" meta="Instruments &middot; 118 S Arkansas Ave" href="#row" />
+              <RowItem lead={<RowIcon name="heartbeat" />} title="Bost Chiropractic" meta="Clinic &middot; 505 W Parkway Dr" href="#row" />
+            </RowList>
+          </div>
+        </div>
+        <div className="sp-grid">
+          <div>
+            <p className="sp-head">Date lead, unframed, not pressable</p>
+            <RowList framed={false} label="This week">
+              <RowItem lead={<RowDate weekday="Sat" day={9} />} title="Pope County farmers market" meta="8:00 a.m. &middot; Depot pavilion" />
+              <RowItem lead={<RowDate weekday="Wed" day={13} />} title="Reading hour, Pope County Library" meta="10:30 a.m. &middot; Children's room" />
+            </RowList>
+          </div>
+          <div>
+            <p className="sp-head">No lead at all</p>
+            <RowList label="Around town">
+              <RowItem title="Tech moves fall move-in to August 17" meta="Arkansas Tech University &middot; 2h" href="#row" />
+              <RowItem title="Main Street repaving starts at Denver Street Monday" meta="City of Russellville &middot; 4h" href="#row" />
+            </RowList>
+          </div>
+        </div>
+        <p className="sp-note">
+          Compact sets four variables and nothing else: <code>--ts-row-y</code>,{' '}
+          <code>--ts-row-gap</code>, <code>--ts-row-lead</code>, <code>--ts-row-title</code>. The tap
+          target still floors at 44px, so it buys vertical space and never accessibility, and a
+          creation rendered inside a compact list inherits the density too.
+        </p>
+      </Spec>
+    </>
+  )
+}
+
+const ROLES: Array<[string, string, string]> = [
+  ['--ts-action', '--ts-terracotta', 'the one thing a finger is meant to press'],
+  ['--ts-action-hover', '--ts-terracotta-hover', 'pressed and hovered states of the above'],
+  ['--ts-action-quiet', '--ts-terracotta14', 'the wash behind a selected chip or active tab'],
+  ['--ts-civic', '--ts-gold', 'the town speaking: notices, closures, postings'],
+  ['--ts-civic-text', '--ts-gold-text', 'civic copy on a light wash'],
+  ['--ts-verified', '--ts-sage', 'vouched, open, alive. Never a brand accent'],
+  ['--ts-alarm', '--ts-brick', 'an actual emergency. Never a validation error'],
+  ['--ts-quiet', '--ts-ink60', 'text that recedes: bylines, counts, timestamps'],
+  ['--ts-structure', '--ts-navy', 'chrome, dark cards, the frame around the town'],
+]
+
+function Roles() {
+  return (
+    <Spec
+      title="Semantic tokens"
+      why="a component asking for terracotta when it means primary action is describing a colour, not a role"
+    >
+      <div className="sp-roles">
+        {ROLES.map(([name, raw, means]) => (
+          <div className="sp-role" key={name}>
+            <span className="sp-role-chip" style={{ background: `var(${name})` }} />
+            <code>{name}</code>
+            <code className="sp-role-raw">{raw}</code>
+            <span className="sp-role-means">{means}</span>
+          </div>
+        ))}
+      </div>
+      <p className="sp-note">
+        Every one is a pure alias, so the visual diff on the day it landed was zero. They emit as{' '}
+        <code>var()</code> references rather than resolved values on purpose: a town that overrides{' '}
+        <code>--ts-terracotta</code> moves <code>--ts-action</code> with it, and a town that wants a
+        different action colour from its structural colour can override <code>--ts-action</code>{' '}
+        alone. That second case is the thing a palette cannot express. The raw tokens are not
+        deprecated and are not going anywhere: reaching at the physical palette is legitimate, and a
+        wash behind a hover is a wash, not a role.
+      </p>
     </Spec>
   )
 }
@@ -769,6 +942,8 @@ function Page() {
       <Chips />
       <Fields />
       <Choices />
+      <Roles />
+      <Structure />
       <Identity />
       <Loading />
       <Empties />

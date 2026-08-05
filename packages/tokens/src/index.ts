@@ -179,7 +179,80 @@ export const tokens = {
    * instead, which the shell does by redefining this variable on that scope, so
    * a component still just says `box-shadow: var(--ts-focus)`.
    */
-  focus: '0 0 0 2px var(--ts-cream), 0 0 0 4px var(--ts-terracotta)',
+  focus: '0 0 0 2px var(--ts-cream), 0 0 0 4px var(--ts-action)',
+
+  /**
+   * Roles, not colours. The layer above the palette.
+   *
+   * A component that asks for terracotta when it means "the one thing on this
+   * screen a finger is meant to press" is describing a colour, and that works
+   * exactly as long as the palette and the roles line up. They already do not:
+   * Harbor's action colour is a teal, and it is still called terracotta in
+   * every creation in that town, so a builder reading the token list has to
+   * know the lore to understand why.
+   *
+   * Every one of these is a pure alias on day one, so the visual diff is zero.
+   * The cost is real but small and it is documentation rather than
+   * engineering: for a while both `--ts-terracotta` and `--ts-action` are
+   * valid and a builder has to be told which to prefer. That is a smaller tax
+   * than the lore tax above.
+   *
+   * The raw tokens are **not** deprecated and are not scheduled for removal.
+   * They are the physical palette and reaching at it directly is legitimate:
+   * `--ts-terracotta14` behind a hover is a wash, not a role. This layer sits
+   * beside them, not on top of them.
+   *
+   * These emit as `var()` references rather than resolved values on purpose,
+   * so a town that overrides `--ts-terracotta` moves `--ts-action` with it and
+   * a town that wants a different action colour from its structural colour can
+   * override `--ts-action` alone. That is the thing roles buy that a palette
+   * cannot express.
+   */
+  semantic: {
+    /** The one thing on this screen a finger is meant to press. */
+    action: 'var(--ts-terracotta)',
+    /** Pressed and hovered states of the above. */
+    actionHover: 'var(--ts-terracotta-hover)',
+    /** The wash behind a selected chip or an active tab. */
+    actionQuiet: 'var(--ts-terracotta14)',
+    /** The town speaking: notices, closures, official postings. */
+    civic: 'var(--ts-gold)',
+    /** Civic copy that has to pass on a light wash. Raw gold is unreadable. */
+    civicText: 'var(--ts-gold-text)',
+    /** Vouched, open, alive. Never a brand accent. */
+    verified: 'var(--ts-sage)',
+    /** An actual emergency. Never a validation error. */
+    alarm: 'var(--ts-brick)',
+    /** Text that recedes: bylines, counts, timestamps. */
+    quiet: 'var(--ts-ink60)',
+    /** Chrome, dark cards, the frame around the town. */
+    structure: 'var(--ts-navy)',
+  },
+
+  /**
+   * Density, as an override rather than a second component.
+   *
+   * A row reads `var(--ts-row-y, var(--ts-space-4))`, so it is correct with
+   * nothing set and denser when a container asks for it. Shipping a compact
+   * variant of a row instead is how a design system starts to rot: two
+   * components that must stay in sync forever, and they will not.
+   *
+   * Two consequences worth naming. The tap target still floors at 44px, so
+   * compact buys vertical space and never accessibility. And a creation inside
+   * a compact container inherits the density too, which is how a
+   * resident-built list stops looking foreign beside the directory.
+   *
+   * These are the comfortable defaults. `Row` in `apps/web/src/ui` reads them
+   * with these same values as CSS fallbacks, so the tokens are documentation
+   * of the default rather than a thing that must be set.
+   */
+  density: {
+    rowY: '16px',
+    rowGap: '12px',
+    /** The leading block, fixed, so every title in a list starts on one x. */
+    rowLead: '44px',
+    rowTitle: '17px',
+  },
 } as const
 
 export type Tokens = typeof tokens
@@ -196,6 +269,13 @@ export function cssVariables(t: Tokens = tokens): Record<string, string> {
   for (const [k, v] of Object.entries(t.type)) out[`--ts-text-${kebab(k)}`] = `${v}px`
 
   for (const [k, v] of Object.entries(t.shadow)) out[`--ts-shadow-${kebab(k)}`] = v
+
+  // Roles and density both flatten straight off the key: `actionHover` gives
+  // `--ts-action-hover`, `rowY` gives `--ts-row-y`. No group prefix, because
+  // the role IS the name — `--ts-semantic-action` would be describing our
+  // filing system to a builder who only wants the primary action colour.
+  for (const [k, v] of Object.entries(t.semantic)) out[`--ts-${kebab(k)}`] = v
+  for (const [k, v] of Object.entries(t.density)) out[`--ts-${kebab(k)}`] = v
 
   /**
    * Motion flattens by hand, because the names are not a family.
