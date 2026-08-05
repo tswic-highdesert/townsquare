@@ -652,9 +652,25 @@ appears in the shell header:
 TOWNSQUARE_SEED_COHORT='tswic:tal@example.com:admin' pnpm dev:api
 ```
 
-In development each process holds its own memory copy, so a submission made
-through `pnpm dev:mcp` is not in the API's queue. In production all three read
-one database.
+In development each process holds its own memory copy, and the consequence is
+stronger than "this particular submission will not cross".
+
+**The shell's review queue cannot contain anything in development, by any
+supported means.** `apps/mcp` and `apps/api` each construct their own
+`MemorySubmissionStore`, `MemoryCreationStore` and `MemoryIdentityStore`, there
+is no env var or shared store between them, and **the API has no route that
+creates a submission at all** — the only `submit` in `apps/api` is
+`contributionRoutes.ts`, which is town-data corrections and a different thing.
+
+So the queue list, an opened submission, the permissions diff and version
+history are unreachable locally until all three processes read one database.
+They were unread for a long time for exactly that reason, and reading them
+required standing up a scratch process wiring the real `Review` against a store
+populated directly. Approve-then-run as one continuous flow is still undriven.
+
+The example creations exercise the sandbox and bridge at boot, so that half is
+not unexercised — it is the join between the builder door and the shell that
+does not exist yet.
 
 ## Reporting, and acting on something already live
 

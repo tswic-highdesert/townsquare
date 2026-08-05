@@ -1490,6 +1490,108 @@
   .ts-sheet-grab { display: none; }
 }
 
+
+/* ── split row ──────────────────────────────────────────────────────────────
+ *
+ * One primary destination plus one or two small independent actions.
+ *
+ * The container is deliberately not an anchor. The primary link is stretched
+ * over the whole row by its own `::after`, and the actions are siblings raised
+ * above it. Nesting a button inside the link instead would look identical,
+ * work with a mouse, and leave a screen-reader user with a row they cannot
+ * operate — which is the reason this is a primitive at all.
+ */
+
+.ts-splitrow {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: var(--ts-row-gap, var(--ts-space-3));
+  width: 100%;
+  min-height: 44px;
+  padding: var(--ts-row-y, var(--ts-space-4)) var(--ts-row-x, var(--ts-space-4));
+  transition: background-color var(--ts-dur-1) var(--ts-ease);
+}
+
+.ts-splitrow:hover { background: var(--ts-ink08); }
+
+.ts-splitrow-primary {
+  display: block;
+  font-family: var(--ts-font-serif);
+  font-size: var(--ts-row-title, var(--ts-text-body));
+  font-weight: 500;
+  line-height: 1.3;
+  letter-spacing: -0.008em;
+  color: var(--ts-ink);
+  text-decoration: none;
+}
+
+/*
+ * The stretch. `inset: 0` on the row rather than on the text, so the target is
+ * the whole row and not just the words in it.
+ */
+.ts-splitrow-primary::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+}
+
+.ts-splitrow-primary:focus-visible { outline: none; }
+.ts-splitrow:has(.ts-splitrow-primary:focus-visible) {
+  outline: none;
+  box-shadow: var(--ts-focus);
+  border-radius: var(--ts-radius-button);
+}
+
+/*
+ * Above the stretched link, and only these. `position: relative` is doing real
+ * work here: without it these sit under the `::after` and become unclickable
+ * while still being focusable, which is the worst of both.
+ */
+.ts-splitrow-actions {
+  position: relative;
+  flex: none;
+  display: flex;
+  align-items: center;
+  gap: var(--ts-space-1);
+}
+
+.ts-splitrow-action {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  /* 44px even when the glyph is 16px. The button is the target, not the mark. */
+  min-width: 44px;
+  min-height: 44px;
+  padding: 0 var(--ts-space-2);
+  border: 0;
+  border-radius: var(--ts-radius-button);
+  background: none;
+  color: var(--ts-action);
+  font-family: var(--ts-font-sans);
+  font-size: 13.5px;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.ts-splitrow-action:hover { background: var(--ts-action-quiet); color: var(--ts-action-hover); }
+.ts-splitrow-action:focus-visible { outline: none; box-shadow: var(--ts-focus); }
+
+.ts-rows li + li .ts-splitrow::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: var(--ts-ink13);
+}
+
+.ts-rows li + li .ts-splitrow[data-lead]::before {
+  left: calc(var(--ts-row-lead, 44px) + var(--ts-row-gap, var(--ts-space-3)));
+}
+
 /* ── reduced motion ─────────────────────────────────────────────────────────
  *
  * Not "everything off". Opacity and colour changes stay, because they are not

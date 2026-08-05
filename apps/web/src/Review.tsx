@@ -177,8 +177,19 @@ function SubmissionsTab() {
               }
               trailing={
                 <>
+                  {/*
+                    Gold, not the quiet pending grey, and not brick.
+                    
+                    The diff on the submission page is loud because that is
+                    where the decision is made. This pill is where *triage
+                    order* is decided, which on a busy day is what determines
+                    whether the escalating row gets opened first or fifth — and
+                    a grey chip in a row that also reads "3 files · 1 KB ·
+                    waiting under an hour" does not carry that. Gold is the
+                    attention register; brick stays the one alarm.
+                  */}
                   {item.escalates && (
-                    <StatusPill tone="pending" icon="alert-circle">
+                    <StatusPill tone="gold" icon="alert-circle">
                       asks for more
                     </StatusPill>
                   )}
@@ -831,9 +842,21 @@ function Diff(props: { diff: ManifestDiff }) {
         </p>
       )}
 
+      {/*
+        Storage is a boolean, so `listOf` models it as the single value
+        "storage" to make every key diff the same way. Printing that value would
+        read "Adds private storage: storage", which repeats the key at a
+        reviewer and sits oddly beside three lines that name a real host or
+        record type. The grant is the whole fact here.
+      */}
       {diff.escalations.map((change) => (
         <p key={change.key} data-add>
-          <b>Adds</b> {LABELS[change.key] ?? change.key}: <code>{change.added.join(', ')}</code>
+          <b>Adds</b> {LABELS[change.key] ?? change.key}
+          {change.key === 'storage' ? null : (
+            <>
+              : <code>{change.added.join(', ')}</code>
+            </>
+          )}
         </p>
       ))}
 

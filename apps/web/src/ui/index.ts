@@ -30,6 +30,11 @@ export {
 } from './Card.js'
 export type { CardProps, RowProps } from './Card.js'
 
+export { SplitRow, SplitRowList } from './SplitRow.js'
+export type { SplitAction, SplitRowListProps, SplitRowProps } from './SplitRow.js'
+export { nextFocusAfterRemoval, removalAnnouncement } from './rowRemoval.js'
+export type { FocusTarget } from './rowRemoval.js'
+
 export { AppChip, FilterChip, StatusPill, Tag } from './Chip.js'
 export type { FilterChipProps, PillTone, StatusPillProps, TagProps } from './Chip.js'
 

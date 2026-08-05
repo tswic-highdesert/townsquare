@@ -22,6 +22,7 @@ import {
   RowIcon,
   RowItem,
   RowList,
+  SplitRowList,
   AvatarStack,
   Banner,
   BottomSheet,
@@ -579,6 +580,105 @@ function Roles() {
   )
 }
 
+const SAVED = [
+  { id: 's1', name: 'Feltner’s Whatta-Burger', detail: 'Burgers · 1410 N Arkansas Ave' },
+  { id: 's2', name: 'Lake Dardanelle State Park', detail: 'Park · 2428 Marina Rd' },
+  { id: 's3', name: 'River Valley Bicycles', detail: 'Bikes · 208 E 4th St' },
+  { id: 's4', name: 'Plant Parlor', detail: 'Nursery · 305 W Main St' },
+]
+
+/**
+ * The split row, and the case that actually breaks.
+ *
+ * The un-save button removes the row it is in, which is where focus management
+ * goes wrong: the pressed button stops existing and focus falls to `<body>`.
+ * Try it with the keyboard — Tab to a bookmark, press it, and focus lands on
+ * the row that took its place rather than at the top of the page.
+ */
+function Split() {
+  const [saved, setSaved] = useState(SAVED)
+  return (
+    <Spec
+      title="Split row"
+      why="one primary destination, and up to two secondary actions reachable without going there first"
+    >
+      <div className="sp-stack" style={{ gap: 24, maxWidth: 640 }}>
+        <div>
+          <p className="sp-head">A saved list, where the action removes its own row</p>
+          <SplitRowList
+            label="Saved"
+            items={saved}
+            itemKey={(s) => s.id}
+            itemLabel={(s) => s.name}
+            row={(s) => ({
+              lead: <RowIcon name="storefront" />,
+              title: s.name,
+              meta: s.detail,
+              href: '#split',
+              actions: [
+                {
+                  label: `Remove ${s.name} from your saved things`,
+                  icon: 'bookmark',
+                  iconOnly: true,
+                  removes: true,
+                  onAct: () => setSaved((cur) => cur.filter((x) => x.id !== s.id)),
+                },
+              ],
+            })}
+          />
+          {saved.length === 0 ? (
+            <div className="sp-plate" style={{ marginTop: 12 }}>
+              <EmptyState
+                align="start"
+                mark="bookmark"
+                line="You haven’t saved anything yet."
+                sub="Focus went to the list itself when the last row left, because there was no row left to hold it."
+              />
+              <Button size="sm" onClick={() => setSaved(SAVED)}>
+                Put them back
+              </Button>
+            </div>
+          ) : null}
+        </div>
+        <div>
+          <p className="sp-head">A directory row, two actions, neither of them destructive</p>
+          <SplitRowList
+            label="In the directory"
+            items={[
+              { id: 'd1', name: 'Old South Restaurant', detail: 'Diner · 1330 E Main St' },
+              { id: 'd2', name: 'Dardanelle Ace Hardware', detail: 'Hardware · 210 Union St' },
+            ]}
+            itemKey={(d) => d.id}
+            row={(d) => ({
+              lead: <RowIcon name="storefront" />,
+              title: d.name,
+              meta: d.detail,
+              href: '#split',
+              actions: [
+                { label: 'Call', icon: 'phone', onAct: () => {} },
+                { label: 'Directions', icon: 'directions', onAct: () => {} },
+              ],
+            })}
+          />
+          <p className="sp-note">
+            Ringing a shop should not require opening its page first, which is the whole reason this
+            shape exists. The row is one target and the two buttons are their own, with no anchor
+            nested inside an anchor — put them inside the link instead and it looks identical, works
+            with a mouse, and leaves a screen reader user with a row they cannot operate.
+          </p>
+        </div>
+      </div>
+      <p className="sp-note">
+        Tab order is document order: the row, then its actions, then the next row. The buttons are
+        44px targets around a 16px glyph. The container is not an anchor — the primary link is
+        stretched over the row by its own <code>::after</code>, and the actions sit above it on{' '}
+        <code>position: relative</code>. Without that they would be under the stretched link:
+        focusable, and unclickable.
+      </p>
+    </Spec>
+  )
+}
+
 function Identity() {
   return (
     <Spec
@@ -1075,6 +1175,7 @@ function Page() {
       <Contrast town={town} />
       <Roles />
       <Structure />
+      <Split />
       <Identity />
       <Loading />
       <Empties />
