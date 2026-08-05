@@ -11,6 +11,7 @@
     "@townsquare/feed": "workspace:*",
     "@townsquare/identity": "workspace:*",
     "@townsquare/mcp": "workspace:*",
+    "@townsquare/review": "workspace:*",
     "@townsquare/sandbox": "workspace:*",
     "@townsquare/shared": "workspace:*"
   }

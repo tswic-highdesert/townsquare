@@ -49,6 +49,10 @@ entry document at serve time.
 | `apps/web` | the shell, the bridge | a creation's code |
 | `apps/mcp` | bearer tokens, drafts | a cookie parser or any session |
 
+The queue itself lives in `packages/review`, reachable from both sides: the MCP
+can submit into it and read back what it submitted, and only the API can decide.
+The builder door is structurally incapable of approving its own work.
+
 The sandbox process serves untrusted code from origins whose contents we do not
 control. It has no route that reads a user and no dependency that could grow
 one. That is why the read API is a separate service even in development: a
@@ -193,6 +197,63 @@ SDK, and a docs/SDK skew silently writes an entire generation of creations
 against a contract nobody implements — that is as dangerous as an unauthenticated
 endpoint, so it gets the same treatment.
 
+## The review queue
+
+Nothing a resident builds reaches the town without a human reading it. `submit`
+puts a version in the queue; a moderator opens **Review queue** in the shell,
+reads the source, and approves, rejects, or asks for changes.
+
+```
+GET  /api/review/queue
+GET  /api/review/submissions/:id
+POST /api/review/submissions/:id/decide   { decision, note }
+```
+
+Session-authenticated and gated on `role in (moderator, admin)`. An ordinary
+resident gets a **404**, not a 403: how much is pending and whose work is in it
+are not things the town gets to learn by asking. The role check that actually
+decides lives in `Review.decide`, so a second door onto the queue later inherits
+it rather than re-implementing it.
+
+Four properties are load-bearing.
+
+**Approval is of one exact version.** The submission carries its own bytes, and
+the digest is re-checked at the moment of approval. A draft is scratch space its
+owner keeps editing, so a queue that merely pointed at one would let a builder
+swap the contents between the reviewer reading them and the approval landing.
+
+**The town is re-validated at approval time.** A submission clean on Tuesday can
+be invalid on Thursday, because someone else defined a conflicting record type
+in between. When that happens the submission is marked `changes_requested` with
+the reason, rather than published on a stale pass.
+
+**Updates are reviewed too, and the live version keeps serving until its
+replacement is approved.** This is the whole defence against the browser-extension
+play: ship something innocuous, get approved, build an audience, then push the
+real payload.
+
+**The reviewer sees a diff, not a permissions block.** An update renders as
+"**adds** network: collect.example.com", and the queue row carries an *asks for
+more* flag. A reviewer re-reading a full block for the fifth time will not catch
+one new line; that is what the diff exists to make impossible to miss.
+
+Approving allocates the creation on first publish — a uuid, an origin key
+derived from it, and a slug (suffixed `-2` if the proposed one is taken, rather
+than bouncing the submission). Every later version keeps the **same origin key**,
+which is the storage partition: a new one per update would silently empty every
+resident's saved state. Superseded versions are kept, never deleted.
+
+To try it locally, seed yourself as an admin and the **Review queue** button
+appears in the shell header:
+
+```bash
+TOWNSQUARE_SEED_COHORT='tswic:tal@example.com:admin' pnpm dev:api
+```
+
+In development each process holds its own memory copy, so a submission made
+through `pnpm dev:mcp` is not in the API's queue. In production all three read
+one database.
+
 ## Adding an example creation
 
 Drop a directory in `apps/sandbox/examples/`. It needs a `townsquare.json`, the
@@ -203,7 +264,7 @@ fails loudly at startup rather than working only here.
 ## Tests
 
 ```bash
-pnpm test        # 542 tests
+pnpm test        # 584 tests
 pnpm typecheck
 ```
 
@@ -241,7 +302,7 @@ in two jobs split by cost:
 
 | Job | Runs | Roughly |
 |---|---|---|
-| `checks` | typecheck, generated-docs drift, 542 unit tests | under a minute |
+| `checks` | typecheck, generated-docs drift, 584 unit tests | under a minute |
 | `boundary` | the Playwright suite, three origins in Chromium | two to three minutes |
 
 Neither is configured as a **required** status check, on purpose. This repo is

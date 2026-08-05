@@ -7,7 +7,13 @@
  * a test of "can resident A read resident B's draft" is worth anything.
  */
 
-import { MemoryBundleStore } from '@townsquare/sandbox'
+import { BundleStorePublisher, MemoryBundleStore } from '@townsquare/sandbox'
+import {
+  MemoryCreationStore,
+  MemoryRecordTypeStore,
+  MemorySubmissionStore,
+  Review,
+} from '@townsquare/review'
 import { MemoryIdentityStore } from '@townsquare/identity'
 import { MANIFEST_VERSION, SDK_MAJOR } from '@townsquare/manifest'
 import type { McpContext, Principal } from './context.js'
@@ -15,9 +21,9 @@ import { MemoryDraftStore } from './drafts.js'
 import { MemoryMcpTokenStore } from './tokens.js'
 import {
   BundleStoreCatalogue,
-  MemoryReviewQueue,
+  RecordTypeStoreRegistry,
+  ReviewQueueAdapter,
   SandboxPublisher,
-  StaticRecordTypeRegistry,
   StaticTownReader,
 } from './memory.js'
 
@@ -27,19 +33,38 @@ export interface Fixture {
   identity: MemoryIdentityStore
   tokens: MemoryMcpTokenStore
   drafts: MemoryDraftStore
-  review: MemoryReviewQueue
-  recordTypes: StaticRecordTypeRegistry
+  /** The real queue, shared with the reviewer side. */
+  review: Review
+  submissions: MemorySubmissionStore
+  creations: MemoryCreationStore
+  recordTypes: MemoryRecordTypeStore
   bundles: MemoryBundleStore
 }
+
+export const TOWN_ID = 'russellville-ar'
 
 export function makeFixture(): Fixture {
   const clock = { now: 1_700_000_000_000 }
   const identity = new MemoryIdentityStore()
   const tokens = new MemoryMcpTokenStore()
   const drafts = new MemoryDraftStore()
-  const review = new MemoryReviewQueue()
-  const recordTypes = new StaticRecordTypeRegistry()
+  const submissions = new MemorySubmissionStore()
+  const creations = new MemoryCreationStore()
+  const recordTypes = new MemoryRecordTypeStore()
   const bundles = new MemoryBundleStore()
+
+  const origin = { appsDomain: 'tsq-apps.localhost', scheme: 'http' as const, port: 3031 }
+  const shellOrigins = ['http://townsquare.localhost:5173']
+
+  // One `Review`, shared: the builder submits into it and the reviewer decides
+  // on it. A test that used two would prove nothing about the real system.
+  const review = new Review({
+    submissions,
+    creations,
+    recordTypes,
+    publisher: new BundleStorePublisher({ store: bundles, origin, shellOrigins }),
+    now: () => clock.now,
+  })
 
   const ctx: McpContext = {
     now: () => clock.now,
@@ -47,24 +72,25 @@ export function makeFixture(): Fixture {
     users: identity,
     drafts,
     town: new StaticTownReader({
-      info: { id: 'russellville-ar', name: 'Russellville', timezone: 'America/Chicago' },
+      info: { id: TOWN_ID, name: 'Russellville', timezone: 'America/Chicago' },
       items: [{ id: 'e1', type: 'event', title: 'Farmers market' }],
       businesses: [{ id: 'b1', name: 'Taqueria', category: 'restaurant' }],
     }),
     creations: new BundleStoreCatalogue(bundles),
-    recordTypes,
+    recordTypes: new RecordTypeStoreRegistry(recordTypes, TOWN_ID),
     publisher: new SandboxPublisher({
       store: bundles,
-      origin: { appsDomain: 'tsq-apps.localhost', scheme: 'http', port: 3031 },
-      shellOrigins: ['http://townsquare.localhost:5173'],
+      origin,
+      shellOrigins,
       now: () => clock.now,
     }),
-    review,
+    review: new ReviewQueueAdapter(review),
+    townId: TOWN_ID,
     publicUrl: 'http://localhost:8770',
     shellOrigin: 'http://townsquare.localhost:5173',
   }
 
-  return { ctx, clock, identity, tokens, drafts, review, recordTypes, bundles }
+  return { ctx, clock, identity, tokens, drafts, review, submissions, creations, recordTypes, bundles }
 }
 
 export async function makeResident(

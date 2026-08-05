@@ -20,14 +20,21 @@ import {
   BundleStoreCatalogue,
   MemoryDraftStore,
   MemoryMcpTokenStore,
-  MemoryReviewQueue,
+  RecordTypeStoreRegistry,
+  ReviewQueueAdapter,
   SandboxPublisher,
-  StaticRecordTypeRegistry,
   StaticTownReader,
   mintToken,
   startMcpServer,
   type McpContext,
 } from '@townsquare/mcp'
+import {
+  MemoryCreationStore,
+  MemoryRecordTypeStore,
+  MemorySubmissionStore,
+  Review,
+} from '@townsquare/review'
+import { BundleStorePublisher } from '@townsquare/sandbox'
 import { businesses } from '../../../packages/feed/src/data/businesses.js'
 import { loadExampleCreations } from '../../sandbox/src/examples.js'
 
@@ -67,6 +74,24 @@ async function main(): Promise<void> {
 
   const tokens = new MemoryMcpTokenStore()
 
+  const origin = {
+    appsDomain: APPS_DOMAIN,
+    scheme: IS_DEV ? ('http' as const) : ('https' as const),
+    ...(IS_DEV ? { port: SANDBOX_PORT } : {}),
+  }
+  const shellOrigins = (process.env['SHELL_ORIGINS'] ?? SHELL_ORIGIN).split(',').map((o) => o.trim())
+
+  // The same `Review` the reviewer decides on. In development it is this
+  // process's own memory instance, so an approval here is not visible to
+  // `pnpm dev:api` — in production all three read one database.
+  const recordTypes = new MemoryRecordTypeStore()
+  const review = new Review({
+    submissions: new MemorySubmissionStore(),
+    creations: new MemoryCreationStore(),
+    recordTypes,
+    publisher: new BundleStorePublisher({ store, origin, shellOrigins }),
+  })
+
   const ctx: McpContext = {
     now: () => Date.now(),
     tokens,
@@ -74,13 +99,10 @@ async function main(): Promise<void> {
     drafts: new MemoryDraftStore(),
     town: new StaticTownReader({ info: TOWN, items: [], businesses: [...businesses] }),
     creations: new BundleStoreCatalogue(store),
-    recordTypes: new StaticRecordTypeRegistry(),
-    publisher: new SandboxPublisher({
-      store,
-      origin: { appsDomain: APPS_DOMAIN, scheme: IS_DEV ? 'http' : 'https', ...(IS_DEV ? { port: SANDBOX_PORT } : {}) },
-      shellOrigins: (process.env['SHELL_ORIGINS'] ?? SHELL_ORIGIN).split(',').map((o) => o.trim()),
-    }),
-    review: new MemoryReviewQueue(),
+    recordTypes: new RecordTypeStoreRegistry(recordTypes, TOWN.id),
+    publisher: new SandboxPublisher({ store, origin, shellOrigins, townId: TOWN.id }),
+    review: new ReviewQueueAdapter(review),
+    townId: TOWN.id,
     publicUrl: PUBLIC_URL,
     shellOrigin: SHELL_ORIGIN,
   }

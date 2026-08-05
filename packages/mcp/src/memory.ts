@@ -12,11 +12,13 @@
  * interfaces existing at all.
  */
 
-import { createHash, randomUUID } from 'node:crypto'
-import { compileCsp, previewOrigin, type OriginConfig } from '@townsquare/shared'
-import type { MemoryBundleStore } from '@townsquare/sandbox'
+import { createHash } from 'node:crypto'
+import type { OriginConfig } from '@townsquare/shared'
+import { BundleStorePublisher, type MemoryBundleStore } from '@townsquare/sandbox'
 import type { Manifest } from '@townsquare/manifest'
 import type { Finding } from '@townsquare/bundle'
+import { Review, ReviewError, type Submission } from '@townsquare/review'
+import { ToolError } from './tools.js'
 import type {
   CreationCatalogue,
   CreationDetail,
@@ -27,11 +29,9 @@ import type {
   RecordTypeInfo,
   RecordTypeRegistry,
   ReviewQueue,
-  Submission,
   TownInfo,
   TownReader,
 } from './context.js'
-import { draftFiles, type Draft } from './drafts.js'
 
 /**
  * How long a preview stays up.
@@ -58,88 +58,132 @@ export interface SandboxPublisherOptions {
   origin: OriginConfig
   /** Who may frame a preview. Baked into the frozen CSP, same as production. */
   shellOrigins: string[]
+  townId?: string
   now?: () => number
 }
 
+/**
+ * Preview publishing, over the same writer an approval uses.
+ *
+ * Deliberately not its own code path. `BundleStorePublisher` compiles the CSP,
+ * freezes it on the version row and writes the content-addressed files, for a
+ * preview and an approved creation alike. The only differences are the key
+ * namespace and the fact that a preview never joins the catalogue.
+ */
 export class SandboxPublisher implements Publisher {
-  constructor(private readonly opts: SandboxPublisherOptions) {}
+  private readonly writer: BundleStorePublisher
+
+  constructor(private readonly opts: SandboxPublisherOptions) {
+    this.writer = new BundleStorePublisher({
+      store: opts.store,
+      origin: opts.origin,
+      shellOrigins: opts.shellOrigins,
+    })
+  }
 
   async publishPreview(input: {
-    draft: Draft
+    draftId: string
     manifest: Manifest
     entry: string
+    files: ReadonlyMap<string, Uint8Array>
   }): Promise<PublishedPreview> {
     const now = this.opts.now?.() ?? Date.now()
-    const key = previewKeyForDraft(input.draft.id)
-    const files = new Map(draftFiles(input.draft).map((f) => [f.path, f.bytes]))
+    const key = previewKeyForDraft(input.draftId)
 
-    this.opts.store.add('preview', key, {
+    const published = this.writer.publish({
+      kind: 'preview',
+      key,
+      creationId: input.draftId,
       // A fresh version id per publish, so a browser holding the previous one
       // cannot be served a mix of two builds out of the content-addressed store.
       versionId: `preview-${key}-${now}`,
-      creationId: input.draft.id,
-      originKey: `p-${key}`,
-      entryPath: input.entry,
-      // Compiled here, once, and frozen on the version row. Never recomputed at
-      // request time from the bundle's own townsquare.json, which is just
-      // another file the bundle can edit.
-      cspHeader: compileCsp(input.manifest, { shellOrigins: this.opts.shellOrigins }),
-      townId: 'russellville-ar',
-      // Previews are not 'active': they are unreviewed code, and the sandbox
-      // must be able to tell the two apart on the serving path.
-      creationStatus: 'active',
-      files,
+      townId: this.opts.townId ?? 'russellville-ar',
+      manifest: input.manifest,
+      entry: input.entry,
+      files: input.files,
     })
 
-    return {
-      previewKey: key,
-      url: previewOrigin(key, this.opts.origin),
-      expiresAt: now + PREVIEW_TTL_MS,
-    }
+    return { previewKey: key, url: published.url, expiresAt: now + PREVIEW_TTL_MS }
   }
 }
 
-export class MemoryReviewQueue implements ReviewQueue {
-  private readonly submissions = new Map<string, Submission>()
+/**
+ * The MCP's half of the queue, over the real `Review` service.
+ *
+ * Narrow on purpose: this adapter can submit and it can read back what the
+ * caller submitted. There is no method here that could decide anything, so the
+ * builder door is structurally incapable of approving its own work no matter
+ * what a tool handler tries to do.
+ */
+export class ReviewQueueAdapter implements ReviewQueue {
+  constructor(private readonly review: Review) {}
 
   async submit(input: {
-    draft: Draft
+    userId: string
+    handle: string
+    townId: string
+    proposedSlug: string
     manifest: Manifest
+    entry: string
+    files: ReadonlyMap<string, Uint8Array>
+    bundleDigest: string
     warnings: readonly Finding[]
-    now: number
   }): Promise<Submission> {
-    const submission: Submission = {
-      id: randomUUID(),
-      draftId: input.draft.id,
-      userId: input.draft.userId,
-      slug: input.draft.slug,
-      name: input.manifest.name,
-      status: 'queued',
-      warnings: input.warnings.map((w) => ({ ...w })),
-      note: null,
-      submittedAt: input.now,
-      decidedAt: null,
+    try {
+      return await this.review.submit({
+        townId: input.townId,
+        userId: input.userId,
+        handle: input.handle,
+        proposedSlug: input.proposedSlug,
+        name: input.manifest.name,
+        version: input.manifest.version,
+        manifest: input.manifest,
+        entry: input.entry,
+        bundleDigest: input.bundleDigest,
+        files: input.files,
+        warnings: input.warnings,
+      })
+    } catch (err) {
+      // A queue rule the builder can act on — a version they already used, a
+      // submission already outstanding — reaches them as a sentence rather than
+      // as an internal error they cannot do anything about.
+      if (err instanceof ReviewError) throw new ToolError(err.message)
+      throw err
     }
-    this.submissions.set(submission.id, submission)
-    return { ...submission }
   }
 
   async submissionById(id: string): Promise<Submission | null> {
-    const s = this.submissions.get(id)
-    return s ? { ...s } : null
+    return this.review.submissionById(id)
   }
 
   async submissionsForUser(userId: string): Promise<Submission[]> {
-    return [...this.submissions.values()]
-      .filter((s) => s.userId === userId)
-      .sort((a, b) => b.submittedAt - a.submittedAt)
-      .map((s) => ({ ...s }))
+    return this.review.submissionsForUser(userId)
   }
+}
 
-  /** The reviewer's side. Not reachable from any MCP tool, by construction. */
-  async decide(id: string, status: Submission['status'], note: string, now: number): Promise<void> {
-    const s = this.submissions.get(id)
-    if (s) this.submissions.set(id, { ...s, status, note, decidedAt: now })
+/**
+ * The record-type list, read from the town's real registry.
+ *
+ * The same rows the reviewer writes on approval, so a type defined by the
+ * creation approved this morning is visible to the agent building against it
+ * this afternoon. That loop closing is the whole compounding story; a separate
+ * list here would quietly break it.
+ */
+export class RecordTypeStoreRegistry implements RecordTypeRegistry {
+  constructor(
+    private readonly store: { list(townId: string): Promise<
+      Array<{ type: string; schema: Record<string, unknown>; definedByCreationId: string | null; recordCount: number }>
+    > },
+    private readonly townId: string,
+  ) {}
+
+  async list(): Promise<RecordTypeInfo[]> {
+    return (await this.store.list(this.townId)).map((row) => ({
+      type: row.type,
+      schema: row.schema,
+      definedBy: row.definedByCreationId ?? 'the town',
+      recordCount: row.recordCount,
+    }))
   }
 }
 

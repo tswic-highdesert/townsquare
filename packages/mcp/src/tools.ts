@@ -539,9 +539,10 @@ const DEFS: ToolDef[] = [
         )
       }
       const published = await ctx.publisher.publishPreview({
-        draft,
+        draftId: draft.id,
         manifest: report.manifest,
         entry: report.entry,
+        files: new Map(draftFiles(draft).map((f) => [f.path, f.bytes])),
       })
       await ctx.drafts.updateDraft(draft.id, { previewKey: published.previewKey }, ctx.now())
       return {
@@ -587,22 +588,30 @@ const DEFS: ToolDef[] = [
         )
       }
 
+      const files = new Map(draftFiles(draft).map((f) => [f.path, f.bytes]))
+      const digest = bundleDigest(hashFiles(draftFiles(draft)))
       const submission = await ctx.review.submit({
-        draft,
+        userId: principal.userId,
+        handle: principal.handle,
+        townId: ctx.townId,
+        proposedSlug: draft.slug,
         manifest: report.manifest,
+        entry: report.entry,
+        files,
+        bundleDigest: digest,
         warnings: report.warnings,
-        now: ctx.now(),
       })
       await ctx.drafts.updateDraft(
         draft.id,
         { submissionId: submission.id, status: 'submitted' },
         ctx.now(),
       )
-      const hashes = hashFiles(draftFiles(draft))
       return {
         submission_id: submission.id,
         status: submission.status,
-        bundle_digest: bundleDigest(hashes),
+        slug: submission.proposedSlug,
+        kind: submission.creationId ? 'update' : 'new',
+        bundle_digest: digest,
         warnings: report.warnings,
         what_happens_next:
           'A reviewer reads your source and your permissions block. The bundle is pinned by digest, ' +

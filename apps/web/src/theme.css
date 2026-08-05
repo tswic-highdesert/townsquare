@@ -383,3 +383,134 @@ button {
   font-size: var(--ts-text-label);
   word-break: break-all;
 }
+
+/* ── the review queue ─────────────────────────────────────────────────────
+ *
+ * Deliberately plain. This screen is read by one person doing careful work,
+ * and the only thing on it that earns colour is an update asking for a
+ * permission it did not have before.
+ */
+
+.queue {
+  list-style: none;
+  padding: 0;
+  margin: var(--ts-space-6) 0 0;
+  display: grid;
+  gap: var(--ts-space-3);
+}
+
+.queue-row {
+  width: 100%;
+  display: grid;
+  gap: var(--ts-space-1);
+  text-align: left;
+  font: inherit;
+  color: inherit;
+  cursor: pointer;
+  padding: var(--ts-space-4);
+  background: var(--ts-surface);
+  border: 1px solid var(--ts-hairline);
+  border-radius: var(--ts-radius-card);
+}
+
+.queue-row .name {
+  font-weight: 600;
+}
+
+.queue-row .detail {
+  color: var(--ts-ink60);
+  font-size: var(--ts-text-label);
+}
+
+.flags {
+  display: flex;
+  gap: var(--ts-space-2);
+  margin-top: var(--ts-space-1);
+}
+
+.flag {
+  font-size: var(--ts-text-caption);
+  padding: 2px var(--ts-space-2);
+  border-radius: var(--ts-radius-full);
+  background: var(--ts-hairline);
+  color: var(--ts-ink60);
+}
+
+/* The one thing on the queue that is allowed to shout. */
+.flag.escalates {
+  background: var(--ts-terracotta-14);
+  color: var(--ts-terracotta);
+}
+
+.diff {
+  margin-top: var(--ts-space-6);
+  padding: var(--ts-space-4);
+  border: 1px solid var(--ts-hairline);
+  border-left: 3px solid var(--ts-hairline);
+  border-radius: var(--ts-radius-card);
+}
+
+.diff.escalates {
+  border-left-color: var(--ts-terracotta);
+}
+
+.diff h2,
+.decide h2 {
+  font-size: var(--ts-text-label);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--ts-ink60);
+  margin: 0 0 var(--ts-space-3);
+}
+
+.diff .added {
+  margin: 0 0 var(--ts-space-2);
+}
+
+.diff .removed,
+.diff .renamed {
+  margin: 0 0 var(--ts-space-2);
+  color: var(--ts-ink60);
+}
+
+.warnings {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: grid;
+  gap: var(--ts-space-2);
+  font-size: var(--ts-text-label);
+  color: var(--ts-ink60);
+}
+
+.decide textarea {
+  width: 100%;
+  font: inherit;
+  color: var(--ts-ink);
+  background: var(--ts-surface);
+  border: 1px solid var(--ts-hairline);
+  border-radius: var(--ts-radius-button);
+  padding: var(--ts-space-3);
+}
+
+.decide .buttons {
+  display: flex;
+  gap: var(--ts-space-3);
+  margin: var(--ts-space-3) 0;
+  flex-wrap: wrap;
+}
+
+.outcome {
+  color: var(--ts-sage, var(--ts-ink60));
+  font-size: var(--ts-text-label);
+}
+
+details > pre {
+  overflow-x: auto;
+  padding: var(--ts-space-3);
+  background: var(--ts-surface);
+  border: 1px solid var(--ts-hairline);
+  border-radius: var(--ts-radius-button);
+  font-family: var(--ts-font-mono);
+  font-size: var(--ts-text-caption);
+}

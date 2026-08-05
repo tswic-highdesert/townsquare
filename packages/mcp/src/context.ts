@@ -15,8 +15,9 @@
 import type { Manifest } from '@townsquare/manifest'
 import type { IdentityStore } from '@townsquare/identity'
 import type { Finding } from '@townsquare/bundle'
+import type { Submission } from '@townsquare/review'
 import type { McpTokenStore } from './tokens.js'
-import type { Draft, DraftStore } from './drafts.js'
+import type { DraftStore } from './drafts.js'
 
 /**
  * The authenticated caller.
@@ -124,35 +125,32 @@ export interface PublishedPreview {
  */
 export interface Publisher {
   publishPreview(input: {
-    draft: Draft
+    draftId: string
     manifest: Manifest
     entry: string
+    files: ReadonlyMap<string, Uint8Array>
   }): Promise<PublishedPreview>
 }
 
-export type SubmissionStatus = 'queued' | 'approved' | 'rejected' | 'changes_requested'
-
-export interface Submission {
-  id: string
-  draftId: string
-  userId: string
-  slug: string
-  name: string
-  status: SubmissionStatus
-  /** Warnings the validator raised. The reviewer's starting point. */
-  warnings: readonly Finding[]
-  /** Set when a reviewer has answered. */
-  note: string | null
-  submittedAt: number
-  decidedAt: number | null
-}
-
+/**
+ * The queue, as this service needs it.
+ *
+ * The model lives in `@townsquare/review` rather than here, because there is
+ * one queue and two doors onto it: a builder submits through the MCP and a
+ * reviewer decides through the API. Two definitions of a submission would be
+ * two queues that agree until the day they do not.
+ */
 export interface ReviewQueue {
   submit(input: {
-    draft: Draft
+    userId: string
+    handle: string
+    townId: string
+    proposedSlug: string
     manifest: Manifest
+    entry: string
+    files: ReadonlyMap<string, Uint8Array>
+    bundleDigest: string
     warnings: readonly Finding[]
-    now: number
   }): Promise<Submission>
   submissionById(id: string): Promise<Submission | null>
   submissionsForUser(userId: string): Promise<Submission[]>
@@ -170,6 +168,8 @@ export interface McpContext {
   recordTypes: RecordTypeRegistry
   publisher: Publisher
   review: ReviewQueue
+  /** Which town this service builds for. */
+  townId: string
   /** Public base URL of this service, so upload tickets are followable. */
   publicUrl: string
   /** Where a resident manages their account, for pointing them at things. */

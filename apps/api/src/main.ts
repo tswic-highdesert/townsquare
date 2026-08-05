@@ -25,7 +25,15 @@ import { CreationStorage, MemoryStorageStore } from '@townsquare/storage'
 import { businesses } from '../../../packages/feed/src/data/businesses.js'
 import { loadExampleCreations } from '../../sandbox/src/examples.js'
 import { MemoryMcpTokenStore } from '@townsquare/mcp'
+import {
+  MemoryCreationStore,
+  MemoryRecordTypeStore,
+  MemorySubmissionStore,
+  Review,
+} from '@townsquare/review'
+import { BundleStorePublisher } from '@townsquare/sandbox'
 import { createConnectRoutes } from './connectRoutes.js'
+import { createReviewRoutes } from './reviewRoutes.js'
 import { createIdentityRoutes } from './identityRoutes.js'
 
 const PORT = Number(process.env['API_PORT'] ?? 3030)
@@ -88,6 +96,31 @@ async function main(): Promise<void> {
     mcpUrl: MCP_URL,
   })
 
+  // The review queue. In development this process holds its own memory copy,
+  // so a submission made through `pnpm dev:mcp` is not in this one — in
+  // production all three services read the same database.
+  const review = new Review({
+    submissions: new MemorySubmissionStore(),
+    creations: new MemoryCreationStore(),
+    recordTypes: new MemoryRecordTypeStore(),
+    publisher: new BundleStorePublisher({
+      store,
+      origin: {
+        appsDomain: APPS_DOMAIN,
+        scheme: IS_DEV ? 'http' : 'https',
+        ...(IS_DEV ? { port: SANDBOX_PORT } : {}),
+      },
+      shellOrigins: (process.env['SHELL_ORIGINS'] ?? SHELL_ORIGIN).split(',').map((o) => o.trim()),
+    }),
+  })
+
+  const reviewRoutes = createReviewRoutes({
+    identity,
+    review,
+    shellOrigin: SHELL_ORIGIN,
+    townId: TOWN.id,
+  })
+
   const identityRoutes = createIdentityRoutes({
     identity,
     store: identityStore,
@@ -140,6 +173,7 @@ async function main(): Promise<void> {
     // Anything holding a credential is decided first, and owns its own 404s.
     void identityRoutes(req, res, url)
       .then((handled) => (handled ? true : connectRoutes(req, res, url)))
+      .then((handled) => (handled ? true : reviewRoutes(req, res, url)))
       .then((handled) => {
         if (!handled) readRoutes(url, store, json)
       })

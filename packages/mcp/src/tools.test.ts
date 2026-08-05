@@ -8,7 +8,7 @@ import {
   runTool,
 } from './tools.js'
 import { acceptFile, sha256Hex, type InventoryEntry } from './drafts.js'
-import { makeFixture, makeResident, helloBundle, type Fixture } from './fixtures.js'
+import { makeFixture, makeResident, helloBundle, TOWN_ID, type Fixture } from './fixtures.js'
 import type { Principal } from './context.js'
 
 const enc = new TextEncoder()
@@ -104,12 +104,16 @@ describe('orientation', () => {
   })
 
   it('points at existing record types so a builder reuses rather than forks', async () => {
-    fixture.recordTypes.define({
-      type: 'flock_camera',
-      schema: { lat: { type: 'number' } },
-      definedBy: 'flock-map',
-      recordCount: 12,
-    })
+    await fixture.recordTypes.define(
+      {
+        townId: TOWN_ID,
+        type: 'flock_camera',
+        label: 'Flock camera',
+        schema: { lat: { type: 'number' } },
+        definedByCreationId: 'flock-map',
+      },
+      fixture.clock.now,
+    )
     const me = await makeResident(fixture, 'newcomer')
     const result = (await runTool(fixture.ctx, me, 'list_record_types', {})) as {
       types: Array<{ type: string }>
@@ -372,5 +376,114 @@ describe('the verified gate', () => {
       status: string
     }
     expect(result.status).toBe('queued')
+  })
+})
+
+describe('from a resident’s agent to the town', () => {
+  let fixture: Fixture
+
+  beforeEach(() => {
+    fixture = makeFixture()
+  })
+
+  const MODERATOR = { userId: 'mod-1', handle: 'tswic', role: 'admin' as const }
+
+  it('goes scaffold → upload → validate → preview → submit → approve → live', async () => {
+    const me = await makeResident(fixture, 'builder', { verified: true })
+
+    // The agent's whole session, in the order the tool descriptions teach.
+    const scaffolded = (await runTool(fixture.ctx, me, 'scaffold', {
+      name: 'Trail Conditions',
+      tagline: 'Whether the river trail is under water',
+      description: 'Reads the town directory and says whether the trail is passable.',
+      template: 'directory',
+    })) as { files: Array<{ path: string; text: string }> }
+
+    const draftId = await uploadBundle(fixture, me, scaffolded.files, 'trail-conditions')
+    const report = (await runTool(fixture.ctx, me, 'validate', { draft_id: draftId })) as {
+      ok: boolean
+    }
+    expect(report.ok).toBe(true)
+
+    await runTool(fixture.ctx, me, 'preview', { draft_id: draftId })
+    const submitted = (await runTool(fixture.ctx, me, 'submit', { draft_id: draftId })) as {
+      submission_id: string
+      kind: string
+    }
+    expect(submitted.kind).toBe('new')
+
+    // Nothing is live yet. That is the point of the queue.
+    expect(fixture.bundles.list()).toHaveLength(0)
+
+    // The reviewer sees it, reads the source, and approves.
+    const queue = await fixture.review.queue(TOWN_ID)
+    expect(queue.map((q) => q.name)).toEqual(['Trail Conditions'])
+    const detail = await fixture.review.detail(queue[0]!.id)
+    expect(detail.files.map((f) => f.path)).toContain('index.html')
+
+    const decided = await fixture.review.decide(MODERATOR, queue[0]!.id, 'approve', 'reads clean')
+    expect(decided.creation).toMatchObject({ slug: 'trail-conditions', status: 'active' })
+
+    // And now the town can run it, through the same serving path as everything
+    // else — and the builder sees the outcome without asking anyone.
+    const resolved = await fixture.bundles.resolveOrigin('creation', decided.creation!.originKey)
+    expect(resolved?.entryPath).toBe('index.html')
+
+    const status = (await runTool(fixture.ctx, me, 'submission_status', {
+      submission_id: submitted.submission_id,
+    })) as { status: string; note: string | null }
+    expect(status).toMatchObject({ status: 'approved', note: 'reads clean' })
+  })
+
+  it('shows a builder the reviewer’s reason when they are turned down', async () => {
+    const me = await makeResident(fixture, 'builder', { verified: true })
+    const draftId = await uploadBundle(fixture, me, helloBundle())
+    const submitted = (await runTool(fixture.ctx, me, 'submit', { draft_id: draftId })) as {
+      submission_id: string
+    }
+
+    const queue = await fixture.review.queue(TOWN_ID)
+    await fixture.review.decide(MODERATOR, queue[0]!.id, 'request_changes', 'drop the tracker')
+
+    const status = (await runTool(fixture.ctx, me, 'submission_status', {
+      submission_id: submitted.submission_id,
+    })) as { status: string; note: string }
+    expect(status.status).toBe('changes_requested')
+    expect(status.note).toBe('drop the tracker')
+  })
+
+  it('routes a second version of the same creation back through review', async () => {
+    const me = await makeResident(fixture, 'builder', { verified: true })
+    const first = await uploadBundle(fixture, me, helloBundle())
+    await runTool(fixture.ctx, me, 'submit', { draft_id: first })
+    const queue = await fixture.review.queue(TOWN_ID)
+    const live = await fixture.review.decide(MODERATOR, queue[0]!.id, 'approve', '')
+
+    // An update that quietly wants a network host it never had before.
+    const updated = helloBundle({
+      version: '1.1.0',
+      permissions: {
+        identity: 'none',
+        read: [],
+        write: [],
+        network: ['collect.example.com'],
+        storage: false,
+        device: [],
+      },
+    })
+    const second = await uploadBundle(fixture, me, updated)
+    const resubmitted = (await runTool(fixture.ctx, me, 'submit', { draft_id: second })) as {
+      kind: string
+    }
+    expect(resubmitted.kind).toBe('update')
+
+    // The live version is untouched while its replacement waits, and the queue
+    // says out loud that this one asks for more than the last one did.
+    const resolved = await fixture.bundles.resolveOrigin('creation', live.creation!.originKey)
+    expect(resolved?.versionId).toBe(live.creation!.activeVersionId)
+    expect((await fixture.review.queue(TOWN_ID))[0]).toMatchObject({
+      kind: 'update',
+      escalates: true,
+    })
   })
 })

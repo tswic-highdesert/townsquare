@@ -19,6 +19,7 @@ export default defineConfig({
       '@townsquare/identity': r('./packages/identity/src/index.ts'),
       '@townsquare/storage': r('./packages/storage/src/index.ts'),
       '@townsquare/mcp': r('./packages/mcp/src/index.ts'),
+      '@townsquare/review': r('./packages/review/src/index.ts'),
     },
   },
   test: {

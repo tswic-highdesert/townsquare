@@ -10,6 +10,7 @@
     "@townsquare/bundle": "workspace:*",
     "@townsquare/identity": "workspace:*",
     "@townsquare/manifest": "workspace:*",
+    "@townsquare/review": "workspace:*",
     "@townsquare/sandbox": "workspace:*",
     "@townsquare/sdk": "workspace:*",
     "@townsquare/shared": "workspace:*",

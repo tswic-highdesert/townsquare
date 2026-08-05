@@ -69,6 +69,9 @@ importers:
       '@townsquare/mcp':
         specifier: workspace:*
         version: link:../../packages/mcp
+      '@townsquare/review':
+        specifier: workspace:*
+        version: link:../../packages/review
       '@townsquare/sandbox':
         specifier: workspace:*
         version: link:../../packages/sandbox
@@ -90,6 +93,9 @@ importers:
       '@townsquare/mcp':
         specifier: workspace:*
         version: link:../../packages/mcp
+      '@townsquare/review':
+        specifier: workspace:*
+        version: link:../../packages/review
       '@townsquare/sandbox':
         specifier: workspace:*
         version: link:../../packages/sandbox
@@ -229,6 +235,9 @@ importers:
       '@townsquare/manifest':
         specifier: workspace:*
         version: link:../manifest
+      '@townsquare/review':
+        specifier: workspace:*
+        version: link:../review
       '@townsquare/sandbox':
         specifier: workspace:*
         version: link:../sandbox
@@ -241,6 +250,21 @@ importers:
       zod:
         specifier: ^3.23.0
         version: 3.25.76
+
+  packages/review:
+    dependencies:
+      '@townsquare/bundle':
+        specifier: workspace:*
+        version: link:../bundle
+      '@townsquare/manifest':
+        specifier: workspace:*
+        version: link:../manifest
+      '@townsquare/sandbox':
+        specifier: workspace:*
+        version: link:../sandbox
+      '@townsquare/shared':
+        specifier: workspace:*
+        version: link:../shared
 
   packages/sandbox:
     dependencies:

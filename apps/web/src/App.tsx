@@ -10,6 +10,7 @@
 import { useEffect, useMemo, useState } from 'react'
 import { describeManifest } from '@townsquare/host'
 import { AccountScreen } from './Account.js'
+import { ReviewScreen } from './Review.js'
 import { resolveInitialAccount, type AccountView } from './session.js'
 import { CreationFrame } from './CreationFrame.js'
 import { fetchCreations, fetchTown, type CreationSummary } from './townData.js'
@@ -17,6 +18,7 @@ import { fetchCreations, fetchTown, type CreationSummary } from './townData.js'
 type Screen =
   | { name: 'gallery' }
   | { name: 'account' }
+  | { name: 'review' }
   | { name: 'trust'; creation: CreationSummary }
   | { name: 'running'; creation: CreationSummary }
 
@@ -49,13 +51,27 @@ export function App() {
     [account?.handle, account?.verified],
   )
 
+  // Moderation is a role held by a committee, so the entry point is gated on
+  // the role rather than on being anyone in particular. The API answers 404 to
+  // everyone else, so this is a convenience, not the control.
+  const canReview = account?.role === 'moderator' || account?.role === 'admin'
+
   const header = (
     <div className="account-bar">
+      {canReview && (
+        <button className="back" onClick={() => setScreen({ name: 'review' })}>
+          Review queue
+        </button>
+      )}
       <button className="back" onClick={() => setScreen({ name: 'account' })}>
         {account ? `${account.handle}${account.verified ? ' · verified' : ''}` : 'Sign in'}
       </button>
     </div>
   )
+
+  if (screen.name === 'review') {
+    return <ReviewScreen onBack={() => setScreen({ name: 'gallery' })} />
+  }
 
   if (screen.name === 'account') {
     return (
@@ -186,7 +202,7 @@ export function App() {
 
       <div className="footer-chrome">
         <span>running on Town Square</span>
-        <button onClick={() => alert('Reporting arrives with the review queue.')}>Report</button>
+        <button onClick={() => alert('Reporting arrives with the next phase.')}>Report</button>
       </div>
     </div>
   )
