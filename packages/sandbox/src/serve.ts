@@ -139,12 +139,20 @@ export async function serveBundleRequest(
   if (resolved.creationStatus !== 'active') {
     // Plain, styled by nothing, and explicit. A blocked creation showing a
     // blank frame reads as our bug rather than our decision.
+    //
+    // Neither branch names the builder. `hidden` used to say "by its owner",
+    // which was not true: `Moderation.act` requires a moderator for hide, block
+    // and restore, and no owner-facing hide route exists. So the town was told
+    // a resident pulled their own work when a committee had taken it down —
+    // publicly assigning a decision to the person least able to correct it.
+    // The blocked branch already said who acted, for the reason above; the
+    // argument applies to both.
     return html(
       410,
       resolved.cspHeader,
       resolved.creationStatus === 'blocked'
         ? 'This creation was blocked by a moderator and is no longer available.'
-        : 'This creation was hidden by its owner.',
+        : 'This creation has been hidden by a moderator and is not available right now.',
     )
   }
 

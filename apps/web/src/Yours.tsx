@@ -131,8 +131,8 @@ export function Yours(props: YoursProps) {
             copy of the same shape. `framed={false}` because the section
             already sits on the page rather than on a card.
 
-            The `.creation-row` rules in `styles/today.css` stay: Today draws
-            the same shape from the same classes and was not migrated with this.
+            Today drew the same shape from the same `.creation-row` classes, so
+            those rules survived this screen's migration and died with Today's.
           */}
           <RowList framed={false} label="What you built">
             {props.built.map((creation) => (
