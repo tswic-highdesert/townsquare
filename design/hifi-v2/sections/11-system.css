@@ -1,0 +1,1972 @@
+/*
+ * 11 — the theming seam.
+ *
+ * Everything here is var(--ts-*) or a color-mix of var(--ts-*). That is not a
+ * style rule for its own sake: the three phones at the top of this section are
+ * the same markup under three data-town values, and a single hand-picked grey
+ * anywhere below would break the proof. The dark-mode and semantic-alias
+ * proposals are written the same way, as overrides that reference the palette
+ * rather than replace it.
+ */
+
+/* ── the three-town proof ───────────────────────────────────────────────── */
+
+/*
+ * Three 390px devices side by side is 1218px plus gaps. Rather than let them
+ * wrap (which destroys the comparison, since the whole point is one eye
+ * movement between them) the row scrolls sideways on a narrow screen.
+ */
+.sy-proof {
+  flex-wrap: nowrap;
+  overflow-x: auto;
+  padding-bottom: var(--ts-space-3);
+  scrollbar-width: thin;
+}
+
+.sy-today {
+  padding: var(--ts-space-4) var(--ts-space-4) var(--ts-space-8);
+  display: flex;
+  flex-direction: column;
+  gap: var(--ts-space-5);
+}
+
+.sy-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--ts-space-3);
+}
+
+.sy-lockup {
+  display: flex;
+  align-items: center;
+  gap: var(--ts-space-3);
+}
+
+/* The mark takes the town's structural colour, so it rebrands with everything else. */
+.sy-mark {
+  width: 34px;
+  height: 34px;
+  flex: none;
+  border-radius: 9px;
+  background: var(--ts-navy);
+  position: relative;
+}
+
+.sy-mark::after {
+  content: '';
+  position: absolute;
+  inset: 10px;
+  border: 1.5px solid var(--ts-cream);
+  border-radius: 2px;
+  border-bottom-color: transparent;
+}
+
+.sy-wordmark {
+  font-family: var(--ts-font-serif);
+  font-size: 17px;
+  font-weight: 600;
+  line-height: 1.1;
+  letter-spacing: -0.01em;
+}
+
+.sy-place {
+  font-family: var(--ts-font-mono);
+  font-size: 9.5px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ts-ink45);
+  margin-top: 3px;
+}
+
+.sy-today-date {
+  font-family: var(--ts-font-mono);
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--ts-ink45);
+}
+
+/* ── the lead ───────────────────────────────────────────────────────────── */
+
+.sy-lead {
+  background: var(--ts-surface);
+  border: 1px solid var(--ts-hairline);
+  border-radius: var(--ts-radius-card);
+  box-shadow: var(--ts-shadow-flat);
+  overflow: hidden;
+}
+
+/*
+ * No photographs on a static sheet. A gradient over stone, angled so it reads
+ * as a deliberate placeholder rather than a failed image load.
+ */
+.sy-photo {
+  height: 128px;
+  background:
+    linear-gradient(155deg, color-mix(in srgb, var(--ts-navy) 34%, transparent), transparent 62%),
+    linear-gradient(20deg, color-mix(in srgb, var(--ts-terracotta) 26%, transparent), transparent 58%),
+    var(--ts-stone);
+}
+
+.sy-lead-body {
+  padding: var(--ts-space-4);
+}
+
+.sy-eyebrow {
+  font-family: var(--ts-font-mono);
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ts-ink45);
+  margin-bottom: var(--ts-space-2);
+}
+
+.sy-lead h3 {
+  font-family: var(--ts-font-serif);
+  font-size: 20px;
+  font-weight: 600;
+  line-height: 1.22;
+  letter-spacing: -0.015em;
+  margin: 0 0 var(--ts-space-2);
+}
+
+.sy-byline {
+  font-family: var(--ts-font-serif);
+  font-size: 13.5px;
+  color: var(--ts-ink60);
+  margin: 0;
+}
+
+/* ── the notice ─────────────────────────────────────────────────────────── */
+
+.sy-notice {
+  display: flex;
+  gap: var(--ts-space-3);
+  padding: var(--ts-space-3) var(--ts-space-4);
+  background: var(--ts-gold14);
+  border-left: 3px solid var(--ts-gold);
+  border-radius: var(--ts-radius-button);
+  color: var(--ts-gold-text);
+}
+
+.sy-notice-title {
+  font-family: var(--ts-font-sans);
+  font-size: var(--ts-text-label);
+  font-weight: 500;
+  color: var(--ts-ink);
+}
+
+.sy-notice p {
+  margin: 2px 0 0;
+  font-size: 13.5px;
+  line-height: 1.4;
+  color: var(--ts-gold-text);
+}
+
+.sy-notice-tight {
+  padding: var(--ts-space-2) var(--ts-space-3);
+}
+
+/* ── section labels and the event list ──────────────────────────────────── */
+
+.sy-sec-label {
+  font-family: var(--ts-font-mono);
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--ts-ink45);
+  margin-bottom: calc(var(--ts-space-3) * -1 + var(--ts-space-1));
+}
+
+.sy-events {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  background: var(--ts-surface);
+  border: 1px solid var(--ts-hairline);
+  border-radius: var(--ts-radius-card);
+  overflow: hidden;
+}
+
+.sy-event {
+  display: flex;
+  align-items: center;
+  gap: var(--ts-space-3);
+  padding: var(--ts-space-3) var(--ts-space-4);
+  min-height: 44px;
+}
+
+.sy-event + .sy-event {
+  border-top: 1px solid var(--ts-ink13);
+}
+
+/* A fixed leading block so every title in the list starts on the same x. */
+.sy-when {
+  width: 44px;
+  flex: none;
+  text-align: center;
+  padding: var(--ts-space-1) 0;
+  border-radius: var(--ts-radius-button);
+  background: var(--ts-navy10);
+  color: var(--ts-navy);
+}
+
+.sy-when-d {
+  display: block;
+  font-family: var(--ts-font-mono);
+  font-size: 9px;
+  letter-spacing: 0.12em;
+}
+
+.sy-when-n {
+  display: block;
+  font-family: var(--ts-font-serif);
+  font-size: 17px;
+  font-weight: 600;
+  line-height: 1.05;
+}
+
+.sy-event-body {
+  min-width: 0;
+  flex: 1;
+}
+
+.sy-event-title {
+  font-size: var(--ts-text-label);
+  line-height: 1.3;
+}
+
+.sy-event-meta {
+  font-family: var(--ts-font-sans);
+  font-size: 12.5px;
+  color: var(--ts-ink60);
+  margin-top: 2px;
+}
+
+/* ── chips ──────────────────────────────────────────────────────────────── */
+
+.sy-chip {
+  display: inline-flex;
+  align-items: center;
+  flex: none;
+  padding: var(--ts-space-1) var(--ts-space-3);
+  border-radius: var(--ts-radius-chip);
+  font-family: var(--ts-font-sans);
+  font-size: 12px;
+  line-height: 1.5;
+  background: color-mix(in srgb, var(--ts-ink) 7%, transparent);
+  color: var(--ts-ink60);
+}
+
+.sy-chip-sage {
+  background: var(--ts-sage14);
+  color: var(--ts-sage);
+}
+
+.sy-chip-gold {
+  background: var(--ts-gold14);
+  color: var(--ts-gold-text);
+}
+
+.sy-chip-terra {
+  background: var(--ts-terracotta14);
+  color: var(--ts-terracotta);
+}
+
+.sy-chip-big {
+  font-size: var(--ts-text-label);
+  padding: var(--ts-space-2) var(--ts-space-4);
+}
+
+/* ── the featured creation, the one dark card ───────────────────────────── */
+
+.sy-creation {
+  background: var(--ts-navy-dark);
+  border-radius: var(--ts-radius-card);
+  padding: var(--ts-space-4);
+  color: var(--ts-cream);
+  box-shadow: var(--ts-shadow-navy);
+}
+
+.sy-creation-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--ts-space-3);
+}
+
+.sy-app {
+  font-family: var(--ts-font-mono);
+  font-size: 9.5px;
+  font-weight: 500;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  padding: 3px var(--ts-space-2);
+  border-radius: var(--ts-radius-chip);
+  background: var(--ts-cream14);
+  color: var(--ts-cream);
+}
+
+.sy-creation-ago {
+  font-family: var(--ts-font-serif);
+  font-size: 12.5px;
+  color: var(--ts-cream-muted);
+}
+
+.sy-creation h4 {
+  font-family: var(--ts-font-serif);
+  font-size: var(--ts-text-card-title);
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  margin: 0 0 var(--ts-space-1);
+}
+
+.sy-creation p {
+  margin: 0 0 var(--ts-space-4);
+  font-size: 13.5px;
+  line-height: 1.45;
+  color: var(--ts-cream-muted);
+}
+
+.sy-creation-by {
+  display: flex;
+  align-items: center;
+  gap: var(--ts-space-2);
+  font-size: 12.5px;
+  color: var(--ts-cream);
+}
+
+.sy-avatar {
+  width: 22px;
+  height: 22px;
+  flex: none;
+  border-radius: var(--ts-radius-full);
+  background: linear-gradient(150deg, var(--ts-sage-light), var(--ts-sage));
+}
+
+.sy-verified {
+  color: var(--ts-sage-light);
+}
+
+.sy-creation-vouch {
+  color: var(--ts-cream-muted);
+}
+
+.sy-open {
+  margin-left: auto;
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  min-height: 32px;
+  padding: 0 var(--ts-space-2) 0 var(--ts-space-3);
+  border: 0;
+  border-radius: var(--ts-radius-chip);
+  background: var(--ts-cream);
+  color: var(--ts-navy-dark);
+  font-family: var(--ts-font-sans);
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background var(--ts-dur-1) var(--ts-ease);
+}
+
+.sy-open:hover {
+  background: var(--ts-cream-muted);
+}
+
+.sy-open:focus-visible {
+  outline: none;
+  box-shadow: var(--ts-focus);
+}
+
+/* ── the diff table ─────────────────────────────────────────────────────── */
+
+.sy-diff-wrap {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 260px;
+  gap: var(--ts-space-6);
+  align-items: start;
+}
+
+@media (max-width: 1100px) {
+  .sy-diff-wrap {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+.sy-diff,
+.sy-sem-map,
+.sy-a11y {
+  width: 100%;
+  border-collapse: collapse;
+  background: var(--ts-surface);
+  border: 1px solid var(--ts-hairline);
+  border-radius: var(--ts-radius-card);
+  overflow: hidden;
+  font-size: 13.5px;
+}
+
+.sy-cap {
+  caption-side: top;
+  text-align: left;
+  font-size: 12.5px;
+  color: var(--ts-ink45);
+  padding-bottom: var(--ts-space-2);
+}
+
+.sy-diff th,
+.sy-diff td,
+.sy-sem-map th,
+.sy-sem-map td,
+.sy-a11y th,
+.sy-a11y td {
+  text-align: left;
+  padding: var(--ts-space-2) var(--ts-space-3);
+  border-bottom: 1px solid var(--ts-ink13);
+  font-weight: 400;
+  vertical-align: middle;
+}
+
+.sy-diff thead th,
+.sy-sem-map thead th,
+.sy-a11y thead th {
+  font-family: var(--ts-font-mono);
+  font-size: 9.5px;
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ts-ink45);
+  background: var(--ts-cream);
+}
+
+.sy-diff tbody th,
+.sy-sem-map tbody th,
+.sy-a11y tbody th {
+  color: var(--ts-ink);
+}
+
+.sy-diff code,
+.sy-sem-map code,
+.sy-tok code,
+.sy-cr code,
+.sy-a11y code,
+.sy-limits code,
+.sy-den-note code,
+.sy-pinned code,
+.sy-ten code,
+.sy-donot code,
+.sy-sem-arg code,
+.sy-cost code {
+  font-family: var(--ts-font-mono);
+  font-size: 0.88em;
+  color: var(--ts-navy);
+}
+
+.sy-diff td {
+  font-family: var(--ts-font-mono);
+  font-size: 12px;
+  color: var(--ts-ink60);
+  white-space: nowrap;
+}
+
+/* The swatch reads its colour from whatever town the cell is in. */
+.sy-sw {
+  display: inline-block;
+  width: 13px;
+  height: 13px;
+  border-radius: 3px;
+  margin-right: var(--ts-space-2);
+  vertical-align: -2px;
+  border: 1px solid var(--ts-ink13);
+}
+
+.sy-sw[data-sw='cream'] { background: var(--ts-cream); }
+.sy-sw[data-sw='navy'] { background: var(--ts-navy); }
+.sy-sw[data-sw='navy-dark'] { background: var(--ts-navy-dark); }
+.sy-sw[data-sw='terracotta'] { background: var(--ts-terracotta); }
+.sy-sw[data-sw='terracotta-hover'] { background: var(--ts-terracotta-hover); }
+.sy-sw[data-sw='terracotta-tint'] { background: var(--ts-terracotta-tint); }
+.sy-sw[data-sw='gold'] { background: var(--ts-gold); }
+.sy-sw[data-sw='sage'] { background: var(--ts-sage); }
+
+.sy-derived {
+  font-style: italic;
+  color: var(--ts-ink45);
+}
+
+.sy-same td,
+.sy-same th {
+  background: var(--ts-cream);
+  color: var(--ts-ink60);
+  white-space: normal;
+}
+
+.sy-tally {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ts-space-3);
+  padding: var(--ts-space-5);
+  background: var(--ts-navy-dark);
+  border-radius: var(--ts-radius-card);
+  color: var(--ts-cream);
+}
+
+.sy-tally-row {
+  display: flex;
+  align-items: baseline;
+  gap: var(--ts-space-3);
+  font-size: 13px;
+  line-height: 1.35;
+  color: var(--ts-cream-muted);
+}
+
+.sy-tally-n {
+  font-family: var(--ts-font-serif);
+  font-size: 28px;
+  font-weight: 600;
+  line-height: 1;
+  width: 40px;
+  flex: none;
+  text-align: right;
+  color: var(--ts-cream);
+}
+
+.sy-tally-zero .sy-tally-n {
+  color: var(--ts-sage-light);
+}
+
+/* ── rule cards ─────────────────────────────────────────────────────────── */
+
+.sy-rules {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: var(--ts-space-4);
+  margin-bottom: var(--ts-space-4);
+}
+
+.sy-rule {
+  padding: var(--ts-space-4);
+  background: var(--ts-surface);
+  border: 1px solid var(--ts-hairline);
+  border-radius: var(--ts-radius-card);
+  border-top: 3px solid var(--ts-ink13);
+}
+
+.sy-rule-safe {
+  border-top-color: var(--ts-sage);
+}
+
+.sy-rule-break {
+  border-top-color: var(--ts-brick);
+}
+
+.sy-rule-head {
+  display: flex;
+  align-items: center;
+  gap: var(--ts-space-2);
+  font-size: var(--ts-text-label);
+  font-weight: 500;
+  margin-bottom: var(--ts-space-2);
+}
+
+.sy-rule-safe .sy-rule-head {
+  color: var(--ts-sage);
+}
+
+.sy-rule-break .sy-rule-head {
+  color: var(--ts-brick);
+}
+
+.sy-rule p {
+  margin: 0 0 var(--ts-space-3);
+  font-size: 13.5px;
+  line-height: 1.5;
+  color: var(--ts-ink60);
+}
+
+/* ── code blocks ────────────────────────────────────────────────────────── */
+
+.sy-code {
+  margin: 0;
+  padding: var(--ts-space-3);
+  background: var(--ts-cream);
+  border: 1px solid var(--ts-ink13);
+  border-radius: var(--ts-radius-button);
+  font-family: var(--ts-font-mono);
+  font-size: 11.5px;
+  line-height: 1.65;
+  overflow-x: auto;
+  color: var(--ts-ink);
+  white-space: pre;
+  tab-size: 2;
+}
+
+.sy-code-lg {
+  font-size: 12.5px;
+  padding: var(--ts-space-4);
+}
+
+.sy-c {
+  color: var(--ts-ink45);
+}
+
+.sy-pinned {
+  display: flex;
+  gap: var(--ts-space-3);
+  padding: var(--ts-space-4);
+  background: var(--ts-terracotta-tint);
+  border-radius: var(--ts-radius-card);
+  font-size: 13.5px;
+  line-height: 1.55;
+  color: var(--ts-ink60);
+}
+
+.sy-pinned svg {
+  color: var(--ts-terracotta);
+  margin-top: 3px;
+}
+
+.sy-pinned b {
+  display: block;
+  color: var(--ts-ink);
+  font-weight: 500;
+  margin-bottom: 2px;
+}
+
+/* ── the reskin recipe ──────────────────────────────────────────────────── */
+
+.sy-recipe {
+  display: grid;
+  grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr);
+  gap: var(--ts-space-6);
+  align-items: start;
+}
+
+@media (max-width: 1000px) {
+  .sy-recipe {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+.sy-file {
+  font-family: var(--ts-font-mono);
+  font-size: 9.5px;
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ts-ink45);
+  margin-bottom: var(--ts-space-2);
+}
+
+.sy-file-2 {
+  margin-top: var(--ts-space-5);
+}
+
+.sy-recipe-side {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ts-space-4);
+}
+
+.sy-donot {
+  padding: var(--ts-space-4);
+  background: var(--ts-surface);
+  border: 1px solid var(--ts-hairline);
+  border-left: 3px solid var(--ts-brick);
+  border-radius: var(--ts-radius-card);
+}
+
+.sy-donot-head {
+  display: flex;
+  align-items: center;
+  gap: var(--ts-space-2);
+  font-size: var(--ts-text-label);
+  font-weight: 500;
+  color: var(--ts-brick);
+  margin-bottom: var(--ts-space-3);
+}
+
+.sy-donot ul,
+.sy-limits ul,
+.sy-cr ul,
+.sy-cr ol,
+.sy-verdict ol {
+  margin: 0;
+  padding-left: var(--ts-space-4);
+}
+
+.sy-donot li,
+.sy-limits li,
+.sy-cr li,
+.sy-verdict li {
+  font-size: 13.5px;
+  line-height: 1.55;
+  color: var(--ts-ink60);
+  margin-bottom: var(--ts-space-2);
+}
+
+.sy-ten {
+  padding: var(--ts-space-4);
+  background: var(--ts-navy-dark);
+  border-radius: var(--ts-radius-card);
+  color: var(--ts-cream);
+}
+
+.sy-ten-head {
+  font-family: var(--ts-font-serif);
+  font-size: var(--ts-text-card-title);
+  font-weight: 600;
+  margin-bottom: var(--ts-space-3);
+}
+
+.sy-ten ol {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  counter-reset: none;
+}
+
+.sy-ten li {
+  display: flex;
+  gap: var(--ts-space-3);
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--ts-cream-muted);
+  padding: var(--ts-space-2) 0;
+}
+
+.sy-ten li + li {
+  border-top: 1px solid var(--ts-cream14);
+}
+
+.sy-ten code {
+  font-family: var(--ts-font-mono);
+  font-size: 0.9em;
+  color: var(--ts-cream);
+}
+
+.sy-min {
+  font-family: var(--ts-font-mono);
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  color: var(--ts-sage-light);
+  flex: none;
+  width: 34px;
+  padding-top: 2px;
+}
+
+/* ── where a token is allowed to be wrong ───────────────────────────────── */
+
+.sy-fail-wrap {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.25fr);
+  gap: var(--ts-space-6);
+  align-items: start;
+  margin-bottom: var(--ts-space-6);
+}
+
+@media (max-width: 1000px) {
+  .sy-fail-wrap {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+.sy-fail-col {
+  min-width: 0;
+}
+
+.sy-mini-cap {
+  display: flex;
+  align-items: center;
+  gap: var(--ts-space-2);
+  font-family: var(--ts-font-mono);
+  font-size: 9.5px;
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ts-ink45);
+  margin-bottom: var(--ts-space-3);
+}
+
+.sy-fail-plate {
+  margin-bottom: var(--ts-space-3);
+}
+
+/*
+ * A town that picks its brand yellow as the action colour. Expressed the only
+ * honest way: an override of the same token names, derived from the palette
+ * rather than pasted in. It resolves near a pale gold, which is exactly the
+ * mistake being drawn.
+ */
+.sy-fail-town {
+  --ts-terracotta: color-mix(in srgb, var(--ts-gold) 62%, var(--ts-cream));
+  --ts-terracotta-hover: color-mix(in srgb, var(--ts-gold) 70%, var(--ts-cream));
+  --ts-terracotta10: color-mix(in srgb, var(--ts-gold) 10%, transparent);
+  --ts-terracotta14: color-mix(in srgb, var(--ts-gold) 14%, transparent);
+  display: flex;
+  flex-direction: column;
+  gap: var(--ts-space-3);
+  align-items: flex-start;
+}
+
+.sy-fail-row {
+  display: flex;
+  align-items: center;
+  gap: var(--ts-space-4);
+}
+
+.sy-fail-note {
+  display: flex;
+  align-items: center;
+  gap: var(--ts-space-2);
+  font-size: 12.5px;
+  color: var(--ts-ink45);
+}
+
+.sy-fail-nums {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ts-space-1);
+  font-size: 13px;
+  color: var(--ts-ink60);
+}
+
+.sy-fail-nums b {
+  font-family: var(--ts-font-mono);
+  font-size: 12.5px;
+  color: var(--ts-brick);
+  font-weight: 500;
+}
+
+/* ── the build-time guardrail ───────────────────────────────────────────── */
+
+.sy-term {
+  border-radius: var(--ts-radius-card);
+  overflow: hidden;
+  background: var(--ts-ink);
+  box-shadow: var(--ts-shadow-lifted);
+  margin-bottom: var(--ts-space-3);
+}
+
+.sy-term-bar {
+  display: flex;
+  align-items: center;
+  gap: var(--ts-space-2);
+  padding: var(--ts-space-2) var(--ts-space-3);
+  background: color-mix(in srgb, var(--ts-cream) 8%, transparent);
+  font-family: var(--ts-font-mono);
+  font-size: 10px;
+  letter-spacing: 0.06em;
+  color: color-mix(in srgb, var(--ts-cream) 55%, transparent);
+}
+
+.sy-term-bar span {
+  width: 8px;
+  height: 8px;
+  border-radius: var(--ts-radius-full);
+  background: color-mix(in srgb, var(--ts-cream) 22%, transparent);
+}
+
+.sy-term-bar span:first-child {
+  margin-left: 0;
+}
+
+.sy-term-bar span + span + span {
+  margin-right: var(--ts-space-2);
+}
+
+.sy-term-body {
+  margin: 0;
+  padding: var(--ts-space-4);
+  font-family: var(--ts-font-mono);
+  font-size: 11.5px;
+  line-height: 1.7;
+  color: var(--ts-cream);
+  white-space: pre;
+  overflow-x: auto;
+}
+
+.sy-t-dim {
+  color: color-mix(in srgb, var(--ts-cream) 52%, transparent);
+}
+
+.sy-t-ok {
+  color: var(--ts-sage-light);
+}
+
+.sy-t-bad {
+  color: color-mix(in srgb, var(--ts-brick) 45%, var(--ts-cream));
+}
+
+.sy-guard {
+  padding: var(--ts-space-3) var(--ts-space-4);
+  background: var(--ts-terracotta-tint);
+  border-radius: var(--ts-radius-button);
+  font-size: 13.5px;
+  line-height: 1.55;
+  color: var(--ts-ink60);
+}
+
+.sy-guard b {
+  color: var(--ts-ink);
+  font-weight: 500;
+}
+
+.sy-limits {
+  padding: var(--ts-space-4) var(--ts-space-5);
+  background: var(--ts-surface);
+  border: 1px solid var(--ts-hairline);
+  border-radius: var(--ts-radius-card);
+}
+
+.sy-limits-head,
+.sy-cost-head,
+.sy-never-head,
+.sy-limits-head {
+  font-family: var(--ts-font-serif);
+  font-size: var(--ts-text-card-title);
+  font-weight: 600;
+  margin-bottom: var(--ts-space-3);
+}
+
+.sy-limits b,
+.sy-cr b,
+.sy-verdict b,
+.sy-a11y-item b,
+.sy-den-note b {
+  color: var(--ts-ink);
+  font-weight: 500;
+}
+
+/* ── semantic tokens ────────────────────────────────────────────────────── */
+
+.sy-sem {
+  display: grid;
+  grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr);
+  gap: var(--ts-space-6);
+  align-items: start;
+  margin-bottom: var(--ts-space-5);
+}
+
+@media (max-width: 1000px) {
+  .sy-sem {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+.sy-sem-arg p {
+  margin: 0 0 var(--ts-space-3);
+  font-size: var(--ts-text-label);
+  line-height: 1.6;
+  color: var(--ts-ink60);
+}
+
+.sy-sem-map td {
+  color: var(--ts-ink60);
+}
+
+.sy-sem-map tbody th code {
+  color: var(--ts-terracotta);
+}
+
+.sy-sem-demo {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: var(--ts-space-4);
+  margin-bottom: var(--ts-space-5);
+}
+
+.sy-sem-out .sy-sem-render {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--ts-space-3);
+  padding: var(--ts-space-4);
+  background: var(--ts-surface);
+  border: 1px solid var(--ts-hairline);
+  border-radius: var(--ts-radius-button);
+}
+
+.sy-sem-render .sy-notice {
+  align-self: stretch;
+}
+
+.sy-vbadge {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--ts-space-1);
+  font-size: 13px;
+  color: var(--ts-sage);
+}
+
+.sy-cost {
+  padding: var(--ts-space-5);
+  background: var(--ts-cream);
+  border: 1px solid var(--ts-ink13);
+  border-radius: var(--ts-radius-card);
+}
+
+.sy-cost-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+  gap: var(--ts-space-5);
+}
+
+.sy-cost-n {
+  display: block;
+  font-family: var(--ts-font-mono);
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ts-terracotta);
+  margin-bottom: var(--ts-space-2);
+}
+
+.sy-cost p {
+  margin: 0;
+  font-size: 13.5px;
+  line-height: 1.55;
+  color: var(--ts-ink60);
+}
+
+/* ── component anatomy ──────────────────────────────────────────────────── */
+
+.sy-anat-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: var(--ts-space-6);
+}
+
+.sy-anat-stage {
+  position: relative;
+  padding: var(--ts-space-8) var(--ts-space-10);
+  background: var(--ts-cream);
+  border: 1px solid var(--ts-ink13);
+  border-radius: var(--ts-radius-card);
+  margin-bottom: var(--ts-space-4);
+  /* the measuring grid, so the 4px scale is visible rather than asserted */
+  background-image:
+    repeating-linear-gradient(
+      to bottom,
+      color-mix(in srgb, var(--ts-navy) 7%, transparent) 0 1px,
+      transparent 1px 8px
+    );
+}
+
+.sy-anat-card {
+  position: relative;
+  background: var(--ts-surface);
+  border: 1px solid var(--ts-hairline);
+  border-radius: var(--ts-radius-card);
+  box-shadow: var(--ts-shadow-flat);
+  overflow: visible;
+}
+
+.sy-anat-photo {
+  height: 82px;
+  border-radius: 12px 12px 0 0;
+  background:
+    linear-gradient(155deg, color-mix(in srgb, var(--ts-navy) 34%, transparent), transparent 62%),
+    linear-gradient(20deg, color-mix(in srgb, var(--ts-terracotta) 26%, transparent), transparent 58%),
+    var(--ts-stone);
+  margin: var(--ts-space-1);
+  margin-bottom: 0;
+}
+
+.sy-anat-cardbody {
+  padding: var(--ts-space-4);
+}
+
+.sy-anat-card h5,
+.sy-dd-h {
+  font-family: var(--ts-font-serif);
+  font-size: var(--ts-text-card-title);
+  font-weight: 600;
+  line-height: 1.25;
+  letter-spacing: -0.012em;
+  margin: 0 0 var(--ts-space-2);
+}
+
+/* Measurement labels. Mono, small, in the accent so they read as annotation. */
+.sy-tick {
+  position: absolute;
+  font-family: var(--ts-font-mono);
+  font-size: 9px;
+  letter-spacing: 0.06em;
+  color: var(--ts-terracotta);
+  white-space: nowrap;
+  background: var(--ts-cream);
+  padding: 0 3px;
+}
+
+.sy-tick::before {
+  content: '';
+  position: absolute;
+  border-color: var(--ts-terracotta);
+  border-style: dashed;
+}
+
+.sy-tick-pad-t {
+  top: 88px;
+  left: calc(100% + 6px);
+}
+
+.sy-tick-pad-t::before {
+  border-top-width: 1px;
+  width: 22px;
+  right: 100%;
+  top: 50%;
+}
+
+.sy-tick-pad-b {
+  bottom: 8px;
+  left: calc(100% + 6px);
+}
+
+.sy-tick-pad-b::before {
+  border-top-width: 1px;
+  width: 22px;
+  right: 100%;
+  top: 50%;
+}
+
+.sy-tick-rad {
+  top: -18px;
+  left: -4px;
+}
+
+.sy-tick-gap {
+  bottom: 30px;
+  left: calc(100% + 6px);
+}
+
+.sy-tick-gap::before {
+  border-top-width: 1px;
+  width: 22px;
+  right: 100%;
+  top: 50%;
+}
+
+.sy-anat-key {
+  margin: 0;
+  padding-left: var(--ts-space-4);
+}
+
+.sy-anat-key li {
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--ts-ink60);
+  margin-bottom: var(--ts-space-2);
+}
+
+.sy-anat-key code {
+  font-family: var(--ts-font-mono);
+  font-size: 0.9em;
+  color: var(--ts-navy);
+}
+
+.sy-anat-rows {
+  background: var(--ts-surface);
+  border: 1px solid var(--ts-hairline);
+  border-radius: var(--ts-radius-card);
+}
+
+.sy-anat-row-item {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: var(--ts-space-3);
+  padding: var(--ts-space-3) var(--ts-space-4);
+  min-height: 44px;
+}
+
+.sy-anat-row-item + .sy-anat-row-item {
+  border-top: 1px solid var(--ts-ink13);
+  margin-left: 60px;
+  padding-left: var(--ts-space-1);
+}
+
+.sy-row-chev {
+  color: var(--ts-ink26);
+}
+
+.sy-tick-row-h {
+  top: 50%;
+  left: calc(100% + 6px);
+  transform: translateY(-50%);
+}
+
+.sy-tick-row-h::before {
+  border-left-width: 1px;
+  height: 34px;
+  right: calc(100% + 4px);
+  top: -12px;
+}
+
+.sy-tick-row-g {
+  top: -16px;
+  left: 52px;
+}
+
+.sy-anat-chips {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  padding: var(--ts-space-6) 0;
+}
+
+.sy-tick-chip-x {
+  bottom: 12px;
+  left: 50%;
+  transform: translateX(-90px);
+}
+
+.sy-tick-chip-y {
+  top: 12px;
+  left: 50%;
+  transform: translateX(20px);
+}
+
+.sy-tick-chip-r {
+  top: -14px;
+  left: 0;
+}
+
+.sy-anat-chiprow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--ts-space-2);
+  justify-content: center;
+}
+
+/* ── density ────────────────────────────────────────────────────────────── */
+
+.sy-den-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: var(--ts-space-6);
+  margin-bottom: var(--ts-space-4);
+}
+
+.sy-den-plate {
+  padding: var(--ts-space-3);
+  margin-bottom: var(--ts-space-3);
+}
+
+.sy-dir {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  background: var(--ts-surface);
+  border: 1px solid var(--ts-hairline);
+  border-radius: var(--ts-radius-card);
+  overflow: hidden;
+}
+
+/*
+ * The row reads the density tokens with the comfortable values as fallbacks,
+ * so it is correct with nothing set and denser when a container asks. One
+ * component, no variants.
+ */
+.sy-dir-item {
+  display: flex;
+  align-items: center;
+  gap: var(--ts-row-gap, var(--ts-space-3));
+  padding: var(--ts-row-y, var(--ts-space-4)) var(--ts-space-4);
+  min-height: 44px;
+}
+
+.sy-dir-item + .sy-dir-item {
+  border-top: 1px solid var(--ts-ink13);
+}
+
+.sy-dir-logo {
+  width: var(--ts-row-lead, 44px);
+  height: var(--ts-row-lead, 44px);
+  flex: none;
+  border-radius: var(--ts-radius-button);
+  background: linear-gradient(150deg, var(--ts-stone), color-mix(in srgb, var(--ts-navy) 16%, var(--ts-stone)));
+}
+
+.sy-dir-body {
+  flex: 1;
+  min-width: 0;
+}
+
+.sy-dir-name {
+  font-size: var(--ts-row-title, var(--ts-text-body));
+  line-height: 1.3;
+}
+
+.sy-dir-meta {
+  font-size: 12.5px;
+  color: var(--ts-ink60);
+  margin-top: 1px;
+}
+
+.sy-dir[data-density='compact'] {
+  --ts-row-y: var(--ts-space-2);
+  --ts-row-gap: var(--ts-space-2);
+  --ts-row-lead: 32px;
+  --ts-row-title: 15px;
+}
+
+.sy-den-note {
+  max-width: 74ch;
+  margin: 0;
+  font-size: var(--ts-text-label);
+  line-height: 1.6;
+  color: var(--ts-ink60);
+}
+
+/* ── dark mode ──────────────────────────────────────────────────────────── */
+
+.sy-dark-row {
+  display: grid;
+  grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.15fr);
+  gap: var(--ts-space-6);
+  align-items: start;
+  margin-bottom: var(--ts-space-5);
+}
+
+@media (max-width: 1000px) {
+  .sy-dark-row {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+/*
+ * The dark palette is derived in two layers on purpose. The outer element
+ * computes the new values from the light palette, and the inner one rebinds
+ * the --ts-* names to them. Doing both in one block would make --ts-cream
+ * depend on a --ts-ink that is itself being redefined, which is a cycle and
+ * resolves to nothing. In the shipped tokens package these would be literal
+ * values; here they stay derived so the section holds to its own rule.
+ */
+.sy-darkroom {
+  --sy-d-bg: color-mix(in srgb, var(--ts-ink) 93%, var(--ts-terracotta));
+  --sy-d-surface: color-mix(in srgb, var(--ts-ink) 86%, var(--ts-terracotta));
+  --sy-d-stone: color-mix(in srgb, var(--ts-ink) 74%, var(--ts-terracotta));
+  --sy-d-ink: color-mix(in srgb, var(--ts-cream) 92%, var(--ts-gold));
+  --sy-d-ink60: color-mix(in srgb, var(--ts-cream) 62%, transparent);
+  --sy-d-ink45: color-mix(in srgb, var(--ts-cream) 45%, transparent);
+  --sy-d-ink26: color-mix(in srgb, var(--ts-cream) 26%, transparent);
+  --sy-d-ink13: color-mix(in srgb, var(--ts-cream) 14%, transparent);
+  --sy-d-ink08: color-mix(in srgb, var(--ts-ink) 45%, transparent);
+  --sy-d-hairline: color-mix(in srgb, var(--ts-cream) 13%, transparent);
+  --sy-d-terracotta: color-mix(in srgb, var(--ts-terracotta) 76%, var(--ts-cream));
+  --sy-d-terracotta-tint: color-mix(in srgb, var(--ts-terracotta) 24%, var(--ts-ink));
+  --sy-d-terracotta14: color-mix(in srgb, var(--ts-terracotta) 26%, transparent);
+  --sy-d-navy: color-mix(in srgb, var(--ts-navy) 62%, var(--ts-cream));
+  --sy-d-navy10: color-mix(in srgb, var(--ts-cream) 12%, transparent);
+  --sy-d-gold14: color-mix(in srgb, var(--ts-gold) 24%, transparent);
+  --sy-d-gold-text: color-mix(in srgb, var(--ts-gold) 78%, var(--ts-cream));
+  --sy-d-sage14: color-mix(in srgb, var(--ts-sage-light) 24%, transparent);
+
+  /* naive inversion, drawn for comparison and not proposed */
+  --sy-n-bg: color-mix(in srgb, var(--ts-ink) 96%, var(--ts-navy));
+  --sy-n-surface: color-mix(in srgb, var(--ts-ink) 82%, var(--ts-surface));
+  --sy-n-ink: var(--ts-surface);
+
+  padding: var(--ts-space-4);
+  border-radius: var(--ts-radius-card);
+  background: var(--ts-ink);
+}
+
+.sy-dark {
+  --ts-cream: var(--sy-d-bg);
+  --ts-surface: var(--sy-d-surface);
+  --ts-stone: var(--sy-d-stone);
+  --ts-ink: var(--sy-d-ink);
+  --ts-ink60: var(--sy-d-ink60);
+  --ts-ink45: var(--sy-d-ink45);
+  --ts-ink26: var(--sy-d-ink26);
+  --ts-ink13: var(--sy-d-ink13);
+  --ts-ink08: var(--sy-d-ink08);
+  --ts-hairline: var(--sy-d-hairline);
+  --ts-terracotta: var(--sy-d-terracotta);
+  --ts-terracotta-tint: var(--sy-d-terracotta-tint);
+  --ts-terracotta14: var(--sy-d-terracotta14);
+  --ts-navy: var(--sy-d-navy);
+  --ts-navy10: var(--sy-d-navy10);
+  --ts-gold14: var(--sy-d-gold14);
+  --ts-gold-text: var(--sy-d-gold-text);
+  --ts-sage: var(--ts-sage-light);
+  --ts-sage14: var(--sy-d-sage14);
+  --ts-shadow-flat: 0 1px 2px var(--sy-d-ink08);
+  --ts-focus: 0 0 0 2px var(--sy-d-bg), 0 0 0 4px var(--sy-d-terracotta);
+
+  background: var(--ts-cream);
+  color: var(--ts-ink);
+  border-radius: var(--ts-radius-button);
+  padding: var(--ts-space-4);
+}
+
+.sy-dark-naive {
+  --ts-cream: var(--sy-n-bg);
+  --ts-surface: var(--sy-n-surface);
+  --ts-ink: var(--sy-n-ink);
+  --ts-ink60: color-mix(in srgb, var(--sy-n-ink) 60%, transparent);
+  --ts-ink45: color-mix(in srgb, var(--sy-n-ink) 45%, transparent);
+  --ts-hairline: color-mix(in srgb, var(--sy-n-ink) 12%, transparent);
+}
+
+.sy-dark-stack {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ts-space-4);
+}
+
+.sy-dark-card {
+  box-shadow: none;
+}
+
+.sy-dark-rowitem {
+  background: var(--ts-surface);
+  border: 1px solid var(--ts-hairline);
+  border-radius: var(--ts-radius-card);
+}
+
+.sy-dark-chips {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--ts-space-2);
+}
+
+.sy-dark-flaw {
+  display: flex;
+  gap: var(--ts-space-2);
+  font-size: 12.5px;
+  line-height: 1.5;
+  color: var(--ts-ink60);
+}
+
+.sy-dark-col {
+  min-width: 0;
+}
+
+.sy-verdict {
+  margin-top: var(--ts-space-5);
+  padding: var(--ts-space-5);
+  background: var(--ts-surface);
+  border: 1px solid var(--ts-hairline);
+  border-left: 3px solid var(--ts-brick);
+  border-radius: var(--ts-radius-card);
+}
+
+.sy-verdict-head {
+  display: flex;
+  align-items: center;
+  gap: var(--ts-space-2);
+  font-family: var(--ts-font-serif);
+  font-size: var(--ts-text-card-title);
+  font-weight: 600;
+  color: var(--ts-brick);
+  margin-bottom: var(--ts-space-3);
+}
+
+/* ── accessibility ──────────────────────────────────────────────────────── */
+
+.sy-a11y {
+  margin-bottom: var(--ts-space-5);
+}
+
+.sy-a11y td {
+  text-align: center;
+}
+
+.sy-a11y td:first-of-type {
+  font-family: var(--ts-font-mono);
+  font-size: 11px;
+  color: var(--ts-ink45);
+}
+
+.sy-r {
+  display: inline-block;
+  min-width: 52px;
+  padding: 2px var(--ts-space-2);
+  border-radius: var(--ts-radius-chip);
+  font-family: var(--ts-font-mono);
+  font-size: 11.5px;
+  font-weight: 500;
+}
+
+.sy-r-aaa,
+.sy-r-aa {
+  background: var(--ts-sage14);
+  color: var(--ts-sage);
+}
+
+.sy-r-aaa::after {
+  content: ' AAA';
+  font-size: 8.5px;
+  letter-spacing: 0.08em;
+}
+
+.sy-r-aa::after {
+  content: ' AA';
+  font-size: 8.5px;
+  letter-spacing: 0.08em;
+}
+
+.sy-r-large {
+  background: var(--ts-gold14);
+  color: var(--ts-gold-text);
+}
+
+.sy-r-large::after {
+  content: ' LG';
+  font-size: 8.5px;
+  letter-spacing: 0.08em;
+}
+
+.sy-r-fail {
+  background: color-mix(in srgb, var(--ts-brick) 12%, transparent);
+  color: var(--ts-brick);
+}
+
+.sy-r-fail::after {
+  content: ' FAIL';
+  font-size: 8.5px;
+  letter-spacing: 0.08em;
+}
+
+.sy-a11y-read {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: var(--ts-space-4);
+  margin-bottom: var(--ts-space-6);
+}
+
+.sy-a11y-item {
+  padding: var(--ts-space-3) var(--ts-space-4);
+  background: var(--ts-cream);
+  border-left: 2px solid var(--ts-ink13);
+  border-radius: 0 var(--ts-radius-button) var(--ts-radius-button) 0;
+  font-size: 13.5px;
+  line-height: 1.55;
+  color: var(--ts-ink60);
+}
+
+.sy-never {
+  padding: var(--ts-space-5);
+  background: var(--ts-surface);
+  border: 1px solid var(--ts-hairline);
+  border-radius: var(--ts-radius-card);
+}
+
+.sy-never-pair {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: var(--ts-space-5);
+}
+
+.sy-never-tag,
+.sy-dd-tag {
+  display: flex;
+  align-items: center;
+  gap: var(--ts-space-2);
+  font-family: var(--ts-font-sans);
+  font-size: 12.5px;
+  font-weight: 500;
+  margin-bottom: var(--ts-space-3);
+}
+
+.sy-never-bad .sy-never-tag,
+.sy-dd-bad .sy-dd-tag {
+  color: var(--ts-brick);
+}
+
+.sy-never-good .sy-never-tag,
+.sy-dd-good .sy-dd-tag {
+  color: var(--ts-sage);
+}
+
+.sy-never-col p,
+.sy-dd-cell p {
+  margin: var(--ts-space-3) 0 0;
+  font-size: 13px;
+  line-height: 1.55;
+  color: var(--ts-ink60);
+}
+
+.sy-never-list {
+  border-radius: var(--ts-radius-button);
+}
+
+.sy-dot {
+  width: 10px;
+  height: 10px;
+  flex: none;
+  border-radius: var(--ts-radius-full);
+  margin: 0 var(--ts-space-2);
+}
+
+.sy-dot-open {
+  background: var(--ts-sage);
+}
+
+.sy-dot-closed {
+  background: var(--ts-ink26);
+}
+
+/* ── do and do not ──────────────────────────────────────────────────────── */
+
+.sy-dd {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ts-space-4);
+}
+
+.sy-dd-pair {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: var(--ts-space-4);
+}
+
+.sy-dd-cell {
+  padding: var(--ts-space-4);
+  background: var(--ts-surface);
+  border: 1px solid var(--ts-hairline);
+  border-radius: var(--ts-radius-card);
+  border-top: 3px solid var(--ts-ink13);
+}
+
+.sy-dd-bad {
+  border-top-color: var(--ts-brick);
+}
+
+.sy-dd-good {
+  border-top-color: var(--ts-sage);
+}
+
+.sy-dd-stage {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 96px;
+  padding: var(--ts-space-4);
+  background: var(--ts-cream);
+  border-radius: var(--ts-radius-button);
+}
+
+.sy-dd-stage-left {
+  justify-content: flex-start;
+  text-align: left;
+  display: block;
+}
+
+.sy-dd-stage-col {
+  flex-direction: column;
+  align-items: stretch;
+  gap: var(--ts-space-2);
+}
+
+.sy-dd-stage .sy-code {
+  width: 100%;
+  background: var(--ts-surface);
+}
+
+/* ── buttons and links used across the do/don't pairs ───────────────────── */
+
+.sy-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 44px;
+  padding: 0 var(--ts-space-5);
+  border: 0;
+  border-radius: var(--ts-radius-button);
+  background: var(--ts-terracotta);
+  color: var(--ts-surface);
+  font-family: var(--ts-font-sans);
+  font-size: var(--ts-text-label);
+  font-weight: 500;
+  cursor: pointer;
+  transition: background var(--ts-dur-1) var(--ts-ease);
+}
+
+.sy-btn:hover {
+  background: var(--ts-terracotta-hover);
+}
+
+.sy-btn:focus-visible {
+  outline: none;
+  box-shadow: var(--ts-focus);
+}
+
+.sy-btn-sm {
+  min-height: 36px;
+  padding: 0 var(--ts-space-4);
+  font-size: 13.5px;
+}
+
+.sy-btn-brick {
+  background: var(--ts-brick);
+}
+
+.sy-btn-brick:hover {
+  background: color-mix(in srgb, var(--ts-brick) 88%, var(--ts-ink));
+}
+
+.sy-btn-ghost {
+  background: transparent;
+  color: var(--ts-ink);
+  border: 1px solid var(--ts-ink26);
+}
+
+.sy-btn-ghost:hover {
+  background: color-mix(in srgb, var(--ts-ink) 5%, transparent);
+}
+
+.sy-link {
+  color: var(--ts-terracotta);
+  font-size: var(--ts-text-label);
+  text-decoration: none;
+  border-bottom: 1px solid color-mix(in srgb, var(--ts-terracotta) 40%, transparent);
+  padding-bottom: 1px;
+}
+
+.sy-link:hover {
+  color: var(--ts-terracotta-hover);
+  border-bottom-color: var(--ts-terracotta-hover);
+}
+
+.sy-byline-mono {
+  font-family: var(--ts-font-mono);
+  font-size: 10.5px;
+  letter-spacing: 0.12em;
+}
+
+.sy-mini-dark,
+.sy-mini-light {
+  padding: var(--ts-space-3) var(--ts-space-4);
+  border-radius: var(--ts-radius-button);
+  font-size: 13.5px;
+}
+
+.sy-mini-dark {
+  background: var(--ts-navy-dark);
+  color: var(--ts-cream);
+}
+
+.sy-mini-light {
+  background: var(--ts-surface);
+  border: 1px solid var(--ts-hairline);
+  color: var(--ts-ink);
+}
+
+.sy-deco-card {
+  display: flex;
+  align-items: center;
+  gap: var(--ts-space-3);
+  width: 100%;
+  padding: var(--ts-space-3) var(--ts-space-4);
+  background: var(--ts-surface);
+  border: 1px solid var(--ts-hairline);
+  border-radius: var(--ts-radius-card);
+}
+
+.sy-deco-bad {
+  border-color: var(--ts-terracotta);
+  background: var(--ts-terracotta-tint);
+}
+
+.sy-deco-bar {
+  width: 4px;
+  align-self: stretch;
+  border-radius: var(--ts-radius-full);
+  background: var(--ts-terracotta);
+}
+
+.sy-eyebrow-terra {
+  color: var(--ts-terracotta);
+}
+
+.sy-meta-terra {
+  color: var(--ts-terracotta);
+}
+
+.sy-deco-card .sy-dir-name {
+  font-size: var(--ts-text-label);
+}
+
+.sy-emph {
+  width: 100%;
+  padding: var(--ts-space-4);
+  background: var(--ts-surface);
+  border: 1px solid var(--ts-hairline);
+  border-radius: var(--ts-radius-card);
+}
+
+.sy-emph-bad {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--ts-space-2);
+  border-color: var(--ts-terracotta);
+}
+
+.sy-emph-bad .sy-chip {
+  margin-right: var(--ts-space-1);
+}
+
+.sy-dd-h-terra {
+  color: var(--ts-terracotta);
+}
+
+.sy-emph-p {
+  margin: 0 0 var(--ts-space-3);
+  font-size: 13.5px;
+  line-height: 1.5;
+  color: var(--ts-ink60);
+}
+
+.sy-emph-bad .sy-emph-p {
+  font-weight: 700;
+  color: var(--ts-ink);
+}
+
+/* ── the contract card ──────────────────────────────────────────────────── */
+
+.sy-contract {
+  background: var(--ts-surface);
+  border: 1px solid var(--ts-hairline);
+  border-radius: var(--ts-radius-card);
+  box-shadow: var(--ts-shadow-raised);
+  overflow: hidden;
+}
+
+.sy-contract-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--ts-space-4);
+  padding: var(--ts-space-5) var(--ts-space-6);
+  background: var(--ts-navy-dark);
+  color: var(--ts-cream);
+}
+
+.sy-contract-head .sy-eyebrow {
+  color: var(--ts-cream-muted);
+  margin-bottom: var(--ts-space-1);
+}
+
+.sy-contract-head h4 {
+  font-family: var(--ts-font-serif);
+  font-size: var(--ts-text-h2);
+  font-weight: 600;
+  letter-spacing: -0.015em;
+  margin: 0;
+}
+
+.sy-contract-head code {
+  font-family: var(--ts-font-mono);
+  font-size: 0.82em;
+}
+
+.sy-contract-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: var(--ts-space-5) var(--ts-space-6);
+  padding: var(--ts-space-6);
+}
+
+.sy-tok-head {
+  font-family: var(--ts-font-mono);
+  font-size: 9.5px;
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ts-ink45);
+  padding-bottom: var(--ts-space-2);
+  margin-bottom: var(--ts-space-2);
+  border-bottom: 1px solid var(--ts-ink13);
+}
+
+.sy-tok {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.sy-tok li {
+  font-size: 12.5px;
+  line-height: 1.45;
+  color: var(--ts-ink60);
+  padding: 2px 0;
+}
+
+.sy-tok li span {
+  display: block;
+  font-size: 11.5px;
+  color: var(--ts-ink45);
+}
+
+.sy-tok-inline {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--ts-space-1) var(--ts-space-2);
+  margin-top: var(--ts-space-2);
+}
+
+.sy-tok-inline li {
+  padding: 1px var(--ts-space-2);
+  border-radius: var(--ts-radius-chip);
+  background: var(--ts-cream);
+  border: 1px solid var(--ts-ink13);
+  font-family: var(--ts-font-mono);
+  font-size: 10.5px;
+  color: var(--ts-ink60);
+}
+
+.sy-tok-inline li code {
+  color: var(--ts-ink);
+}
+
+.sy-contract-rules {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: var(--ts-space-6);
+  padding: var(--ts-space-6);
+  border-top: 1px solid var(--ts-ink13);
+  background: var(--ts-cream);
+}
+
+.sy-cr-head {
+  display: flex;
+  align-items: center;
+  gap: var(--ts-space-2);
+  font-family: var(--ts-font-serif);
+  font-size: var(--ts-text-card-title);
+  font-weight: 600;
+  margin-bottom: var(--ts-space-3);
+}
+
+.sy-cr-break .sy-cr-head {
+  color: var(--ts-brick);
+}
+
+.sy-cr-foot {
+  margin: var(--ts-space-3) 0 0;
+  font-size: 12.5px;
+  line-height: 1.55;
+  color: var(--ts-ink45);
+}
+
+/* ── narrow screens ─────────────────────────────────────────────────────── */
+
+@media (max-width: 760px) {
+  .sy-anat-stage {
+    padding: var(--ts-space-6) var(--ts-space-5);
+  }
+
+  .sy-tick {
+    display: none;
+  }
+}

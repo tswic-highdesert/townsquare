@@ -1,0 +1,550 @@
+/*
+ * Town Square — hi-fi v2 foundation.
+ *
+ * The token block below is a verbatim mirror of `packages/tokens/src/index.ts`
+ * flattened through `cssVariables()`. Nothing in a section stylesheet may use a
+ * hex literal: a hand-copied colour is how a shell and the creations it hosts
+ * drift apart, and the drift is invisible until you see them side by side.
+ *
+ * The `[data-town]` blocks at the bottom are the multi-town theming seam. They
+ * override values only, never names, which is the whole contract: a creation
+ * styling itself with var(--ts-navy) survives a town reskin untouched.
+ */
+
+/* ── self-hosted faces ──────────────────────────────────────────────────── */
+
+@font-face {
+  font-family: 'Newsreader';
+  src: url('./fonts/newsreader.woff2') format('woff2');
+  font-weight: 400 600;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'DM Sans';
+  src: url('./fonts/dm-sans.woff2') format('woff2');
+  font-weight: 400 700;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'DM Mono';
+  src: url('./fonts/dm-mono-400.woff2') format('woff2');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'DM Mono';
+  src: url('./fonts/dm-mono-500.woff2') format('woff2');
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* ── the published token contract ───────────────────────────────────────── */
+
+:root {
+  /* surfaces */
+  --ts-cream: #f8f6f1;
+  --ts-surface: #ffffff;
+  --ts-stone: #e5e1da;
+
+  /* ink and its alphas — muted text is ink at alpha, never navy at alpha */
+  --ts-ink: #1d1b16;
+  --ts-ink60: rgba(29, 27, 22, 0.6);
+  --ts-ink45: rgba(29, 27, 22, 0.45);
+  --ts-ink26: rgba(29, 27, 22, 0.26);
+  --ts-ink13: rgba(29, 27, 22, 0.13);
+  --ts-ink08: rgba(29, 27, 22, 0.08);
+  --ts-hairline: rgba(29, 27, 22, 0.11);
+
+  /* navy */
+  --ts-navy: #26405b;
+  --ts-navy-dark: #22384e;
+  --ts-navy80: rgba(38, 64, 91, 0.8);
+  --ts-navy60: rgba(38, 64, 91, 0.6);
+  --ts-navy40: rgba(38, 64, 91, 0.4);
+  --ts-navy10: rgba(38, 64, 91, 0.1);
+
+  /* text on a dark card inverts the muted rule */
+  --ts-cream-muted: rgba(248, 246, 241, 0.7);
+  --ts-cream14: rgba(248, 246, 241, 0.14);
+
+  /* terracotta — the warm accent and the primary action */
+  --ts-terracotta: #c4714e;
+  --ts-terracotta-hover: #b15f3b;
+  --ts-terracotta-tint: #fff3ec;
+  --ts-terracotta10: rgba(196, 113, 78, 0.1);
+  --ts-terracotta14: rgba(196, 113, 78, 0.14);
+
+  /* gold — civic, notices, activity */
+  --ts-gold: #e7ae2e;
+  --ts-gold14: rgba(231, 174, 46, 0.18);
+  --ts-gold-text: #8a6510;
+
+  /* sage — verified, open, alive */
+  --ts-sage: #4c6b4b;
+  --ts-sage-light: #86a585;
+  --ts-sage14: rgba(76, 107, 75, 0.18);
+
+  /* the one alarm register, and the only place it is ever used */
+  --ts-brick: #7e1f0c;
+
+  /* 4px scale */
+  --ts-space-1: 4px;
+  --ts-space-2: 8px;
+  --ts-space-3: 12px;
+  --ts-space-4: 16px;
+  --ts-space-5: 20px;
+  --ts-space-6: 24px;
+  --ts-space-8: 32px;
+  --ts-space-10: 40px;
+  --ts-space-12: 48px;
+  --ts-space-16: 64px;
+
+  --ts-radius-input: 10px;
+  --ts-radius-button: 10px;
+  --ts-radius-chip: 999px;
+  --ts-radius-card: 16px;
+  --ts-radius-sheet: 20px;
+  --ts-radius-full: 999px;
+
+  --ts-font-serif: 'Newsreader', Georgia, 'Times New Roman', serif;
+  --ts-font-sans: 'DM Sans', system-ui, -apple-system, sans-serif;
+  --ts-font-mono: 'DM Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
+
+  --ts-text-h1: 24px;
+  --ts-text-h2: 21px;
+  --ts-text-card-title: 18px;
+  --ts-text-body: 17px;
+  --ts-text-label: 15px;
+  --ts-text-caption: 13px;
+  --ts-text-eyebrow: 11px;
+}
+
+/* ── additions proposed by hi-fi v2 ─────────────────────────────────────────
+ *
+ * Names are contract, so these are ADDITIONS only. Nothing above was renamed.
+ * Elevation and motion were being hand-rolled per component; a shadow picked to
+ * look nice beside the last one is how a system stops being a system.
+ */
+
+:root {
+  --ts-shadow-flat: 0 1px 2px var(--ts-ink08);
+  --ts-shadow-raised: 0 1px 2px var(--ts-ink08), 0 6px 16px -8px var(--ts-ink26);
+  --ts-shadow-lifted: 0 2px 4px var(--ts-ink08), 0 14px 30px -14px var(--ts-ink26);
+  --ts-shadow-overlay: 0 8px 12px -6px var(--ts-ink08), 0 28px 60px -20px rgba(29, 27, 22, 0.34);
+  --ts-shadow-navy: 0 2px 4px var(--ts-ink08), 0 16px 30px -16px var(--ts-navy80);
+
+  --ts-ease: cubic-bezier(0.2, 0, 0, 1);
+  --ts-ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --ts-dur-1: 90ms;
+  --ts-dur-2: 160ms;
+  --ts-dur-3: 260ms;
+  --ts-dur-4: 420ms;
+
+  --ts-focus: 0 0 0 2px var(--ts-cream), 0 0 0 4px var(--ts-terracotta);
+}
+
+/* ── multi-town theming seam ────────────────────────────────────────────────
+ *
+ * Three towns, one component set, zero component changes. Values move, names
+ * never do. Applied by setting data-town on any ancestor.
+ */
+
+[data-town='delta'] {
+  --ts-navy: #2f4739;
+  --ts-navy-dark: #263b2f;
+  --ts-navy80: rgba(47, 71, 57, 0.8);
+  --ts-navy60: rgba(47, 71, 57, 0.6);
+  --ts-navy40: rgba(47, 71, 57, 0.4);
+  --ts-navy10: rgba(47, 71, 57, 0.1);
+  --ts-terracotta: #a8642f;
+  --ts-terracotta-hover: #8d5124;
+  --ts-terracotta-tint: #fdf1e6;
+  --ts-terracotta10: rgba(168, 100, 47, 0.1);
+  --ts-terracotta14: rgba(168, 100, 47, 0.14);
+  --ts-cream: #f7f5ee;
+  --ts-gold: #cf9a2c;
+  --ts-sage: #5b7150;
+  --ts-font-serif: 'Newsreader', Georgia, serif;
+}
+
+[data-town='harbor'] {
+  --ts-navy: #1f3b57;
+  --ts-navy-dark: #17304a;
+  --ts-navy80: rgba(31, 59, 87, 0.8);
+  --ts-navy60: rgba(31, 59, 87, 0.6);
+  --ts-navy40: rgba(31, 59, 87, 0.4);
+  --ts-navy10: rgba(31, 59, 87, 0.1);
+  --ts-terracotta: #3d7d8c;
+  --ts-terracotta-hover: #316875;
+  --ts-terracotta-tint: #eaf5f7;
+  --ts-terracotta10: rgba(61, 125, 140, 0.1);
+  --ts-terracotta14: rgba(61, 125, 140, 0.14);
+  --ts-cream: #f4f6f6;
+  --ts-gold: #d9a441;
+  --ts-sage: #46736a;
+}
+
+/* ── sheet chrome ───────────────────────────────────────────────────────────
+ *
+ * The specimen sheet's own furniture. Deliberately not part of the product:
+ * it uses the palette but nothing here should be mistaken for a component.
+ */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: #ede9e0; /* the canvas behind the phone, per the hi-fi */
+  color: var(--ts-ink);
+  font-family: var(--ts-font-sans);
+  font-size: var(--ts-text-body);
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+
+.sheet {
+  --rail: 268px;
+  display: grid;
+  grid-template-columns: var(--rail) minmax(0, 1fr);
+  align-items: start;
+}
+
+@media (max-width: 900px) {
+  .sheet {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .rail {
+    display: none;
+  }
+}
+
+/* ── the rail ───────────────────────────────────────────────────────────── */
+
+.rail {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  overflow-y: auto;
+  padding: var(--ts-space-6) var(--ts-space-5);
+  background: var(--ts-ink);
+  color: var(--ts-cream);
+  border-right: 1px solid rgba(0, 0, 0, 0.2);
+}
+
+.rail-brand {
+  display: flex;
+  align-items: center;
+  gap: var(--ts-space-3);
+  padding-bottom: var(--ts-space-5);
+  margin-bottom: var(--ts-space-4);
+  border-bottom: 1px solid rgba(248, 246, 241, 0.14);
+}
+
+.rail-mark {
+  width: 34px;
+  height: 34px;
+  flex: none;
+  border-radius: 9px;
+  background: var(--ts-cream) url('./mark-ui.png') center / 24px no-repeat;
+}
+
+.rail-title {
+  font-family: var(--ts-font-serif);
+  font-size: 17px;
+  font-weight: 600;
+  line-height: 1.1;
+}
+
+.rail-sub {
+  font-family: var(--ts-font-mono);
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: rgba(248, 246, 241, 0.5);
+  margin-top: 3px;
+}
+
+.rail-group {
+  font-family: var(--ts-font-mono);
+  font-size: 9.5px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: rgba(248, 246, 241, 0.38);
+  margin: var(--ts-space-5) 0 var(--ts-space-2);
+}
+
+.rail a {
+  display: flex;
+  align-items: baseline;
+  gap: var(--ts-space-2);
+  padding: 6px var(--ts-space-2);
+  border-radius: 8px;
+  color: rgba(248, 246, 241, 0.76);
+  text-decoration: none;
+  font-size: 13.5px;
+  line-height: 1.3;
+}
+
+.rail a:hover {
+  background: rgba(248, 246, 241, 0.09);
+  color: var(--ts-cream);
+}
+
+.rail a.on {
+  background: var(--ts-terracotta);
+  color: #fff;
+}
+
+.rail a .n {
+  font-family: var(--ts-font-mono);
+  font-size: 10px;
+  color: rgba(248, 246, 241, 0.4);
+  flex: none;
+  width: 18px;
+}
+
+.rail a.on .n {
+  color: rgba(255, 255, 255, 0.65);
+}
+
+/* ── the body ───────────────────────────────────────────────────────────── */
+
+.stack {
+  min-width: 0;
+  padding: 0 0 var(--ts-space-16);
+}
+
+.masthead {
+  padding: var(--ts-space-16) var(--ts-space-12) var(--ts-space-12);
+  background: var(--ts-ink);
+  color: var(--ts-cream);
+}
+
+.masthead h1 {
+  font-family: var(--ts-font-serif);
+  font-size: clamp(34px, 5vw, 58px);
+  font-weight: 400;
+  letter-spacing: -0.025em;
+  line-height: 1.02;
+  margin: 0 0 var(--ts-space-4);
+  max-width: 18ch;
+}
+
+.masthead p {
+  max-width: 62ch;
+  color: rgba(248, 246, 241, 0.72);
+  margin: 0 0 var(--ts-space-3);
+}
+
+.masthead .kicker {
+  font-family: var(--ts-font-mono);
+  font-size: 10.5px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--ts-terracotta);
+  margin-bottom: var(--ts-space-5);
+}
+
+.sheet-section {
+  padding: var(--ts-space-16) var(--ts-space-12);
+  border-bottom: 1px solid rgba(29, 27, 22, 0.1);
+  scroll-margin-top: 0;
+}
+
+.sheet-section:nth-of-type(even) {
+  background: rgba(255, 255, 255, 0.34);
+}
+
+.sec-head {
+  display: flex;
+  align-items: baseline;
+  gap: var(--ts-space-3);
+  margin-bottom: var(--ts-space-3);
+}
+
+.sec-num {
+  font-family: var(--ts-font-mono);
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  color: #fff;
+  background: var(--ts-ink);
+  padding: 3px 7px;
+  border-radius: 4px;
+}
+
+.sec-head h2 {
+  font-family: var(--ts-font-serif);
+  font-size: 30px;
+  font-weight: 400;
+  letter-spacing: -0.02em;
+  margin: 0;
+}
+
+.sec-note {
+  max-width: 66ch;
+  color: var(--ts-ink60);
+  font-size: var(--ts-text-label);
+  margin: 0 0 var(--ts-space-10);
+}
+
+/* A labelled specimen. The label is sheet chrome, the child is the component. */
+.spec {
+  margin: 0 0 var(--ts-space-10);
+}
+
+.spec-label {
+  display: flex;
+  align-items: baseline;
+  gap: var(--ts-space-2);
+  font-family: var(--ts-font-mono);
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ts-ink45);
+  padding-bottom: var(--ts-space-2);
+  margin-bottom: var(--ts-space-4);
+  border-bottom: 1px solid var(--ts-ink13);
+}
+
+.spec-label em {
+  font: inherit;
+  font-style: normal;
+  text-transform: none;
+  letter-spacing: 0.02em;
+  font-family: var(--ts-font-sans);
+  font-size: 12.5px;
+  color: var(--ts-ink45);
+  margin-left: auto;
+  text-align: right;
+  max-width: 52ch;
+}
+
+/* Lay specimens out side by side without inventing a grid per section. */
+.spec-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--ts-space-6);
+  align-items: flex-start;
+}
+
+.spec-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: var(--ts-space-6);
+  align-items: start;
+}
+
+/*
+ * A phone. Sections that are whole screens rather than parts render inside one,
+ * because the product is mobile first and a 1200px-wide "screen" lies about it.
+ */
+.phone {
+  width: 390px;
+  flex: none;
+  border-radius: 34px;
+  padding: 10px;
+  background: var(--ts-ink);
+  box-shadow: var(--ts-shadow-overlay);
+}
+
+.phone-screen {
+  height: 780px;
+  overflow: hidden auto;
+  border-radius: 25px;
+  background: var(--ts-cream);
+  scrollbar-width: none;
+}
+
+.phone-screen::-webkit-scrollbar {
+  display: none;
+}
+
+.phone-cap {
+  text-align: center;
+  font-family: var(--ts-font-mono);
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: rgba(248, 246, 241, 0.6);
+  padding: var(--ts-space-2) 0 2px;
+}
+
+/* A neutral card to sit a loose component on so it is not floating on cream. */
+.plate {
+  padding: var(--ts-space-6);
+  background: var(--ts-cream);
+  border: 1px solid var(--ts-ink13);
+  border-radius: var(--ts-radius-card);
+}
+
+.plate[data-dark] {
+  background: var(--ts-navy-dark);
+  border-color: transparent;
+}
+
+/* Design rationale, set apart from the specimens it explains. */
+.why {
+  max-width: 70ch;
+  margin: 0 0 var(--ts-space-8);
+  padding-left: var(--ts-space-4);
+  border-left: 2px solid var(--ts-terracotta);
+  color: var(--ts-ink60);
+  font-size: var(--ts-text-label);
+}
+
+.why b {
+  color: var(--ts-ink);
+  font-weight: 500;
+}
+
+/* ── shared icon sizing ─────────────────────────────────────────────────── */
+
+.i {
+  width: 20px;
+  height: 20px;
+  flex: none;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.6;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  vertical-align: middle;
+}
+
+.i-sm {
+  width: 16px;
+  height: 16px;
+  stroke-width: 1.7;
+}
+
+.i-lg {
+  width: 24px;
+  height: 24px;
+  stroke-width: 1.5;
+}
+
+.i-xl {
+  width: 32px;
+  height: 32px;
+  stroke-width: 1.35;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}

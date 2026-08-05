@@ -1,0 +1,2637 @@
+/*
+ * 09 – Civic, notices, and emergency.
+ *
+ * Two shipped rules govern everything below.
+ *
+ * 1. The notice is the ONLY tinted card on a screen, and most days it is not
+ *    rendered at all. Every tint here is therefore rationed: gold for civic,
+ *    terracotta for the app's own voice, and nothing decorative.
+ * 2. --ts-brick is the single alarm register and appears exactly ONCE per
+ *    screen. On the takeover it is the band and nothing else: the action is
+ *    cream, the ground is ink. Spending brick on a button would make the band
+ *    stop meaning "now".
+ *
+ * Everything darker or lighter than a token is derived with color-mix so the
+ * multi-town seam still holds.
+ */
+
+/* ── shared small parts ─────────────────────────────────────────────────── */
+
+#civic .cv-eyebrow {
+  font-family: var(--ts-font-mono);
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ts-ink45);
+}
+
+#civic .cv-mono {
+  font-family: var(--ts-font-mono);
+  font-size: 12.5px;
+}
+
+/* The middle dot separator. An <i> so it never gets read aloud as emphasis. */
+#civic i {
+  font-style: normal;
+  color: var(--ts-ink26);
+  padding: 0 2px;
+}
+
+#civic .cv-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--ts-space-2);
+  min-height: 44px;
+  padding: 0 var(--ts-space-4);
+  border: 0;
+  border-radius: var(--ts-radius-button);
+  background: var(--ts-terracotta);
+  color: var(--ts-surface);
+  font-family: var(--ts-font-sans);
+  font-size: 14px;
+  font-weight: 500;
+  text-decoration: none;
+  cursor: pointer;
+  transition: background var(--ts-dur-1) var(--ts-ease);
+}
+
+#civic .cv-btn:hover {
+  background: var(--ts-terracotta-hover);
+}
+
+#civic .cv-btn:focus-visible,
+#civic .cv-ghost:focus-visible {
+  outline: none;
+  box-shadow: var(--ts-focus);
+}
+
+#civic .cv-ghost {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--ts-space-2);
+  min-height: 44px;
+  padding: 0 var(--ts-space-3);
+  border: 1px solid var(--ts-hairline);
+  border-radius: var(--ts-radius-button);
+  background: var(--ts-surface);
+  color: var(--ts-ink);
+  font-family: var(--ts-font-sans);
+  font-size: 13.5px;
+  font-weight: 500;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+#civic .cv-ghost:hover {
+  border-color: var(--ts-ink26);
+}
+
+/*
+ * The provenance line. Deliberately the quietest type on any card: it exists
+ * for the one reader in fifty who wants it and for the argument it settles.
+ */
+#civic .cv-prov {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 5px;
+  font-family: var(--ts-font-sans);
+  font-size: 11.5px;
+  line-height: 1.4;
+  color: var(--ts-ink45);
+}
+
+#civic .cv-prov .i-sm {
+  width: 13px;
+  height: 13px;
+  color: var(--ts-ink26);
+}
+
+#civic .cv-prov-block {
+  padding-top: var(--ts-space-3);
+  margin-top: var(--ts-space-4);
+  border-top: 1px solid var(--ts-ink13);
+}
+
+/* Stale is ink, never gold and never brick. A quiet source is not an alarm. */
+#civic .cv-prov[data-stale] {
+  color: var(--ts-ink60);
+}
+
+#civic .cv-prov[data-broken] {
+  color: var(--ts-ink60);
+  padding: var(--ts-space-2) var(--ts-space-3);
+  border-radius: var(--ts-radius-input);
+  background: var(--ts-ink08);
+}
+
+#civic .cv-prov-link {
+  color: var(--ts-ink60);
+  text-underline-offset: 2px;
+}
+
+/* ── sheet-local scaffolding for loose specimens ────────────────────────── */
+
+#civic .cv-side {
+  flex: 1 1 340px;
+  min-width: 300px;
+  max-width: 560px;
+}
+
+#civic .cv-side-cap,
+#civic .cv-state-cap,
+#civic .cv-bar-cap,
+#civic .cv-prov-cap,
+#civic .cv-mark-cap {
+  font-family: var(--ts-font-mono);
+  font-size: 9.5px;
+  font-weight: 500;
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+  color: var(--ts-ink45);
+  margin-bottom: var(--ts-space-2);
+}
+
+#civic .cv-side-cap-2 {
+  margin-top: var(--ts-space-6);
+}
+
+#civic .cv-side-note {
+  max-width: 46ch;
+  margin: var(--ts-space-3) 0 0;
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--ts-ink60);
+}
+
+/* ── 1. the notice ladder ───────────────────────────────────────────────── */
+
+#civic .cv-ladder {
+  display: grid;
+  grid-template-columns: 160px minmax(0, 1fr);
+  gap: var(--ts-space-6);
+  align-items: start;
+}
+
+@media (max-width: 760px) {
+  #civic .cv-ladder {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  #civic .cv-ladder-rail {
+    display: none;
+  }
+}
+
+#civic .cv-ladder-rail {
+  display: grid;
+  gap: var(--ts-space-3);
+  padding-top: 2px;
+}
+
+#civic .cv-rail-step {
+  position: relative;
+  min-height: 96px;
+  padding-left: var(--ts-space-4);
+  border-left: 2px solid var(--ts-ink13);
+}
+
+#civic .cv-rail-step::before {
+  content: '';
+  position: absolute;
+  left: -6px;
+  top: 12px;
+  width: 10px;
+  height: 10px;
+  border-radius: var(--ts-radius-full);
+  background: var(--ts-ink26);
+}
+
+#civic .cv-rail-step[data-sev='info']::before {
+  background: var(--ts-gold);
+}
+#civic .cv-rail-step[data-sev='advisory']::before {
+  background: var(--ts-gold);
+  box-shadow: 0 0 0 3px var(--ts-gold14);
+}
+#civic .cv-rail-step[data-sev='urgent']::before {
+  background: var(--ts-terracotta);
+  box-shadow: 0 0 0 3px var(--ts-terracotta14);
+}
+#civic .cv-rail-step[data-sev='emergency']::before {
+  background: var(--ts-brick);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--ts-brick) 16%, transparent);
+}
+
+#civic .cv-rail-step span {
+  display: block;
+  font-family: var(--ts-font-sans);
+  font-size: 13.5px;
+  font-weight: 500;
+  line-height: 1.2;
+}
+
+#civic .cv-rail-step b {
+  display: block;
+  margin-top: 3px;
+  font-family: var(--ts-font-mono);
+  font-size: 10px;
+  font-weight: 400;
+  letter-spacing: 0.05em;
+  color: var(--ts-ink45);
+}
+
+#civic .cv-ladder-cards {
+  display: grid;
+  gap: var(--ts-space-3);
+}
+
+/*
+ * .cv-notice ships as .notice. Severity is stated in words above the headline,
+ * so the ladder survives a screenshot, a screen reader, and colour blindness.
+ */
+#civic .cv-notice {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--ts-space-3);
+  padding: var(--ts-space-3);
+  border-radius: var(--ts-radius-sheet);
+  border: 1px solid var(--ts-gold14);
+  background: var(--ts-gold14);
+  color: inherit;
+  text-decoration: none;
+  transition: transform var(--ts-dur-1) var(--ts-ease),
+    box-shadow var(--ts-dur-1) var(--ts-ease);
+}
+
+#civic .cv-notice-icon {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 30px;
+  height: 30px;
+  border-radius: var(--ts-radius-input);
+  background: var(--ts-gold);
+  color: var(--ts-gold-text);
+}
+
+#civic .cv-notice-body {
+  min-width: 0;
+  flex: 1;
+}
+
+#civic .cv-notice-sev {
+  display: block;
+  font-family: var(--ts-font-mono);
+  font-size: 9.5px;
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ts-gold-text);
+  margin-bottom: 3px;
+}
+
+#civic .cv-notice-title {
+  display: block;
+  font-size: var(--ts-text-label);
+  font-weight: 500;
+  line-height: 1.28;
+}
+
+#civic .cv-notice-detail {
+  display: block;
+  font-size: var(--ts-text-caption);
+  line-height: 1.45;
+  color: var(--ts-ink60);
+  margin-top: 3px;
+}
+
+#civic .cv-notice .cv-prov {
+  margin-top: var(--ts-space-2);
+}
+
+#civic .cv-notice-go {
+  flex: none;
+  margin-top: 6px;
+  color: var(--ts-ink26);
+}
+
+/* Advisory keeps the gold ground but drops the fill, so it reads one step up. */
+#civic .cv-notice[data-sev='advisory'] {
+  border-color: color-mix(in srgb, var(--ts-gold) 45%, transparent);
+}
+
+/*
+ * Urgent is the terracotta rung. It is the last step before the alarm register,
+ * and it borrows the accent rather than the alarm on purpose.
+ */
+#civic .cv-notice[data-sev='urgent'] {
+  border-color: var(--ts-terracotta);
+  background: var(--ts-terracotta10);
+}
+
+#civic .cv-notice[data-sev='urgent'] .cv-notice-icon {
+  background: var(--ts-terracotta);
+  color: var(--ts-surface);
+}
+
+#civic .cv-notice[data-sev='urgent'] .cv-notice-sev {
+  color: var(--ts-terracotta-hover);
+}
+
+/* An emergency is the one place the alarm register is allowed out. */
+#civic .cv-notice[data-sev='emergency'] {
+  border-color: var(--ts-brick);
+  background: color-mix(in srgb, var(--ts-brick) 7%, var(--ts-surface));
+}
+
+#civic .cv-notice[data-sev='emergency'] .cv-notice-icon {
+  background: var(--ts-brick);
+  color: var(--ts-cream);
+}
+
+#civic .cv-notice[data-sev='emergency'] .cv-notice-sev {
+  color: var(--ts-brick);
+}
+
+/* Cleared drops all tint. The card is now a receipt, not a notice. */
+#civic .cv-notice[data-sev='cleared'] {
+  border-color: var(--ts-hairline);
+  background: var(--ts-surface);
+}
+
+#civic .cv-notice[data-sev='cleared'] .cv-notice-icon {
+  background: var(--ts-sage14);
+  color: var(--ts-sage);
+}
+
+#civic .cv-notice[data-sev='cleared'] .cv-notice-sev {
+  color: var(--ts-sage);
+}
+
+#civic .cv-notice:hover {
+  box-shadow: var(--ts-shadow-raised);
+}
+
+#civic .cv-notice[data-pressed] {
+  transform: scale(0.985);
+  box-shadow: none;
+  filter: brightness(0.97);
+}
+
+#civic .cv-notice[data-focus] {
+  outline: none;
+  box-shadow: var(--ts-focus);
+}
+
+/* Read keeps every affordance and only softens the fill. An alert you have */
+/* already seen is still an alert that is still happening.                   */
+#civic .cv-notice[data-read] {
+  background: color-mix(in srgb, var(--ts-terracotta10) 45%, var(--ts-surface));
+}
+
+#civic .cv-notice-sm {
+  width: 268px;
+}
+
+#civic .cv-state {
+  flex: none;
+}
+
+/* ── 2. the takeover ────────────────────────────────────────────────────── */
+
+/*
+ * The ground is ink, not red. A red field with red type on it is a poster, not
+ * a screen you can read at arm's length in the dark. Brick appears once, as the
+ * band, and the single action is cream so it wins on contrast without spending
+ * the alarm colour twice.
+ */
+#civic .cv-over {
+  display: flex;
+  flex-direction: column;
+  min-height: 100%;
+  background: var(--ts-ink);
+  color: var(--ts-cream);
+}
+
+#civic .cv-over-band {
+  display: flex;
+  align-items: center;
+  gap: var(--ts-space-3);
+  padding: var(--ts-space-6) var(--ts-space-5) var(--ts-space-4);
+  background: var(--ts-brick);
+  color: var(--ts-cream);
+}
+
+#civic .cv-over[data-sev='urgent'] .cv-over-band {
+  background: var(--ts-gold);
+  color: var(--ts-gold-text);
+}
+
+#civic .cv-over-band-t {
+  font-family: var(--ts-font-mono);
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+#civic .cv-over-band-x {
+  margin-left: auto;
+  font-family: var(--ts-font-mono);
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  opacity: 0.85;
+}
+
+#civic .cv-over-body {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  padding: var(--ts-space-6) var(--ts-space-5) var(--ts-space-5);
+}
+
+/* Serif at 33px. This is the "legible at arm's length" number. */
+#civic .cv-over-head {
+  font-family: var(--ts-font-serif);
+  font-size: 33px;
+  font-weight: 500;
+  line-height: 1.08;
+  letter-spacing: -0.02em;
+  margin: 0 0 var(--ts-space-3);
+}
+
+#civic .cv-over-lede {
+  margin: 0 0 var(--ts-space-5);
+  font-size: var(--ts-text-body);
+  line-height: 1.45;
+  color: var(--ts-cream-muted);
+}
+
+#civic .cv-over-do {
+  margin: 0 0 var(--ts-space-6);
+  padding: 0;
+  list-style: none;
+  border-top: 1px solid var(--ts-cream14);
+}
+
+#civic .cv-over-do li {
+  padding: var(--ts-space-3) 0 var(--ts-space-3) var(--ts-space-5);
+  border-bottom: 1px solid var(--ts-cream14);
+  font-size: 15.5px;
+  line-height: 1.35;
+  position: relative;
+}
+
+#civic .cv-over-do li::before {
+  content: '';
+  position: absolute;
+  left: 2px;
+  top: 20px;
+  width: 6px;
+  height: 6px;
+  border-radius: var(--ts-radius-full);
+  background: var(--ts-cream);
+  opacity: 0.5;
+}
+
+/* One action. A second button here is a decision, and a decision is a delay. */
+#civic .cv-over-act {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 56px;
+  border-radius: var(--ts-radius-button);
+  background: var(--ts-cream);
+  color: var(--ts-ink);
+  font-family: var(--ts-font-sans);
+  font-size: var(--ts-text-body);
+  font-weight: 700;
+  text-decoration: none;
+}
+
+#civic .cv-over-act:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 3px var(--ts-ink), 0 0 0 6px var(--ts-cream);
+}
+
+#civic .cv-over-src {
+  margin-top: var(--ts-space-5);
+}
+
+#civic .cv-over-src-a {
+  font-family: var(--ts-font-serif);
+  font-size: 15px;
+  font-weight: 500;
+  color: var(--ts-cream);
+}
+
+#civic .cv-over-src-b {
+  margin-top: 2px;
+  font-family: var(--ts-font-sans);
+  font-size: 12px;
+  line-height: 1.45;
+  color: var(--ts-cream-muted);
+}
+
+#civic .cv-over-src-b i {
+  color: var(--ts-cream14);
+}
+
+/*
+ * The dismissal. Not an X, not in the corner, not above the fold: it sits after
+ * the instruction and after the source, and it is a full sentence.
+ */
+#civic .cv-over-hide {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--ts-space-2);
+  width: 100%;
+  min-height: 48px;
+  margin-top: auto;
+  padding-top: var(--ts-space-6);
+  border: 0;
+  background: none;
+  color: var(--ts-cream-muted);
+  font-family: var(--ts-font-sans);
+  font-size: 13.5px;
+  cursor: pointer;
+}
+
+#civic .cv-over-hide:hover {
+  color: var(--ts-cream);
+}
+
+/* ── the what-happened screen ───────────────────────────────────────────── */
+
+#civic .cv-after-screen {
+  padding: var(--ts-space-5) var(--ts-space-4);
+}
+
+#civic .cv-after-top {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  margin-bottom: var(--ts-space-3);
+}
+
+#civic .cv-after-date {
+  font-family: var(--ts-font-serif);
+  font-size: 14.5px;
+  color: var(--ts-ink45);
+}
+
+#civic .cv-after {
+  padding: var(--ts-space-4);
+  border: 1px solid var(--ts-hairline);
+  border-radius: var(--ts-radius-sheet);
+  background: var(--ts-surface);
+}
+
+#civic .cv-after-h {
+  display: flex;
+  align-items: center;
+  gap: var(--ts-space-2);
+  font-size: var(--ts-text-label);
+  font-weight: 500;
+  line-height: 1.3;
+}
+
+#civic .cv-after-h .i-sm {
+  color: var(--ts-sage);
+}
+
+#civic .cv-after-p {
+  margin: var(--ts-space-2) 0 var(--ts-space-4);
+  font-size: var(--ts-text-caption);
+  line-height: 1.5;
+  color: var(--ts-ink60);
+}
+
+#civic .cv-after-foot {
+  display: flex;
+  align-items: center;
+  gap: var(--ts-space-3);
+  flex-wrap: wrap;
+  margin-top: var(--ts-space-4);
+}
+
+#civic .cv-after-age {
+  font-size: 11.5px;
+  color: var(--ts-ink45);
+}
+
+#civic .cv-after-rest {
+  margin-top: var(--ts-space-6);
+}
+
+#civic .cv-quiet-row {
+  display: flex;
+  align-items: center;
+  gap: var(--ts-space-2);
+  padding: var(--ts-space-3) 0;
+  border-bottom: 1px solid var(--ts-ink13);
+  font-family: var(--ts-font-serif);
+  font-size: 15px;
+  color: var(--ts-ink60);
+}
+
+#civic .cv-quiet-row .i-sm {
+  color: var(--ts-ink26);
+}
+
+/* ── the timeline ───────────────────────────────────────────────────────── */
+
+#civic .cv-tl {
+  margin: 0;
+  padding: 0 0 0 var(--ts-space-4);
+  list-style: none;
+  border-left: 1px solid var(--ts-ink13);
+}
+
+#civic .cv-tl li {
+  position: relative;
+  padding: 0 0 var(--ts-space-3);
+}
+
+#civic .cv-tl li::before {
+  content: '';
+  position: absolute;
+  left: calc(var(--ts-space-4) * -1 - 4px);
+  top: 6px;
+  width: 7px;
+  height: 7px;
+  border-radius: var(--ts-radius-full);
+  background: var(--ts-ink26);
+}
+
+#civic .cv-tl li[data-now]::before {
+  background: var(--ts-terracotta);
+}
+
+#civic .cv-tl-t {
+  display: block;
+  font-family: var(--ts-font-mono);
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ts-ink45);
+}
+
+#civic .cv-tl-b {
+  display: block;
+  font-size: var(--ts-text-caption);
+  line-height: 1.4;
+}
+
+#civic .cv-tl-light li {
+  padding-bottom: var(--ts-space-3);
+}
+
+/* ── the mark problem ───────────────────────────────────────────────────── */
+
+#civic .cv-mark-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: var(--ts-space-5);
+}
+
+#civic .cv-mark-case {
+  border: 1px solid var(--ts-ink13);
+  border-radius: var(--ts-radius-card);
+  padding: var(--ts-space-4);
+  background: var(--ts-surface);
+}
+
+#civic .cv-mark-case[data-verdict='yes'] {
+  border-color: var(--ts-sage);
+}
+
+#civic .cv-mark-cap {
+  display: flex;
+  align-items: center;
+  gap: var(--ts-space-2);
+  flex-wrap: wrap;
+}
+
+#civic .cv-verdict {
+  font-family: var(--ts-font-mono);
+  font-size: 9px;
+  font-weight: 500;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  padding: 3px 6px;
+  border-radius: var(--ts-radius-chip);
+}
+
+#civic .cv-verdict[data-v='no'] {
+  background: var(--ts-ink08);
+  color: var(--ts-ink60);
+}
+
+#civic .cv-verdict[data-v='yes'] {
+  background: var(--ts-sage14);
+  color: var(--ts-sage);
+}
+
+/* The stage is a scrap of the takeover, so the comparison is in context. */
+#civic .cv-mark-stage {
+  display: flex;
+  align-items: center;
+  min-height: 96px;
+  margin: var(--ts-space-3) 0;
+  padding: var(--ts-space-4);
+  border-radius: var(--ts-radius-input);
+  background: var(--ts-ink);
+  border-top: 4px solid var(--ts-brick);
+}
+
+#civic .cv-mark-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--ts-space-2);
+  padding: 5px var(--ts-space-3) 5px 5px;
+  border-radius: var(--ts-radius-chip);
+  background: var(--ts-cream14);
+  color: var(--ts-cream);
+  font-family: var(--ts-font-sans);
+  font-size: 12px;
+}
+
+/* Placeholder for the real mark: a cream tile with the terracotta bubble. */
+#civic .cv-mark-tile {
+  position: relative;
+  width: 22px;
+  height: 22px;
+  flex: none;
+  border-radius: 6px;
+  background: var(--ts-cream);
+}
+
+#civic .cv-mark-tile::before {
+  content: '';
+  position: absolute;
+  inset: 5px 4px 7px;
+  border-radius: 3px 3px 3px 0;
+  background: var(--ts-navy);
+}
+
+#civic .cv-mark-tile::after {
+  content: '';
+  position: absolute;
+  right: 3px;
+  top: 3px;
+  width: 9px;
+  height: 8px;
+  border-radius: 4px 4px 4px 0;
+  background: var(--ts-terracotta);
+}
+
+#civic .cv-mark-tile[data-mono] {
+  background: none;
+}
+
+#civic .cv-mark-tile[data-mono]::before,
+#civic .cv-mark-tile[data-mono]::after {
+  background: var(--ts-cream);
+}
+
+#civic .cv-mark-src {
+  margin: 0;
+}
+
+#civic .cv-mark-note {
+  margin: 0;
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--ts-ink60);
+}
+
+/* ── 3. the alert bar ───────────────────────────────────────────────────── */
+
+#civic .cv-bar-stack {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: var(--ts-space-6);
+  align-items: start;
+}
+
+#civic .cv-frame {
+  overflow: hidden;
+  border: 1px solid var(--ts-ink13);
+  border-radius: var(--ts-radius-card);
+  background: var(--ts-cream);
+}
+
+#civic .cv-frame-quiet {
+  padding: var(--ts-space-3);
+}
+
+/*
+ * The bar pushes content, it never covers it. Anything that covers the page in
+ * a four-day situation gets swiped away reflexively.
+ */
+#civic .cv-bar {
+  display: flex;
+  align-items: center;
+  gap: var(--ts-space-2);
+  min-height: 44px;
+  padding: 0 var(--ts-space-2) 0 var(--ts-space-3);
+  background: var(--ts-gold14);
+  border-bottom: 1px solid color-mix(in srgb, var(--ts-gold) 40%, transparent);
+}
+
+#civic .cv-bar[data-sev='urgent'] {
+  background: var(--ts-terracotta10);
+  border-bottom-color: var(--ts-terracotta);
+}
+
+#civic .cv-bar[data-open] {
+  display: block;
+  padding-bottom: var(--ts-space-4);
+}
+
+#civic .cv-bar-top {
+  display: flex;
+  align-items: center;
+  gap: var(--ts-space-2);
+  min-height: 44px;
+}
+
+#civic .cv-bar-dot {
+  flex: none;
+  width: 8px;
+  height: 8px;
+  border-radius: var(--ts-radius-full);
+  background: var(--ts-gold);
+}
+
+#civic .cv-bar[data-sev='urgent'] .cv-bar-dot {
+  background: var(--ts-terracotta);
+}
+
+#civic .cv-bar-sev {
+  flex: none;
+  font-family: var(--ts-font-mono);
+  font-size: 9.5px;
+  font-weight: 500;
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+  color: var(--ts-gold-text);
+}
+
+#civic .cv-bar[data-sev='urgent'] .cv-bar-sev {
+  color: var(--ts-terracotta-hover);
+}
+
+#civic .cv-bar-t {
+  min-width: 0;
+  flex: 1;
+  font-size: 13.5px;
+  font-weight: 500;
+  line-height: 1.25;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+#civic .cv-bar-more {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 44px;
+  height: 44px;
+  border: 0;
+  background: none;
+  color: var(--ts-ink60);
+  cursor: pointer;
+}
+
+#civic .cv-bar-more:focus-visible {
+  outline: none;
+  border-radius: var(--ts-radius-button);
+  box-shadow: var(--ts-focus);
+}
+
+#civic .cv-bar-open {
+  padding-left: var(--ts-space-4);
+  padding-right: var(--ts-space-2);
+}
+
+#civic .cv-bar-open p {
+  margin: 0 0 var(--ts-space-3);
+  font-size: 13.5px;
+  line-height: 1.5;
+  color: var(--ts-ink60);
+}
+
+#civic .cv-bar-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--ts-space-2);
+  margin-bottom: var(--ts-space-3);
+}
+
+#civic .cv-prov-onbar {
+  gap: var(--ts-space-2);
+}
+
+#civic .cv-bar-mute {
+  border: 0;
+  padding: 0;
+  background: none;
+  color: var(--ts-ink60);
+  font-family: var(--ts-font-sans);
+  font-size: 11.5px;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  cursor: pointer;
+}
+
+/* A stand-in for whatever page the bar is sitting on top of. */
+#civic .cv-frame-under {
+  padding: var(--ts-space-4);
+}
+
+#civic .cv-fake-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  padding-bottom: var(--ts-space-3);
+  margin-bottom: var(--ts-space-3);
+  border-bottom: 1px solid var(--ts-ink13);
+  font-family: var(--ts-font-serif);
+  font-size: 16px;
+  font-weight: 600;
+}
+
+#civic .cv-fake-town {
+  font-family: var(--ts-font-mono);
+  font-size: 9.5px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  font-weight: 400;
+  color: var(--ts-ink45);
+}
+
+#civic .cv-fake-line {
+  height: 9px;
+  border-radius: var(--ts-radius-full);
+  background: var(--ts-stone);
+  margin-bottom: var(--ts-space-2);
+}
+
+#civic .cv-fake-card {
+  height: 62px;
+  border-radius: var(--ts-radius-card);
+  background: linear-gradient(160deg, var(--ts-stone), var(--ts-cream));
+  border: 1px solid var(--ts-ink13);
+  margin-top: var(--ts-space-3);
+}
+
+/* ── 4. city hall ───────────────────────────────────────────────────────── */
+
+#civic .cv-hall {
+  padding: var(--ts-space-5) var(--ts-space-4) var(--ts-space-8);
+}
+
+#civic .cv-hall-head h3 {
+  font-family: var(--ts-font-serif);
+  font-size: var(--ts-text-h1);
+  font-weight: 500;
+  letter-spacing: -0.02em;
+  margin: var(--ts-space-1) 0 var(--ts-space-2);
+}
+
+#civic .cv-hall-head p {
+  margin: 0;
+  font-size: var(--ts-text-caption);
+  line-height: 1.5;
+  color: var(--ts-ink60);
+}
+
+#civic .cv-hall-sec {
+  margin-top: var(--ts-space-6);
+}
+
+#civic .cv-hall-sec .cv-eyebrow {
+  display: block;
+  margin-bottom: var(--ts-space-1);
+}
+
+/* .cv-list / .cv-meet ship as .civic-list / .civic-row. */
+#civic .cv-list {
+  display: flex;
+  flex-direction: column;
+}
+
+#civic .cv-list > * + * {
+  border-top: 1px solid var(--ts-ink13);
+}
+
+#civic .cv-list-plate {
+  padding: 0 var(--ts-space-4);
+  border: 1px solid var(--ts-ink13);
+  border-radius: var(--ts-radius-card);
+  background: var(--ts-surface);
+}
+
+#civic .cv-meet {
+  display: flex;
+  align-items: center;
+  gap: var(--ts-space-3);
+  min-height: 56px;
+  padding: var(--ts-space-3) 2px;
+  color: inherit;
+  text-decoration: none;
+}
+
+#civic .cv-meet:hover .cv-meet-body-t {
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+#civic .cv-meet:focus-visible {
+  outline: none;
+  border-radius: var(--ts-radius-input);
+  box-shadow: var(--ts-focus);
+}
+
+/*
+ * A date block, not an icon. Every row in this list is a meeting, so an icon
+ * would repeat down the column saying nothing; the date is what differs.
+ */
+#civic .cv-meet-date {
+  display: grid;
+  place-items: center;
+  align-content: center;
+  flex: none;
+  width: 40px;
+  height: 42px;
+  border-radius: var(--ts-radius-input);
+  background: var(--ts-navy10);
+  color: var(--ts-navy);
+}
+
+#civic .cv-meet-date b {
+  font-family: var(--ts-font-sans);
+  font-size: 17px;
+  font-weight: 500;
+  line-height: 1;
+}
+
+#civic .cv-meet-date span {
+  font-family: var(--ts-font-mono);
+  font-size: 9px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  margin-top: 2px;
+}
+
+#civic .cv-meet-body {
+  min-width: 0;
+  flex: 1;
+}
+
+#civic .cv-meet-body-t {
+  display: block;
+  font-size: var(--ts-text-caption);
+  font-weight: 500;
+  line-height: 1.3;
+}
+
+#civic .cv-meet-body-d {
+  display: block;
+  font-family: var(--ts-font-serif);
+  font-size: 14.5px;
+  color: var(--ts-ink45);
+  margin-top: 2px;
+}
+
+#civic .cv-meet-go {
+  flex: none;
+  color: var(--ts-ink26);
+}
+
+/* Tonight is the one row per screen that gets a marker. */
+#civic .cv-meet[data-state='tonight'] .cv-meet-date {
+  background: var(--ts-terracotta);
+  color: var(--ts-surface);
+}
+
+#civic .cv-meet[data-state='off'] .cv-meet-date {
+  background: var(--ts-ink08);
+  color: var(--ts-ink45);
+}
+
+#civic .cv-meet[data-state='off'] .cv-meet-body-t {
+  text-decoration: line-through;
+  text-decoration-thickness: 1px;
+  color: var(--ts-ink60);
+}
+
+#civic .cv-meet[data-state='done'] .cv-meet-date {
+  background: var(--ts-ink08);
+  color: var(--ts-ink60);
+}
+
+#civic .cv-meet .cv-prov {
+  margin-top: var(--ts-space-1);
+}
+
+#civic .cv-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+  margin-top: 6px;
+}
+
+#civic .cv-tag {
+  font-family: var(--ts-font-sans);
+  font-size: 11px;
+  font-weight: 500;
+  padding: 2px var(--ts-space-2);
+  border-radius: var(--ts-radius-chip);
+  background: var(--ts-ink08);
+  color: var(--ts-ink60);
+}
+
+#civic .cv-tag[data-t='ready'] {
+  background: var(--ts-sage14);
+  color: var(--ts-sage);
+}
+
+#civic .cv-tag[data-t='comment'] {
+  background: var(--ts-terracotta14);
+  color: var(--ts-terracotta-hover);
+}
+
+#civic .cv-tag[data-t='wait'] {
+  background: transparent;
+  border: 1px dashed var(--ts-ink26);
+  color: var(--ts-ink60);
+}
+
+#civic .cv-tag[data-t='off'] {
+  background: var(--ts-ink08);
+  color: var(--ts-ink45);
+}
+
+/* ── 5. the agenda reader ───────────────────────────────────────────────── */
+
+#civic .cv-doc-head,
+#civic .cv-vote-head,
+#civic .cv-ballot-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--ts-space-5);
+  flex-wrap: wrap;
+  margin-bottom: var(--ts-space-4);
+}
+
+#civic .cv-doc-title,
+#civic .cv-vote-t,
+#civic .cv-ballot-t {
+  font-family: var(--ts-font-serif);
+  font-size: var(--ts-text-h2);
+  font-weight: 500;
+  letter-spacing: -0.015em;
+  line-height: 1.15;
+  margin: var(--ts-space-1) 0 var(--ts-space-1);
+  max-width: 40ch;
+}
+
+#civic .cv-doc-sub,
+#civic .cv-ballot-sub {
+  font-size: var(--ts-text-caption);
+  color: var(--ts-ink60);
+}
+
+#civic .cv-doc-actions {
+  display: flex;
+  gap: var(--ts-space-2);
+  flex-wrap: wrap;
+}
+
+/*
+ * The honesty note. It is the app's own voice, so it takes terracotta, not the
+ * gold that belongs to the city's own notices.
+ */
+#civic .cv-honest {
+  display: flex;
+  gap: var(--ts-space-3);
+  padding: var(--ts-space-3) var(--ts-space-4);
+  margin-bottom: var(--ts-space-5);
+  border-radius: var(--ts-radius-input);
+  background: var(--ts-terracotta-tint);
+  border: 1px solid var(--ts-terracotta14);
+}
+
+#civic .cv-honest .i-sm {
+  flex: none;
+  margin-top: 3px;
+  color: var(--ts-terracotta);
+}
+
+#civic .cv-honest p {
+  margin: 0;
+  font-size: 13.5px;
+  line-height: 1.5;
+  color: var(--ts-ink60);
+  max-width: 76ch;
+}
+
+#civic .cv-honest b {
+  color: var(--ts-ink);
+  font-weight: 500;
+}
+
+#civic .cv-items {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  border-top: 1px solid var(--ts-ink13);
+}
+
+#civic .cv-item {
+  display: flex;
+  gap: var(--ts-space-4);
+  padding: var(--ts-space-4) 0;
+  border-bottom: 1px solid var(--ts-ink13);
+}
+
+#civic .cv-item-n {
+  flex: none;
+  width: 24px;
+  font-family: var(--ts-font-mono);
+  font-size: 12px;
+  color: var(--ts-ink45);
+  padding-top: 2px;
+}
+
+#civic .cv-item-b {
+  min-width: 0;
+  flex: 1;
+}
+
+/* Serif for the item, because it is the city's prose, not our UI. */
+#civic .cv-item-t {
+  font-family: var(--ts-font-serif);
+  font-size: var(--ts-text-body);
+  line-height: 1.35;
+  max-width: 62ch;
+}
+
+#civic .cv-item[data-kind='skip'] .cv-item-t {
+  color: var(--ts-ink60);
+}
+
+#civic .cv-item-meta {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--ts-space-2);
+  margin-top: var(--ts-space-2);
+}
+
+/* The ordinance reference is a citation key, which is exactly what mono is for. */
+#civic .cv-ref {
+  font-family: var(--ts-font-mono);
+  font-size: 10.5px;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 3px var(--ts-space-2);
+  border-radius: 5px;
+  background: var(--ts-navy10);
+  color: var(--ts-navy);
+}
+
+#civic .cv-item-stage {
+  font-family: var(--ts-font-sans);
+  font-size: 11.5px;
+  font-weight: 500;
+  color: var(--ts-ink60);
+  padding: 3px var(--ts-space-2);
+  border: 1px solid var(--ts-ink13);
+  border-radius: var(--ts-radius-chip);
+}
+
+#civic .cv-item-tagline {
+  font-size: 12.5px;
+  color: var(--ts-ink60);
+}
+
+#civic .cv-item-atts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--ts-space-2);
+  margin-top: var(--ts-space-3);
+}
+
+#civic .cv-att {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 32px;
+  padding: 0 var(--ts-space-3);
+  border: 1px solid var(--ts-hairline);
+  border-radius: var(--ts-radius-chip);
+  background: var(--ts-surface);
+  color: var(--ts-ink60);
+  font-family: var(--ts-font-sans);
+  font-size: 12.5px;
+  text-decoration: none;
+}
+
+#civic .cv-att:hover {
+  border-color: var(--ts-ink26);
+  color: var(--ts-ink);
+}
+
+#civic .cv-att .i-sm {
+  color: var(--ts-ink26);
+}
+
+#civic .cv-item-flag {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: var(--ts-space-3);
+  padding: 4px var(--ts-space-3);
+  border-radius: var(--ts-radius-chip);
+  background: var(--ts-terracotta14);
+  color: var(--ts-terracotta-hover);
+  font-size: 12px;
+  font-weight: 500;
+}
+
+#civic .cv-items-more {
+  margin-top: var(--ts-space-4);
+}
+
+/* ── item detail and the plain-terms panel ──────────────────────────────── */
+
+#civic .cv-detail-head {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--ts-space-2);
+}
+
+#civic .cv-detail-when {
+  font-size: 12.5px;
+  color: var(--ts-ink60);
+}
+
+#civic .cv-detail-t {
+  font-family: var(--ts-font-serif);
+  font-size: var(--ts-text-h2);
+  font-weight: 500;
+  line-height: 1.2;
+  letter-spacing: -0.015em;
+  margin: var(--ts-space-3) 0 var(--ts-space-5);
+  max-width: 52ch;
+}
+
+#civic .cv-plain {
+  padding: var(--ts-space-4) var(--ts-space-5);
+  border-radius: var(--ts-radius-card);
+  background: var(--ts-surface);
+  border: 1px solid var(--ts-hairline);
+}
+
+#civic .cv-plain-h {
+  display: flex;
+  align-items: center;
+  gap: var(--ts-space-2);
+  font-family: var(--ts-font-mono);
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ts-ink60);
+  padding-bottom: var(--ts-space-3);
+  border-bottom: 1px solid var(--ts-ink13);
+}
+
+#civic .cv-plain-h .i-sm {
+  color: var(--ts-gold-text);
+}
+
+#civic .cv-plain-how {
+  margin-left: auto;
+  border: 0;
+  padding: 0;
+  background: none;
+  font-family: var(--ts-font-sans);
+  font-size: 11.5px;
+  letter-spacing: normal;
+  text-transform: none;
+  color: var(--ts-ink45);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  cursor: pointer;
+}
+
+#civic .cv-plain-l {
+  margin: var(--ts-space-3) 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+#civic .cv-plain-l li {
+  position: relative;
+  padding: var(--ts-space-2) 0 var(--ts-space-2) var(--ts-space-5);
+  font-size: var(--ts-text-label);
+  line-height: 1.5;
+  max-width: 72ch;
+}
+
+#civic .cv-plain-l li::before {
+  content: '';
+  position: absolute;
+  left: 4px;
+  top: 15px;
+  width: 5px;
+  height: 5px;
+  border-radius: var(--ts-radius-full);
+  background: var(--ts-ink26);
+}
+
+/* Every line names a page. A line with no citation cannot ship. */
+#civic .cv-cite {
+  display: inline-block;
+  margin-left: 6px;
+  font-family: var(--ts-font-mono);
+  font-size: 10px;
+  letter-spacing: 0.06em;
+  color: var(--ts-navy60);
+  border-bottom: 1px dotted var(--ts-navy40);
+  cursor: pointer;
+}
+
+#civic .cv-plain-rule {
+  margin: var(--ts-space-3) 0 0;
+  padding-top: var(--ts-space-3);
+  border-top: 1px solid var(--ts-ink13);
+  font-size: 12.5px;
+  line-height: 1.55;
+  color: var(--ts-ink45);
+  max-width: 78ch;
+}
+
+#civic .cv-detail-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: var(--ts-space-6);
+  margin-top: var(--ts-space-5);
+}
+
+#civic .cv-detail-col {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--ts-space-2);
+}
+
+#civic .cv-detail-col .cv-eyebrow {
+  margin-bottom: var(--ts-space-1);
+}
+
+/* ── 6. the vote record ─────────────────────────────────────────────────── */
+
+#civic .cv-outcome {
+  padding: var(--ts-space-4) var(--ts-space-5);
+  border-radius: var(--ts-radius-card);
+  background: var(--ts-surface);
+  border: 1px solid var(--ts-hairline);
+  margin-bottom: var(--ts-space-5);
+}
+
+/* The word first, the numbers second. A tally alone does not say which way. */
+#civic .cv-outcome-line {
+  display: flex;
+  align-items: baseline;
+  gap: var(--ts-space-3);
+  flex-wrap: wrap;
+}
+
+#civic .cv-outcome-word {
+  font-family: var(--ts-font-serif);
+  font-size: 25px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+
+#civic .cv-outcome-tally {
+  font-family: var(--ts-font-sans);
+  font-size: 14px;
+  color: var(--ts-ink60);
+}
+
+#civic .cv-tally-bar {
+  display: flex;
+  gap: 2px;
+  height: 8px;
+  margin: var(--ts-space-3) 0 var(--ts-space-2);
+  border-radius: var(--ts-radius-full);
+  overflow: hidden;
+}
+
+#civic .cv-tally-seg[data-v='for'] {
+  background: var(--ts-sage);
+}
+
+/*
+ * Against is stone, not red. Red would make a routine 5 to 2 look like a fight,
+ * and in this system red is spoken for.
+ */
+#civic .cv-tally-seg[data-v='against'] {
+  background: var(--ts-navy40);
+}
+
+#civic .cv-tally-seg[data-v='absent'] {
+  background: var(--ts-stone);
+}
+
+#civic .cv-tally-seg[data-v='none'] {
+  background: repeating-linear-gradient(
+    -45deg,
+    var(--ts-stone) 0 4px,
+    var(--ts-cream) 4px 8px
+  );
+}
+
+#civic .cv-outcome-note {
+  font-size: 12.5px;
+  line-height: 1.5;
+  color: var(--ts-ink60);
+  max-width: 70ch;
+}
+
+#civic .cv-roll {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: var(--ts-space-5);
+}
+
+#civic .cv-roll-cap {
+  display: flex;
+  align-items: center;
+  gap: var(--ts-space-2);
+  padding-bottom: var(--ts-space-2);
+  border-bottom: 1px solid var(--ts-ink13);
+  font-family: var(--ts-font-mono);
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+  color: var(--ts-ink60);
+}
+
+#civic .cv-roll-cap b {
+  margin-left: auto;
+  color: var(--ts-ink);
+}
+
+#civic .cv-roll-cap-2 {
+  margin-top: var(--ts-space-5);
+}
+
+#civic .cv-roll-row {
+  display: flex;
+  align-items: center;
+  gap: var(--ts-space-3);
+  min-height: 44px;
+  padding: var(--ts-space-2) 0;
+  border-bottom: 1px solid var(--ts-ink13);
+}
+
+#civic .cv-roll-row[data-quiet] .cv-roll-name {
+  color: var(--ts-ink60);
+}
+
+/* Sage fill for the affirmative, a hollow ring for the negative, plus words. */
+#civic .cv-vdot {
+  flex: none;
+  width: 10px;
+  height: 10px;
+  border-radius: var(--ts-radius-full);
+  border: 2px solid var(--ts-ink26);
+}
+
+#civic .cv-vdot[data-v='for'] {
+  background: var(--ts-sage);
+  border-color: var(--ts-sage);
+}
+
+#civic .cv-vdot[data-v='against'] {
+  background: transparent;
+  border-color: var(--ts-navy60);
+}
+
+#civic .cv-vdot[data-v='absent'] {
+  background: var(--ts-stone);
+  border-color: var(--ts-stone);
+}
+
+#civic .cv-roll-name {
+  font-family: var(--ts-font-serif);
+  font-size: var(--ts-text-body);
+  line-height: 1.2;
+}
+
+/* The ward is printed on every row: it is how a resident finds themselves. */
+#civic .cv-roll-ward {
+  font-family: var(--ts-font-mono);
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ts-ink45);
+}
+
+#civic .cv-roll-vote {
+  margin-left: auto;
+  font-family: var(--ts-font-sans);
+  font-size: 12.5px;
+  font-weight: 500;
+  color: var(--ts-ink60);
+}
+
+#civic .cv-vote-quotes {
+  margin-top: var(--ts-space-6);
+}
+
+#civic .cv-quote {
+  margin: var(--ts-space-2) 0 0;
+  padding-left: var(--ts-space-4);
+  border-left: 2px solid var(--ts-ink13);
+  font-family: var(--ts-font-serif);
+  font-size: var(--ts-text-body);
+  line-height: 1.45;
+  color: var(--ts-ink);
+  max-width: 68ch;
+}
+
+#civic .cv-quote cite {
+  display: block;
+  margin-top: var(--ts-space-2);
+  font-family: var(--ts-font-mono);
+  font-size: 10px;
+  font-style: normal;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ts-ink45);
+}
+
+#civic .cv-vote-note {
+  margin: var(--ts-space-3) 0 0;
+  font-size: 12.5px;
+  line-height: 1.55;
+  color: var(--ts-ink45);
+  max-width: 76ch;
+}
+
+#civic .cv-vote-card {
+  flex: 1 1 280px;
+  min-width: 260px;
+  max-width: 400px;
+  padding: var(--ts-space-4);
+  border: 1px solid var(--ts-ink13);
+  border-radius: var(--ts-radius-card);
+  background: var(--ts-surface);
+}
+
+#civic .cv-vote-card .cv-outcome-line {
+  margin-top: var(--ts-space-1);
+}
+
+#civic .cv-vote-card .cv-outcome-word {
+  font-size: 21px;
+}
+
+#civic .cv-outcome-line[data-none] .cv-outcome-word {
+  color: var(--ts-ink60);
+}
+
+#civic .cv-vote-mini {
+  margin: 0 0 var(--ts-space-3);
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--ts-ink60);
+}
+
+/* ── 7. public comment ──────────────────────────────────────────────────── */
+
+#civic .cv-comment {
+  flex: 1 1 380px;
+  min-width: 300px;
+  max-width: 520px;
+  padding: var(--ts-space-5);
+  border-radius: var(--ts-radius-card);
+  border: 1px solid var(--ts-hairline);
+  background: var(--ts-surface);
+}
+
+#civic .cv-comment[data-state='open'] {
+  border-color: var(--ts-terracotta);
+}
+
+#civic .cv-comment-h {
+  display: flex;
+  align-items: center;
+  gap: var(--ts-space-2);
+  font-family: var(--ts-font-mono);
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+  color: var(--ts-ink45);
+}
+
+#civic .cv-comment[data-state='open'] .cv-comment-h {
+  color: var(--ts-terracotta-hover);
+}
+
+#civic .cv-comment-clock {
+  margin-left: auto;
+  font-family: var(--ts-font-sans);
+  font-size: 11.5px;
+  letter-spacing: normal;
+  text-transform: none;
+  color: var(--ts-ink60);
+}
+
+#civic .cv-comment-t {
+  font-family: var(--ts-font-serif);
+  font-size: var(--ts-text-card-title);
+  font-weight: 500;
+  line-height: 1.25;
+  margin: var(--ts-space-3) 0 var(--ts-space-4);
+}
+
+#civic .cv-comment-dl {
+  display: flex;
+  gap: var(--ts-space-3);
+  padding: var(--ts-space-2) 0;
+  border-top: 1px solid var(--ts-ink13);
+}
+
+#civic .cv-dl-k {
+  flex: none;
+  width: 116px;
+  font-family: var(--ts-font-mono);
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ts-ink45);
+  padding-top: 3px;
+}
+
+#civic .cv-dl-v {
+  font-size: 13.5px;
+  line-height: 1.45;
+  font-weight: 500;
+}
+
+#civic .cv-how {
+  margin: var(--ts-space-4) 0;
+  padding-left: var(--ts-space-5);
+  font-size: 13.5px;
+  line-height: 1.55;
+  color: var(--ts-ink60);
+}
+
+#civic .cv-how li {
+  padding: 3px 0;
+}
+
+#civic .cv-comment-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--ts-space-2);
+  margin-bottom: var(--ts-space-3);
+}
+
+#civic .cv-comment-body {
+  font-size: 13.5px;
+  line-height: 1.5;
+  color: var(--ts-ink60);
+  margin: 0 0 var(--ts-space-4);
+}
+
+#civic .cv-comment-note {
+  margin: 0 0 var(--ts-space-3);
+  font-size: 12.5px;
+  line-height: 1.55;
+  color: var(--ts-ink45);
+}
+
+/* ── 8. service status ──────────────────────────────────────────────────── */
+
+#civic .cv-svc {
+  padding: var(--ts-space-4);
+  border: 1px solid var(--ts-hairline);
+  border-radius: var(--ts-radius-card);
+  background: var(--ts-surface);
+}
+
+#civic .cv-svc-h {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  margin-bottom: var(--ts-space-2);
+}
+
+#civic .cv-svc-count {
+  font-family: var(--ts-font-serif);
+  font-size: 14.5px;
+  color: var(--ts-ink45);
+}
+
+#civic .cv-svc-row {
+  display: flex;
+  gap: var(--ts-space-3);
+  padding: var(--ts-space-3) 0;
+}
+
+#civic .cv-svc-icon {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 28px;
+  height: 28px;
+  border-radius: 9px;
+  background: var(--ts-navy10);
+  color: var(--ts-navy);
+}
+
+#civic .cv-svc-t {
+  display: block;
+  font-size: var(--ts-text-caption);
+  font-weight: 500;
+  line-height: 1.3;
+}
+
+#civic .cv-svc-d {
+  display: block;
+  font-family: var(--ts-font-serif);
+  font-size: 14.5px;
+  line-height: 1.35;
+  color: var(--ts-ink45);
+  margin-top: 2px;
+}
+
+#civic .cv-svc-row .cv-prov {
+  margin-top: var(--ts-space-2);
+}
+
+/*
+ * Normal is one sentence and one dot. A grid of green ticks is a machine
+ * reporting on itself; this is a neighbour telling you nothing is wrong.
+ */
+#civic .cv-normal {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--ts-space-3);
+  padding: var(--ts-space-3) 0;
+}
+
+#civic .cv-normal p {
+  margin: 0;
+  font-family: var(--ts-font-serif);
+  font-size: var(--ts-text-body);
+  line-height: 1.4;
+  color: var(--ts-ink60);
+}
+
+#civic .cv-normal-dot {
+  flex: none;
+  width: 8px;
+  height: 8px;
+  margin-top: 8px;
+  border-radius: var(--ts-radius-full);
+  background: var(--ts-sage);
+}
+
+#civic .cv-normal-inline {
+  padding: 0;
+}
+
+#civic .cv-normal-inline p {
+  font-size: var(--ts-text-label);
+}
+
+#civic .cv-normal-more {
+  margin-top: var(--ts-space-2);
+}
+
+/* ── 9. alert subscriptions ─────────────────────────────────────────────── */
+
+#civic .cv-subs {
+  padding: var(--ts-space-5) var(--ts-space-4) var(--ts-space-8);
+}
+
+#civic .cv-subs-head h3 {
+  font-family: var(--ts-font-serif);
+  font-size: var(--ts-text-h1);
+  font-weight: 500;
+  letter-spacing: -0.02em;
+  margin: var(--ts-space-1) 0 var(--ts-space-2);
+}
+
+#civic .cv-subs-head p {
+  margin: 0;
+  font-size: var(--ts-text-caption);
+  line-height: 1.5;
+  color: var(--ts-ink60);
+}
+
+#civic .cv-subs-block {
+  margin-top: var(--ts-space-6);
+}
+
+#civic .cv-subs-label {
+  font-family: var(--ts-font-mono);
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ts-ink45);
+  margin-bottom: var(--ts-space-2);
+}
+
+/* The threshold is the ladder again, so the setting and the ladder are one. */
+#civic .cv-thresh {
+  display: flex;
+  flex-direction: column;
+  border: 1px solid var(--ts-hairline);
+  border-radius: var(--ts-radius-card);
+  background: var(--ts-surface);
+  overflow: hidden;
+}
+
+#civic .cv-thresh-opt {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--ts-space-3);
+  width: 100%;
+  min-height: 56px;
+  padding: var(--ts-space-3) var(--ts-space-4);
+  border: 0;
+  border-bottom: 1px solid var(--ts-ink13);
+  background: none;
+  text-align: left;
+  font-family: var(--ts-font-sans);
+  color: inherit;
+  cursor: pointer;
+}
+
+#civic .cv-thresh-opt:last-child {
+  border-bottom: 0;
+}
+
+#civic .cv-thresh-opt:focus-visible {
+  outline: none;
+  box-shadow: var(--ts-focus);
+}
+
+#civic .cv-thresh-opt[aria-checked='true'],
+#civic .cv-thresh-opt[data-on] {
+  background: var(--ts-terracotta-tint);
+}
+
+#civic .cv-thresh-dot {
+  flex: none;
+  width: 14px;
+  height: 14px;
+  margin-top: 3px;
+  border-radius: var(--ts-radius-full);
+  border: 2px solid var(--ts-ink26);
+}
+
+#civic .cv-thresh-opt[aria-checked='true'] .cv-thresh-dot,
+#civic .cv-thresh-opt[data-on] .cv-thresh-dot {
+  border-color: var(--ts-terracotta);
+  background: var(--ts-terracotta);
+  box-shadow: inset 0 0 0 3px var(--ts-surface);
+}
+
+#civic .cv-thresh-b {
+  min-width: 0;
+  flex: 1;
+}
+
+#civic .cv-thresh-b b {
+  display: block;
+  font-size: var(--ts-text-label);
+  font-weight: 500;
+  line-height: 1.25;
+}
+
+/* The frequency is the only honest way to describe what is being agreed to. */
+#civic .cv-thresh-b i {
+  display: block;
+  padding: 0;
+  margin-top: 2px;
+  font-style: normal;
+  font-size: 12.5px;
+  line-height: 1.4;
+  color: var(--ts-ink60);
+}
+
+#civic .cv-thresh-b em {
+  display: inline-block;
+  margin-top: var(--ts-space-2);
+  padding: 2px var(--ts-space-2);
+  border-radius: var(--ts-radius-chip);
+  background: var(--ts-terracotta14);
+  color: var(--ts-terracotta-hover);
+  font-family: var(--ts-font-mono);
+  font-size: 9px;
+  font-style: normal;
+  font-weight: 500;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+#civic .cv-thresh-plate {
+  max-width: 420px;
+}
+
+#civic .cv-quiet {
+  padding: var(--ts-space-4);
+  border: 1px solid var(--ts-hairline);
+  border-radius: var(--ts-radius-card);
+  background: var(--ts-surface);
+}
+
+#civic .cv-quiet-h {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--ts-space-3);
+  font-size: var(--ts-text-label);
+  font-weight: 500;
+}
+
+#civic .cv-quiet-p {
+  margin: var(--ts-space-3) 0 0;
+  font-size: 12.5px;
+  line-height: 1.55;
+  color: var(--ts-ink60);
+}
+
+#civic .cv-quiet-p b {
+  color: var(--ts-ink);
+  font-weight: 500;
+}
+
+#civic .cv-topics {
+  border: 1px solid var(--ts-hairline);
+  border-radius: var(--ts-radius-card);
+  background: var(--ts-surface);
+  overflow: hidden;
+}
+
+#civic .cv-topic {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--ts-space-3);
+  min-height: 48px;
+  padding: var(--ts-space-2) var(--ts-space-4);
+  border-bottom: 1px solid var(--ts-ink13);
+  font-size: var(--ts-text-caption);
+}
+
+#civic .cv-topic:last-child {
+  border-bottom: 0;
+}
+
+#civic .cv-switch {
+  flex: none;
+  position: relative;
+  width: 46px;
+  height: 28px;
+  border: 0;
+  border-radius: var(--ts-radius-full);
+  background: var(--ts-ink26);
+  cursor: pointer;
+  transition: background var(--ts-dur-2) var(--ts-ease);
+}
+
+#civic .cv-switch span {
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: 22px;
+  height: 22px;
+  border-radius: var(--ts-radius-full);
+  background: var(--ts-surface);
+  box-shadow: var(--ts-shadow-flat);
+  transition: transform var(--ts-dur-2) var(--ts-ease);
+}
+
+#civic .cv-switch[aria-checked='true'] {
+  background: var(--ts-sage);
+}
+
+#civic .cv-switch[aria-checked='true'] span {
+  transform: translateX(18px);
+}
+
+#civic .cv-switch:focus-visible,
+#civic .cv-switch[data-focus] {
+  outline: none;
+  box-shadow: var(--ts-focus);
+}
+
+/* Locked on renders as a switch so the state stays legible, and is explained. */
+#civic .cv-switch:disabled {
+  background: var(--ts-sage14);
+  cursor: not-allowed;
+}
+
+#civic .cv-switch:disabled span {
+  background: var(--ts-sage-light);
+}
+
+#civic .cv-switch-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--ts-space-5);
+  align-items: center;
+  padding: var(--ts-space-4);
+  border: 1px solid var(--ts-ink13);
+  border-radius: var(--ts-radius-card);
+  background: var(--ts-surface);
+}
+
+#civic .cv-switch-row > span {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--ts-space-2);
+  font-size: 12.5px;
+  color: var(--ts-ink60);
+}
+
+#civic .cv-subs-foot {
+  display: flex;
+  gap: var(--ts-space-3);
+  margin-top: var(--ts-space-6);
+  padding-top: var(--ts-space-4);
+  border-top: 1px solid var(--ts-ink13);
+}
+
+#civic .cv-subs-foot .i-sm {
+  flex: none;
+  margin-top: 2px;
+  color: var(--ts-sage);
+}
+
+#civic .cv-subs-foot p {
+  margin: 0;
+  font-size: 12.5px;
+  line-height: 1.55;
+  color: var(--ts-ink60);
+}
+
+/* ── 10. lock screen and push specimens ─────────────────────────────────── */
+
+#civic .cv-lock {
+  min-height: 100%;
+  padding: var(--ts-space-8) var(--ts-space-3) var(--ts-space-5);
+  background:
+    radial-gradient(
+      120% 80% at 50% 0%,
+      color-mix(in srgb, var(--ts-navy) 70%, var(--ts-ink)) 0%,
+      var(--ts-ink) 62%
+    );
+}
+
+#civic .cv-lock-clock {
+  text-align: center;
+  color: var(--ts-cream);
+  margin-bottom: var(--ts-space-8);
+}
+
+#civic .cv-lock-time {
+  font-family: var(--ts-font-sans);
+  font-size: 68px;
+  font-weight: 400;
+  line-height: 1;
+  letter-spacing: -0.02em;
+}
+
+#civic .cv-lock-date {
+  margin-top: var(--ts-space-2);
+  font-size: 14px;
+  color: var(--ts-cream-muted);
+}
+
+#civic .cv-lock-stack {
+  display: grid;
+  gap: var(--ts-space-2);
+}
+
+/*
+ * A push is a frosted tile on the OS wallpaper, so it cannot carry a tint the
+ * way an in-app card does. Severity rides the left edge and the header word.
+ */
+#civic .cv-push {
+  position: relative;
+  padding: var(--ts-space-3) var(--ts-space-4);
+  border-radius: var(--ts-radius-card);
+  background: color-mix(in srgb, var(--ts-cream) 16%, transparent);
+  border: 1px solid var(--ts-cream14);
+  color: var(--ts-cream);
+  overflow: hidden;
+}
+
+#civic .cv-push::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 3px;
+  background: var(--ts-gold);
+}
+
+#civic .cv-push[data-sev='urgent']::before {
+  background: var(--ts-terracotta);
+}
+
+#civic .cv-push[data-sev='emergency']::before {
+  background: var(--ts-brick);
+  width: 4px;
+}
+
+#civic .cv-push-h {
+  display: flex;
+  align-items: center;
+  gap: var(--ts-space-2);
+  margin-bottom: 5px;
+}
+
+#civic .cv-push-app {
+  font-family: var(--ts-font-mono);
+  font-size: 9.5px;
+  font-weight: 500;
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+  color: var(--ts-cream-muted);
+}
+
+#civic .cv-push-sev {
+  font-family: var(--ts-font-mono);
+  font-size: 9.5px;
+  font-weight: 500;
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+  padding: 2px 6px;
+  border-radius: var(--ts-radius-chip);
+  background: var(--ts-cream14);
+  color: var(--ts-cream);
+}
+
+#civic .cv-push[data-sev='emergency'] .cv-push-sev {
+  background: var(--ts-brick);
+  color: var(--ts-cream);
+}
+
+#civic .cv-push-time {
+  margin-left: auto;
+  font-size: 11px;
+  color: var(--ts-cream-muted);
+}
+
+/* The title is complete on its own, because for most people it is all there is. */
+#civic .cv-push-t {
+  font-size: 15px;
+  font-weight: 700;
+  line-height: 1.25;
+}
+
+#civic .cv-push-b {
+  margin-top: 2px;
+  font-size: 13.5px;
+  line-height: 1.4;
+  color: var(--ts-cream-muted);
+}
+
+#civic .cv-push-crit {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  margin-top: var(--ts-space-2);
+  font-family: var(--ts-font-mono);
+  font-size: 9.5px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ts-cream-muted);
+}
+
+#civic .cv-push-plate {
+  padding: var(--ts-space-5);
+  border-radius: var(--ts-radius-card);
+  background: var(--ts-ink);
+}
+
+#civic .cv-anat {
+  margin: var(--ts-space-5) 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+#civic .cv-anat li {
+  padding: var(--ts-space-2) 0;
+  border-top: 1px solid var(--ts-cream14);
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--ts-cream-muted);
+}
+
+#civic .cv-anat b {
+  color: var(--ts-cream);
+  font-weight: 500;
+}
+
+#civic .cv-noship {
+  display: flex;
+  gap: var(--ts-space-3);
+  padding: var(--ts-space-4);
+  border: 1px dashed var(--ts-ink26);
+  border-radius: var(--ts-radius-card);
+  font-size: 13px;
+  line-height: 1.55;
+  color: var(--ts-ink60);
+}
+
+#civic .cv-noship .i-sm {
+  flex: none;
+  margin-top: 3px;
+  color: var(--ts-ink26);
+}
+
+#civic .cv-noship b {
+  color: var(--ts-ink);
+  font-weight: 500;
+}
+
+/* ── 11. elections ──────────────────────────────────────────────────────── */
+
+#civic .cv-ballot-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: var(--ts-space-8);
+}
+
+#civic .cv-race {
+  padding: var(--ts-space-4) 0;
+  border-bottom: 1px solid var(--ts-ink13);
+}
+
+#civic .cv-race-t {
+  font-family: var(--ts-font-serif);
+  font-size: var(--ts-text-card-title);
+  font-weight: 500;
+  line-height: 1.25;
+}
+
+#civic .cv-race-n {
+  font-family: var(--ts-font-mono);
+  font-size: 9.5px;
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+  color: var(--ts-ink45);
+  margin-top: 3px;
+}
+
+#civic .cv-cands {
+  margin-top: var(--ts-space-3);
+  border-top: 1px solid var(--ts-ink13);
+}
+
+/*
+ * Every candidate row is identical: same weight, same one link, alphabetical.
+ * There is deliberately no editorial surface left to be biased with.
+ */
+#civic .cv-cand {
+  display: flex;
+  align-items: center;
+  gap: var(--ts-space-3);
+  min-height: 48px;
+  padding: var(--ts-space-2) 0;
+  border-bottom: 1px solid var(--ts-ink13);
+}
+
+#civic .cv-cand-n {
+  font-family: var(--ts-font-serif);
+  font-size: var(--ts-text-body);
+}
+
+#civic .cv-cand-i {
+  font-family: var(--ts-font-mono);
+  font-size: 9.5px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ts-ink45);
+  padding: 2px 6px;
+  border: 1px solid var(--ts-ink13);
+  border-radius: var(--ts-radius-chip);
+}
+
+#civic .cv-cand-l {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  margin-left: auto;
+  color: var(--ts-ink45);
+  font-family: var(--ts-font-sans);
+  font-size: 12px;
+  text-decoration: none;
+}
+
+#civic .cv-cand-l:hover {
+  color: var(--ts-ink);
+}
+
+#civic .cv-cand-l .i-sm {
+  width: 13px;
+  height: 13px;
+}
+
+#civic .cv-race-f,
+#civic .cv-measure-f {
+  margin-top: var(--ts-space-2);
+  font-size: 12px;
+  line-height: 1.5;
+  color: var(--ts-ink45);
+  max-width: 56ch;
+}
+
+#civic .cv-measure {
+  margin-top: var(--ts-space-3);
+}
+
+/* The ballot title, word for word. A paraphrase of it is an argument about it. */
+#civic .cv-measure-q {
+  padding: var(--ts-space-3) var(--ts-space-4);
+  border-left: 2px solid var(--ts-navy40);
+  background: var(--ts-navy10);
+  border-radius: 0 var(--ts-radius-input) var(--ts-radius-input) 0;
+  font-family: var(--ts-font-serif);
+  font-size: var(--ts-text-body);
+  line-height: 1.4;
+}
+
+#civic .cv-measure .cv-ghost {
+  margin-top: var(--ts-space-3);
+}
+
+#civic .cv-vote-info {
+  border-top: 1px solid var(--ts-ink13);
+  margin-bottom: var(--ts-space-5);
+}
+
+#civic .cv-vi-row {
+  display: flex;
+  gap: var(--ts-space-3);
+  padding: var(--ts-space-3) 0;
+  border-bottom: 1px solid var(--ts-ink13);
+}
+
+#civic .cv-vi-k {
+  flex: none;
+  width: 106px;
+  font-family: var(--ts-font-mono);
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ts-ink45);
+  padding-top: 3px;
+}
+
+#civic .cv-vi-v {
+  font-size: 13.5px;
+  line-height: 1.45;
+}
+
+#civic .cv-official {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--ts-space-2);
+  margin-bottom: var(--ts-space-5);
+}
+
+#civic .cv-official .cv-eyebrow {
+  margin-bottom: var(--ts-space-1);
+}
+
+#civic .cv-neutral {
+  display: flex;
+  gap: var(--ts-space-3);
+  padding: var(--ts-space-4);
+  border: 1px solid var(--ts-ink13);
+  border-radius: var(--ts-radius-card);
+  background: var(--ts-surface);
+  font-size: 13px;
+  line-height: 1.55;
+  color: var(--ts-ink60);
+}
+
+#civic .cv-neutral .i-sm {
+  flex: none;
+  margin-top: 3px;
+  color: var(--ts-navy60);
+}
+
+#civic .cv-neutral b {
+  display: block;
+  margin-bottom: var(--ts-space-2);
+  color: var(--ts-ink);
+  font-weight: 500;
+}
+
+#civic .cv-neutral ul {
+  margin: 0 0 var(--ts-space-2);
+  padding-left: var(--ts-space-4);
+}
+
+#civic .cv-neutral li {
+  padding: 2px 0;
+}
+
+#civic .cv-neutral span {
+  display: block;
+  padding-top: var(--ts-space-2);
+  border-top: 1px solid var(--ts-ink13);
+  color: var(--ts-ink45);
+  font-size: 12.5px;
+}
+
+/* ── 12. provenance states ──────────────────────────────────────────────── */
+
+#civic .cv-prov-set {
+  display: grid;
+  gap: var(--ts-space-4);
+  padding: var(--ts-space-4);
+  border: 1px solid var(--ts-ink13);
+  border-radius: var(--ts-radius-card);
+  background: var(--ts-surface);
+}
+
+#civic .cv-prov-case + .cv-prov-case {
+  padding-top: var(--ts-space-4);
+  border-top: 1px solid var(--ts-ink13);
+}
+
+#civic .cv-stale-card {
+  padding: var(--ts-space-4);
+  border: 1px solid var(--ts-ink13);
+  border-radius: var(--ts-radius-card);
+  background: var(--ts-surface);
+}
+
+#civic .cv-stale-h {
+  display: flex;
+  align-items: center;
+  gap: var(--ts-space-2);
+  font-size: var(--ts-text-label);
+  font-weight: 500;
+  line-height: 1.3;
+}
+
+#civic .cv-stale-h .i-sm {
+  color: var(--ts-ink45);
+}
+
+#civic .cv-stale-card p {
+  margin: var(--ts-space-2) 0 var(--ts-space-4);
+  font-size: var(--ts-text-caption);
+  line-height: 1.5;
+  color: var(--ts-ink60);
+}
+
+#civic .cv-stale-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--ts-space-2);
+}
+
+/* ── responsive ─────────────────────────────────────────────────────────── */
+
+@media (max-width: 900px) {
+  #civic .cv-roll,
+  #civic .cv-ballot-grid,
+  #civic .cv-detail-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}

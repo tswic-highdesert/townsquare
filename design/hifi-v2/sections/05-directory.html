@@ -1,0 +1,1372 @@
+<section class="sheet-section" id="directory">
+  <svg style="display:none" aria-hidden="true">
+    <symbol id="i-dr-shuffle" viewBox="0 0 24 24">
+      <path d="M3 6h3.5l3 3.7M3 18h3.5l10.2-12H21M14.6 14.6 16.7 18H21"/>
+      <path d="M18.4 3.2 21.2 6l-2.8 2.8M18.4 15.2 21.2 18l-2.8 2.8"/>
+    </symbol>
+    <symbol id="i-dr-paw" viewBox="0 0 24 24">
+      <circle cx="6.2" cy="10" r="1.9"/><circle cx="10.3" cy="6.8" r="2"/>
+      <circle cx="15.4" cy="6.8" r="2"/><circle cx="19" cy="10.6" r="1.9"/>
+      <path d="M16.7 15c-1-1.6-2.6-2.7-4.4-2.7S8.9 13.4 7.9 15c-.9 1.4-2.2 2.3-2.2 4 0 1.6 1.3 2.8 2.9 2.8 1.3 0 2.4-.6 3.7-.6s2.4.6 3.7.6c1.6 0 2.9-1.2 2.9-2.8 0-1.7-1.3-2.6-2.2-4Z"/>
+    </symbol>
+    <symbol id="i-dr-ticket-stub" viewBox="0 0 24 24">
+      <path d="M4 7a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v2.2a2.4 2.4 0 0 0 0 4.8V17a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2v-2.9a2.4 2.4 0 0 0 0-4.8Z"/>
+      <path d="M14 5v14"/>
+    </symbol>
+  </svg>
+
+  <div class="sec-head"><span class="sec-num">05</span><h2>The directory and discovery</h2></div>
+  <p class="sec-note">Seven hundred and forty one real Russellville listings, plus the town's
+  articles and podcasts. This is built for stumbling onto a place you did not know to look
+  for. Search exists, but it is the fallback, not the product. Everything here obeys one
+  honesty rule: we only assert a business is open when we actually parsed its hours.</p>
+
+  <!-- ─────────────────────────────────────────────────────────  1. DISCOVERY HOME -->
+
+  <div class="spec">
+    <div class="spec-label">The discovery home <em>ordered from "I have no idea what I want" down to "I know exactly what I want", so search lands last and quietest</em></div>
+    <div class="spec-row">
+      <div class="phone">
+        <div class="phone-cap">Directory, discovery home</div>
+        <div class="phone-screen">
+          <div class="dr-home">
+
+            <header class="dr-topbar">
+              <div>
+                <div class="dr-eyebrow">The directory</div>
+                <div class="dr-topbar-town">Russellville</div>
+              </div>
+              <button class="dr-topbar-search" type="button" aria-label="Search the directory">
+                <svg class="i i-sm" aria-hidden="true"><use href="#i-search"/></svg>
+              </button>
+            </header>
+
+            <div class="dr-intro">
+              <p>There are 741 places in this directory. You have probably been to about
+              thirty of them.</p>
+              <p class="dr-intro-sub">Fifty two were added by neighbours this year. Nine are
+              inside other businesses.</p>
+            </div>
+
+            <button class="dr-serendipity" type="button">
+              <span class="dr-serendipity-icon">
+                <svg class="i i-lg" aria-hidden="true"><use href="#i-dr-shuffle"/></svg>
+              </span>
+              <span class="dr-serendipity-text">
+                <span class="dr-serendipity-title">Show me something</span>
+                <span class="dr-serendipity-sub">One place at a time, drawn at random</span>
+              </span>
+              <svg class="i i-sm dr-serendipity-go" aria-hidden="true"><use href="#i-arrow-right"/></svg>
+            </button>
+
+            <section class="dr-block">
+              <div class="dr-block-head">
+                <h3 class="dr-block-title">Open right now near you</h3>
+                <span class="dr-block-count">31 places</span>
+              </div>
+              <p class="dr-block-note">Distance is worked out on your phone. We never receive
+              your location.</p>
+              <div class="dr-rail" role="list">
+                <article class="dr-mini" role="listitem">
+                  <div class="dr-photo dr-mini-photo" data-shot="counter" role="img" aria-label="Photo of Natural State Coffee Roasters"></div>
+                  <div class="dr-mini-body">
+                    <span class="dr-mini-name">Natural State Coffee Roasters</span>
+                    <span class="dr-open" data-state="open"><span class="dr-open-dot"></span>Until 6 PM</span>
+                    <span class="dr-mini-dist">0.4 mi</span>
+                  </div>
+                </article>
+                <article class="dr-mini" role="listitem">
+                  <div class="dr-photo dr-mini-photo" data-shot="shelf" role="img" aria-label="Photo of Dog Ear Books"></div>
+                  <div class="dr-mini-body">
+                    <span class="dr-mini-name">Dog Ear Books</span>
+                    <span class="dr-open" data-state="soon"><span class="dr-open-dot"></span>Closes in 40 min</span>
+                    <span class="dr-mini-dist">0.6 mi</span>
+                  </div>
+                </article>
+                <article class="dr-mini" role="listitem">
+                  <div class="dr-photo dr-mini-photo" data-shot="plate" role="img" aria-label="Photo of CJ's Butcher Boy Burgers"></div>
+                  <div class="dr-mini-body">
+                    <span class="dr-mini-name">CJ's Butcher Boy Burgers</span>
+                    <span class="dr-open" data-state="open"><span class="dr-open-dot"></span>Until 9 PM</span>
+                    <span class="dr-mini-dist">1.2 mi</span>
+                  </div>
+                </article>
+                <article class="dr-mini" role="listitem">
+                  <div class="dr-photo dr-mini-photo" data-shot="none" role="img" aria-label="No photo for Cooper Music">
+                    <svg class="i i-lg" aria-hidden="true"><use href="#i-music"/></svg>
+                  </div>
+                  <div class="dr-mini-body">
+                    <span class="dr-mini-name">Cooper Music</span>
+                    <span class="dr-open" data-state="open"><span class="dr-open-dot"></span>Until 5:30 PM</span>
+                    <span class="dr-mini-dist">1.0 mi</span>
+                  </div>
+                </article>
+              </div>
+            </section>
+
+            <section class="dr-block">
+              <div class="dr-block-head">
+                <h3 class="dr-block-title">Browse by what it is</h3>
+                <a class="dr-block-link" href="#directory">All 16<svg class="i i-sm" aria-hidden="true"><use href="#i-chevron-right"/></svg></a>
+              </div>
+              <div class="dr-tiles dr-tiles-home">
+                <a class="dr-tile" href="#directory" data-tone="eat">
+                  <span class="dr-tile-art" aria-hidden="true"></span>
+                  <svg class="i i-lg dr-tile-icon" aria-hidden="true"><use href="#i-utensils"/></svg>
+                  <span class="dr-tile-name">Eat and drink</span>
+                  <span class="dr-tile-count">86</span>
+                </a>
+                <a class="dr-tile" href="#directory" data-tone="shop">
+                  <span class="dr-tile-art" aria-hidden="true"></span>
+                  <svg class="i i-lg dr-tile-icon" aria-hidden="true"><use href="#i-storefront"/></svg>
+                  <span class="dr-tile-name">Shop</span>
+                  <span class="dr-tile-count">112</span>
+                </a>
+                <a class="dr-tile" href="#directory" data-tone="auto">
+                  <span class="dr-tile-art" aria-hidden="true"></span>
+                  <svg class="i i-lg dr-tile-icon" aria-hidden="true"><use href="#i-wrench"/></svg>
+                  <span class="dr-tile-name">Auto and repair</span>
+                  <span class="dr-tile-count">74</span>
+                </a>
+                <a class="dr-tile" href="#directory" data-tone="out">
+                  <span class="dr-tile-art" aria-hidden="true"></span>
+                  <svg class="i i-lg dr-tile-icon" aria-hidden="true"><use href="#i-tree"/></svg>
+                  <span class="dr-tile-name">Outdoors and parks</span>
+                  <span class="dr-tile-count">19</span>
+                </a>
+              </div>
+            </section>
+
+            <section class="dr-block">
+              <div class="dr-block-head">
+                <h3 class="dr-block-title">Collections</h3>
+                <span class="dr-block-count">Made by residents</span>
+              </div>
+              <div class="dr-rail" role="list">
+                <a class="dr-coll" href="#directory" role="listitem">
+                  <span class="dr-coll-cover" aria-hidden="true">
+                    <span class="dr-photo" data-shot="plate"></span>
+                    <span class="dr-photo" data-shot="awning"></span>
+                    <span class="dr-photo" data-shot="counter"></span>
+                  </span>
+                  <span class="dr-coll-title">Where to eat after a Tech game</span>
+                  <span class="dr-coll-meta">11 places · @hollyb</span>
+                </a>
+                <a class="dr-coll" href="#directory" role="listitem">
+                  <span class="dr-coll-cover" aria-hidden="true">
+                    <span class="dr-photo" data-shot="masonry"></span>
+                    <span class="dr-photo" data-shot="shelf"></span>
+                    <span class="dr-photo" data-shot="lot"></span>
+                  </span>
+                  <span class="dr-coll-title">Open on Sunday</span>
+                  <span class="dr-coll-meta">24 places · Town Square</span>
+                </a>
+              </div>
+            </section>
+
+            <section class="dr-block dr-block-last">
+              <div class="dr-block-head">
+                <h3 class="dr-block-title">Looking for something specific?</h3>
+              </div>
+              <button class="dr-searchfield" type="button">
+                <svg class="i i-sm" aria-hidden="true"><use href="#i-search"/></svg>
+                <span>Search 741 places, articles and podcasts</span>
+              </button>
+            </section>
+
+          </div>
+        </div>
+      </div>
+
+      <div class="dr-annot">
+        <p class="why">Everything above the fold answers <b>"show me something"</b>. The
+        random draw sits first because it is the only control that requires no vocabulary
+        at all. Then <b>open right now</b>, which is the one thing on the screen with a
+        deadline attached to it and therefore the most likely to turn into a trip. Then the
+        deliberate browse, then the curated collections, and only then a search field, set
+        as a quiet outline button under a heading that names it as the exception. A search
+        box in the header would tell every arriving resident that the correct way to use
+        this is to already know the answer, which is exactly the behaviour the directory is
+        supposed to replace.</p>
+        <p class="why">The intro is set in the serif and says a true, specific number. It is
+        the only place on the screen where the product speaks in its own voice, and it is
+        doing a job: <b>741 and you have been to thirty</b> reframes the directory as a
+        place with a lot left in it rather than a lookup table you have already exhausted.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ─────────────────────────────────────────────────────────  2. STUMBLE -->
+
+  <div class="spec">
+    <div class="spec-label">The stumble surface <em>a card you flip, not a lever you pull: no spin, no reveal delay, no counter climbing</em></div>
+    <div class="spec-row">
+      <div class="phone">
+        <div class="phone-cap">Directory, show me something</div>
+        <div class="phone-screen">
+          <div class="dr-stumble" id="dr-stumble">
+            <div class="dr-stumble-chrome">
+              <button class="dr-stumble-close" type="button" aria-label="Close">
+                <svg class="i i-sm" aria-hidden="true"><use href="#i-close"/></svg>
+              </button>
+              <span class="dr-eyebrow dr-stumble-eyebrow">Drawn from 741</span>
+              <button class="dr-stumble-save" type="button" aria-label="Save this place">
+                <svg class="i i-sm" aria-hidden="true"><use href="#i-bookmark"/></svg>
+              </button>
+            </div>
+
+            <div class="dr-stumble-deck">
+              <span class="dr-stumble-edge" aria-hidden="true"></span>
+              <span class="dr-stumble-edge" aria-hidden="true"></span>
+
+              <article class="dr-stumble-card" data-on>
+                <div class="dr-photo dr-stumble-photo" data-shot="shelf" role="img" aria-label="Photo of Dog Ear Books"></div>
+                <div class="dr-stumble-body">
+                  <span class="dr-stumble-cat">Book store · 0.6 mi · W 2nd St</span>
+                  <h3 class="dr-stumble-name">Dog Ear Books</h3>
+                  <p class="dr-stumble-line">Used and new, two rooms deep, with a coffee bar
+                  called Retro Roasts wedged into the back corner.</p>
+                  <span class="dr-open" data-state="soon"><span class="dr-open-dot"></span>Closes in 40 minutes</span>
+                </div>
+              </article>
+
+              <article class="dr-stumble-card">
+                <div class="dr-photo dr-stumble-photo" data-shot="lot" role="img" aria-label="Photo of Jackalope Cycling"></div>
+                <div class="dr-stumble-body">
+                  <span class="dr-stumble-cat">Bicycle shop · 0.7 mi · N Commerce Ave</span>
+                  <h3 class="dr-stumble-name">Jackalope Cycling</h3>
+                  <p class="dr-stumble-line">Repairs while you wait, and the only place in
+                  town that will true a wheel on a Saturday.</p>
+                  <span class="dr-open" data-state="open"><span class="dr-open-dot"></span>Open until 5 PM</span>
+                </div>
+              </article>
+
+              <article class="dr-stumble-card">
+                <div class="dr-photo dr-stumble-photo" data-shot="river" role="img" aria-label="Photo of Old Post Road Park"></div>
+                <div class="dr-stumble-body">
+                  <span class="dr-stumble-cat">Park · 3.1 mi · Lock and Dam Rd</span>
+                  <h3 class="dr-stumble-name">Old Post Road Park</h3>
+                  <p class="dr-stumble-line">Camping and a boat ramp on the Dardanelle side,
+                  under the dam. Best light in town at about seven.</p>
+                  <span class="dr-open" data-state="unknown">
+                    <svg class="i i-sm" aria-hidden="true"><use href="#i-clock"/></svg>
+                    Hours not confirmed
+                  </span>
+                </div>
+              </article>
+            </div>
+
+            <div class="dr-stumble-actions">
+              <button class="dr-btn dr-btn-quiet" type="button">
+                <svg class="i i-sm" aria-hidden="true"><use href="#i-map-pin"/></svg>
+                See the listing
+              </button>
+              <button class="dr-btn dr-btn-primary dr-stumble-next" type="button" id="dr-stumble-next">
+                <svg class="i i-sm" aria-hidden="true"><use href="#i-dr-shuffle"/></svg>
+                Show me another
+              </button>
+            </div>
+            <p class="dr-stumble-foot">Nothing is being scored and nothing is being saved
+            unless you save it.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="dr-annot">
+        <p class="why">A slot machine withholds. It spins, it delays, it implies you might
+        win. This does the opposite: the next card is <b>already there</b>, visible as two
+        edges behind the current one, and the swap is a 160&thinsp;ms cross of opacity and a
+        0.6&thinsp;deg rotation, the physical feeling of a card being turned over on a table.
+        There is no counter climbing, no streak, no "you've seen 12 today". The footer says
+        plainly that nothing is being scored, because the moment this surface starts keeping
+        score it becomes a game about the app rather than a way to find a bike shop.</p>
+        <p class="why">Two actions, weighted. <b>Show me another</b> is the primary because
+        the honest expectation is that most draws are a miss, and a miss should cost one
+        tap. Seeing the full listing is the quieter button, which is the correct ranking:
+        stumbling is cheap, committing is deliberate.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ─────────────────────────────────────────────────────────  3. OPEN NOW -->
+
+  <div class="spec">
+    <div class="spec-label">The open-now system <em>unknown is the load-bearing state: 184 of our 741 listings have no hours we could read</em></div>
+    <div class="plate">
+      <div class="dr-states">
+        <div class="dr-state">
+          <span class="dr-open" data-state="open"><span class="dr-open-dot"></span>Open until 9 PM</span>
+          <span class="dr-state-note">Solid dot, sage. We parsed a full week and the clock is inside it.</span>
+        </div>
+        <div class="dr-state">
+          <span class="dr-open" data-state="soon"><span class="dr-open-dot"></span>Closes in 40 minutes</span>
+          <span class="dr-state-note">Dot with a halo, gold. Fires inside the last hour, never earlier.</span>
+        </div>
+        <div class="dr-state">
+          <span class="dr-open" data-state="later"><span class="dr-open-dot"></span>Opens 10 AM today</span>
+          <span class="dr-state-note">Half dot. Closed right now but the same day is still in play.</span>
+        </div>
+        <div class="dr-state">
+          <span class="dr-open" data-state="closed"><span class="dr-open-dot"></span>Closed, opens 7 AM Thursday</span>
+          <span class="dr-state-note">Hollow dot, ink. Always names the next opening, never just "Closed".</span>
+        </div>
+        <div class="dr-state">
+          <span class="dr-open" data-state="unknown">
+            <svg class="i i-sm" aria-hidden="true"><use href="#i-clock"/></svg>
+            Tue to Sat, hours vary
+          </span>
+          <span class="dr-state-note">No dot at all. A clock and the raw string exactly as we hold it.</span>
+        </div>
+        <div class="dr-state">
+          <span class="dr-open" data-state="unknown">
+            <svg class="i i-sm" aria-hidden="true"><use href="#i-clock"/></svg>
+            Hours not confirmed
+          </span>
+          <span class="dr-state-note">And when there is no string either, we say that instead of guessing.</span>
+        </div>
+      </div>
+      <div class="dr-states-legend">
+        <div class="dr-legend-row">
+          <span class="dr-legend-k">Why no dot for unknown</span>
+          <span class="dr-legend-v">A grey dot beside a green dot reads as "closed". Unknown is not
+          closed, it is us not knowing, and those two facts must not share a shape. Dropping the
+          dot and swapping in a clock changes the glyph, not just the colour.</span>
+        </div>
+        <div class="dr-legend-row">
+          <span class="dr-legend-k">Colour is never alone</span>
+          <span class="dr-legend-v">Four distinct dot shapes, one icon substitution, and a text
+          string that states the fact in words. Desaturate the whole sheet and every state is
+          still readable.</span>
+        </div>
+        <div class="dr-legend-row">
+          <span class="dr-legend-k">The rule in one line</span>
+          <span class="dr-legend-v"><code>openNow</code> is nullable. Null renders the clock branch.
+          Nothing downstream is allowed to coerce null to false.</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ─────────────────────────────────────────────────────────  4. BROWSE CARD -->
+
+  <div class="spec">
+    <div class="spec-label">Browse card <em>drawn twice: once with everything, once with the ragged data we actually hold</em></div>
+    <div class="spec-grid">
+      <article class="dr-card">
+        <div class="dr-photo dr-card-photo" data-shot="awning" role="img" aria-label="Photo of B Street Bakery and Deli">
+          <button class="dr-card-save" type="button" aria-label="Save B Street Bakery and Deli">
+            <svg class="i i-sm" aria-hidden="true"><use href="#i-bookmark"/></svg>
+          </button>
+        </div>
+        <div class="dr-card-body">
+          <h3 class="dr-card-name">B Street Bakery and Deli</h3>
+          <p class="dr-card-cat">Bakery and lunch counter · 311 W B St</p>
+          <div class="dr-card-foot">
+            <span class="dr-open" data-state="open"><span class="dr-open-dot"></span>Open until 2 PM</span>
+            <span class="dr-card-dist">0.5 mi</span>
+          </div>
+        </div>
+      </article>
+
+      <article class="dr-card">
+        <div class="dr-photo dr-card-photo" data-shot="none" role="img" aria-label="No photo for Barefield's Auto Salvage">
+          <svg class="i i-xl" aria-hidden="true"><use href="#i-wrench"/></svg>
+          <span class="dr-photo-cap">No photo yet</span>
+          <button class="dr-card-save" type="button" aria-label="Save Barefield's Auto Salvage">
+            <svg class="i i-sm" aria-hidden="true"><use href="#i-bookmark"/></svg>
+          </button>
+        </div>
+        <div class="dr-card-body">
+          <h3 class="dr-card-name">Barefield's Auto Salvage</h3>
+          <p class="dr-card-cat">Used auto parts · 3316 Bernice Ave</p>
+          <div class="dr-card-foot">
+            <span class="dr-open" data-state="unknown">
+              <svg class="i i-sm" aria-hidden="true"><use href="#i-clock"/></svg>
+              Mon to Fri, hours vary
+            </span>
+            <span class="dr-card-dist">2.4 mi</span>
+          </div>
+        </div>
+      </article>
+
+      <article class="dr-card" data-hover>
+        <div class="dr-photo dr-card-photo" data-shot="counter" role="img" aria-label="Photo of Retro Roasts">
+          <button class="dr-card-save" type="button" aria-label="Save Retro Roasts">
+            <svg class="i i-sm" aria-hidden="true"><use href="#i-bookmark-filled"/></svg>
+          </button>
+        </div>
+        <div class="dr-card-body">
+          <h3 class="dr-card-name">Retro Roasts</h3>
+          <p class="dr-card-cat">Coffee shop · Inside Dog Ear Books</p>
+          <div class="dr-card-foot">
+            <span class="dr-open" data-state="soon"><span class="dr-open-dot"></span>Closes in 25 min</span>
+            <span class="dr-card-dist">0.6 mi</span>
+          </div>
+        </div>
+      </article>
+    </div>
+    <p class="why">The photo is a fixed 16:10 so a grid of 700 never goes ragged, and the
+    no-photo case fills that exact box with the category glyph on stone rather than
+    collapsing the card. A shorter card beside a taller one would make <b>"we have no
+    picture of this place"</b> look like a layout bug instead of a fact. Save is a separate
+    44&thinsp;px target sitting on the photo, not part of the card link, because saving and
+    opening are different intentions.</p>
+  </div>
+
+  <!-- ─────────────────────────────────────────────────────────  5. LIST ROW -->
+
+  <div class="spec">
+    <div class="spec-label">List row, the density workhorse <em>72 px per listing, so a category of 112 is nine screens rather than thirty</em></div>
+    <div class="spec-row">
+      <div class="dr-rows-wrap">
+        <ul class="dr-rows">
+          <li><a class="dr-row" href="#directory">
+            <span class="dr-photo dr-row-thumb" data-shot="plate" aria-hidden="true"></span>
+            <span class="dr-row-body">
+              <span class="dr-row-name">La Huerta Mexican Restaurant</span>
+              <span class="dr-row-cat">Mexican restaurant · 1510 E Main St</span>
+            </span>
+            <span class="dr-row-right">
+              <span class="dr-open" data-state="open"><span class="dr-open-dot"></span>Until 9 PM</span>
+              <span class="dr-row-dist">1.1 mi</span>
+            </span>
+            <svg class="i i-sm dr-row-go" aria-hidden="true"><use href="#i-chevron-right"/></svg>
+          </a></li>
+
+          <li><a class="dr-row" href="#directory">
+            <span class="dr-photo dr-row-thumb" data-shot="awning" aria-hidden="true"></span>
+            <span class="dr-row-body">
+              <span class="dr-row-name">Taco Villa</span>
+              <span class="dr-row-cat">Taco restaurant · 420 E 4th St</span>
+            </span>
+            <span class="dr-row-right">
+              <span class="dr-open" data-state="soon"><span class="dr-open-dot"></span>Closes 8 PM</span>
+              <span class="dr-row-dist">0.9 mi</span>
+            </span>
+            <svg class="i i-sm dr-row-go" aria-hidden="true"><use href="#i-chevron-right"/></svg>
+          </a></li>
+
+          <li><a class="dr-row" href="#directory" data-hover>
+            <span class="dr-photo dr-row-thumb" data-shot="none" aria-hidden="true">
+              <svg class="i i-sm" aria-hidden="true"><use href="#i-utensils"/></svg>
+            </span>
+            <span class="dr-row-body">
+              <span class="dr-row-name">Tacos 4 Ever Burritos &amp; More</span>
+              <span class="dr-row-cat">Mexican restaurant · 407 S Arkansas Ave</span>
+            </span>
+            <span class="dr-row-right">
+              <span class="dr-open" data-state="unknown">
+                <svg class="i i-sm" aria-hidden="true"><use href="#i-clock"/></svg>
+                Hours vary
+              </span>
+              <span class="dr-row-dist">0.8 mi</span>
+            </span>
+            <svg class="i i-sm dr-row-go" aria-hidden="true"><use href="#i-chevron-right"/></svg>
+          </a></li>
+
+          <li><a class="dr-row" href="#directory" data-focus>
+            <span class="dr-photo dr-row-thumb" data-shot="masonry" aria-hidden="true"></span>
+            <span class="dr-row-body">
+              <span class="dr-row-name">Morelos Mexican Grill</span>
+              <span class="dr-row-cat">Mexican restaurant · 1310 E Main St</span>
+            </span>
+            <span class="dr-row-right">
+              <span class="dr-open" data-state="closed"><span class="dr-open-dot"></span>Opens 11 AM</span>
+              <span class="dr-row-dist">1.3 mi</span>
+            </span>
+            <svg class="i i-sm dr-row-go" aria-hidden="true"><use href="#i-chevron-right"/></svg>
+          </a></li>
+
+          <li><a class="dr-row" href="#directory" data-stale>
+            <span class="dr-photo dr-row-thumb" data-shot="lot" aria-hidden="true"></span>
+            <span class="dr-row-body">
+              <span class="dr-row-name">Las Palmas</span>
+              <span class="dr-row-cat">Mexican restaurant · 615 N Arkansas Ave</span>
+              <span class="dr-row-flag">
+                <svg class="i i-sm" aria-hidden="true"><use href="#i-info"/></svg>
+                Not confirmed since March
+              </span>
+            </span>
+            <span class="dr-row-right">
+              <span class="dr-open" data-state="unknown">
+                <svg class="i i-sm" aria-hidden="true"><use href="#i-clock"/></svg>
+                Unknown
+              </span>
+              <span class="dr-row-dist">0.7 mi</span>
+            </span>
+            <svg class="i i-sm dr-row-go" aria-hidden="true"><use href="#i-chevron-right"/></svg>
+          </a></li>
+        </ul>
+        <div class="dr-rows-cap">Rows 1 to 5 of 86 · rest, hover, unknown hours, focus ring, stale</div>
+      </div>
+
+      <p class="why">The row carries the same five facts as the browse card in a third of the
+      height, which is what makes a 112-item category survivable. The thumbnail is 48&thinsp;px
+      and square: at that size a photograph is a texture, not information, so it earns its
+      place only by making the list scannable in the peripheral. The open state sits
+      right-aligned in a fixed column, so a finger running down the edge of the screen reads
+      <b>a column of dots</b> and can skip everything else.</p>
+    </div>
+  </div>
+
+  <!-- ─────────────────────────────────────────────────────────  6. RAIL + PIN CARD -->
+
+  <div class="spec">
+    <div class="spec-label">Compact rail card and map pin card <em>the two densities that live inside something else, so both drop the photo before they drop the fact</em></div>
+    <div class="spec-row">
+      <div class="dr-demo">
+        <div class="dr-demo-cap">Compact, 132 px, horizontal rail</div>
+        <div class="dr-rail dr-rail-loose">
+          <article class="dr-mini">
+            <div class="dr-photo dr-mini-photo" data-shot="counter" aria-hidden="true"></div>
+            <div class="dr-mini-body">
+              <span class="dr-mini-name">7 Brew Coffee</span>
+              <span class="dr-open" data-state="open"><span class="dr-open-dot"></span>Until 11 PM</span>
+              <span class="dr-mini-dist">1.8 mi</span>
+            </div>
+          </article>
+          <article class="dr-mini">
+            <div class="dr-photo dr-mini-photo" data-shot="none" aria-hidden="true">
+              <svg class="i i-lg" aria-hidden="true"><use href="#i-key"/></svg>
+            </div>
+            <div class="dr-mini-body">
+              <span class="dr-mini-name">Ivy's Cove RV Retreat</span>
+              <span class="dr-open" data-state="unknown">
+                <svg class="i i-sm" aria-hidden="true"><use href="#i-clock"/></svg>
+                Unknown
+              </span>
+              <span class="dr-mini-dist">4.2 mi</span>
+            </div>
+          </article>
+          <article class="dr-mini">
+            <div class="dr-photo dr-mini-photo" data-shot="shelf" aria-hidden="true"></div>
+            <div class="dr-mini-body">
+              <span class="dr-mini-name">Heart &amp; Soul Christian Bookstore</span>
+              <span class="dr-open" data-state="closed"><span class="dr-open-dot"></span>Opens 10 AM</span>
+              <span class="dr-mini-dist">1.0 mi</span>
+            </div>
+          </article>
+        </div>
+      </div>
+
+      <div class="dr-demo">
+        <div class="dr-demo-cap">Map pin card, sits over the map</div>
+        <article class="dr-pincard">
+          <div class="dr-photo dr-pincard-photo" data-shot="masonry" aria-hidden="true"></div>
+          <div class="dr-pincard-body">
+            <span class="dr-pincard-cat">Musical instrument store</span>
+            <h3 class="dr-pincard-name">Cooper Music</h3>
+            <span class="dr-pincard-addr">914 W Main St · 1.0 mi</span>
+            <span class="dr-open" data-state="open"><span class="dr-open-dot"></span>Open until 5:30 PM</span>
+          </div>
+          <div class="dr-pincard-acts">
+            <a class="dr-iconbtn" href="#directory" aria-label="Call Cooper Music"><svg class="i i-sm" aria-hidden="true"><use href="#i-phone"/></svg></a>
+            <a class="dr-iconbtn" href="#directory" aria-label="Directions to Cooper Music"><svg class="i i-sm" aria-hidden="true"><use href="#i-directions"/></svg></a>
+          </div>
+        </article>
+
+        <article class="dr-pincard">
+          <div class="dr-photo dr-pincard-photo" data-shot="none" aria-hidden="true">
+            <svg class="i i-lg" aria-hidden="true"><use href="#i-storefront"/></svg>
+          </div>
+          <div class="dr-pincard-body">
+            <span class="dr-pincard-cat">Party equipment rental</span>
+            <h3 class="dr-pincard-name">Happy Jumpers Inflatables</h3>
+            <span class="dr-pincard-addr">3904 S Arkansas Ave · 3.0 mi</span>
+            <span class="dr-open" data-state="unknown">
+              <svg class="i i-sm" aria-hidden="true"><use href="#i-clock"/></svg>
+              Hours not confirmed
+            </span>
+          </div>
+          <div class="dr-pincard-acts">
+            <span class="dr-iconbtn" data-off aria-hidden="true"><svg class="i i-sm"><use href="#i-phone"/></svg></span>
+            <a class="dr-iconbtn" href="#directory" aria-label="Directions to Happy Jumpers Inflatables"><svg class="i i-sm" aria-hidden="true"><use href="#i-directions"/></svg></a>
+          </div>
+        </article>
+        <p class="dr-demo-note">No phone on file, so the call target is drawn as disabled and
+        removed from the tab order rather than dialling nothing.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ─────────────────────────────────────────────────────────  7. CATEGORY BROWSE -->
+
+  <div class="spec">
+    <div class="spec-label">Category browse <em>304 raw Google categories rolled into 16 a person would actually say out loud</em></div>
+    <div class="dr-tiles">
+      <a class="dr-tile" href="#directory" data-tone="eat"><span class="dr-tile-art" aria-hidden="true"></span><svg class="i i-lg dr-tile-icon" aria-hidden="true"><use href="#i-utensils"/></svg><span class="dr-tile-name">Eat and drink</span><span class="dr-tile-count">86</span></a>
+      <a class="dr-tile" href="#directory" data-tone="shop"><span class="dr-tile-art" aria-hidden="true"></span><svg class="i i-lg dr-tile-icon" aria-hidden="true"><use href="#i-storefront"/></svg><span class="dr-tile-name">Shop</span><span class="dr-tile-count">112</span></a>
+      <a class="dr-tile" href="#directory" data-tone="auto"><span class="dr-tile-art" aria-hidden="true"></span><svg class="i i-lg dr-tile-icon" aria-hidden="true"><use href="#i-wrench"/></svg><span class="dr-tile-name">Auto and repair</span><span class="dr-tile-count">74</span></a>
+      <a class="dr-tile" href="#directory" data-tone="health"><span class="dr-tile-art" aria-hidden="true"></span><svg class="i i-lg dr-tile-icon" aria-hidden="true"><use href="#i-heart"/></svg><span class="dr-tile-name">Health and care</span><span class="dr-tile-count">98</span></a>
+      <a class="dr-tile" href="#directory" data-tone="home"><span class="dr-tile-art" aria-hidden="true"></span><svg class="i i-lg dr-tile-icon" aria-hidden="true"><use href="#i-home"/></svg><span class="dr-tile-name">Home and trades</span><span class="dr-tile-count">63</span></a>
+      <a class="dr-tile" href="#directory" data-tone="beauty"><span class="dr-tile-art" aria-hidden="true"></span><svg class="i i-lg dr-tile-icon" aria-hidden="true"><use href="#i-sparkle"/></svg><span class="dr-tile-name">Beauty and barber</span><span class="dr-tile-count">41</span></a>
+      <a class="dr-tile" href="#directory" data-tone="money"><span class="dr-tile-art" aria-hidden="true"></span><svg class="i i-lg dr-tile-icon" aria-hidden="true"><use href="#i-scale"/></svg><span class="dr-tile-name">Money and law</span><span class="dr-tile-count">58</span></a>
+      <a class="dr-tile" href="#directory" data-tone="stay"><span class="dr-tile-art" aria-hidden="true"></span><svg class="i i-lg dr-tile-icon" aria-hidden="true"><use href="#i-key"/></svg><span class="dr-tile-name">Stay the night</span><span class="dr-tile-count">22</span></a>
+      <a class="dr-tile" href="#directory" data-tone="out"><span class="dr-tile-art" aria-hidden="true"></span><svg class="i i-lg dr-tile-icon" aria-hidden="true"><use href="#i-tree"/></svg><span class="dr-tile-name">Outdoors and parks</span><span class="dr-tile-count">19</span></a>
+      <a class="dr-tile" href="#directory" data-tone="faith"><span class="dr-tile-art" aria-hidden="true"></span><svg class="i i-lg dr-tile-icon" aria-hidden="true"><use href="#i-building"/></svg><span class="dr-tile-name">Faith</span><span class="dr-tile-count">24</span></a>
+      <a class="dr-tile" href="#directory" data-tone="learn"><span class="dr-tile-art" aria-hidden="true"></span><svg class="i i-lg dr-tile-icon" aria-hidden="true"><use href="#i-book"/></svg><span class="dr-tile-name">Learn</span><span class="dr-tile-count">17</span></a>
+      <a class="dr-tile" href="#directory" data-tone="pets"><span class="dr-tile-art" aria-hidden="true"></span><svg class="i i-lg dr-tile-icon" aria-hidden="true"><use href="#i-dr-paw"/></svg><span class="dr-tile-name">Pets</span><span class="dr-tile-count">11</span></a>
+      <a class="dr-tile" href="#directory" data-tone="kids"><span class="dr-tile-art" aria-hidden="true"></span><svg class="i i-lg dr-tile-icon" aria-hidden="true"><use href="#i-users"/></svg><span class="dr-tile-name">Kids and family</span><span class="dr-tile-count">14</span></a>
+      <a class="dr-tile" href="#directory" data-tone="fun"><span class="dr-tile-art" aria-hidden="true"></span><svg class="i i-lg dr-tile-icon" aria-hidden="true"><use href="#i-sport"/></svg><span class="dr-tile-name">Fun and fitness</span><span class="dr-tile-count">26</span></a>
+      <a class="dr-tile" href="#directory" data-tone="serv"><span class="dr-tile-art" aria-hidden="true"></span><svg class="i i-lg dr-tile-icon" aria-hidden="true"><use href="#i-package"/></svg><span class="dr-tile-name">Services</span><span class="dr-tile-count">62</span></a>
+      <a class="dr-tile" href="#directory" data-tone="civic"><span class="dr-tile-art" aria-hidden="true"></span><svg class="i i-lg dr-tile-icon" aria-hidden="true"><use href="#i-vote"/></svg><span class="dr-tile-name">Civic</span><span class="dr-tile-count">14</span></a>
+    </div>
+    <p class="why">Sixteen tiles that add to 741 exactly, because a count that does not add up
+    is the first thing a resident will catch. The tile has an art plate rather than a plain
+    icon chip: an icon on grey is an admin console, an icon over a warm plate reads as
+    <b>a door into somewhere</b>. The count is set in the serif and kept quiet, so it informs
+    the choice without turning the screen into a dashboard.</p>
+
+    <div class="dr-subhead">The long tail, as a chip rail</div>
+    <div class="dr-chips" role="list">
+      <a class="dr-chip" href="#directory" role="listitem">Auto repair shop <span>22</span></a>
+      <a class="dr-chip" href="#directory" role="listitem">Restaurant <span>18</span></a>
+      <a class="dr-chip" href="#directory" role="listitem">Medical clinic <span>18</span></a>
+      <a class="dr-chip" href="#directory" role="listitem">Tire shop <span>16</span></a>
+      <a class="dr-chip" href="#directory" role="listitem">Real estate agency <span>14</span></a>
+      <a class="dr-chip" href="#directory" role="listitem">Attorney <span>14</span></a>
+      <a class="dr-chip" href="#directory" role="listitem">Nail salon <span>13</span></a>
+      <a class="dr-chip" href="#directory" role="listitem">Home health care <span>13</span></a>
+      <a class="dr-chip" href="#directory" role="listitem">Bank <span>12</span></a>
+      <a class="dr-chip" href="#directory" role="listitem">Mexican restaurant <span>11</span></a>
+      <a class="dr-chip" href="#directory" role="listitem">Hotel <span>10</span></a>
+      <a class="dr-chip" href="#directory" role="listitem">Furniture store <span>10</span></a>
+      <a class="dr-chip" href="#directory" role="listitem">Antique store <span>5</span></a>
+      <a class="dr-chip" href="#directory" role="listitem">Coffee shop <span>4</span></a>
+      <a class="dr-chip" href="#directory" role="listitem">Dance school <span>4</span></a>
+      <a class="dr-chip" href="#directory" role="listitem">Book store <span>3</span></a>
+      <a class="dr-chip" href="#directory" role="listitem">Donut shop <span>2</span></a>
+      <a class="dr-chip" href="#directory" role="listitem" data-tail>288 more<svg class="i i-sm" aria-hidden="true"><use href="#i-chevron-right"/></svg></a>
+    </div>
+
+    <div class="dr-subhead">Category landing header</div>
+    <header class="dr-cathead">
+      <a class="dr-cathead-back" href="#directory"><svg class="i i-sm" aria-hidden="true"><use href="#i-chevron-left"/></svg>All categories</a>
+      <div class="dr-cathead-main">
+        <span class="dr-cathead-icon"><svg class="i i-lg" aria-hidden="true"><use href="#i-utensils"/></svg></span>
+        <div>
+          <h3 class="dr-cathead-title">Eat and drink</h3>
+          <p class="dr-cathead-sub">86 places in Russellville. 31 open right now.</p>
+        </div>
+      </div>
+      <p class="dr-cathead-blurb">Rolled up from 24 Google categories including taco
+      restaurant, sandwich shop, donut shop and bakery. Two of these are inside other
+      businesses.</p>
+      <div class="dr-cathead-tools">
+        <button class="dr-tool" type="button"><svg class="i i-sm" aria-hidden="true"><use href="#i-filter"/></svg>Filter</button>
+        <button class="dr-tool" type="button"><svg class="i i-sm" aria-hidden="true"><use href="#i-sort"/></svg>Nearest first</button>
+        <button class="dr-tool" type="button"><svg class="i i-sm" aria-hidden="true"><use href="#i-map"/></svg>Map</button>
+        <button class="dr-tool dr-tool-accent" type="button"><svg class="i i-sm" aria-hidden="true"><use href="#i-dr-shuffle"/></svg>Surprise me</button>
+      </div>
+    </header>
+  </div>
+
+  <!-- ─────────────────────────────────────────────────────────  8. PROFILE -->
+
+  <div class="spec">
+    <div class="spec-label">Business profile <em>call, directions and website open three different apps, so they are three targets and never one card link</em></div>
+    <div class="spec-row">
+      <div class="phone">
+        <div class="phone-cap">Directory, a listing, unclaimed</div>
+        <div class="phone-screen">
+          <article class="dr-prof">
+            <div class="dr-photo dr-prof-hero" data-shot="shelf" role="img" aria-label="Photo of Dog Ear Books">
+              <a class="dr-prof-back" href="#directory" aria-label="Back">
+                <svg class="i i-sm" aria-hidden="true"><use href="#i-chevron-left"/></svg>
+              </a>
+              <button class="dr-prof-heroaction" type="button" aria-label="Save Dog Ear Books">
+                <svg class="i i-sm" aria-hidden="true"><use href="#i-bookmark"/></svg>
+              </button>
+            </div>
+
+            <header class="dr-prof-head">
+              <span class="dr-prof-cat">Book store · Downtown</span>
+              <h3 class="dr-prof-name">Dog Ear Books</h3>
+              <span class="dr-open dr-prof-open" data-state="open"><span class="dr-open-dot"></span>Open until 6 PM</span>
+              <p class="dr-prof-addr">312 W 2nd St, Russellville · 0.6 mi</p>
+            </header>
+
+            <div class="dr-prof-acts">
+              <a class="dr-act" href="#directory">
+                <svg class="i" aria-hidden="true"><use href="#i-phone"/></svg>
+                <span class="dr-act-label">Call</span>
+                <span class="dr-act-sub">(479) 967-4114</span>
+              </a>
+              <a class="dr-act" href="#directory">
+                <svg class="i" aria-hidden="true"><use href="#i-directions"/></svg>
+                <span class="dr-act-label">Directions</span>
+                <span class="dr-act-sub">Opens Maps</span>
+              </a>
+              <a class="dr-act" href="#directory">
+                <svg class="i" aria-hidden="true"><use href="#i-globe"/></svg>
+                <span class="dr-act-label">Website</span>
+                <span class="dr-act-sub">dogearbooks.com</span>
+              </a>
+            </div>
+
+            <div class="dr-prof-strip" role="list" aria-label="Photos">
+              <span class="dr-photo dr-prof-shot" data-shot="shelf" role="listitem"></span>
+              <span class="dr-photo dr-prof-shot" data-shot="counter" role="listitem"></span>
+              <span class="dr-photo dr-prof-shot" data-shot="masonry" role="listitem"></span>
+              <span class="dr-photo dr-prof-shot" data-shot="awning" role="listitem"></span>
+            </div>
+
+            <section class="dr-prof-sec">
+              <p class="dr-prof-desc">Used and new books over two rooms, heavy on Arkansas
+              history and paperback westerns. Retro Roasts runs the coffee bar in the back
+              corner and keeps its own hours. Trade credit for books in decent shape.</p>
+            </section>
+
+            <section class="dr-prof-sec">
+              <h4 class="dr-prof-h">Hours</h4>
+              <table class="dr-hours">
+                <tbody>
+                  <tr><th scope="row">Monday</th><td class="dr-hours-shut">Closed</td></tr>
+                  <tr><th scope="row">Tuesday</th><td>10 AM to 6 PM</td></tr>
+                  <tr data-today><th scope="row">Wednesday <span class="dr-hours-today">Today</span></th><td>10 AM to 6 PM</td></tr>
+                  <tr><th scope="row">Thursday</th><td>10 AM to 6 PM</td></tr>
+                  <tr><th scope="row">Friday</th><td>10 AM to 8 PM</td></tr>
+                  <tr><th scope="row">Saturday</th><td>9 AM to 5 PM</td></tr>
+                  <tr><th scope="row">Sunday</th><td>1 to 4 PM</td></tr>
+                </tbody>
+              </table>
+            </section>
+
+            <section class="dr-prof-sec">
+              <h4 class="dr-prof-h">What we know, and where it came from</h4>
+              <ul class="dr-prov">
+                <li>
+                  <svg class="i i-sm" aria-hidden="true"><use href="#i-map-pin"/></svg>
+                  <span><b>Name, address, phone</b> from the public Google Places listing,
+                  read on 10 December 2025.</span>
+                </li>
+                <li>
+                  <svg class="i i-sm" aria-hidden="true"><use href="#i-clock"/></svg>
+                  <span><b>Hours</b> from the same listing. A full week was published, so we
+                  parse them and we are willing to say "open".</span>
+                </li>
+                <li>
+                  <svg class="i i-sm" aria-hidden="true"><use href="#i-users"/></svg>
+                  <span><b>The description</b> was written by a resident, @marcusd, and
+                  edited twice. <a href="#directory">See the 3 versions</a>.</span>
+                </li>
+                <li>
+                  <svg class="i i-sm" aria-hidden="true"><use href="#i-image"/></svg>
+                  <span><b>Photos</b> are not ours. Nobody has added one yet.
+                  <a href="#directory">Add a photo</a>.</span>
+                </li>
+              </ul>
+            </section>
+
+            <section class="dr-prof-sec dr-prof-sec-last">
+              <div class="dr-claim">
+                <span class="dr-claim-icon"><svg class="i" aria-hidden="true"><use href="#i-storefront"/></svg></span>
+                <div>
+                  <p class="dr-claim-title">Is this your business?</p>
+                  <p class="dr-claim-body">Claim the listing and you can fix the hours,
+                  add photos, and say what you actually do. Verification is a phone call to
+                  the number above, not a form.</p>
+                  <button class="dr-btn dr-btn-quiet dr-claim-btn" type="button">Claim this listing</button>
+                </div>
+              </div>
+              <div class="dr-correct">
+                <a href="#directory"><svg class="i i-sm" aria-hidden="true"><use href="#i-flag"/></svg>Something here is wrong</a>
+                <a href="#directory"><svg class="i i-sm" aria-hidden="true"><use href="#i-history"/></svg>Edit history</a>
+              </div>
+            </section>
+          </article>
+        </div>
+      </div>
+
+      <div class="dr-annot">
+        <p class="why">Three actions, three targets, three destinations. Call opens the
+        dialler, directions hands off to Maps, website leaves for a browser. Rolling them
+        into one tappable card would make <b>"read the menu" and "start driving" the same
+        gesture</b>, which is the exact mistake the shipped directory card already avoids.
+        Each one names where it goes underneath the verb, so nobody taps Website expecting a
+        phone number.</p>
+        <p class="why">The provenance block is the part that makes this directory
+        trustworthy rather than merely populated. It says the source, the date, and who
+        touched it, and it is honest that <b>we have no photographs</b> instead of quietly
+        drawing a stock image of some other town's bookshop. It also doubles as the
+        contribution invitation: every line that admits a gap ends in a link that closes it.</p>
+      </div>
+    </div>
+
+    <div class="dr-subhead">Claimed and verified by the owner</div>
+    <div class="spec-row">
+      <div class="dr-demo">
+        <div class="dr-owned">
+          <div class="dr-owned-bar">
+            <svg class="i i-sm" aria-hidden="true"><use href="#i-badge-check"/></svg>
+            Claimed by the owner, verified 24 July 2026
+          </div>
+          <div class="dr-owned-body">
+            <span class="dr-prof-cat">Bicycle shop · Downtown</span>
+            <h3 class="dr-prof-name">Jackalope Cycling</h3>
+            <span class="dr-open" data-state="open"><span class="dr-open-dot"></span>Open until 5 PM</span>
+            <p class="dr-prof-addr">112 N Commerce Ave · 0.7 mi</p>
+            <ul class="dr-prov dr-prov-owned">
+              <li>
+                <svg class="i i-sm" aria-hidden="true"><use href="#i-badge-check"/></svg>
+                <span><b>Hours and phone</b> set by the owner, Ross Deel, on 24 July. Not
+                scraped.</span>
+              </li>
+              <li>
+                <svg class="i i-sm" aria-hidden="true"><use href="#i-image"/></svg>
+                <span><b>Four photos</b> uploaded by the owner.</span>
+              </li>
+              <li>
+                <svg class="i i-sm" aria-hidden="true"><use href="#i-users"/></svg>
+                <span>Residents can still suggest corrections. The owner sees them, and so
+                does everyone else.</span>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+      <p class="why">Claimed is a <b>provenance change, not a promotion</b>. The listing does
+      not rise in any ranking, get a bigger card, or lose the correction link. All that
+      changes is the source line: these facts now come from the person who unlocks the door
+      in the morning. A verified badge that also bought better placement would make the
+      badge worthless as information, and would turn a town directory into an ad product.</p>
+    </div>
+  </div>
+
+  <!-- ─────────────────────────────────────────────────────────  9. MAP -->
+
+  <div class="spec">
+    <div class="spec-label">Map view <em>drawn entirely in CSS: real tiles are a network call, so shipping them needs a declared permission and a named provider</em></div>
+    <div class="spec-row">
+      <div class="phone">
+        <div class="phone-cap">Directory, map, one pin selected</div>
+        <div class="phone-screen">
+          <div class="dr-mapview">
+            <div class="dr-map" role="img" aria-label="Stylised map of central Russellville with 41 listings">
+              <span class="dr-map-park" aria-hidden="true"></span>
+              <span class="dr-map-river" aria-hidden="true"></span>
+              <span class="dr-map-road" data-road="main" aria-hidden="true"><i>W MAIN ST</i></span>
+              <span class="dr-map-road" data-road="ark" aria-hidden="true"><i>N ARKANSAS AVE</i></span>
+              <span class="dr-map-road" data-road="pkwy" aria-hidden="true"><i>E PARKWAY DR</i></span>
+
+              <button class="dr-pin" type="button" style="left:22%;top:30%" aria-label="Cooper Music">
+                <svg class="i i-sm" aria-hidden="true"><use href="#i-music"/></svg>
+              </button>
+              <button class="dr-pin" type="button" style="left:64%;top:22%" aria-label="7 Brew Coffee">
+                <svg class="i i-sm" aria-hidden="true"><use href="#i-coffee"/></svg>
+              </button>
+              <button class="dr-pin" type="button" style="left:78%;top:52%" aria-label="Old Post Road Park">
+                <svg class="i i-sm" aria-hidden="true"><use href="#i-tree"/></svg>
+              </button>
+              <button class="dr-pin" data-cluster type="button" style="left:44%;top:44%" aria-label="12 listings on West 2nd Street, zoom in">12</button>
+              <button class="dr-pin" data-selected type="button" style="left:34%;top:62%" aria-label="Dog Ear Books, selected">
+                <svg class="i i-sm" aria-hidden="true"><use href="#i-book"/></svg>
+              </button>
+
+              <div class="dr-map-note">
+                <svg class="i i-sm" aria-hidden="true"><use href="#i-info"/></svg>
+                Drawn map. Tiles from a provider would be the app's first outbound request.
+              </div>
+            </div>
+
+            <div class="dr-mapsheet">
+              <span class="dr-mapsheet-grab" aria-hidden="true"></span>
+              <article class="dr-pincard dr-mapsheet-card">
+                <div class="dr-photo dr-pincard-photo" data-shot="shelf" aria-hidden="true"></div>
+                <div class="dr-pincard-body">
+                  <span class="dr-pincard-cat">Book store</span>
+                  <h3 class="dr-pincard-name">Dog Ear Books</h3>
+                  <span class="dr-pincard-addr">312 W 2nd St · 0.6 mi</span>
+                  <span class="dr-open" data-state="open"><span class="dr-open-dot"></span>Open until 6 PM</span>
+                </div>
+                <div class="dr-pincard-acts">
+                  <a class="dr-iconbtn" href="#directory" aria-label="Call Dog Ear Books"><svg class="i i-sm" aria-hidden="true"><use href="#i-phone"/></svg></a>
+                  <a class="dr-iconbtn" href="#directory" aria-label="Directions to Dog Ear Books"><svg class="i i-sm" aria-hidden="true"><use href="#i-directions"/></svg></a>
+                </div>
+              </article>
+              <div class="dr-mapsheet-foot">
+                <span>41 of 741 listings in view</span>
+                <button class="dr-mapsheet-list" type="button">
+                  <svg class="i i-sm" aria-hidden="true"><use href="#i-list"/></svg>
+                  See them as a list
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="dr-annot">
+        <p class="why">Three pin states, and they differ in size, fill and glyph rather than
+        colour alone. A cluster carries its own count so nobody taps it hoping. The selected
+        pin grows, inverts and gains a ring, and the sheet that slides up is the same
+        <b>pin card</b> component used loose elsewhere, so the map is not a second design
+        system.</p>
+        <p class="why">The note on the map is not decoration. A map that fetches tiles is the
+        first thing in this app to talk to a server that is not ours, and in a product built
+        on not tracking anyone that is a decision with a name attached, declared in the
+        manifest, not a library someone dropped in.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ─────────────────────────────────────────────────  10. ARTICLES + PODCASTS -->
+
+  <div class="spec">
+    <div class="spec-label">Articles and podcasts <em>not businesses: they get the serif headline and a byline, which is the whole tell that this is something to read, not somewhere to go</em></div>
+    <div class="spec-grid">
+      <article class="dr-art">
+        <div class="dr-photo dr-art-photo" data-shot="river" role="img" aria-label="Photo of the Arkansas River at Lake Dardanelle"></div>
+        <div class="dr-art-body">
+          <span class="dr-art-kind"><svg class="i i-sm" aria-hidden="true"><use href="#i-newspaper"/></svg>Article</span>
+          <h3 class="dr-art-title">The lake is four feet low and the marinas are moving docks again</h3>
+          <p class="dr-art-meta">The Courier · Della Yarnell · 2 August · 6 min read</p>
+        </div>
+      </article>
+
+      <article class="dr-art">
+        <div class="dr-photo dr-art-photo" data-shot="masonry" role="img" aria-label="Photo of a Main Street building"></div>
+        <div class="dr-art-body">
+          <span class="dr-art-kind"><svg class="i i-sm" aria-hidden="true"><use href="#i-newspaper"/></svg>Article</span>
+          <h3 class="dr-art-title">What the old Sears building on Main becomes next</h3>
+          <p class="dr-art-meta">River Valley Leader · Sam Ottinger · 28 July · 4 min read</p>
+        </div>
+      </article>
+
+      <article class="dr-art" data-nophoto>
+        <div class="dr-art-body">
+          <span class="dr-art-kind"><svg class="i i-sm" aria-hidden="true"><use href="#i-newspaper"/></svg>Article</span>
+          <h3 class="dr-art-title">Pope County quorum court sets the millage, and nobody in the room objected</h3>
+          <p class="dr-art-meta">The Courier · staff · 21 July · 3 min read</p>
+          <p class="dr-art-note">No image with this one, so the headline gets the room instead
+          of a grey rectangle pretending to be a photo.</p>
+        </div>
+      </article>
+    </div>
+
+    <div class="dr-subhead">Podcasts</div>
+    <div class="spec-grid">
+      <article class="dr-pod">
+        <div class="dr-photo dr-pod-cover" data-shot="counter" role="img" aria-label="Cover art for River Valley Rundown">
+          <button class="dr-pod-play" type="button" aria-label="Play episode 48">
+            <svg class="i i-lg" aria-hidden="true"><use href="#i-play"/></svg>
+          </button>
+        </div>
+        <div class="dr-pod-body">
+          <span class="dr-pod-ep">Ep. 48</span>
+          <h3 class="dr-pod-title">The people who keep Lake Dardanelle's boat ramps open</h3>
+          <p class="dr-pod-meta">River Valley Rundown · 41 min · 1 August</p>
+        </div>
+      </article>
+
+      <article class="dr-pod" data-playing>
+        <div class="dr-photo dr-pod-cover" data-shot="masonry" role="img" aria-label="Cover art for Down on Main">
+          <button class="dr-pod-play" type="button" aria-label="Pause episode 12">
+            <svg class="i i-lg" aria-hidden="true"><use href="#i-pause"/></svg>
+          </button>
+        </div>
+        <div class="dr-pod-body">
+          <span class="dr-pod-ep">Ep. 12</span>
+          <h3 class="dr-pod-title">Three generations behind the counter at Cooper Music</h3>
+          <p class="dr-pod-meta">Down on Main · 28 min · 24 July</p>
+          <div class="dr-pod-scrub">
+            <span class="dr-pod-bar"><span class="dr-pod-fill"></span></span>
+            <span class="dr-pod-time">9:12 left</span>
+          </div>
+        </div>
+      </article>
+
+      <article class="dr-pod">
+        <div class="dr-photo dr-pod-cover" data-shot="none" role="img" aria-label="No cover art for Wonder Boy Weekly">
+          <svg class="i i-lg" aria-hidden="true"><use href="#i-headphones"/></svg>
+          <button class="dr-pod-play" type="button" aria-label="Play episode 3">
+            <svg class="i i-lg" aria-hidden="true"><use href="#i-play"/></svg>
+          </button>
+        </div>
+        <div class="dr-pod-body">
+          <span class="dr-pod-ep">Ep. 3</span>
+          <h3 class="dr-pod-title">Tech's new season, and the thing nobody says about the schedule</h3>
+          <p class="dr-pod-meta">Wonder Boy Weekly · 55 min · 19 July</p>
+        </div>
+      </article>
+    </div>
+    <p class="why">Businesses are set in the sans and podcasts and articles in the serif. That
+    single split does more work than any badge: scrolling a mixed feed you can tell
+    <b>somewhere to go</b> from <b>something to read</b> without reading a word. The play
+    control is a real 44&thinsp;px button on the cover, so an episode starts from the browse
+    grid without a detail screen in between, which is how anyone actually listens to a local
+    podcast: while doing something else.</p>
+  </div>
+
+  <!-- ─────────────────────────────────────────────────────────  11. COLLECTIONS -->
+
+  <div class="spec">
+    <div class="spec-label">Collections <em>the editorial layer over a scraped directory, and residents can make them, which is the same thesis as the build layer at a smaller size</em></div>
+    <div class="spec-row">
+      <article class="dr-collcard">
+        <div class="dr-collcard-cover" aria-hidden="true">
+          <span class="dr-photo" data-shot="plate"></span>
+          <span class="dr-photo" data-shot="awning"></span>
+          <span class="dr-photo" data-shot="counter"></span>
+          <span class="dr-photo" data-shot="lot"></span>
+          <span class="dr-collcard-more">+7</span>
+        </div>
+        <div class="dr-collcard-body">
+          <span class="dr-eyebrow">Collection</span>
+          <h3 class="dr-collcard-title">Where to eat after a Tech game</h3>
+          <p class="dr-collcard-desc">Eleven places that are still serving after the stadium
+          empties out, sorted by how far you have to walk from the lot.</p>
+          <div class="dr-collcard-by">
+            <span class="dr-avatar" aria-hidden="true">H</span>
+            <span>Made by <b>@hollyb</b><svg class="i i-sm dr-verified" aria-hidden="true"><use href="#i-badge-check"/></svg></span>
+            <span class="dr-collcard-count">11 places · updated 2 August</span>
+          </div>
+        </div>
+      </article>
+
+      <div class="dr-demo">
+        <div class="dr-demo-cap">Other collections</div>
+        <ul class="dr-rows">
+          <li><a class="dr-row" href="#directory">
+            <span class="dr-collmini" aria-hidden="true">
+              <span class="dr-photo" data-shot="shelf"></span>
+              <span class="dr-photo" data-shot="masonry"></span>
+            </span>
+            <span class="dr-row-body">
+              <span class="dr-row-name">Open on Sunday</span>
+              <span class="dr-row-cat">24 places · kept by Town Square</span>
+            </span>
+            <svg class="i i-sm dr-row-go" aria-hidden="true"><use href="#i-chevron-right"/></svg>
+          </a></li>
+          <li><a class="dr-row" href="#directory">
+            <span class="dr-collmini" aria-hidden="true">
+              <span class="dr-photo" data-shot="lot"></span>
+              <span class="dr-photo" data-shot="awning"></span>
+            </span>
+            <span class="dr-row-body">
+              <span class="dr-row-name">Somebody will fix your tyre today</span>
+              <span class="dr-row-cat">9 places · @deanpr</span>
+            </span>
+            <svg class="i i-sm dr-row-go" aria-hidden="true"><use href="#i-chevron-right"/></svg>
+          </a></li>
+          <li><a class="dr-row" href="#directory">
+            <span class="dr-collmini" aria-hidden="true">
+              <span class="dr-photo" data-shot="counter"></span>
+              <span class="dr-photo" data-shot="plate"></span>
+            </span>
+            <span class="dr-row-body">
+              <span class="dr-row-name">Businesses hiding inside other businesses</span>
+              <span class="dr-row-cat">9 places · @marcusd</span>
+            </span>
+            <svg class="i i-sm dr-row-go" aria-hidden="true"><use href="#i-chevron-right"/></svg>
+          </a></li>
+        </ul>
+        <button class="dr-btn dr-btn-quiet dr-collnew" type="button">
+          <svg class="i i-sm" aria-hidden="true"><use href="#i-plus"/></svg>
+          Start a collection
+        </button>
+        <p class="dr-demo-note">Any verified resident can start one. It carries their handle,
+        not their name, and nothing about where they live.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ─────────────────────────────────────────────────────────  12. FILTER + SORT -->
+
+  <div class="spec">
+    <div class="spec-label">Filter and sort <em>a filter bar that names what it removed, because 86 of 741 with no explanation is indistinguishable from a broken directory</em></div>
+    <div class="spec-row">
+      <div class="dr-demo">
+        <div class="dr-filterbar">
+          <div class="dr-filter-row">
+            <button class="dr-tool" type="button"><svg class="i i-sm" aria-hidden="true"><use href="#i-filter"/></svg>Filter<span class="dr-tool-badge">3</span></button>
+            <button class="dr-tool" type="button"><svg class="i i-sm" aria-hidden="true"><use href="#i-sort"/></svg>Nearest first</button>
+            <button class="dr-tool" type="button"><svg class="i i-sm" aria-hidden="true"><use href="#i-map"/></svg>Map</button>
+          </div>
+          <div class="dr-filter-count">
+            Showing <b>18 of 86</b>. Three filters are hiding 68 places.
+          </div>
+          <div class="dr-filter-chips">
+            <button class="dr-fchip" type="button">Open now<svg class="i i-sm" aria-hidden="true"><use href="#i-close"/></svg></button>
+            <button class="dr-fchip" type="button">Under 2 miles<svg class="i i-sm" aria-hidden="true"><use href="#i-close"/></svg></button>
+            <button class="dr-fchip" type="button">Has a phone number<svg class="i i-sm" aria-hidden="true"><use href="#i-close"/></svg></button>
+            <button class="dr-fchip" data-reset type="button"><svg class="i i-sm" aria-hidden="true"><use href="#i-refresh"/></svg>Clear all three</button>
+          </div>
+          <p class="dr-filter-warn">
+            <svg class="i i-sm" aria-hidden="true"><use href="#i-info"/></svg>
+            <span><b>Open now</b> also hides the 21 places whose hours we could not read.
+            They may well be open.</span>
+          </p>
+        </div>
+      </div>
+
+      <div class="dr-demo">
+        <div class="dr-demo-cap">Sort</div>
+        <ul class="dr-sortlist">
+          <li><button type="button" data-on><svg class="i i-sm" aria-hidden="true"><use href="#i-check"/></svg>Nearest first<span>Worked out on your device</span></button></li>
+          <li><button type="button"><svg class="i i-sm" aria-hidden="true"><use href="#i-check"/></svg>Open now, then nearest<span>Unknown hours go last, not away</span></button></li>
+          <li><button type="button"><svg class="i i-sm" aria-hidden="true"><use href="#i-check"/></svg>A to Z<span>All 86</span></button></li>
+          <li><button type="button"><svg class="i i-sm" aria-hidden="true"><use href="#i-check"/></svg>Recently added or corrected<span>52 changed this year</span></button></li>
+          <li><button type="button"><svg class="i i-sm" aria-hidden="true"><use href="#i-check"/></svg>Shuffle<span>A different order every time</span></button></li>
+        </ul>
+        <p class="dr-demo-note">There is no "top rated" and no "featured". We hold no ratings
+        and nobody can buy the top of this list.</p>
+      </div>
+    </div>
+
+    <div class="dr-subhead">No results, with a way back out</div>
+    <div class="dr-empty">
+      <svg class="i i-xl dr-empty-icon" aria-hidden="true"><use href="#i-filter"/></svg>
+      <h3 class="dr-empty-title">Nothing matches all four filters</h3>
+      <p class="dr-empty-body">Four filters is a lot to ask of 86 places. Dropping the
+      strictest one gets you most of the way back.</p>
+      <div class="dr-empty-acts">
+        <button class="dr-btn dr-btn-primary" type="button">Drop "open now" and show 12</button>
+        <button class="dr-btn dr-btn-quiet" type="button">Clear all filters, show 86</button>
+      </div>
+      <a class="dr-empty-alt" href="#directory">
+        <svg class="i i-sm" aria-hidden="true"><use href="#i-dr-shuffle"/></svg>
+        Or let us pick something for you
+      </a>
+    </div>
+    <p class="why">An empty state that only says "no results" hands the problem back to the
+    person who already could not solve it. This one names the cause, does the arithmetic,
+    and offers the exact move that fixes it, with the resulting count on the button so
+    nobody taps into a second dead end. The third option is the escape hatch back to the
+    thing this whole section is for: <b>stop filtering, start wandering</b>.</p>
+  </div>
+
+  <!-- ─────────────────────────────────────────────────────────  13. SEARCH -->
+
+  <div class="spec">
+    <div class="spec-label">Search, the fallback <em>grouped by kind before it is ranked by score, because "did you mean a place or an episode" is the useful question</em></div>
+    <div class="spec-row">
+      <div class="dr-demo">
+        <div class="dr-searchbar">
+          <svg class="i i-sm" aria-hidden="true"><use href="#i-search"/></svg>
+          <span class="dr-searchbar-q">coop<span class="dr-caret" aria-hidden="true"></span></span>
+          <button class="dr-searchbar-x" type="button" aria-label="Clear search">
+            <svg class="i i-sm" aria-hidden="true"><use href="#i-close"/></svg>
+          </button>
+        </div>
+
+        <div class="dr-typeahead" role="listbox" aria-label="Suggestions">
+          <div class="dr-ta-group">Places</div>
+          <a class="dr-ta-row" href="#directory" role="option" aria-selected="true">
+            <span class="dr-photo dr-ta-thumb" data-shot="masonry" aria-hidden="true"></span>
+            <span class="dr-ta-body">
+              <span class="dr-ta-name"><mark>Coop</mark>er Music</span>
+              <span class="dr-ta-sub">Musical instrument store · 914 W Main St</span>
+            </span>
+            <span class="dr-open" data-state="open"><span class="dr-open-dot"></span>Open</span>
+          </a>
+          <a class="dr-ta-row" href="#directory" role="option">
+            <span class="dr-photo dr-ta-thumb" data-shot="none" aria-hidden="true">
+              <svg class="i i-sm" aria-hidden="true"><use href="#i-storefront"/></svg>
+            </span>
+            <span class="dr-ta-body">
+              <span class="dr-ta-name">Farmers <mark>Coop</mark>erative</span>
+              <span class="dr-ta-sub">Farm supply store · 1806 S Arkansas Ave</span>
+            </span>
+            <span class="dr-open" data-state="unknown">
+              <svg class="i i-sm" aria-hidden="true"><use href="#i-clock"/></svg>
+              Unknown
+            </span>
+          </a>
+
+          <div class="dr-ta-group">Podcasts</div>
+          <a class="dr-ta-row" href="#directory" role="option">
+            <span class="dr-photo dr-ta-thumb" data-shot="masonry" aria-hidden="true"></span>
+            <span class="dr-ta-body">
+              <span class="dr-ta-name">Three generations behind the counter at <mark>Coop</mark>er Music</span>
+              <span class="dr-ta-sub">Down on Main · Ep. 12 · 28 min</span>
+            </span>
+          </a>
+
+          <div class="dr-ta-group">Collections</div>
+          <a class="dr-ta-row" href="#directory" role="option">
+            <span class="dr-collmini dr-ta-thumb" aria-hidden="true">
+              <span class="dr-photo" data-shot="masonry"></span>
+              <span class="dr-photo" data-shot="shelf"></span>
+            </span>
+            <span class="dr-ta-body">
+              <span class="dr-ta-name">Family businesses still on Main</span>
+              <span class="dr-ta-sub">14 places · @marcusd</span>
+            </span>
+          </a>
+
+          <a class="dr-ta-all" href="#directory">
+            All 6 results for "coop"
+            <svg class="i i-sm" aria-hidden="true"><use href="#i-arrow-right"/></svg>
+          </a>
+        </div>
+      </div>
+
+      <div class="dr-annot">
+        <p class="why">The matched substring is marked in every row, which is the cheapest
+        possible way to answer <b>why is this here</b>. Without it, "Farmers Cooperative"
+        under the query "coop" looks like a fuzzy-match accident rather than an exact one.
+        Groups are labelled and ordered places, podcasts, articles, collections, because a
+        person typing four letters into a town directory is looking for a place far more
+        often than an episode, and a single mixed ranking would bury that.</p>
+        <p class="why">Search is deliberately plain. No recent searches, no trending queries,
+        no suggested terms. Every one of those would be a small surveillance surface, and the
+        product does not need them: <b>the answer to "I do not know what to type" is the
+        stumble button</b>, not a list of what other people typed.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ─────────────────────────────────────────────────  14. CORRECTIONS + ADDING -->
+
+  <div class="spec">
+    <div class="spec-label">Suggest a correction and add a listing <em>every edit is a version, so an open door costs nothing and a bad one is one tap to undo</em></div>
+    <div class="spec-row">
+      <div class="dr-demo">
+        <div class="dr-demo-cap">Correction sheet, from any listing</div>
+        <div class="dr-sheet">
+          <span class="dr-sheet-grab" aria-hidden="true"></span>
+          <h3 class="dr-sheet-title">What is wrong with Las Palmas?</h3>
+          <p class="dr-sheet-sub">Pick the closest. You do not have to write anything.</p>
+          <ul class="dr-optlist">
+            <li><button type="button"><svg class="i i-sm" aria-hidden="true"><use href="#i-clock"/></svg>The hours are wrong</button></li>
+            <li><button type="button"><svg class="i i-sm" aria-hidden="true"><use href="#i-x-circle"/></svg>It has closed for good</button></li>
+            <li><button type="button"><svg class="i i-sm" aria-hidden="true"><use href="#i-map-pin"/></svg>It moved, or the address is wrong</button></li>
+            <li><button type="button"><svg class="i i-sm" aria-hidden="true"><use href="#i-phone"/></svg>The phone number does not work</button></li>
+            <li><button type="button"><svg class="i i-sm" aria-hidden="true"><use href="#i-tag"/></svg>It is filed under the wrong thing</button></li>
+            <li><button type="button"><svg class="i i-sm" aria-hidden="true"><use href="#i-edit"/></svg>Something else, let me write it</button></li>
+          </ul>
+          <p class="dr-sheet-foot">
+            <svg class="i i-sm" aria-hidden="true"><use href="#i-history"/></svg>
+            <span>Every change is kept as a version with the handle that made it. Anything
+            can be rolled back by any verified resident, so nothing here is permanent and
+            nothing is anonymous.</span>
+          </p>
+        </div>
+      </div>
+
+      <div class="dr-demo">
+        <div class="dr-demo-cap">Add a place we are missing</div>
+        <div class="dr-add">
+          <h3 class="dr-sheet-title">Add a place</h3>
+          <p class="dr-sheet-sub">Two fields are required. The rest can be filled in by
+          anybody, later, including you.</p>
+          <label class="dr-field">
+            <span class="dr-field-label">Name <em>required</em></span>
+            <span class="dr-input">Whittle &amp; Fern</span>
+          </label>
+          <label class="dr-field">
+            <span class="dr-field-label">Street address <em>required</em></span>
+            <span class="dr-input">218 W Main St</span>
+          </label>
+          <label class="dr-field">
+            <span class="dr-field-label">What is it? <em>optional</em></span>
+            <span class="dr-input" data-placeholder>Gift shop, bakery, tyre place</span>
+          </label>
+          <label class="dr-field">
+            <span class="dr-field-label">Hours <em>optional</em></span>
+            <span class="dr-input" data-placeholder>Leave it blank rather than guessing</span>
+            <span class="dr-field-help">A blank field shows a clock and "hours not
+            confirmed". A guess shows a green dot that is a lie.</span>
+          </label>
+          <div class="dr-add-foot">
+            <button class="dr-btn dr-btn-primary" type="button">Add it</button>
+            <span class="dr-add-note">Goes live straight away, credited to @you.
+            Reviewed after, not before.</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <p class="why">The correction path is six taps and no typing, because the person who
+    notices that Las Palmas closed is standing outside it in the rain. Adding a place asks
+    for two fields, and the hours field explicitly invites you to <b>leave it empty</b>. That
+    is the honesty rule pushed all the way up into the input: an empty hours field produces a
+    truthful unknown state, and a well-meaning guess produces a green dot that sends someone
+    across town for nothing.</p>
+  </div>
+
+  <!-- ─────────────────────────────────────────────────────────  15. STATES -->
+
+  <div class="spec">
+    <div class="spec-label">Loading, empty and stale <em>the stale notice reports a fact about us, not an accusation about the business</em></div>
+    <div class="dr-subhead">Loading the browse grid</div>
+    <div class="spec-grid">
+      <div class="dr-skel" aria-hidden="true">
+        <span class="dr-skel-photo"></span>
+        <span class="dr-skel-line" style="width:72%"></span>
+        <span class="dr-skel-line" style="width:52%"></span>
+        <span class="dr-skel-foot"><span class="dr-skel-line" style="width:38%"></span><span class="dr-skel-line" style="width:18%"></span></span>
+      </div>
+      <div class="dr-skel" aria-hidden="true">
+        <span class="dr-skel-photo"></span>
+        <span class="dr-skel-line" style="width:60%"></span>
+        <span class="dr-skel-line" style="width:64%"></span>
+        <span class="dr-skel-foot"><span class="dr-skel-line" style="width:44%"></span><span class="dr-skel-line" style="width:18%"></span></span>
+      </div>
+      <div class="dr-skel" aria-hidden="true">
+        <span class="dr-skel-photo"></span>
+        <span class="dr-skel-line" style="width:80%"></span>
+        <span class="dr-skel-line" style="width:46%"></span>
+        <span class="dr-skel-foot"><span class="dr-skel-line" style="width:34%"></span><span class="dr-skel-line" style="width:18%"></span></span>
+      </div>
+    </div>
+    <p class="dr-demo-note" role="status">The skeleton holds the exact geometry of the browse
+    card, including the 16:10 photo box, so nothing jumps when the real data lands. Screen
+    readers get a live "loading 86 places" instead of nine empty boxes.</p>
+
+    <div class="dr-subhead">A category with nothing in it yet</div>
+    <div class="dr-empty" data-quiet>
+      <svg class="i i-xl dr-empty-icon" aria-hidden="true"><use href="#i-dr-paw"/></svg>
+      <h3 class="dr-empty-title">No pet groomers in the directory yet</h3>
+      <p class="dr-empty-body">There are at least two in town. We have not got them written
+      down, which is a gap in our records and not a fact about Russellville.</p>
+      <div class="dr-empty-acts">
+        <button class="dr-btn dr-btn-primary" type="button"><svg class="i i-sm" aria-hidden="true"><use href="#i-plus"/></svg>Add the first one</button>
+        <button class="dr-btn dr-btn-quiet" type="button">Browse all 11 pet listings</button>
+      </div>
+    </div>
+
+    <div class="dr-subhead">Stale listing notice</div>
+    <div class="dr-stalebox">
+      <svg class="i i-sm" aria-hidden="true"><use href="#i-info"/></svg>
+      <div>
+        <p class="dr-stale-title">We have not been able to reach this business's site since
+        March.</p>
+        <p class="dr-stale-body">The listing is still here because the phone number worked
+        the last time somebody tried it. That is all we know. It may have closed, it may
+        have changed hands, or the website may simply be gone.</p>
+        <div class="dr-stale-acts">
+          <button class="dr-stale-btn" type="button">It is still open</button>
+          <button class="dr-stale-btn" type="button">It has closed</button>
+          <button class="dr-stale-btn" type="button">I do not know</button>
+        </div>
+      </div>
+    </div>
+    <p class="why">Gold, not brick. Brick is the one alarm register in this system and it is
+    reserved for the river coming up, not for a dead domain. The wording is deliberately
+    about <b>our reach</b> rather than the business's status, because "we could not load
+    their website" and "they went under" are wildly different claims and only one of them is
+    ours to make in public about a neighbour's livelihood.</p>
+  </div>
+
+  <script>
+    // Stumble deck: the next card is already in the DOM, the button just turns it over.
+    (function () {
+      var root = document.getElementById('dr-stumble')
+      if (!root) return
+      var deck = root.querySelector('.dr-stumble-deck')
+      var cards = root.querySelectorAll('.dr-stumble-card')
+      var next = document.getElementById('dr-stumble-next')
+      if (!deck || !cards.length || !next) return
+      deck.setAttribute('data-js', '')
+      cards[0].setAttribute('data-on', '')
+      var at = 0
+      next.addEventListener('click', function () {
+        cards[at].removeAttribute('data-on')
+        at = (at + 1) % cards.length
+        cards[at].setAttribute('data-on', '')
+      })
+    })()
+  </script>
+
+</section>

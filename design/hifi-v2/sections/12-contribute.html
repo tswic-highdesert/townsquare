@@ -1,0 +1,1527 @@
+<section class="sheet-section" id="contribute">
+  <div class="sec-head"><span class="sec-num">12</span><h2>Contribution, and the composer</h2></div>
+  <p class="sec-note">Everything a resident puts into Town Square is a typed record with a shape and a purpose: an event, a correction to a listing, a notice from an organisation, a collection, a photo of something that happened. There is no box that says "what's on your mind". Every record is versioned, attributed and revertible, which is what makes light moderation survivable in a town this size.</p>
+
+  <!-- ── 1. the entry point ───────────────────────────────────────────────── -->
+
+  <div class="spec">
+    <div class="spec-label">Entry point, one plus and a typed chooser <em>Choosing the shape first is what stops this becoming a complaint board. The choice is five nouns, not a blank field.</em></div>
+    <div class="spec-row">
+
+      <div class="phone">
+        <div class="phone-cap">Contribute – chooser, resident</div>
+        <div class="phone-screen cn-screen">
+          <div class="cn-behind" aria-hidden="true">
+            <div class="cn-behind-eyebrow">This week in Russellville</div>
+            <div class="cn-behind-card"></div>
+            <div class="cn-behind-card cn-behind-card--short"></div>
+            <div class="cn-behind-card"></div>
+          </div>
+          <div class="cn-scrim" aria-hidden="true"></div>
+
+          <div class="cn-sheet" role="dialog" aria-label="Add to Town Square">
+            <div class="cn-sheet-grab" aria-hidden="true"></div>
+            <h3 class="cn-sheet-title">Add something</h3>
+            <p class="cn-sheet-sub">Pick what it is. Everything in Town Square has a shape, so it can be found again.</p>
+
+            <ul class="cn-choose">
+              <li>
+                <button class="cn-choose-row" type="button">
+                  <span class="cn-choose-ic cn-choose-ic--event"><svg class="i" aria-hidden="true"><use href="#i-calendar"/></svg></span>
+                  <span class="cn-choose-text">
+                    <span class="cn-choose-name">An event</span>
+                    <span class="cn-choose-desc">Something happening at a time and a place that people can turn up to.</span>
+                  </span>
+                  <svg class="i i-sm cn-choose-go" aria-hidden="true"><use href="#i-chevron-right"/></svg>
+                </button>
+              </li>
+              <li>
+                <button class="cn-choose-row" type="button">
+                  <span class="cn-choose-ic cn-choose-ic--fix"><svg class="i" aria-hidden="true"><use href="#i-edit"/></svg></span>
+                  <span class="cn-choose-text">
+                    <span class="cn-choose-name">A correction</span>
+                    <span class="cn-choose-desc">Hours, a phone number or a name that is wrong on a listing.</span>
+                  </span>
+                  <svg class="i i-sm cn-choose-go" aria-hidden="true"><use href="#i-chevron-right"/></svg>
+                </button>
+              </li>
+              <li>
+                <button class="cn-choose-row cn-choose-row--locked" type="button" aria-describedby="cn-notice-lock">
+                  <span class="cn-choose-ic cn-choose-ic--notice"><svg class="i" aria-hidden="true"><use href="#i-megaphone"/></svg></span>
+                  <span class="cn-choose-text">
+                    <span class="cn-choose-name">A notice <span class="cn-mini-lock"><svg class="i i-sm" aria-hidden="true"><use href="#i-lock"/></svg></span></span>
+                    <span class="cn-choose-desc" id="cn-notice-lock">An organisation telling the town something. Verified organisations only.</span>
+                  </span>
+                  <svg class="i i-sm cn-choose-go" aria-hidden="true"><use href="#i-chevron-right"/></svg>
+                </button>
+              </li>
+              <li>
+                <button class="cn-choose-row" type="button">
+                  <span class="cn-choose-ic cn-choose-ic--coll"><svg class="i" aria-hidden="true"><use href="#i-layers"/></svg></span>
+                  <span class="cn-choose-text">
+                    <span class="cn-choose-name">A collection</span>
+                    <span class="cn-choose-desc">Places or stories you have gathered into a list with a name.</span>
+                  </span>
+                  <svg class="i i-sm cn-choose-go" aria-hidden="true"><use href="#i-chevron-right"/></svg>
+                </button>
+              </li>
+              <li>
+                <button class="cn-choose-row" type="button">
+                  <span class="cn-choose-ic cn-choose-ic--photo"><svg class="i" aria-hidden="true"><use href="#i-camera"/></svg></span>
+                  <span class="cn-choose-text">
+                    <span class="cn-choose-name">A photo</span>
+                    <span class="cn-choose-desc">One picture of something in town, and one line saying what it is.</span>
+                  </span>
+                  <svg class="i i-sm cn-choose-go" aria-hidden="true"><use href="#i-chevron-right"/></svg>
+                </button>
+              </li>
+            </ul>
+
+            <p class="cn-sheet-foot">
+              <svg class="i i-sm" aria-hidden="true"><use href="#i-info"/></svg>
+              There is no general post box here, on purpose. <a href="#contribute" class="cn-inline-link">Why</a>
+            </p>
+          </div>
+
+          <nav class="cn-tabs" aria-label="Main">
+            <span class="cn-tab"><svg class="i" aria-hidden="true"><use href="#i-home"/></svg>Today</span>
+            <span class="cn-tab"><svg class="i" aria-hidden="true"><use href="#i-compass"/></svg>Discover</span>
+            <span class="cn-tab cn-tab--plus" aria-current="true"><span class="cn-plus cn-plus--open"><svg class="i" aria-hidden="true"><use href="#i-close"/></svg></span></span>
+            <span class="cn-tab"><svg class="i" aria-hidden="true"><use href="#i-grid"/></svg>Creations</span>
+            <span class="cn-tab"><svg class="i" aria-hidden="true"><use href="#i-user"/></svg>You</span>
+          </nav>
+        </div>
+      </div>
+
+      <div class="cn-side">
+        <div class="cn-side-head">The plus, three states</div>
+        <div class="cn-plusrow">
+          <div class="cn-plusdemo">
+            <span class="cn-plus"><svg class="i" aria-hidden="true"><use href="#i-plus"/></svg></span>
+            <b>Rest</b><span>Terracotta, the one primary action in the tab bar.</span>
+          </div>
+          <div class="cn-plusdemo">
+            <span class="cn-plus cn-plus--focus"><svg class="i" aria-hidden="true"><use href="#i-plus"/></svg></span>
+            <b>Focus</b><span>Ring clears the bar so it is visible against cream.</span>
+          </div>
+          <div class="cn-plusdemo">
+            <span class="cn-plus cn-plus--open"><svg class="i" aria-hidden="true"><use href="#i-close"/></svg></span>
+            <b>Open</b><span>Rotates to a close. Same target, no second control.</span>
+          </div>
+        </div>
+
+        <div class="cn-side-head">What each type becomes</div>
+        <table class="cn-typetable">
+          <thead><tr><th>Chooser row</th><th>Record type</th><th>Goes live</th></tr></thead>
+          <tbody>
+            <tr><td>An event</td><td><code>event</code></td><td>Immediately, verified residents</td></tr>
+            <tr><td>A correction</td><td><code>business</code> v+1</td><td>After owner or moderator sees it</td></tr>
+            <tr><td>A notice</td><td><code>notice</code></td><td>Immediately, urgent is reviewed</td></tr>
+            <tr><td>A collection</td><td><code>collection</code></td><td>Immediately</td></tr>
+            <tr><td>A photo</td><td><code>photo</code></td><td>Immediately</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <div class="why">
+    <b>Typed beats freeform because the type is the moderation policy.</b> A general status box has no shape, so it accepts everything, and the thing it accepts most easily is a grievance about a neighbour. Nobody sets out to build a complaint board. You build a box, and the box decides. Asking for the shape first does three useful things at once: it turns "someone should do something about the potholes on Weir Road" into either an event, a correction or nothing, it gives every record fields that make it findable in six months, and it means the rules can be per type rather than one global standard nobody agrees on. Corrections are checked against the listing they touch. Notices are gated on being an organisation. Photos allow no comments. None of that is possible when everything arrives as untyped text. The cost is real: a resident with something to say that fits no shape is turned away. We take that cost knowingly, and the chooser says so in plain words rather than hiding it.
+  </div>
+
+  <!-- ── 2. the composer shell ────────────────────────────────────────────── -->
+
+  <div class="spec">
+    <div class="spec-label">Composer shell, shared anatomy <em>Five composers, one frame. A resident learns the publish bar once and it never moves.</em></div>
+    <div class="cn-anatomy">
+      <div class="phone">
+        <div class="phone-cap">Shell – annotated</div>
+        <div class="phone-screen cn-screen">
+          <div class="cn-comp">
+            <div class="cn-comp-bar">
+              <button class="cn-icon-btn" type="button" aria-label="Back"><svg class="i" aria-hidden="true"><use href="#i-chevron-left"/></svg></button>
+              <div class="cn-comp-heading">
+                <span class="cn-comp-kicker">Adding</span>
+                <span class="cn-comp-title">An event</span>
+              </div>
+              <span class="cn-pin cn-pin--a">1</span>
+              <span class="cn-save" role="status">
+                <svg class="i i-sm" aria-hidden="true"><use href="#i-check"/></svg>
+                Saved
+              </span>
+              <span class="cn-pin cn-pin--b">2</span>
+            </div>
+
+            <div class="cn-toggle" role="tablist" aria-label="Write or preview">
+              <button class="cn-toggle-opt cn-toggle-opt--on" role="tab" aria-selected="true" type="button">Write</button>
+              <button class="cn-toggle-opt" role="tab" aria-selected="false" type="button">Preview</button>
+              <span class="cn-pin cn-pin--c">3</span>
+            </div>
+
+            <div class="cn-body">
+              <div class="cn-ghost cn-ghost--tall"></div>
+              <div class="cn-ghost"></div>
+              <div class="cn-ghost cn-ghost--short"></div>
+              <div class="cn-ghost cn-ghost--tall"></div>
+              <span class="cn-pin cn-pin--d">4</span>
+            </div>
+
+            <div class="cn-asrow">
+              <svg class="i i-sm" aria-hidden="true"><use href="#i-lock"/></svg>
+              Posting as <b>@dana_h</b>, verified resident
+              <span class="cn-pin cn-pin--e">5</span>
+            </div>
+
+            <footer class="cn-publish">
+              <button class="cn-btn cn-btn--ghost" type="button">Save draft</button>
+              <button class="cn-btn cn-btn--primary" type="button">Post event</button>
+              <span class="cn-pin cn-pin--f">6</span>
+            </footer>
+          </div>
+        </div>
+      </div>
+
+      <ol class="cn-legend">
+        <li><b>Header names the thing being made.</b> "Adding an event", never "New item". If a resident cannot say what they are making, the composer has already failed.</li>
+        <li><b>Autosave indicator, not a save button.</b> Three states: <i>Saving</i>, <i>Saved</i>, <i>Saved offline, will sync</i>. It is a status line with <code>role="status"</code> so it is announced once, not on every keystroke.</li>
+        <li><b>Write and Preview, never side by side on a phone.</b> 370px cannot hold both honestly. Preview renders the record exactly as the town will see it, including the attribution line.</li>
+        <li><b>The body is the only part that changes per type.</b> Everything above and below is identical across all five composers.</li>
+        <li><b>Attribution is shown and locked.</b> There is no author field anywhere in any composer. It is written from the session on the server.</li>
+        <li><b>Publish bar sticks to the bottom.</b> Secondary on the left, primary on the right, both 44px tall. The primary verb names the type: "Post event", "Send correction", "Publish notice".</li>
+      </ol>
+    </div>
+  </div>
+
+  <!-- ── 3. add an event ──────────────────────────────────────────────────── -->
+
+  <div class="spec">
+    <div class="spec-label">Add an event, the fullest composer <em>The date field takes what a person would say out loud and then shows what it heard, because a silently misread time is worse than a rejected one.</em></div>
+    <div class="spec-row">
+
+      <div class="phone">
+        <div class="phone-cap">Add an event – filled</div>
+        <div class="phone-screen cn-screen">
+          <div class="cn-comp">
+            <div class="cn-comp-bar">
+              <button class="cn-icon-btn" type="button" aria-label="Back"><svg class="i" aria-hidden="true"><use href="#i-chevron-left"/></svg></button>
+              <div class="cn-comp-heading">
+                <span class="cn-comp-kicker">Adding</span>
+                <span class="cn-comp-title">An event</span>
+              </div>
+              <span class="cn-save" role="status"><svg class="i i-sm" aria-hidden="true"><use href="#i-check"/></svg> Saved</span>
+            </div>
+
+            <div class="cn-toggle" role="tablist" aria-label="Write or preview">
+              <button class="cn-toggle-opt cn-toggle-opt--on" role="tab" aria-selected="true" type="button">Write</button>
+              <button class="cn-toggle-opt" role="tab" aria-selected="false" type="button">Preview</button>
+            </div>
+
+            <div class="cn-body">
+              <div class="cn-field">
+                <label class="cn-label" for="cn-ev-title">What is it called</label>
+                <input class="cn-input" id="cn-ev-title" value="Homecoming supper and singing" />
+                <p class="cn-hint">How a neighbour would say it, not how a flyer would print it.</p>
+              </div>
+
+              <div class="cn-field">
+                <label class="cn-label" for="cn-ev-when">When</label>
+                <div class="cn-nl">
+                  <svg class="i i-sm cn-nl-ic" aria-hidden="true"><use href="#i-clock"/></svg>
+                  <input class="cn-input cn-input--nl" id="cn-ev-when" value="sat june 14 at 7pm" />
+                </div>
+                <div class="cn-parse cn-parse--ok" role="status">
+                  <svg class="i i-sm" aria-hidden="true"><use href="#i-check-circle"/></svg>
+                  <div>
+                    <p class="cn-parse-read">We read that as <b>Saturday 14 June, 7pm</b>. Is that right?</p>
+                    <div class="cn-parse-acts">
+                      <button class="cn-chip cn-chip--on" type="button"><svg class="i i-sm" aria-hidden="true"><use href="#i-check"/></svg> Yes</button>
+                      <button class="cn-chip" type="button">Set it myself</button>
+                      <button class="cn-chip" type="button">It repeats</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="cn-field">
+                <label class="cn-label" for="cn-ev-where">Where</label>
+                <div class="cn-place cn-place--picked">
+                  <span class="cn-place-ic"><svg class="i i-sm" aria-hidden="true"><use href="#i-map-pin"/></svg></span>
+                  <span class="cn-place-text">
+                    <b>Pleasant Grove Baptist Church</b>
+                    <span>2201 West Main Street, from the directory</span>
+                  </span>
+                  <button class="cn-icon-btn cn-icon-btn--sm" type="button" aria-label="Clear place"><svg class="i i-sm" aria-hidden="true"><use href="#i-close"/></svg></button>
+                </div>
+                <p class="cn-hint">Linked to the listing, so the event moves if their address does.</p>
+              </div>
+
+              <div class="cn-field">
+                <span class="cn-label">Category</span>
+                <div class="cn-chips" role="group" aria-label="Category">
+                  <button class="cn-chip" type="button">Music</button>
+                  <button class="cn-chip cn-chip--on" type="button"><svg class="i i-sm" aria-hidden="true"><use href="#i-check"/></svg> Church</button>
+                  <button class="cn-chip" type="button">Sport</button>
+                  <button class="cn-chip" type="button">Market</button>
+                  <button class="cn-chip" type="button">Kids</button>
+                  <button class="cn-chip" type="button">Civic</button>
+                </div>
+              </div>
+
+              <div class="cn-field">
+                <label class="cn-label" for="cn-ev-desc">What should people know</label>
+                <textarea class="cn-textarea" id="cn-ev-desc" rows="4">Fried catfish, hushpuppies and whatever the tables bring. Singing starts about eight. Bring a dish if you can, come anyway if you cannot.</textarea>
+                <div class="cn-countrow">
+                  <span class="cn-hint">Plain sentences. No all caps.</span>
+                  <span class="cn-count">168 / 600</span>
+                </div>
+              </div>
+
+              <div class="cn-field">
+                <label class="cn-label" for="cn-ev-link">A link <span class="cn-optional">optional</span></label>
+                <div class="cn-nl">
+                  <svg class="i i-sm cn-nl-ic" aria-hidden="true"><use href="#i-link"/></svg>
+                  <input class="cn-input cn-input--nl" id="cn-ev-link" placeholder="A page with more detail" />
+                </div>
+              </div>
+
+              <div class="cn-field">
+                <span class="cn-label">Cost</span>
+                <div class="cn-cost">
+                  <button class="cn-seg cn-seg--on" type="button" aria-pressed="true">Free</button>
+                  <button class="cn-seg" type="button" aria-pressed="false">Costs money</button>
+                  <button class="cn-seg" type="button" aria-pressed="false">Donation</button>
+                </div>
+                <p class="cn-hint">Free is the default because most of what happens here is.</p>
+              </div>
+            </div>
+
+            <div class="cn-asrow">
+              <svg class="i i-sm" aria-hidden="true"><use href="#i-lock"/></svg>
+              Posting as <b>@dana_h</b>, verified resident
+            </div>
+
+            <footer class="cn-publish">
+              <button class="cn-btn cn-btn--ghost" type="button">Save draft</button>
+              <button class="cn-btn cn-btn--primary" type="button">Post event</button>
+            </footer>
+          </div>
+        </div>
+      </div>
+
+      <div class="phone">
+        <div class="phone-cap">Add an event – preview tab</div>
+        <div class="phone-screen cn-screen">
+          <div class="cn-comp">
+            <div class="cn-comp-bar">
+              <button class="cn-icon-btn" type="button" aria-label="Back"><svg class="i" aria-hidden="true"><use href="#i-chevron-left"/></svg></button>
+              <div class="cn-comp-heading">
+                <span class="cn-comp-kicker">Adding</span>
+                <span class="cn-comp-title">An event</span>
+              </div>
+              <span class="cn-save" role="status"><svg class="i i-sm" aria-hidden="true"><use href="#i-check"/></svg> Saved</span>
+            </div>
+
+            <div class="cn-toggle" role="tablist" aria-label="Write or preview">
+              <button class="cn-toggle-opt" role="tab" aria-selected="false" type="button">Write</button>
+              <button class="cn-toggle-opt cn-toggle-opt--on" role="tab" aria-selected="true" type="button">Preview</button>
+            </div>
+
+            <div class="cn-body cn-body--preview">
+              <p class="cn-prev-note">This is exactly how it will appear in the week ahead.</p>
+              <article class="cn-evcard">
+                <div class="cn-evcard-date">
+                  <span class="cn-evcard-mon">Jun</span>
+                  <span class="cn-evcard-day">14</span>
+                </div>
+                <div class="cn-evcard-main">
+                  <span class="cn-evcard-eyebrow">Saturday, 7pm · Church</span>
+                  <h4 class="cn-evcard-title">Homecoming supper and singing</h4>
+                  <p class="cn-evcard-where"><svg class="i i-sm" aria-hidden="true"><use href="#i-map-pin"/></svg> Pleasant Grove Baptist Church</p>
+                  <p class="cn-evcard-body">Fried catfish, hushpuppies and whatever the tables bring. Singing starts about eight.</p>
+                  <div class="cn-evcard-foot">
+                    <span class="cn-badge cn-badge--free">Free</span>
+                    <span class="cn-attrib"><svg class="i i-sm" aria-hidden="true"><use href="#i-user"/></svg> Added by @dana_h</span>
+                  </div>
+                </div>
+              </article>
+              <p class="cn-prev-caveat">
+                <svg class="i i-sm" aria-hidden="true"><use href="#i-info"/></svg>
+                Your name is on it. That is not a warning, it is how anyone reading knows a person in town put it there.
+              </p>
+            </div>
+
+            <footer class="cn-publish">
+              <button class="cn-btn cn-btn--ghost" type="button">Save draft</button>
+              <button class="cn-btn cn-btn--primary" type="button">Post event</button>
+            </footer>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── 4. parse confirmation states ─────────────────────────────────────── -->
+
+  <div class="spec">
+    <div class="spec-label">Date parse confirmation, five states <em>Never silently correct a human. Show the reading, offer the fix, and keep the words they typed visible above it.</em></div>
+    <div class="cn-stack">
+
+      <div class="cn-state">
+        <span class="cn-state-tag">Empty</span>
+        <div class="cn-nl">
+          <svg class="i i-sm cn-nl-ic" aria-hidden="true"><use href="#i-clock"/></svg>
+          <input class="cn-input cn-input--nl" placeholder="Saturday morning, next Thursday at 6, June 14 7pm" />
+        </div>
+        <p class="cn-hint">The placeholder teaches the input by example. No format is documented anywhere.</p>
+      </div>
+
+      <div class="cn-state">
+        <span class="cn-state-tag">Parsed, confident</span>
+        <div class="cn-nl">
+          <svg class="i i-sm cn-nl-ic" aria-hidden="true"><use href="#i-clock"/></svg>
+          <input class="cn-input cn-input--nl" value="sat june 14 at 7pm" />
+        </div>
+        <div class="cn-parse cn-parse--ok" role="status">
+          <svg class="i i-sm" aria-hidden="true"><use href="#i-check-circle"/></svg>
+          <div>
+            <p class="cn-parse-read">We read that as <b>Saturday 14 June, 7pm</b>. Is that right?</p>
+            <div class="cn-parse-acts">
+              <button class="cn-chip cn-chip--on" type="button"><svg class="i i-sm" aria-hidden="true"><use href="#i-check"/></svg> Yes</button>
+              <button class="cn-chip" type="button">Set it myself</button>
+              <button class="cn-chip" type="button">It repeats</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="cn-state">
+        <span class="cn-state-tag">Ambiguous</span>
+        <div class="cn-nl">
+          <svg class="i i-sm cn-nl-ic" aria-hidden="true"><use href="#i-clock"/></svg>
+          <input class="cn-input cn-input--nl" value="friday at 7" />
+        </div>
+        <div class="cn-parse cn-parse--ask" role="status">
+          <svg class="i i-sm" aria-hidden="true"><use href="#i-help"/></svg>
+          <div>
+            <p class="cn-parse-read">Two readings of that. Which one?</p>
+            <div class="cn-parse-acts">
+              <button class="cn-chip" type="button">Friday 13 June, 7am</button>
+              <button class="cn-chip" type="button">Friday 13 June, 7pm</button>
+            </div>
+            <p class="cn-parse-tiny">Nothing is picked for you. A market at 7am and a game at 7pm are both normal here.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="cn-state">
+        <span class="cn-state-tag">Corrected by hand</span>
+        <div class="cn-nl">
+          <svg class="i i-sm cn-nl-ic" aria-hidden="true"><use href="#i-clock"/></svg>
+          <input class="cn-input cn-input--nl" value="sat june 14 at 7pm" />
+        </div>
+        <div class="cn-parse cn-parse--edit">
+          <svg class="i i-sm" aria-hidden="true"><use href="#i-edit"/></svg>
+          <div>
+            <p class="cn-parse-read">You set this by hand. We stopped guessing.</p>
+            <div class="cn-manual">
+              <label class="cn-manual-f"><span>Date</span><input class="cn-input cn-input--sm" value="Sat 14 June" /></label>
+              <label class="cn-manual-f"><span>Starts</span><input class="cn-input cn-input--sm" value="6:30 pm" /></label>
+              <label class="cn-manual-f"><span>Ends</span><input class="cn-input cn-input--sm" placeholder="optional" /></label>
+            </div>
+            <button class="cn-textbtn" type="button"><svg class="i i-sm" aria-hidden="true"><use href="#i-refresh"/></svg> Go back to typing it</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="cn-state">
+        <span class="cn-state-tag">Could not read</span>
+        <div class="cn-nl cn-nl--bad">
+          <svg class="i i-sm cn-nl-ic" aria-hidden="true"><use href="#i-clock"/></svg>
+          <input class="cn-input cn-input--nl" value="sometime around the fair" aria-invalid="true" />
+        </div>
+        <div class="cn-parse cn-parse--bad" role="status">
+          <svg class="i i-sm" aria-hidden="true"><use href="#i-alert-circle"/></svg>
+          <div>
+            <p class="cn-parse-read">We could not find a date in that. Try a day and a time, or set it by hand.</p>
+            <div class="cn-parse-acts">
+              <button class="cn-chip" type="button">Set it by hand</button>
+            </div>
+            <p class="cn-parse-tiny">The words you typed are kept. Nothing you wrote was thrown away.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="why">
+    <b>The parse line is a question, not a result.</b> A date picker is unambiguous and slow. Natural language is fast and occasionally wrong, and a wrong start time is the single most damaging error in this whole product: fifteen people stand in a car park at the wrong hour and nobody trusts the events feed again. So the input takes what someone would say out loud, then reads it back in full prose with the weekday spelled out, because "14/06" and "06/14" look identical to a person skimming and "Saturday 14 June" does not. The ambiguous state deliberately picks nothing. Defaulting to pm would be right most of the time in a town with evening ball games, and wrong every Saturday morning at the market, which is exactly the population that matters most.
+  </div>
+
+  <!-- ── 5. correct a listing ─────────────────────────────────────────────── -->
+
+  <div class="spec">
+    <div class="spec-label">Correct a listing <em>An edit against existing data shows the old value next to the new one, so the reviewer reads a diff and not a claim.</em></div>
+    <div class="spec-row">
+
+      <div class="phone">
+        <div class="phone-cap">Correct a listing – composing</div>
+        <div class="phone-screen cn-screen">
+          <div class="cn-comp">
+            <div class="cn-comp-bar">
+              <button class="cn-icon-btn" type="button" aria-label="Back"><svg class="i" aria-hidden="true"><use href="#i-chevron-left"/></svg></button>
+              <div class="cn-comp-heading">
+                <span class="cn-comp-kicker">Correcting</span>
+                <span class="cn-comp-title">Fat Daddy's Bar-B-Que</span>
+              </div>
+              <span class="cn-save" role="status"><svg class="i i-sm" aria-hidden="true"><use href="#i-check"/></svg> Saved</span>
+            </div>
+
+            <div class="cn-body">
+              <p class="cn-lead">Pick the one thing that is wrong. One correction, one field, so it can be accepted or turned down on its own.</p>
+
+              <div class="cn-field">
+                <span class="cn-label">Which field</span>
+                <div class="cn-chips">
+                  <button class="cn-chip" type="button">Phone</button>
+                  <button class="cn-chip cn-chip--on" type="button"><svg class="i i-sm" aria-hidden="true"><use href="#i-check"/></svg> Hours</button>
+                  <button class="cn-chip" type="button">Address</button>
+                  <button class="cn-chip" type="button">Name</button>
+                  <button class="cn-chip" type="button">Closed for good</button>
+                </div>
+              </div>
+
+              <div class="cn-diff">
+                <div class="cn-diff-side cn-diff-side--old">
+                  <span class="cn-diff-tag">On the listing now</span>
+                  <p class="cn-diff-val">Saturday<br />11am to 8pm</p>
+                  <span class="cn-diff-src">Set 14 months ago by the directory import</span>
+                </div>
+                <div class="cn-diff-arrow" aria-hidden="true"><svg class="i i-sm" aria-hidden="true"><use href="#i-arrow-down"/></svg></div>
+                <div class="cn-diff-side cn-diff-side--new">
+                  <span class="cn-diff-tag">Your correction</span>
+                  <label class="cn-sr" for="cn-fix-val">Corrected hours</label>
+                  <input class="cn-input cn-input--diff" id="cn-fix-val" value="11am to 3pm" />
+                  <span class="cn-diff-src">Saturday only. Other days are untouched.</span>
+                </div>
+              </div>
+
+              <div class="cn-field">
+                <label class="cn-label" for="cn-fix-why">How do you know</label>
+                <textarea class="cn-textarea" id="cn-fix-why" rows="3">Sign taped to the door since about May, lunch only on Saturdays now. Asked at the counter last weekend and they said it is permanent.</textarea>
+                <div class="cn-countrow">
+                  <span class="cn-hint">A reason is required. It is what a reviewer actually reads.</span>
+                  <span class="cn-count">142 / 300</span>
+                </div>
+              </div>
+
+              <div class="cn-vernote">
+                <svg class="i i-sm" aria-hidden="true"><use href="#i-history"/></svg>
+                <p>This becomes <b>version 4</b> of the listing. Version 3 stays exactly as it is and anyone, including you, can put it back. Nothing here is deleted.</p>
+              </div>
+            </div>
+
+            <div class="cn-asrow">
+              <svg class="i i-sm" aria-hidden="true"><use href="#i-lock"/></svg>
+              Correcting as <b>@dana_h</b>, verified resident
+            </div>
+
+            <footer class="cn-publish">
+              <button class="cn-btn cn-btn--ghost" type="button">Cancel</button>
+              <button class="cn-btn cn-btn--primary" type="button">Send correction</button>
+            </footer>
+          </div>
+        </div>
+      </div>
+
+      <div class="cn-side">
+        <div class="cn-side-head">Where it sits after sending</div>
+        <div class="cn-pend">
+          <div class="cn-pend-head">
+            <span class="cn-status cn-status--wait"><svg class="i i-sm" aria-hidden="true"><use href="#i-clock"/></svg> Waiting on the owner</span>
+            <span class="cn-pend-age">Sent Tuesday</span>
+          </div>
+          <h4 class="cn-pend-title">Fat Daddy's Bar-B-Que, Saturday hours</h4>
+          <p class="cn-pend-diff"><s>11am to 8pm</s> <svg class="i i-sm" aria-hidden="true"><use href="#i-arrow-right"/></svg> <b>11am to 3pm</b></p>
+          <p class="cn-pend-body">Fat Daddy's has a claimed listing, so they see this first. If nobody there answers by Friday it goes to a moderator, and if the moderator agrees it goes live.</p>
+          <div class="cn-pend-track" aria-label="Progress">
+            <span class="cn-track-step cn-track-step--done">Sent</span>
+            <span class="cn-track-step cn-track-step--now">Owner has it</span>
+            <span class="cn-track-step">Moderator</span>
+            <span class="cn-track-step">Live</span>
+          </div>
+          <div class="cn-pend-acts">
+            <button class="cn-btn cn-btn--ghost cn-btn--sm" type="button">Withdraw it</button>
+            <button class="cn-btn cn-btn--quiet cn-btn--sm" type="button">Add a note</button>
+          </div>
+        </div>
+
+        <div class="cn-pendrow">
+          <span class="cn-status cn-status--live"><svg class="i i-sm" aria-hidden="true"><use href="#i-check-circle"/></svg> Accepted</span>
+          <p>Pope County Library, Sunday hours. Live since 4 May, now version 6.</p>
+        </div>
+        <div class="cn-pendrow">
+          <span class="cn-status cn-status--no"><svg class="i i-sm" aria-hidden="true"><use href="#i-x-circle"/></svg> Not taken</span>
+          <p>Stoby's phone number. The owner replied that the old number still rings through.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── 6. post a notice ─────────────────────────────────────────────────── -->
+
+  <div class="spec">
+    <div class="spec-label">Post a notice, and the gate in front of it <em>The gate is a route, not a refusal. The severity list spells out the consequence of each level in the level's own words.</em></div>
+    <div class="spec-row">
+
+      <div class="phone">
+        <div class="phone-cap">Notice – no permission yet</div>
+        <div class="phone-screen cn-screen">
+          <div class="cn-comp">
+            <div class="cn-comp-bar">
+              <button class="cn-icon-btn" type="button" aria-label="Back"><svg class="i" aria-hidden="true"><use href="#i-chevron-left"/></svg></button>
+              <div class="cn-comp-heading">
+                <span class="cn-comp-kicker">About</span>
+                <span class="cn-comp-title">Notices</span>
+              </div>
+            </div>
+
+            <div class="cn-body cn-body--gate">
+              <div class="cn-gate-ic"><svg class="i i-xl" aria-hidden="true"><use href="#i-megaphone"/></svg></div>
+              <h3 class="cn-gate-title">Notices come from organisations</h3>
+              <p class="cn-gate-body">A notice goes out under an organisation's name, so residents know who is telling them. The library, a church, the school district, a city department. Your account is a person, so this one is not open to you yet.</p>
+              <p class="cn-gate-body">If you run something in town, or you help run it, we can attach you to it. It takes a couple of days and a person reads it.</p>
+
+              <div class="cn-gate-acts">
+                <button class="cn-btn cn-btn--primary cn-btn--wide" type="button"><svg class="i i-sm" aria-hidden="true"><use href="#i-badge-check"/></svg> Claim an organisation</button>
+                <button class="cn-btn cn-btn--ghost cn-btn--wide" type="button">Have a look at recent notices</button>
+              </div>
+
+              <div class="cn-gate-alt">
+                <p class="cn-gate-alt-head">Or, if what you have is one of these</p>
+                <ul class="cn-gate-list">
+                  <li><svg class="i i-sm" aria-hidden="true"><use href="#i-calendar"/></svg> <span><b>Something is happening.</b> That is an event, and anyone verified can add one.</span></li>
+                  <li><svg class="i i-sm" aria-hidden="true"><use href="#i-edit"/></svg> <span><b>Something is wrong on a listing.</b> That is a correction.</span></li>
+                  <li><svg class="i i-sm" aria-hidden="true"><use href="#i-alert-circle"/></svg> <span><b>Water is out on your street right now.</b> Ring the city. We are not an emergency service and we will not pretend to be.</span></li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="phone">
+        <div class="phone-cap">Notice – verified organisation</div>
+        <div class="phone-screen cn-screen">
+          <div class="cn-comp">
+            <div class="cn-comp-bar">
+              <button class="cn-icon-btn" type="button" aria-label="Back"><svg class="i" aria-hidden="true"><use href="#i-chevron-left"/></svg></button>
+              <div class="cn-comp-heading">
+                <span class="cn-comp-kicker">Posting a notice as</span>
+                <span class="cn-comp-title">First United Methodist</span>
+              </div>
+              <span class="cn-save" role="status"><svg class="i i-sm" aria-hidden="true"><use href="#i-check"/></svg> Saved</span>
+            </div>
+
+            <div class="cn-body">
+              <div class="cn-field">
+                <label class="cn-label" for="cn-nt-title">The notice</label>
+                <input class="cn-input" id="cn-nt-title" value="Wednesday supper moves to 5:30 this week" />
+              </div>
+
+              <div class="cn-field">
+                <label class="cn-label" for="cn-nt-body">Detail</label>
+                <textarea class="cn-textarea" id="cn-nt-body" rows="3">The fellowship hall is being refinished, so supper is early and in the gym. Back to normal on the 24th.</textarea>
+                <div class="cn-countrow">
+                  <span class="cn-hint">Say it the way you would say it from the pulpit.</span>
+                  <span class="cn-count">104 / 400</span>
+                </div>
+              </div>
+
+              <div class="cn-field">
+                <span class="cn-label">How far this goes</span>
+                <div class="cn-sev" role="radiogroup" aria-label="How far this goes">
+
+                  <label class="cn-sev-opt cn-sev-opt--on">
+                    <input type="radio" name="cn-sev" checked />
+                    <span class="cn-sev-mark" aria-hidden="true"></span>
+                    <span class="cn-sev-text">
+                      <span class="cn-sev-name">A notice <span class="cn-sev-default">most notices</span></span>
+                      <span class="cn-sev-what">Appears under Notices and in the week ahead. Nobody's phone makes a sound.</span>
+                    </span>
+                  </label>
+
+                  <label class="cn-sev-opt">
+                    <input type="radio" name="cn-sev" />
+                    <span class="cn-sev-mark" aria-hidden="true"></span>
+                    <span class="cn-sev-text">
+                      <span class="cn-sev-name">Time sensitive</span>
+                      <span class="cn-sev-what">Pinned to the top of Today until it passes, then it drops off. Still no sound.</span>
+                    </span>
+                  </label>
+
+                  <label class="cn-sev-opt cn-sev-opt--urgent">
+                    <input type="radio" name="cn-sev" />
+                    <span class="cn-sev-mark" aria-hidden="true"></span>
+                    <span class="cn-sev-text">
+                      <span class="cn-sev-name">Urgent</span>
+                      <span class="cn-sev-what">Wakes up every phone in Russellville, tonight, including people asleep. Held for a moderator before it sends.</span>
+                      <span class="cn-sev-last">Last used 11 March, when the river came over at Old Post Road.</span>
+                    </span>
+                  </label>
+                </div>
+
+                <div class="cn-nudge">
+                  <svg class="i i-sm" aria-hidden="true"><use href="#i-lightbulb"/></svg>
+                  <p>Supper time changing is a notice. Urgent is for when somebody could get hurt. Nobody thinks less of you for using the quiet one, and everyone notices the loud one twice.</p>
+                </div>
+              </div>
+
+              <div class="cn-field">
+                <span class="cn-label">When</span>
+                <div class="cn-cost">
+                  <button class="cn-seg cn-seg--on" type="button" aria-pressed="true">Now</button>
+                  <button class="cn-seg" type="button" aria-pressed="false">Schedule</button>
+                </div>
+              </div>
+            </div>
+
+            <div class="cn-asrow cn-asrow--org">
+              <svg class="i i-sm" aria-hidden="true"><use href="#i-badge-check"/></svg>
+              Posting as <b>First United Methodist Church</b>, by @rev.tillman
+            </div>
+
+            <footer class="cn-publish">
+              <button class="cn-btn cn-btn--ghost" type="button">Save draft</button>
+              <button class="cn-btn cn-btn--primary" type="button">Publish notice</button>
+            </footer>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="why">
+    <b>The gate is written as a redirect because the person hitting it is almost always right and just in the wrong door.</b> Somebody who wants to post a notice has something to tell the town. Refusing them and stopping there teaches them the product is closed. So the gate names the actual reason, offers the route that solves it, and then lists the three things they probably meant instead, in the order they are likely. The third one sends them to the phone, which is the correct answer and the one a community platform is usually too proud to give. On severity: the failure mode here is not malice, it is a kind secretary who genuinely believes the supper time matters urgently, and it does, to her. So the consequence is written in physical terms, "wakes up every phone in Russellville, tonight, including people asleep", rather than in policy terms. The date of the last real use is shown because it is the most persuasive sentence on the screen.
+  </div>
+
+  <!-- ── 7. start a collection ────────────────────────────────────────────── -->
+
+  <div class="spec">
+    <div class="spec-label">Start a collection <em>Curation is contribution. A collection makes no new claims, so it needs no review, only a name and an order.</em></div>
+    <div class="spec-row">
+
+      <div class="phone">
+        <div class="phone-cap">Collection – building it</div>
+        <div class="phone-screen cn-screen">
+          <div class="cn-comp">
+            <div class="cn-comp-bar">
+              <button class="cn-icon-btn" type="button" aria-label="Back"><svg class="i" aria-hidden="true"><use href="#i-chevron-left"/></svg></button>
+              <div class="cn-comp-heading">
+                <span class="cn-comp-kicker">Making</span>
+                <span class="cn-comp-title">A collection</span>
+              </div>
+              <span class="cn-save cn-save--saving" role="status"><svg class="i i-sm cn-spin" aria-hidden="true"><use href="#i-loader"/></svg> Saving</span>
+            </div>
+
+            <div class="cn-body">
+              <div class="cn-cover">
+                <div class="cn-cover-mosaic" aria-hidden="true">
+                  <span class="cn-ph cn-ph--a"></span>
+                  <span class="cn-ph cn-ph--b"></span>
+                  <span class="cn-ph cn-ph--c"></span>
+                  <span class="cn-ph cn-ph--d"></span>
+                </div>
+                <div class="cn-cover-over">
+                  <p class="cn-cover-title">Where to eat before a Tech game</p>
+                  <p class="cn-cover-meta">4 places · by @dana_h</p>
+                </div>
+                <button class="cn-cover-btn" type="button"><svg class="i i-sm" aria-hidden="true"><use href="#i-image"/></svg> Use my own picture</button>
+              </div>
+              <p class="cn-hint cn-hint--cover">The cover builds itself from the first four items. Change it if you want to, most people never do.</p>
+
+              <div class="cn-field">
+                <label class="cn-label" for="cn-co-name">Call it something</label>
+                <input class="cn-input" id="cn-co-name" value="Where to eat before a Tech game" />
+              </div>
+
+              <div class="cn-field">
+                <label class="cn-label" for="cn-co-desc">A line about it <span class="cn-optional">optional</span></label>
+                <textarea class="cn-textarea" id="cn-co-desc" rows="2">Places you can get in and out of by kickoff on a Saturday.</textarea>
+              </div>
+
+              <div class="cn-field">
+                <span class="cn-label">In this collection</span>
+                <ul class="cn-items">
+                  <li class="cn-item">
+                    <button class="cn-grip" type="button" aria-label="Reorder Stoby's"><svg class="i i-sm" aria-hidden="true"><use href="#i-drag"/></svg></button>
+                    <span class="cn-item-ph" aria-hidden="true"></span>
+                    <span class="cn-item-text"><b>Stoby's</b><span>Restaurant · North El Paso Avenue</span></span>
+                    <button class="cn-icon-btn cn-icon-btn--sm" type="button" aria-label="Remove Stoby's"><svg class="i i-sm" aria-hidden="true"><use href="#i-close"/></svg></button>
+                  </li>
+                  <li class="cn-item cn-item--dragging">
+                    <button class="cn-grip" type="button" aria-label="Reorder Fat Daddy's"><svg class="i i-sm" aria-hidden="true"><use href="#i-drag"/></svg></button>
+                    <span class="cn-item-ph" aria-hidden="true"></span>
+                    <span class="cn-item-text"><b>Fat Daddy's Bar-B-Que</b><span>Restaurant · West Main Street</span></span>
+                    <button class="cn-icon-btn cn-icon-btn--sm" type="button" aria-label="Remove Fat Daddy's"><svg class="i i-sm" aria-hidden="true"><use href="#i-close"/></svg></button>
+                  </li>
+                  <li class="cn-item">
+                    <button class="cn-grip" type="button" aria-label="Reorder Old Bank Sports Grill"><svg class="i i-sm" aria-hidden="true"><use href="#i-drag"/></svg></button>
+                    <span class="cn-item-ph" aria-hidden="true"></span>
+                    <span class="cn-item-text"><b>Old Bank Sports Grill</b><span>Restaurant · West Main Street</span></span>
+                    <button class="cn-icon-btn cn-icon-btn--sm" type="button" aria-label="Remove Old Bank Sports Grill"><svg class="i i-sm" aria-hidden="true"><use href="#i-close"/></svg></button>
+                  </li>
+                  <li class="cn-item">
+                    <button class="cn-grip" type="button" aria-label="Reorder the story"><svg class="i i-sm" aria-hidden="true"><use href="#i-drag"/></svg></button>
+                    <span class="cn-item-ph cn-item-ph--story" aria-hidden="true"><svg class="i i-sm" aria-hidden="true"><use href="#i-newspaper"/></svg></span>
+                    <span class="cn-item-text"><b>The tailgate rules nobody wrote down</b><span>Story · River Valley Leader</span></span>
+                    <button class="cn-icon-btn cn-icon-btn--sm" type="button" aria-label="Remove the story"><svg class="i i-sm" aria-hidden="true"><use href="#i-close"/></svg></button>
+                  </li>
+                </ul>
+              </div>
+
+              <div class="cn-picker">
+                <div class="cn-picker-input">
+                  <svg class="i i-sm" aria-hidden="true"><use href="#i-search"/></svg>
+                  <input class="cn-input cn-input--bare" value="chee" aria-label="Find a listing or story to add" />
+                </div>
+                <ul class="cn-picker-list" role="listbox" aria-label="Results">
+                  <li class="cn-picker-opt cn-picker-opt--on" role="option" aria-selected="true">
+                    <span class="cn-item-ph" aria-hidden="true"></span>
+                    <span class="cn-item-text"><b>Chee<span class="cn-hit">rs</span> in the Heights</b><span>Restaurant · East Parkway Drive</span></span>
+                    <svg class="i i-sm cn-picker-add" aria-hidden="true"><use href="#i-plus"/></svg>
+                  </li>
+                  <li class="cn-picker-opt" role="option" aria-selected="false">
+                    <span class="cn-item-ph" aria-hidden="true"></span>
+                    <span class="cn-item-text"><b>Chee<span class="cn-hit">se Shop, The</span></b><span>Grocery · South Arkansas Avenue</span></span>
+                    <svg class="i i-sm cn-picker-add" aria-hidden="true"><use href="#i-plus"/></svg>
+                  </li>
+                </ul>
+              </div>
+            </div>
+
+            <footer class="cn-publish">
+              <button class="cn-btn cn-btn--ghost" type="button">Save draft</button>
+              <button class="cn-btn cn-btn--primary" type="button">Publish collection</button>
+            </footer>
+          </div>
+        </div>
+      </div>
+
+      <div class="cn-side">
+        <div class="cn-side-head">Reorder, three states</div>
+        <ul class="cn-items cn-items--demo">
+          <li class="cn-item">
+            <button class="cn-grip" type="button" aria-label="Reorder"><svg class="i i-sm" aria-hidden="true"><use href="#i-drag"/></svg></button>
+            <span class="cn-item-ph" aria-hidden="true"></span>
+            <span class="cn-item-text"><b>At rest</b><span>Grip is 44px tall and always visible, never hover-only.</span></span>
+          </li>
+          <li class="cn-item cn-item--dragging">
+            <button class="cn-grip" type="button" aria-label="Reorder"><svg class="i i-sm" aria-hidden="true"><use href="#i-drag"/></svg></button>
+            <span class="cn-item-ph" aria-hidden="true"></span>
+            <span class="cn-item-text"><b>Lifted</b><span>Shadow and a slight tilt. It is off the page, not on it.</span></span>
+          </li>
+          <li class="cn-item cn-item--slot">
+            <span class="cn-item-text"><b>Where it lands</b></span>
+          </li>
+          <li class="cn-item cn-item--kbd">
+            <button class="cn-grip cn-grip--focus" type="button" aria-label="Reorder"><svg class="i i-sm" aria-hidden="true"><use href="#i-drag"/></svg></button>
+            <span class="cn-item-ph" aria-hidden="true"></span>
+            <span class="cn-item-text"><b>Keyboard held</b><span>Space picks up, arrows move, space drops. Position 3 of 5.</span></span>
+          </li>
+        </ul>
+        <p class="cn-side-note">Drag is never the only way to reorder. Every grip is a real button that holds focus and responds to the arrow keys, and the live region reads "moved to position 3 of 5" after each step.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── 8. share a photo ─────────────────────────────────────────────────── -->
+
+  <div class="spec">
+    <div class="spec-label">Share a photo, the narrowest composer <em>One picture, one line, no comments. The thing that makes a photo feed turn nasty is the thread underneath it.</em></div>
+    <div class="spec-row">
+
+      <div class="phone">
+        <div class="phone-cap">Photo – ready to post</div>
+        <div class="phone-screen cn-screen">
+          <div class="cn-comp">
+            <div class="cn-comp-bar">
+              <button class="cn-icon-btn" type="button" aria-label="Back"><svg class="i" aria-hidden="true"><use href="#i-chevron-left"/></svg></button>
+              <div class="cn-comp-heading">
+                <span class="cn-comp-kicker">Sharing</span>
+                <span class="cn-comp-title">A photo</span>
+              </div>
+              <span class="cn-save" role="status"><svg class="i i-sm" aria-hidden="true"><use href="#i-check"/></svg> Saved</span>
+            </div>
+
+            <div class="cn-body">
+              <figure class="cn-shot">
+                <div class="cn-shot-img" role="img" aria-label="The courthouse square on market morning"></div>
+                <button class="cn-shot-swap" type="button"><svg class="i i-sm" aria-hidden="true"><use href="#i-refresh"/></svg> Pick another</button>
+              </figure>
+
+              <div class="cn-exif">
+                <svg class="i i-sm" aria-hidden="true"><use href="#i-shield"/></svg>
+                <div>
+                  <p class="cn-exif-head">We took the location out of this photo</p>
+                  <p class="cn-exif-body">Your phone wrote the exact coordinates into the file. Town Square never stores an address, so we stripped it, along with the camera serial, before anything left your phone. The picture itself is untouched.</p>
+                  <button class="cn-textbtn" type="button"><svg class="i i-sm" aria-hidden="true"><use href="#i-eye"/></svg> See what was removed</button>
+                </div>
+              </div>
+
+              <div class="cn-field">
+                <label class="cn-label" for="cn-ph-cap">One line about it</label>
+                <textarea class="cn-textarea cn-textarea--one" id="cn-ph-cap" rows="3">First market morning of the year on the courthouse square, and the tomato man is back.</textarea>
+                <div class="cn-countrow">
+                  <span class="cn-hint">One line. There is no second line and no comments.</span>
+                  <span class="cn-count">86 / 90</span>
+                </div>
+              </div>
+
+              <div class="cn-field">
+                <label class="cn-label" for="cn-ph-where">Roughly where <span class="cn-optional">optional</span></label>
+                <div class="cn-place cn-place--picked">
+                  <span class="cn-place-ic"><svg class="i i-sm" aria-hidden="true"><use href="#i-map-pin"/></svg></span>
+                  <span class="cn-place-text">
+                    <b>Pope County Courthouse square</b>
+                    <span>A place from the directory, never a pin you drop</span>
+                  </span>
+                  <button class="cn-icon-btn cn-icon-btn--sm" type="button" aria-label="Clear place"><svg class="i i-sm" aria-hidden="true"><use href="#i-close"/></svg></button>
+                </div>
+              </div>
+
+              <p class="cn-noreply">
+                <svg class="i i-sm" aria-hidden="true"><use href="#i-message"/></svg>
+                Photos have no comments anywhere in Town Square. People can save it and they can report it. That is the whole list.
+              </p>
+            </div>
+
+            <div class="cn-asrow">
+              <svg class="i i-sm" aria-hidden="true"><use href="#i-lock"/></svg>
+              Posting as <b>@dana_h</b>, verified resident
+            </div>
+
+            <footer class="cn-publish">
+              <button class="cn-btn cn-btn--ghost" type="button">Save draft</button>
+              <button class="cn-btn cn-btn--primary" type="button">Share photo</button>
+            </footer>
+          </div>
+        </div>
+      </div>
+
+      <div class="cn-side">
+        <div class="cn-side-head">Upload, five states</div>
+        <div class="cn-upgrid">
+
+          <div class="cn-up cn-up--empty">
+            <svg class="i i-lg" aria-hidden="true"><use href="#i-camera"/></svg>
+            <b>Picking</b>
+            <span>Drop a photo, or take one</span>
+            <span class="cn-up-tiny">JPEG or HEIC, up to 12MB</span>
+          </div>
+
+          <div class="cn-up cn-up--busy" aria-busy="true">
+            <div class="cn-up-thumb" aria-hidden="true"></div>
+            <b>Uploading</b>
+            <div class="cn-bar"><span class="cn-bar-fill" style="--cn-p:64%"></span></div>
+            <span class="cn-up-tiny">64% of 3.2MB. You can keep typing the caption.</span>
+          </div>
+
+          <div class="cn-up cn-up--proc" aria-busy="true">
+            <div class="cn-up-thumb cn-up-thumb--blur" aria-hidden="true"></div>
+            <b>Getting it ready</b>
+            <div class="cn-bar cn-bar--indet"><span class="cn-bar-fill"></span></div>
+            <span class="cn-up-tiny">Stripping the location, making the sizes we serve.</span>
+          </div>
+
+          <div class="cn-up cn-up--fail">
+            <svg class="i i-lg" aria-hidden="true"><use href="#i-alert-circle"/></svg>
+            <b>That did not go through</b>
+            <span>The connection dropped at 71%.</span>
+            <div class="cn-up-acts">
+              <button class="cn-btn cn-btn--primary cn-btn--sm" type="button">Try again</button>
+              <button class="cn-btn cn-btn--quiet cn-btn--sm" type="button">Pick another</button>
+            </div>
+            <span class="cn-up-tiny">Your caption is still here.</span>
+          </div>
+
+          <div class="cn-up cn-up--done">
+            <div class="cn-up-thumb" aria-hidden="true"></div>
+            <b>Ready <svg class="i i-sm" aria-hidden="true"><use href="#i-check-circle"/></svg></b>
+            <span>2400 by 1600, location removed</span>
+            <button class="cn-textbtn" type="button">Replace</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="why">
+    <b>EXIF is the obvious leak, and telling people about it is the point.</b> We built a whole identity model on never storing an address, and then the first photo somebody uploads from their front porch carries the coordinates of their front porch inside the file. Stripping it silently would be correct and invisible. Saying it out loud, in the composer, at the moment the photo lands, is correct and <i>legible</i>, and legibility is the thing that makes a stranger believe the rest of the privacy claims. "See what was removed" is there for the one resident in fifty who wants to check, and their checking is what makes the promise real for the other forty nine. The location field is a directory place and never a dropped pin, for the same reason: a pin can be a house, a listing cannot.
+  </div>
+
+  <!-- ── 9. attribution ───────────────────────────────────────────────────── -->
+
+  <div class="spec">
+    <div class="spec-label">Attribution, including the dual case <em>Written from the session on the server. There is no author field in any composer, so there is nothing to forge.</em></div>
+    <div class="spec-grid">
+
+      <div class="cn-attr-card">
+        <span class="cn-attr-tag">A resident</span>
+        <p class="cn-attr-line">
+          <span class="cn-av" aria-hidden="true">D</span>
+          <span>Added by <b>@dana_h</b> <svg class="i i-sm cn-verified" aria-hidden="true"><use href="#i-badge-check"/></svg></span>
+          <span class="cn-attr-when">Tuesday</span>
+        </p>
+        <p class="cn-attr-note">Handle only. Verified is a tick, never a real name, because verified must never mean publicly identified.</p>
+      </div>
+
+      <div class="cn-attr-card">
+        <span class="cn-attr-tag">A resident, through a creation</span>
+        <p class="cn-attr-line">
+          <span class="cn-av" aria-hidden="true">M</span>
+          <span>Added by <b>@mcallister</b> <svg class="i i-sm cn-verified" aria-hidden="true"><use href="#i-badge-check"/></svg><br />
+          through <span class="cn-crchip"><svg class="i i-sm" aria-hidden="true"><use href="#i-puzzle"/></svg> River Trail Conditions</span></span>
+          <span class="cn-attr-when">6h</span>
+        </p>
+        <p class="cn-attr-note">Both are recorded. The person answers for the content, the creation answers for the behaviour, and cutting off a misbehaving app does not punish the people who used it.</p>
+      </div>
+
+      <div class="cn-attr-card">
+        <span class="cn-attr-tag">An organisation</span>
+        <p class="cn-attr-line">
+          <span class="cn-av cn-av--org" aria-hidden="true"><svg class="i i-sm" aria-hidden="true"><use href="#i-building"/></svg></span>
+          <span><b>Pope County Library</b> <svg class="i i-sm cn-verified" aria-hidden="true"><use href="#i-badge-check"/></svg><br /><span class="cn-attr-sub">posted by @j.arnold</span></span>
+          <span class="cn-attr-when">Mon</span>
+        </p>
+        <p class="cn-attr-note">The org is the author in public. The staff handle is shown small underneath, so accountability inside the building is not lost.</p>
+      </div>
+
+      <div class="cn-attr-card">
+        <span class="cn-attr-tag">A creation on a schedule</span>
+        <p class="cn-attr-line">
+          <span class="cn-av cn-av--bot" aria-hidden="true"><svg class="i i-sm" aria-hidden="true"><use href="#i-refresh"/></svg></span>
+          <span>Kept up to date by <span class="cn-crchip"><svg class="i i-sm" aria-hidden="true"><use href="#i-puzzle"/></svg> Lake Level</span><br /><span class="cn-attr-sub">owned by @tswic</span></span>
+          <span class="cn-attr-when">12m</span>
+        </p>
+        <p class="cn-attr-note">No acting user, so none is claimed. The owner is named instead, and the phrasing changes from "added by" to "kept up to date by" so nobody reads a person into it.</p>
+      </div>
+
+      <div class="cn-attr-card">
+        <span class="cn-attr-tag">After a revert</span>
+        <p class="cn-attr-line">
+          <span class="cn-av" aria-hidden="true">D</span>
+          <span>Added by <b>@dana_h</b><br /><span class="cn-attr-sub"><svg class="i i-sm" aria-hidden="true"><use href="#i-history"/></svg> put back to version 3 by a moderator</span></span>
+          <span class="cn-attr-when">Fri</span>
+        </p>
+        <p class="cn-attr-note">The original author keeps the credit for what they wrote. The revert is a separate line, and the moderator is a role rather than a name.</p>
+      </div>
+
+      <div class="cn-attr-card cn-attr-card--locked">
+        <span class="cn-attr-tag">In the composer</span>
+        <div class="cn-asrow cn-asrow--flat">
+          <svg class="i i-sm" aria-hidden="true"><use href="#i-lock"/></svg>
+          Posting as <b>@dana_h</b>, verified resident
+        </div>
+        <p class="cn-attr-note">Not a dropdown, not editable, not hidden. Someone posting for two organisations switches account at the top of the app, not at the bottom of a form, so the choice is never made by accident in the last second before publishing.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── 10. publish gates ────────────────────────────────────────────────── -->
+
+  <div class="spec">
+    <div class="spec-label">Publish gates, the whole matrix <em>Every state says what is happening, who has it, and roughly when. "Pending" on its own is a way of not answering.</em></div>
+    <div class="cn-gates">
+      <div class="cn-gate-row">
+        <span class="cn-status cn-status--need"><svg class="i i-sm" aria-hidden="true"><use href="#i-user-plus"/></svg> Needs vouching</span>
+        <div>
+          <p class="cn-gate-say"><b>Saved, and it will post the moment you are verified.</b> Adding events is for verified residents. You need ten neighbours to vouch, and you have four. We are holding this for you, nothing is lost.</p>
+          <button class="cn-btn cn-btn--quiet cn-btn--sm" type="button">How vouching works</button>
+        </div>
+      </div>
+
+      <div class="cn-gate-row">
+        <span class="cn-status cn-status--wait"><svg class="i i-sm" aria-hidden="true"><use href="#i-clock"/></svg> Being read</span>
+        <div>
+          <p class="cn-gate-say"><b>A moderator has this.</b> Urgent notices are read by a person before they send. Usually inside an hour during the day. If it is genuinely happening right now, ring the city at 479 968 2098 and do not wait on us.</p>
+        </div>
+      </div>
+
+      <div class="cn-gate-row">
+        <span class="cn-status cn-status--sched"><svg class="i i-sm" aria-hidden="true"><use href="#i-calendar"/></svg> Scheduled</span>
+        <div>
+          <p class="cn-gate-say"><b>Goes out Friday at 8am.</b> Nobody can see it before then, including you on another device. You can change it or pull it back any time before it sends.</p>
+          <button class="cn-btn cn-btn--quiet cn-btn--sm" type="button">Change the time</button>
+        </div>
+      </div>
+
+      <div class="cn-gate-row">
+        <span class="cn-status cn-status--live"><svg class="i i-sm" aria-hidden="true"><use href="#i-check-circle"/></svg> Live</span>
+        <div>
+          <p class="cn-gate-say"><b>It is up.</b> 41 people have seen it. Editing it makes version 2, and the old one stays where it is.</p>
+          <div class="cn-gate-acts-row">
+            <button class="cn-btn cn-btn--quiet cn-btn--sm" type="button">Edit</button>
+            <button class="cn-btn cn-btn--quiet cn-btn--sm" type="button">See it in the feed</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="cn-gate-row cn-gate-row--no">
+        <span class="cn-status cn-status--no"><svg class="i i-sm" aria-hidden="true"><use href="#i-x-circle"/></svg> Turned down</span>
+        <div>
+          <p class="cn-gate-say"><b>A moderator did not put this one up, and left you a note.</b></p>
+          <blockquote class="cn-modnote">
+            <p>This one reads as a complaint about a specific neighbour rather than an event, and that is the one thing Town Square does not carry. If the clean up on Skyline Drive is actually happening on Saturday, put it back as an event with a time and I will approve it straight away. Ring me if that is not fair, my number is on the moderators page.</p>
+            <footer><svg class="i i-sm" aria-hidden="true"><use href="#i-shield"/></svg> A moderator, Thursday</footer>
+          </blockquote>
+          <div class="cn-gate-acts-row">
+            <button class="cn-btn cn-btn--primary cn-btn--sm" type="button">Edit and send again</button>
+            <button class="cn-btn cn-btn--quiet cn-btn--sm" type="button">Reply to this</button>
+          </div>
+          <p class="cn-gate-tiny">Nothing was deleted. The draft is exactly as you wrote it.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="why">
+      <b>The rejection is the most important screen in this section.</b> It is the only moment where the platform tells a resident no, and how it reads decides whether they ever contribute again. So it is a person writing to a person: it names what was wrong with the <i>record</i> and never with them, it says exactly what would make it acceptable, it commits to acting quickly if they do, and it gives them a way to argue including a phone number. It is signed "a moderator" rather than by name, because in a town of 29,000 a named moderator gets stopped in the Kroger car park, and that is how you lose your only moderator. The brick alarm colour is nowhere near this screen. Being turned down is not an emergency.
+    </div>
+  </div>
+
+  <!-- ── 11. version history, contributor side ────────────────────────────── -->
+
+  <div class="spec">
+    <div class="spec-label">Version history, from the contributor's side <em>A revert is a new version, not a deletion, so the history reads as a record of care rather than a disciplinary file.</em></div>
+    <div class="spec-row">
+      <div class="phone">
+        <div class="phone-cap">Your contribution – history</div>
+        <div class="phone-screen cn-screen">
+          <div class="cn-comp">
+            <div class="cn-comp-bar">
+              <button class="cn-icon-btn" type="button" aria-label="Back"><svg class="i" aria-hidden="true"><use href="#i-chevron-left"/></svg></button>
+              <div class="cn-comp-heading">
+                <span class="cn-comp-kicker">History of</span>
+                <span class="cn-comp-title">Pope County Library</span>
+              </div>
+            </div>
+
+            <div class="cn-body">
+              <p class="cn-lead">Four versions. Two of them are yours. Everything that has ever been on this listing is still here.</p>
+
+              <ol class="cn-hist">
+                <li class="cn-hist-row cn-hist-row--current">
+                  <span class="cn-hist-dot" aria-hidden="true"></span>
+                  <div class="cn-hist-card">
+                    <div class="cn-hist-head"><b>Version 4</b><span class="cn-hist-now">on the listing now</span></div>
+                    <p class="cn-hist-what">Sunday hours back to <b>1pm to 5pm</b></p>
+                    <p class="cn-hist-who"><svg class="i i-sm" aria-hidden="true"><use href="#i-history"/></svg> A moderator put version 2 back, on Friday</p>
+                    <p class="cn-hist-note">Note left: "The library rang to say the summer Sunday hours do not start until 7 June. Putting the old ones back until then, and I have set a reminder."</p>
+                  </div>
+                </li>
+
+                <li class="cn-hist-row cn-hist-row--mine">
+                  <span class="cn-hist-dot" aria-hidden="true"></span>
+                  <div class="cn-hist-card">
+                    <div class="cn-hist-head"><b>Version 3</b><span class="cn-hist-mine">yours</span></div>
+                    <p class="cn-hist-what">Sunday hours to <b>1pm to 6pm</b></p>
+                    <p class="cn-hist-who"><svg class="i i-sm" aria-hidden="true"><use href="#i-user"/></svg> You, Thursday</p>
+                    <p class="cn-hist-note">Your reason: "New summer hours poster in the front window."</p>
+                    <p class="cn-hist-still">Still here, still yours, and it goes back up on 7 June.</p>
+                    <button class="cn-btn cn-btn--quiet cn-btn--sm" type="button">Put this one back</button>
+                  </div>
+                </li>
+
+                <li class="cn-hist-row">
+                  <span class="cn-hist-dot" aria-hidden="true"></span>
+                  <div class="cn-hist-card">
+                    <div class="cn-hist-head"><b>Version 2</b><span class="cn-hist-mine">yours</span></div>
+                    <p class="cn-hist-what">Phone number to <b>479 968 4368</b></p>
+                    <p class="cn-hist-who"><svg class="i i-sm" aria-hidden="true"><use href="#i-user"/></svg> You, 4 May</p>
+                  </div>
+                </li>
+
+                <li class="cn-hist-row">
+                  <span class="cn-hist-dot" aria-hidden="true"></span>
+                  <div class="cn-hist-card">
+                    <div class="cn-hist-head"><b>Version 1</b></div>
+                    <p class="cn-hist-what">Listing created</p>
+                    <p class="cn-hist-who"><svg class="i i-sm" aria-hidden="true"><use href="#i-database"/></svg> The directory import, March 2025</p>
+                  </div>
+                </li>
+              </ol>
+
+              <p class="cn-hist-foot">
+                <svg class="i i-sm" aria-hidden="true"><use href="#i-info"/></svg>
+                Putting a version back does not erase the ones after it. It writes a new version that copies an old one, which is why nobody can quietly rewrite what happened here.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="cn-side">
+        <div class="cn-side-head">The same event, two framings</div>
+        <div class="cn-compare">
+          <div class="cn-compare-side cn-compare-side--bad">
+            <span class="cn-compare-tag">Not this</span>
+            <p class="cn-compare-copy">Your edit was <b>rejected</b> and has been <b>removed</b>. Repeated violations may result in loss of contribution privileges.</p>
+            <p class="cn-compare-why">Three untrue words. It was not rejected, it was superseded. It was not removed, it is version 3 and always will be. And there is no strike system, so the threat is a fiction that costs a real contributor.</p>
+          </div>
+          <div class="cn-compare-side cn-compare-side--good">
+            <span class="cn-compare-tag">This</span>
+            <p class="cn-compare-copy">A moderator put version 2 back on Friday. Your version 3 is still here, and it goes back up on 7 June.</p>
+            <p class="cn-compare-why">Same facts, correct verbs, and it ends with the contributor's work winning. The revert is described as a scheduling problem, which is what it actually was.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── 12. drafts ───────────────────────────────────────────────────────── -->
+
+  <div class="spec">
+    <div class="spec-label">Drafts, recovery and discard <em>Autosave is worth nothing if a resident cannot find the thing it saved. The drafts list is one tap from the plus.</em></div>
+    <div class="spec-row">
+
+      <div class="phone">
+        <div class="phone-cap">Drafts</div>
+        <div class="phone-screen cn-screen">
+          <div class="cn-comp">
+            <div class="cn-comp-bar">
+              <button class="cn-icon-btn" type="button" aria-label="Back"><svg class="i" aria-hidden="true"><use href="#i-chevron-left"/></svg></button>
+              <div class="cn-comp-heading">
+                <span class="cn-comp-kicker">Not posted yet</span>
+                <span class="cn-comp-title">Your drafts</span>
+              </div>
+            </div>
+
+            <div class="cn-body">
+              <div class="cn-recover" role="status">
+                <svg class="i i-sm" aria-hidden="true"><use href="#i-refresh"/></svg>
+                <div>
+                  <p class="cn-recover-head">You had an event open when this closed</p>
+                  <p class="cn-recover-body">"Summer reading kickoff", from about 20 minutes ago. It is all still here.</p>
+                  <div class="cn-recover-acts">
+                    <button class="cn-btn cn-btn--primary cn-btn--sm" type="button">Pick it back up</button>
+                    <button class="cn-btn cn-btn--quiet cn-btn--sm" type="button">Not now</button>
+                  </div>
+                </div>
+              </div>
+
+              <ul class="cn-drafts">
+                <li class="cn-draft">
+                  <span class="cn-draft-ic cn-choose-ic--event"><svg class="i i-sm" aria-hidden="true"><use href="#i-calendar"/></svg></span>
+                  <span class="cn-draft-text">
+                    <b>Summer reading kickoff</b>
+                    <span>Event · Pope County Library · 20 minutes ago</span>
+                    <span class="cn-draft-missing"><svg class="i i-sm" aria-hidden="true"><use href="#i-alert-circle"/></svg> Needs a start time before it can post</span>
+                  </span>
+                  <button class="cn-icon-btn cn-icon-btn--sm" type="button" aria-label="More for Summer reading kickoff"><svg class="i i-sm" aria-hidden="true"><use href="#i-more-horizontal"/></svg></button>
+                </li>
+                <li class="cn-draft">
+                  <span class="cn-draft-ic cn-choose-ic--coll"><svg class="i i-sm" aria-hidden="true"><use href="#i-layers"/></svg></span>
+                  <span class="cn-draft-text">
+                    <b>Where to eat before a Tech game</b>
+                    <span>Collection · 4 places · yesterday</span>
+                  </span>
+                  <button class="cn-icon-btn cn-icon-btn--sm" type="button" aria-label="More for the collection"><svg class="i i-sm" aria-hidden="true"><use href="#i-more-horizontal"/></svg></button>
+                </li>
+                <li class="cn-draft">
+                  <span class="cn-draft-ic cn-choose-ic--photo"><svg class="i i-sm" aria-hidden="true"><use href="#i-camera"/></svg></span>
+                  <span class="cn-draft-text">
+                    <b>Untitled photo</b>
+                    <span>Photo · no caption yet · 3 weeks ago</span>
+                    <span class="cn-draft-old"><svg class="i i-sm" aria-hidden="true"><use href="#i-archive"/></svg> Drafts are kept for 90 days, then tidied away</span>
+                  </span>
+                  <button class="cn-icon-btn cn-icon-btn--sm" type="button" aria-label="More for the photo"><svg class="i i-sm" aria-hidden="true"><use href="#i-more-horizontal"/></svg></button>
+                </li>
+              </ul>
+
+              <p class="cn-drafts-foot">Drafts are yours alone. Nobody else can see one, not a moderator, not an organisation you help run.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="cn-side">
+        <div class="cn-side-head">Autosave, three states</div>
+        <div class="cn-saverow">
+          <span class="cn-save cn-save--saving"><svg class="i i-sm cn-spin" aria-hidden="true"><use href="#i-loader"/></svg> Saving</span>
+          <span class="cn-save"><svg class="i i-sm" aria-hidden="true"><use href="#i-check"/></svg> Saved</span>
+          <span class="cn-save cn-save--offline"><svg class="i i-sm" aria-hidden="true"><use href="#i-cloud-upload"/></svg> Saved on this phone</span>
+        </div>
+        <p class="cn-side-note">The offline state is the honest one and it says where the copy actually is. Signal on the river road is bad enough that a composer which pretends to have saved is a composer that loses somebody's work.</p>
+
+        <div class="cn-side-head">Discard</div>
+        <div class="cn-confirm" role="dialog" aria-label="Discard this draft">
+          <h4>Throw this draft away?</h4>
+          <p>"Summer reading kickoff", with the time and place you already put in. This one is a real delete, not a version, because a draft was never published and there is nothing to keep a history of.</p>
+          <div class="cn-confirm-acts">
+            <button class="cn-btn cn-btn--ghost" type="button">Keep it</button>
+            <button class="cn-btn cn-btn--danger" type="button">Throw it away</button>
+          </div>
+        </div>
+        <p class="cn-side-note">"Keep it" sits on the left and reads first, and it is the button a thumb finds. Discard is bordered rather than filled, because a filled destructive button is a button people press by accident.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── 13. input primitives ─────────────────────────────────────────────── -->
+
+  <div class="spec">
+    <div class="spec-label">Input primitives this section adds <em>Five controls that only exist because contribution exists. Each one carries its own error state, not a generic one.</em></div>
+    <div class="spec-grid">
+
+      <div class="cn-prim">
+        <span class="cn-prim-name">Place picker, typeahead over the directory</span>
+        <div class="cn-place cn-place--open">
+          <span class="cn-place-ic"><svg class="i i-sm" aria-hidden="true"><use href="#i-search"/></svg></span>
+          <input class="cn-input cn-input--bare" value="pleasant" aria-label="Find a place" aria-expanded="true" />
+        </div>
+        <ul class="cn-picker-list" role="listbox" aria-label="Places">
+          <li class="cn-picker-opt cn-picker-opt--on" role="option" aria-selected="true">
+            <span class="cn-place-ic cn-place-ic--sm"><svg class="i i-sm" aria-hidden="true"><use href="#i-building"/></svg></span>
+            <span class="cn-item-text"><b><span class="cn-hit">Pleasant</span> Grove Baptist Church</b><span>2201 West Main Street</span></span>
+          </li>
+          <li class="cn-picker-opt" role="option" aria-selected="false">
+            <span class="cn-place-ic cn-place-ic--sm"><svg class="i i-sm" aria-hidden="true"><use href="#i-tree"/></svg></span>
+            <span class="cn-item-text"><b><span class="cn-hit">Pleasant</span> View Park</b><span>Skyline Drive</span></span>
+          </li>
+          <li class="cn-picker-opt cn-picker-opt--new" role="option" aria-selected="false">
+            <span class="cn-place-ic cn-place-ic--sm"><svg class="i i-sm" aria-hidden="true"><use href="#i-plus"/></svg></span>
+            <span class="cn-item-text"><b>Somewhere else</b><span>Type a place name. No street address, ever.</span></span>
+          </li>
+        </ul>
+        <p class="cn-prim-note">It searches the 700 listings we already have, so an event links to a real place with real hours instead of a string somebody typed. The escape hatch takes a name and never an address.</p>
+      </div>
+
+      <div class="cn-prim">
+        <span class="cn-prim-name">Tag input</span>
+        <div class="cn-tags">
+          <span class="cn-tagpill">market <button type="button" aria-label="Remove market"><svg class="i i-sm" aria-hidden="true"><use href="#i-close"/></svg></button></span>
+          <span class="cn-tagpill">downtown <button type="button" aria-label="Remove downtown"><svg class="i i-sm" aria-hidden="true"><use href="#i-close"/></svg></button></span>
+          <span class="cn-tagpill cn-tagpill--armed">saturday <button type="button" aria-label="Remove saturday"><svg class="i i-sm" aria-hidden="true"><use href="#i-close"/></svg></button></span>
+          <input class="cn-input cn-input--bare cn-tag-in" value="courth" aria-label="Add a tag" />
+        </div>
+        <ul class="cn-picker-list cn-picker-list--tight" role="listbox" aria-label="Tag suggestions">
+          <li class="cn-picker-opt cn-picker-opt--on" role="option" aria-selected="true"><span class="cn-item-text"><b><span class="cn-hit">courth</span>ouse square</b><span>used on 61 records</span></span></li>
+          <li class="cn-picker-opt" role="option" aria-selected="false"><span class="cn-item-text"><b><span class="cn-hit">courth</span>ouse lawn</b><span>used twice, probably a duplicate</span></span></li>
+        </ul>
+        <p class="cn-prim-note">Existing tags come first with their counts, because a tag used 61 times is worth more than a new one. Backspace on an empty field arms the last pill rather than deleting it outright.</p>
+      </div>
+
+      <div class="cn-prim">
+        <span class="cn-prim-name">Image dropzone with reorder</span>
+        <div class="cn-drop">
+          <div class="cn-drop-grid">
+            <span class="cn-drop-tile cn-drop-tile--1"><span class="cn-drop-badge">Cover</span><button class="cn-drop-x" type="button" aria-label="Remove"><svg class="i i-sm" aria-hidden="true"><use href="#i-close"/></svg></button></span>
+            <span class="cn-drop-tile cn-drop-tile--2"><button class="cn-drop-x" type="button" aria-label="Remove"><svg class="i i-sm" aria-hidden="true"><use href="#i-close"/></svg></button></span>
+            <span class="cn-drop-tile cn-drop-tile--3 cn-drop-tile--busy"><span class="cn-drop-ring" aria-hidden="true"></span></span>
+            <button class="cn-drop-add" type="button"><svg class="i" aria-hidden="true"><use href="#i-plus"/></svg><span>Add</span></button>
+          </div>
+        </div>
+        <div class="cn-drop cn-drop--over" aria-label="Drag over">
+          <svg class="i i-lg" aria-hidden="true"><use href="#i-cloud-upload"/></svg>
+          <b>Drop to add</b>
+          <span>3 photos, they go at the end</span>
+        </div>
+        <p class="cn-prim-note">First tile is the cover and says so, since that is the only ordering decision most people care about. Drag-over is a state on the zone itself, never a full screen overlay that hides what you were doing.</p>
+      </div>
+
+      <div class="cn-prim">
+        <span class="cn-prim-name">Counted text area, under and over</span>
+        <textarea class="cn-textarea" rows="2">Fried catfish and whatever the tables bring.</textarea>
+        <div class="cn-countrow"><span class="cn-hint">Plenty of room</span><span class="cn-count">44 / 600</span></div>
+        <textarea class="cn-textarea cn-textarea--near" rows="2">Singing starts about eight, and Miss Ruthie is bringing her pound cake.</textarea>
+        <div class="cn-countrow"><span class="cn-hint">Getting close</span><span class="cn-count cn-count--near">571 / 600</span></div>
+        <textarea class="cn-textarea cn-textarea--over" rows="2" aria-invalid="true">…and a table for the children out on the side lawn, weather allowing.</textarea>
+        <div class="cn-countrow"><span class="cn-hint cn-hint--over"><svg class="i i-sm" aria-hidden="true"><use href="#i-alert-circle"/></svg> 23 over. Nothing was cut, trim it yourself.</span><span class="cn-count cn-count--over">623 / 600</span></div>
+        <p class="cn-prim-note">The counter only appears past halfway, so it is not a clock ticking at someone from the first word. Over the limit the field accepts the typing and blocks the publish, because truncating a person's sentence mid word is the rudest thing a form can do.</p>
+      </div>
+
+      <div class="cn-prim">
+        <span class="cn-prim-name">Natural language date, resting and focused</span>
+        <div class="cn-nl">
+          <svg class="i i-sm cn-nl-ic" aria-hidden="true"><use href="#i-clock"/></svg>
+          <input class="cn-input cn-input--nl" placeholder="Saturday morning, 14 June at 7pm" />
+        </div>
+        <div class="cn-nl cn-nl--focus">
+          <svg class="i i-sm cn-nl-ic" aria-hidden="true"><use href="#i-clock"/></svg>
+          <input class="cn-input cn-input--nl" value="next thursday 6" />
+        </div>
+        <div class="cn-quickdays">
+          <button class="cn-chip" type="button">Today</button>
+          <button class="cn-chip" type="button">Tomorrow</button>
+          <button class="cn-chip" type="button">Saturday</button>
+          <button class="cn-chip" type="button"><svg class="i i-sm" aria-hidden="true"><use href="#i-calendar"/></svg> Pick a date</button>
+        </div>
+        <p class="cn-prim-note">Focus opens the quick days, which cover most of what gets added. "Pick a date" is the last chip and opens the native picker, because the fallback has to be the thing every phone already knows how to do.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── 14. gentle friction ──────────────────────────────────────────────── -->
+
+  <div class="spec">
+    <div class="spec-label">Rate limiting, as a pause rather than a wall <em>The most prolific contributor in town is an asset. Treat them like one, and say what the limit is actually protecting.</em></div>
+    <div class="spec-row">
+      <div class="phone">
+        <div class="phone-cap">Friction – a busy afternoon</div>
+        <div class="phone-screen cn-screen">
+          <div class="cn-comp">
+            <div class="cn-comp-bar">
+              <button class="cn-icon-btn" type="button" aria-label="Back"><svg class="i" aria-hidden="true"><use href="#i-chevron-left"/></svg></button>
+              <div class="cn-comp-heading">
+                <span class="cn-comp-kicker">Hold on a second</span>
+                <span class="cn-comp-title">Nine today</span>
+              </div>
+            </div>
+            <div class="cn-body cn-body--pause">
+              <div class="cn-pause-ic"><svg class="i i-xl" aria-hidden="true"><use href="#i-coffee"/></svg></div>
+              <h3 class="cn-pause-title">That is nine things you have added today, and they were all good ones</h3>
+              <p class="cn-pause-body">Town Square puts a pause in after nine in a day. Not because you did anything wrong. It is there so that if somebody's account is ever taken over, the town does not wake up to two hundred fake events, and the pause has to apply to everyone or it protects nobody.</p>
+              <div class="cn-pause-when">
+                <svg class="i i-sm" aria-hidden="true"><use href="#i-clock"/></svg>
+                <span>You can post again <b>at 6pm</b>, about two hours.</span>
+              </div>
+              <ul class="cn-pause-list">
+                <li><svg class="i i-sm" aria-hidden="true"><use href="#i-check"/></svg> Keep writing. Drafts still save, there is no limit on those.</li>
+                <li><svg class="i i-sm" aria-hidden="true"><use href="#i-check"/></svg> Corrections to listings still go through. Those are reviewed anyway.</li>
+                <li><svg class="i i-sm" aria-hidden="true"><use href="#i-check"/></svg> Anything already scheduled still sends on time.</li>
+              </ul>
+              <div class="cn-pause-acts">
+                <button class="cn-btn cn-btn--primary cn-btn--wide" type="button">Save this as a draft</button>
+                <button class="cn-btn cn-btn--ghost cn-btn--wide" type="button">Ask a moderator to lift it</button>
+              </div>
+              <p class="cn-pause-foot">If you run the market or the school calendar and nine a day is genuinely not enough, say so and we will raise yours. That takes a message, not an application.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="cn-side">
+        <div class="cn-side-head">The ladder, in order</div>
+        <ol class="cn-ladder">
+          <li><span class="cn-ladder-n">1</span><div><b>Nothing at all, up to six a day.</b> Most residents never see any of this, including the busy ones.</div></li>
+          <li><span class="cn-ladder-n">2</span><div><b>A quiet line at seven.</b> "Seventh one today." Sits under the publish bar. No confirmation, no delay.</div></li>
+          <li><span class="cn-ladder-n">3</span><div><b>The pause at nine.</b> The screen on the left. Drafting continues, publishing waits.</div></li>
+          <li><span class="cn-ladder-n">4</span><div><b>A moderator is told at fifteen attempts.</b> The resident is told they were told. A limit nobody is watching is a limit that only annoys honest people.</div></li>
+        </ol>
+        <div class="cn-quiet-demo">
+          <span class="cn-quiet-line"><svg class="i i-sm" aria-hidden="true"><use href="#i-info"/></svg> Seventh one today. No trouble, just so you know.</span>
+          <footer class="cn-publish cn-publish--flat">
+            <button class="cn-btn cn-btn--ghost" type="button">Save draft</button>
+            <button class="cn-btn cn-btn--primary" type="button">Post event</button>
+          </footer>
+        </div>
+        <p class="cn-side-note">Step two is the one that does the real work. It makes a person notice their own volume without stopping them, and in testing that is usually enough.</p>
+      </div>
+    </div>
+
+    <div class="why">
+      <b>The limit is explained by its threat model, not by its number.</b> "You have reached your daily limit" is a sentence that makes a person feel suspected, and the person hitting it is nearly always the one running the market booth or the school calendar. So the copy names the actual thing being defended, a compromised account posting two hundred fake events overnight, and admits straight out that the rule has to apply to everyone or it defends nobody. It then lists what still works, because the most useful sentence in a rate limit screen is the one that says the work is not lost. And the escalation path is a message to a person, not a form, which is a thing you can only offer in a product built for one town.
+    </div>
+  </div>
+
+  <!-- ── 15. desktop ──────────────────────────────────────────────────────── -->
+
+  <div class="spec">
+    <div class="spec-label">Desktop composer, the one place preview sits beside the form <em>The extra width buys a live preview, not more fields. Nothing appears here that is missing on a phone.</em></div>
+    <div class="plate">
+      <div class="cn-desk">
+        <div class="cn-desk-bar">
+          <div class="cn-desk-heading">
+            <span class="cn-comp-kicker">Adding</span>
+            <span class="cn-desk-title">An event</span>
+          </div>
+          <span class="cn-save" role="status"><svg class="i i-sm" aria-hidden="true"><use href="#i-check"/></svg> Saved 2 minutes ago</span>
+          <div class="cn-desk-acts">
+            <button class="cn-btn cn-btn--ghost cn-btn--sm" type="button">Save draft</button>
+            <button class="cn-btn cn-btn--primary cn-btn--sm" type="button">Post event</button>
+          </div>
+        </div>
+
+        <div class="cn-desk-cols">
+          <div class="cn-desk-form">
+            <div class="cn-field">
+              <label class="cn-label" for="cn-dk-title">What is it called</label>
+              <input class="cn-input" id="cn-dk-title" value="Wonder Boys home opener against Harding" />
+            </div>
+            <div class="cn-desk-two">
+              <div class="cn-field">
+                <label class="cn-label" for="cn-dk-when">When</label>
+                <div class="cn-nl">
+                  <svg class="i i-sm cn-nl-ic" aria-hidden="true"><use href="#i-clock"/></svg>
+                  <input class="cn-input cn-input--nl" id="cn-dk-when" value="sat sept 5, 6pm" />
+                </div>
+              </div>
+              <div class="cn-field">
+                <span class="cn-label">Cost</span>
+                <div class="cn-cost">
+                  <button class="cn-seg" type="button" aria-pressed="false">Free</button>
+                  <button class="cn-seg cn-seg--on" type="button" aria-pressed="true">Costs money</button>
+                </div>
+              </div>
+            </div>
+            <div class="cn-parse cn-parse--ok" role="status">
+              <svg class="i i-sm" aria-hidden="true"><use href="#i-check-circle"/></svg>
+              <div><p class="cn-parse-read">We read that as <b>Saturday 5 September, 6pm</b>. Is that right?</p>
+                <div class="cn-parse-acts">
+                  <button class="cn-chip cn-chip--on" type="button"><svg class="i i-sm" aria-hidden="true"><use href="#i-check"/></svg> Yes</button>
+                  <button class="cn-chip" type="button">Set it myself</button>
+                </div>
+              </div>
+            </div>
+            <div class="cn-field">
+              <span class="cn-label">Where</span>
+              <div class="cn-place cn-place--picked">
+                <span class="cn-place-ic"><svg class="i i-sm" aria-hidden="true"><use href="#i-map-pin"/></svg></span>
+                <span class="cn-place-text"><b>Thone Stadium at Buerkle Field</b><span>Arkansas Tech University, from the directory</span></span>
+                <button class="cn-icon-btn cn-icon-btn--sm" type="button" aria-label="Clear place"><svg class="i i-sm" aria-hidden="true"><use href="#i-close"/></svg></button>
+              </div>
+            </div>
+            <div class="cn-field">
+              <label class="cn-label" for="cn-dk-desc">What should people know</label>
+              <textarea class="cn-textarea" id="cn-dk-desc" rows="3">Gates at half four. Student tickets are free with an ID at the north gate, everyone else is ten dollars at the box or eight online. Parking off El Paso fills first.</textarea>
+              <div class="cn-countrow"><span class="cn-hint">Plain sentences. No all caps.</span><span class="cn-count">182 / 600</span></div>
+            </div>
+            <div class="cn-field">
+              <span class="cn-label">Tags</span>
+              <div class="cn-tags">
+                <span class="cn-tagpill">football <button type="button" aria-label="Remove football"><svg class="i i-sm" aria-hidden="true"><use href="#i-close"/></svg></button></span>
+                <span class="cn-tagpill">arkansas tech <button type="button" aria-label="Remove arkansas tech"><svg class="i i-sm" aria-hidden="true"><use href="#i-close"/></svg></button></span>
+                <input class="cn-input cn-input--bare cn-tag-in" placeholder="Add a tag" aria-label="Add a tag" />
+              </div>
+            </div>
+          </div>
+
+          <aside class="cn-desk-prev" aria-label="Preview">
+            <div class="cn-desk-prev-head"><svg class="i i-sm" aria-hidden="true"><use href="#i-eye"/></svg> How the town will see it</div>
+            <article class="cn-evcard">
+              <div class="cn-evcard-date"><span class="cn-evcard-mon">Sep</span><span class="cn-evcard-day">5</span></div>
+              <div class="cn-evcard-main">
+                <span class="cn-evcard-eyebrow">Saturday, 6pm · Sport</span>
+                <h4 class="cn-evcard-title">Wonder Boys home opener against Harding</h4>
+                <p class="cn-evcard-where"><svg class="i i-sm" aria-hidden="true"><use href="#i-map-pin"/></svg> Thone Stadium at Buerkle Field</p>
+                <p class="cn-evcard-body">Gates at half four. Student tickets are free with an ID at the north gate, everyone else is ten dollars at the box or eight online.</p>
+                <div class="cn-evcard-foot">
+                  <span class="cn-badge">$10</span>
+                  <span class="cn-attrib"><svg class="i i-sm" aria-hidden="true"><use href="#i-user"/></svg> Added by @dana_h</span>
+                </div>
+              </div>
+            </article>
+            <div class="cn-desk-prev-note">
+              <svg class="i i-sm" aria-hidden="true"><use href="#i-history"/></svg>
+              <p>This will be <b>version 1</b>. Anyone verified can correct it later, you will be told when they do, and you can put your version back.</p>
+            </div>
+          </aside>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="why">
+    <b>The whole section is one argument: a record you can fix cheaply does not need to be policed expensively.</b> Every design choice here leans on the same two lines in the data model. Because a version is never destroyed, a correction from a stranger is low stakes, so corrections can be open to any verified resident instead of to owners only. Because attribution is dual, a creation writing on a resident's behalf can be cut off without deleting the resident's work, so residents can safely let their apps write. Because revert is a forward operation, a moderator can undo something in one tap and the contributor can put it back, which is why the revert screen can be written kindly and mean it. Take versioning out and every one of those choices flips to the defensive version: locked fields, owner-only edits, a review queue in front of everything, and a product nobody bothers to contribute to.
+  </div>
+
+</section>

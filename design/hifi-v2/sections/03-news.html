@@ -1,0 +1,1359 @@
+<section class="sheet-section" id="news">
+  <div class="sec-head"><span class="sec-num">03</span><h2>News, the feed, and the reader</h2></div>
+  <p class="sec-note">Town Square aggregates a handful of real sources and links out to every one of
+  them. We never host the article. That single constraint decides the lead, the row, the cluster and
+  the reader page: our job is to be the fastest honest route to somebody else's reporting, and to be
+  legible on the mornings when the town published nothing at all.</p>
+
+  <!-- ═══ 1. the lead ═══════════════════════════════════════════════════ -->
+
+  <div class="spec">
+    <div class="spec-label">The lead, four ways <em>The town does not reliably ship art, so art is never the layout. Four heroes, one picked by what the story actually has.</em></div>
+
+    <div class="spec-row">
+      <div class="nw-slab">
+        <article class="nw-lead" data-art="photo">
+          <a class="nw-lead-art nw-photo" data-scene="river" href="#news" aria-label="Corps drops Lake Dardanelle two feet ahead of the weekend rain">
+            <span class="nw-kind"><svg class="i i-sm" aria-hidden="true"><use href="#i-newspaper"/></svg>News</span>
+          </a>
+          <div class="nw-lead-body">
+            <h3 class="nw-lead-title"><a href="#news">Corps drops Lake Dardanelle two feet ahead of the weekend rain</a></h3>
+            <span class="nw-byline">
+              <span class="nw-mark" data-source="courier" aria-hidden="true">TC</span>
+              <span class="nw-source">The Courier</span>
+              <span class="nw-dot" aria-hidden="true"></span>
+              <span class="nw-meta">this morning &middot; 4 min</span>
+              <svg class="i nw-out" aria-hidden="true"><use href="#i-arrow-out"/></svg>
+            </span>
+          </div>
+        </article>
+        <p class="nw-slab-cap"><b>Photograph.</b> The default when the source published art we are
+        allowed to thumbnail. Roughly half of mornings.</p>
+      </div>
+
+      <div class="nw-slab">
+        <article class="nw-lead" data-art="none">
+          <div class="nw-lead-body">
+            <span class="nw-kind"><svg class="i i-sm" aria-hidden="true"><use href="#i-newspaper"/></svg>News</span>
+            <h3 class="nw-lead-title"><a href="#news">Arkansas Tech holds tuition flat for a third straight year</a></h3>
+            <p class="nw-lead-summary">The board approved the 2026 to 2027 rate on Tuesday without
+            debate. Room and board goes up 2.4 percent, the first increase since 2023.</p>
+            <span class="nw-byline">
+              <span class="nw-mark" data-source="tech" aria-hidden="true">AT</span>
+              <span class="nw-source">Arkansas Tech News</span>
+              <span class="nw-dot" aria-hidden="true"></span>
+              <span class="nw-meta">yesterday &middot; 3 min</span>
+              <svg class="i nw-out" aria-hidden="true"><use href="#i-arrow-out"/></svg>
+            </span>
+          </div>
+        </article>
+        <p class="nw-slab-cap"><b>Typographic.</b> No art anywhere in town. A panel with its own
+        weight, plus the summary doing the job the photo would have done.</p>
+      </div>
+
+      <div class="nw-slab">
+        <article class="nw-lead" data-art="quote">
+          <div class="nw-lead-art nw-quote-art">
+            <svg class="i i-lg nw-quote-glyph" aria-hidden="true"><use href="#i-quote"/></svg>
+            <blockquote class="nw-quote-text">We are not asking the city to stop growing. We are
+            asking it to grow on a road that can carry it.</blockquote>
+            <figcaption class="nw-quote-by">Dana Kirkpatrick, who has lived on Weir Road since 1994</figcaption>
+          </div>
+          <div class="nw-lead-body">
+            <h3 class="nw-lead-title"><a href="#news">Weir Road neighbours file a 214 name petition against the rezoning</a></h3>
+            <span class="nw-byline">
+              <span class="nw-mark" data-source="notebook" aria-hidden="true">PC</span>
+              <span class="nw-source">Pope County Notebook</span>
+              <span class="nw-dot" aria-hidden="true"></span>
+              <span class="nw-meta">Saturday &middot; 9 min</span>
+              <svg class="i nw-out" aria-hidden="true"><use href="#i-arrow-out"/></svg>
+            </span>
+          </div>
+        </article>
+        <p class="nw-slab-cap"><b>Pull-quote as art.</b> No photo, but one line in the piece is
+        better than any photo would have been. Chosen by hand, never by a model.</p>
+      </div>
+
+      <div class="nw-slab">
+        <article class="nw-lead" data-art="photo" data-developing="true">
+          <a class="nw-lead-art nw-photo" data-scene="flood" href="#news" aria-label="Crow Mountain Road is closed at the low water bridge">
+            <span class="nw-kind" data-live="true"><span class="nw-pip" aria-hidden="true"></span>Developing</span>
+          </a>
+          <div class="nw-lead-body">
+            <h3 class="nw-lead-title"><a href="#news">Crow Mountain Road is closed at the low water bridge</a></h3>
+            <p class="nw-lead-summary">The Illinois Bayou is still coming up. The county says the
+            detour is Sherman Road to Highway 124.</p>
+            <span class="nw-byline">
+              <span class="nw-mark" data-source="city" aria-hidden="true">CR</span>
+              <span class="nw-source">City of Russellville</span>
+              <span class="nw-dot" aria-hidden="true"></span>
+              <span class="nw-meta nw-fresh">updated 12 minutes ago</span>
+              <svg class="i nw-out" aria-hidden="true"><use href="#i-arrow-out"/></svg>
+            </span>
+          </div>
+        </article>
+        <p class="nw-slab-cap"><b>Developing.</b> Promoted over anything with better art, because a
+        closed road at 7am beats a good photograph.</p>
+      </div>
+    </div>
+
+    <p class="why">The four are a ladder, resolved in one pass: <b>developing</b> outranks everything
+    if a story is still moving, then <b>photograph</b> if the source shipped art, then
+    <b>pull-quote</b> if an editor marked a line, then <b>typographic</b>. Nothing else competes for
+    the slot. The reason there is no fifth variant with a grey box in it is that a broken image at the
+    top of the town's front page reads as a broken town, and we would rather change the layout than
+    show the hole. The live marker is a pip and the word <b>Developing</b> together, never the pip
+    alone.</p>
+  </div>
+
+  <!-- ═══ 2. story rows ═════════════════════════════════════════════════ -->
+
+  <div class="spec">
+    <div class="spec-label">Story rows, three densities <em>The thumbnail is an enhancement, never the layout. Pull it and the row reads the same, just narrower.</em></div>
+    <div class="spec-row">
+      <div class="nw-slab">
+        <div class="nw-list">
+          <a class="nw-row" href="#news">
+            <span class="nw-row-text">
+              <span class="nw-row-title">Main Street gets a second crossing signal at Arkansas Avenue</span>
+              <span class="nw-byline nw-byline-sm">
+                <span class="nw-mark" data-source="city" aria-hidden="true">CR</span>
+                <span class="nw-source">City of Russellville</span>
+                <span class="nw-dot" aria-hidden="true"></span>
+                <span class="nw-meta">this afternoon &middot; 2 min</span>
+              </span>
+            </span>
+            <span class="nw-photo nw-row-thumb" data-scene="civic" aria-hidden="true"></span>
+          </a>
+          <a class="nw-row" href="#news">
+            <span class="nw-row-text">
+              <span class="nw-row-title">Wonder Boys land a transfer quarterback out of Conway</span>
+              <span class="nw-byline nw-byline-sm">
+                <span class="nw-mark" data-source="tech" aria-hidden="true">AT</span>
+                <span class="nw-source">Arkansas Tech News</span>
+                <span class="nw-dot" aria-hidden="true"></span>
+                <span class="nw-meta">this morning &middot; 3 min</span>
+              </span>
+            </span>
+            <span class="nw-photo nw-row-thumb" data-scene="field" aria-hidden="true"></span>
+          </a>
+        </div>
+        <p class="nw-slab-cap"><b>With thumbnail.</b> 68px, square, cropped. Big enough to identify a
+        place, small enough that the headline still leads.</p>
+      </div>
+
+      <div class="nw-slab">
+        <div class="nw-list">
+          <a class="nw-row" href="#news">
+            <span class="nw-row-text">
+              <span class="nw-row-title">Quorum court sets the 2027 millage without a change</span>
+              <span class="nw-byline nw-byline-sm">
+                <span class="nw-mark" data-source="courier" aria-hidden="true">TC</span>
+                <span class="nw-source">The Courier</span>
+                <span class="nw-dot" aria-hidden="true"></span>
+                <span class="nw-meta">this morning &middot; 5 min</span>
+              </span>
+            </span>
+          </a>
+          <a class="nw-row" href="#news">
+            <span class="nw-row-text">
+              <span class="nw-row-title">Bona Dea Trails closes the east loop for bridge work through September</span>
+              <span class="nw-byline nw-byline-sm">
+                <span class="nw-mark" data-source="post" aria-hidden="true">DP</span>
+                <span class="nw-source">The Dardanelle Post</span>
+                <span class="nw-dot" aria-hidden="true"></span>
+                <span class="nw-meta">Tuesday &middot; 2 min</span>
+              </span>
+            </span>
+          </a>
+        </div>
+        <p class="nw-slab-cap"><b>Without.</b> Same padding, same type, same rules. No placeholder
+        square, no reserved gap.</p>
+      </div>
+
+      <div class="nw-slab">
+        <div class="nw-list" data-density="compact">
+          <a class="nw-row" href="#news" data-density="compact">
+            <span class="nw-row-text">
+              <span class="nw-row-title">Sequoyah Elementary picks up a second reading coach</span>
+              <span class="nw-byline nw-byline-sm"><span class="nw-source">Courier</span><span class="nw-dot" aria-hidden="true"></span><span class="nw-meta">2 h</span></span>
+            </span>
+          </a>
+          <a class="nw-row" href="#news" data-density="compact">
+            <span class="nw-row-text">
+              <span class="nw-row-title">Holla Bend opens the auto tour route for the season</span>
+              <span class="nw-byline nw-byline-sm"><span class="nw-source">Dardanelle Post</span><span class="nw-dot" aria-hidden="true"></span><span class="nw-meta">Tuesday</span></span>
+            </span>
+          </a>
+          <a class="nw-row" href="#news" data-density="compact">
+            <span class="nw-row-text">
+              <span class="nw-row-title">Depot parking closes Friday for the farmers market expansion</span>
+              <span class="nw-byline nw-byline-sm"><span class="nw-source">City</span><span class="nw-dot" aria-hidden="true"></span><span class="nw-meta">Monday</span></span>
+            </span>
+          </a>
+          <a class="nw-row" href="#news" data-density="compact">
+            <span class="nw-row-text">
+              <span class="nw-row-title">Mount Nebo road crews finish the switchback repair</span>
+              <span class="nw-byline nw-byline-sm"><span class="nw-source">Courier</span><span class="nw-dot" aria-hidden="true"></span><span class="nw-meta">28 Jul</span></span>
+            </span>
+          </a>
+        </div>
+        <p class="nw-slab-cap"><b>Compact.</b> The tail of the feed and every topic page. The source
+        name drops to its short form and the byline loses the mark.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="spec">
+    <div class="spec-label">Row states <em>Read state is carried by weight and a dot, not by colour alone. Under an hour, the time goes bold and dark, because that is the only thing that changes a decision.</em></div>
+    <div class="spec-row">
+      <div class="nw-slab">
+        <div class="nw-list">
+          <a class="nw-row" href="#news">
+            <span class="nw-pip nw-row-pip" aria-hidden="true"></span>
+            <span class="nw-row-text">
+              <span class="nw-row-title">Council votes 4 to 1 to rezone the Weir Road corner</span>
+              <span class="nw-byline nw-byline-sm">
+                <span class="nw-mark" data-source="courier" aria-hidden="true">TC</span>
+                <span class="nw-source">The Courier</span>
+                <span class="nw-dot" aria-hidden="true"></span>
+                <span class="nw-meta nw-fresh">9 minutes ago</span>
+              </span>
+            </span>
+            <span class="nw-photo nw-row-thumb" data-scene="civic" aria-hidden="true"></span>
+          </a>
+          <a class="nw-row" href="#news" data-read="true">
+            <span class="nw-row-text">
+              <span class="nw-row-title">Entergy brings Unit 2 back after a 34 day refuelling outage</span>
+              <span class="nw-byline nw-byline-sm">
+                <span class="nw-mark" data-source="courier" aria-hidden="true">TC</span>
+                <span class="nw-source">The Courier</span>
+                <span class="nw-dot" aria-hidden="true"></span>
+                <span class="nw-meta">yesterday afternoon</span>
+                <span class="nw-tag" data-tone="quiet">Read</span>
+              </span>
+            </span>
+            <span class="nw-photo nw-row-thumb" data-scene="plant" aria-hidden="true"></span>
+          </a>
+          <a class="nw-row" href="#news" data-read="true">
+            <span class="nw-row-text">
+              <span class="nw-row-title">The Amish store on Highway 7 is closing after 22 years</span>
+              <span class="nw-byline nw-byline-sm">
+                <span class="nw-mark" data-source="radio" aria-hidden="true">RV</span>
+                <span class="nw-source">River Valley Radio</span>
+                <span class="nw-dot" aria-hidden="true"></span>
+                <span class="nw-meta">Tuesday</span>
+                <span class="nw-tag" data-tone="saved"><svg class="i i-sm" aria-hidden="true"><use href="#i-bookmark-filled"/></svg>Saved</span>
+              </span>
+            </span>
+          </a>
+        </div>
+        <p class="nw-slab-cap">Unread carries the pip and a 500 weight headline. Read drops to 400 and
+        ink60 and says so. Saved is a labelled tag, not a coloured corner.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ 3. the cluster ════════════════════════════════════════════════ -->
+
+  <div class="spec">
+    <div class="spec-label">The cluster <em>Three sources on one vote currently look like three stories. Clustered, the duplication becomes the value: who covered it, in what medium, how fast.</em></div>
+    <div class="spec-row">
+      <div class="nw-slab nw-slab-wide">
+        <article class="nw-cluster">
+          <div class="nw-cluster-head">
+            <span class="nw-cluster-eyebrow"><svg class="i i-sm" aria-hidden="true"><use href="#i-layers"/></svg>3 sources covering</span>
+            <h3 class="nw-cluster-title">The council rezoned the Weir Road corner for apartments on
+            Tuesday night, 4 to 1.</h3>
+            <p class="nw-cluster-note">That sentence is ours. Every headline below belongs to the
+            newsroom that wrote it.</p>
+          </div>
+          <ul class="nw-cluster-list">
+            <li>
+              <a class="nw-cluster-row" href="#news">
+                <span class="nw-mark" data-source="courier" aria-hidden="true">TC</span>
+                <span class="nw-cluster-text">
+                  <span class="nw-cluster-source">The Courier
+                    <span class="nw-tag" data-tone="wall"><svg class="i i-sm" aria-hidden="true"><use href="#i-lock"/></svg>Subscribers</span>
+                  </span>
+                  <span class="nw-cluster-headline">Weir Road rezoning passes after two hours of public comment</span>
+                  <span class="nw-cluster-meta">Reported &middot; 14 hours ago &middot; 6 min read</span>
+                </span>
+                <svg class="i nw-out" aria-hidden="true"><use href="#i-arrow-out"/></svg>
+              </a>
+            </li>
+            <li>
+              <a class="nw-cluster-row" href="#news">
+                <span class="nw-mark" data-source="radio" aria-hidden="true">RV</span>
+                <span class="nw-cluster-text">
+                  <span class="nw-cluster-source">River Valley Radio</span>
+                  <span class="nw-cluster-headline">Listen: the whole comment period, and the one vote against</span>
+                  <span class="nw-cluster-meta"><svg class="i i-sm" aria-hidden="true"><use href="#i-headphones"/></svg>Audio &middot; 12 hours ago &middot; 41 min</span>
+                </span>
+                <svg class="i nw-out" aria-hidden="true"><use href="#i-arrow-out"/></svg>
+              </a>
+            </li>
+            <li>
+              <a class="nw-cluster-row" href="#news">
+                <span class="nw-mark" data-source="notebook" aria-hidden="true">PC</span>
+                <span class="nw-cluster-text">
+                  <span class="nw-cluster-source">Pope County Notebook</span>
+                  <span class="nw-cluster-headline">Four people decided this. I counted the room.</span>
+                  <span class="nw-cluster-meta">Opinion &middot; this morning &middot; 9 min read</span>
+                </span>
+                <svg class="i nw-out" aria-hidden="true"><use href="#i-arrow-out"/></svg>
+              </a>
+            </li>
+          </ul>
+          <div class="nw-cluster-foot">
+            <button class="nw-follow" type="button" aria-pressed="false">
+              <svg class="i i-sm" aria-hidden="true"><use href="#i-plus"/></svg>Follow this story
+            </button>
+            <span class="nw-cluster-count">4 updates since Friday</span>
+          </div>
+        </article>
+      </div>
+    </div>
+
+    <p class="why">This is the pattern local aggregation gets wrong most often, and the failure is
+    always the same: three rows, three headlines, one event, and a reader who concludes the feed
+    repeats itself. <b>Collapsing to a single row and picking a winner is worse.</b> It hides that the
+    radio station has the tape and the blogger was in the room, and it quietly ranks a daily paper
+    above a person writing on her own, which is exactly the judgement an aggregator has no standing to
+    make. So the cluster keeps every source, at the same size, ordered by time and nothing else. Our
+    one sentence at the top is the event, written plainly and <b>labelled as ours</b>, because passing
+    a synthesised headline off as a publisher's is the fastest way to lose the sources we depend on.
+    The medium tag matters more than it looks: <b>Reported</b>, <b>Audio</b> and <b>Opinion</b> let a
+    reader pick what they actually want in about a second, and it is the one piece of editorial
+    judgement we can make without stepping on anyone.</p>
+  </div>
+
+  <!-- ═══ 4. source attribution ═════════════════════════════════════════ -->
+
+  <div class="spec">
+    <div class="spec-label">Source marks, six of them <em>A tinted tile of initials from a five value ramp, keyed to the domain. Six sources, five tints: the tile is recognition, the name is identification.</em></div>
+    <div class="spec-grid">
+      <div class="nw-src">
+        <span class="nw-mark" data-size="lg" data-source="courier" aria-hidden="true">TC</span>
+        <div class="nw-src-text">
+          <div class="nw-src-name">The Courier <svg class="i nw-out" aria-hidden="true"><use href="#i-arrow-out"/></svg></div>
+          <div class="nw-src-what">Russellville's daily since 1892</div>
+          <div class="nw-src-meta">couriernews.com &middot; 41 stories this month</div>
+          <span class="nw-tag" data-tone="wall"><svg class="i i-sm" aria-hidden="true"><use href="#i-lock"/></svg>Two free, then subscribers</span>
+        </div>
+      </div>
+      <div class="nw-src">
+        <span class="nw-mark" data-size="lg" data-source="tech" aria-hidden="true">AT</span>
+        <div class="nw-src-text">
+          <div class="nw-src-name">Arkansas Tech News <svg class="i nw-out" aria-hidden="true"><use href="#i-arrow-out"/></svg></div>
+          <div class="nw-src-what">The university newsroom</div>
+          <div class="nw-src-meta">atu.edu/news &middot; 18 stories this month</div>
+        </div>
+      </div>
+      <div class="nw-src">
+        <span class="nw-mark" data-size="lg" data-source="city" aria-hidden="true">CR</span>
+        <div class="nw-src-text">
+          <div class="nw-src-name">City of Russellville <svg class="i nw-out" aria-hidden="true"><use href="#i-arrow-out"/></svg></div>
+          <div class="nw-src-what">Agendas, minutes, road notices</div>
+          <div class="nw-src-meta">russellvillearkansas.org &middot; 27 notices this month</div>
+        </div>
+      </div>
+      <div class="nw-src">
+        <span class="nw-mark" data-size="lg" data-source="radio" aria-hidden="true">RV</span>
+        <div class="nw-src-text">
+          <div class="nw-src-name">River Valley Radio <svg class="i nw-out" aria-hidden="true"><use href="#i-arrow-out"/></svg></div>
+          <div class="nw-src-what">Audio first, from the Parkway Drive studio</div>
+          <div class="nw-src-meta">rivervalleyradio.fm &middot; 9 segments this month</div>
+        </div>
+      </div>
+      <div class="nw-src">
+        <span class="nw-mark" data-size="lg" data-source="notebook" aria-hidden="true">PC</span>
+        <div class="nw-src-text">
+          <div class="nw-src-name">Pope County Notebook <svg class="i nw-out" aria-hidden="true"><use href="#i-arrow-out"/></svg></div>
+          <div class="nw-src-what">Elaine Fowler writes it on her own</div>
+          <div class="nw-src-meta">popecountynotebook.com &middot; 6 posts this month</div>
+        </div>
+      </div>
+      <div class="nw-src">
+        <span class="nw-mark" data-size="lg" data-source="post" aria-hidden="true">DP</span>
+        <div class="nw-src-text">
+          <div class="nw-src-name">The Dardanelle Post <svg class="i nw-out" aria-hidden="true"><use href="#i-arrow-out"/></svg></div>
+          <div class="nw-src-what">Across the river, twice a week</div>
+          <div class="nw-src-meta">dardanellepost.com &middot; 11 stories this month</div>
+        </div>
+      </div>
+    </div>
+    <p class="why">The tint is assigned from the domain, so a source looks identical on the lead, in a
+    row, inside a cluster and on its own page. <b>The Courier and The Dardanelle Post share navy on
+    purpose</b>, and the sheet shows the collision rather than hiding it: with five tints and a town
+    that will keep adding sources, a unique colour per source was always going to run out, and a
+    system that quietly degrades is better than one that breaks. The tile is a recognition aid at a
+    glance. The name underneath it is the identification, and it is always present, which is also why
+    the tile is <code>aria-hidden</code>.</p>
+  </div>
+
+  <div class="spec">
+    <div class="spec-label">Leaving town <em>The outbound arrow is on the source, not the headline, because the source is what the reader is agreeing to visit.</em></div>
+    <div class="spec-row">
+      <div class="nw-slab">
+        <div class="plate">
+          <div class="nw-stack">
+            <span class="nw-byline">
+              <span class="nw-mark" data-source="courier" aria-hidden="true">TC</span>
+              <span class="nw-source">The Courier</span>
+              <span class="nw-dot" aria-hidden="true"></span>
+              <span class="nw-meta">this morning &middot; 4 min</span>
+              <svg class="i nw-out" aria-hidden="true"><use href="#i-arrow-out"/></svg>
+            </span>
+            <span class="nw-byline">
+              <span class="nw-mark" data-source="courier" aria-hidden="true">TC</span>
+              <span class="nw-source">The Courier</span>
+              <span class="nw-tag" data-tone="wall"><svg class="i i-sm" aria-hidden="true"><use href="#i-lock"/></svg>Subscribers</span>
+              <svg class="i nw-out" aria-hidden="true"><use href="#i-arrow-out"/></svg>
+            </span>
+            <span class="nw-byline">
+              <span class="nw-mark" data-source="radio" aria-hidden="true">RV</span>
+              <span class="nw-source">River Valley Radio</span>
+              <span class="nw-dot" aria-hidden="true"></span>
+              <span class="nw-meta"><svg class="i i-sm" aria-hidden="true"><use href="#i-headphones"/></svg>41 min listen</span>
+              <svg class="i nw-out" aria-hidden="true"><use href="#i-arrow-out"/></svg>
+            </span>
+          </div>
+        </div>
+        <p class="nw-slab-cap">The paywall tag is a statement of fact placed <b>before</b> the tap,
+        not an apology after it. It never uses the alarm register: a subscription is not an
+        emergency.</p>
+      </div>
+      <div class="nw-slab">
+        <div class="plate">
+          <a class="nw-exit" href="#news">
+            <span class="nw-exit-text">
+              <span class="nw-exit-title">Read the full story at The Courier</span>
+              <span class="nw-exit-sub">couriernews.com &middot; opens outside Town Square</span>
+            </span>
+            <svg class="i" aria-hidden="true"><use href="#i-arrow-out"/></svg>
+          </a>
+          <a class="nw-exit" data-tone="wall" href="#news">
+            <span class="nw-exit-text">
+              <span class="nw-exit-title">Read the full story at The Courier</span>
+              <span class="nw-exit-sub"><svg class="i i-sm" aria-hidden="true"><use href="#i-lock"/></svg>You have used both free reads this month</span>
+            </span>
+            <svg class="i" aria-hidden="true"><use href="#i-arrow-out"/></svg>
+          </a>
+        </div>
+        <p class="nw-slab-cap">The full width action, named for the publisher. It says the domain out
+        loud so nobody taps blind, and it is the only terracotta on the reader page.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ 5. the feed screen ════════════════════════════════════════════ -->
+
+  <div class="spec">
+    <div class="spec-label">The feed <em>One lead, one cluster, then rows. The screen a resident actually scrolls.</em></div>
+    <div class="spec-row">
+      <div class="phone">
+        <div class="phone-cap">News &mdash; feed</div>
+        <div class="phone-screen">
+          <div class="nw-screen">
+            <header class="nw-bar">
+              <span class="nw-bar-title">News</span>
+              <span class="nw-bar-place">Russellville</span>
+              <button class="nw-icon-btn" type="button" aria-label="Saved stories"><svg class="i" aria-hidden="true"><use href="#i-bookmark"/></svg></button>
+            </header>
+
+            <div class="nw-rail" role="list" aria-label="Topics">
+              <a class="nw-chip" data-on="true" href="#news" role="listitem">All</a>
+              <a class="nw-chip" href="#news" role="listitem">Nuclear One</a>
+              <a class="nw-chip" href="#news" role="listitem">Arkansas Tech</a>
+              <a class="nw-chip" href="#news" role="listitem">City Council</a>
+              <a class="nw-chip" href="#news" role="listitem">Lake Dardanelle</a>
+              <a class="nw-chip" href="#news" role="listitem">Schools</a>
+            </div>
+
+            <div class="nw-sec">
+              <div class="nw-head"><span class="nw-rule" aria-hidden="true"></span><span class="nw-label">Top of town</span></div>
+              <article class="nw-lead" data-art="photo" data-developing="true">
+                <a class="nw-lead-art nw-photo" data-scene="flood" href="#news" aria-label="Crow Mountain Road is closed at the low water bridge">
+                  <span class="nw-kind" data-live="true"><span class="nw-pip" aria-hidden="true"></span>Developing</span>
+                </a>
+                <div class="nw-lead-body">
+                  <h3 class="nw-lead-title"><a href="#news">Crow Mountain Road is closed at the low water bridge</a></h3>
+                  <span class="nw-byline">
+                    <span class="nw-mark" data-source="city" aria-hidden="true">CR</span>
+                    <span class="nw-source">City of Russellville</span>
+                    <span class="nw-dot" aria-hidden="true"></span>
+                    <span class="nw-meta nw-fresh">updated 12 minutes ago</span>
+                    <svg class="i nw-out" aria-hidden="true"><use href="#i-arrow-out"/></svg>
+                  </span>
+                </div>
+              </article>
+            </div>
+
+            <div class="nw-sec">
+              <div class="nw-head"><span class="nw-rule" aria-hidden="true"></span><span class="nw-label">Everyone is covering</span></div>
+              <article class="nw-cluster" data-compact="true">
+                <div class="nw-cluster-head">
+                  <span class="nw-cluster-eyebrow"><svg class="i i-sm" aria-hidden="true"><use href="#i-layers"/></svg>3 sources</span>
+                  <h3 class="nw-cluster-title">The council rezoned the Weir Road corner for apartments, 4 to 1.</h3>
+                </div>
+                <ul class="nw-cluster-list">
+                  <li><a class="nw-cluster-row" href="#news">
+                    <span class="nw-mark" data-source="courier" aria-hidden="true">TC</span>
+                    <span class="nw-cluster-text">
+                      <span class="nw-cluster-source">The Courier <span class="nw-tag" data-tone="wall"><svg class="i i-sm" aria-hidden="true"><use href="#i-lock"/></svg>Subscribers</span></span>
+                      <span class="nw-cluster-headline">Rezoning passes after two hours of comment</span>
+                      <span class="nw-cluster-meta">Reported &middot; 14 h ago</span>
+                    </span>
+                    <svg class="i nw-out" aria-hidden="true"><use href="#i-arrow-out"/></svg>
+                  </a></li>
+                  <li><a class="nw-cluster-row" href="#news">
+                    <span class="nw-mark" data-source="radio" aria-hidden="true">RV</span>
+                    <span class="nw-cluster-text">
+                      <span class="nw-cluster-source">River Valley Radio</span>
+                      <span class="nw-cluster-headline">Listen: the whole comment period</span>
+                      <span class="nw-cluster-meta"><svg class="i i-sm" aria-hidden="true"><use href="#i-headphones"/></svg>Audio &middot; 12 h ago</span>
+                    </span>
+                    <svg class="i nw-out" aria-hidden="true"><use href="#i-arrow-out"/></svg>
+                  </a></li>
+                  <li><a class="nw-cluster-row" href="#news">
+                    <span class="nw-mark" data-source="notebook" aria-hidden="true">PC</span>
+                    <span class="nw-cluster-text">
+                      <span class="nw-cluster-source">Pope County Notebook</span>
+                      <span class="nw-cluster-headline">Four people decided this. I counted the room.</span>
+                      <span class="nw-cluster-meta">Opinion &middot; this morning</span>
+                    </span>
+                    <svg class="i nw-out" aria-hidden="true"><use href="#i-arrow-out"/></svg>
+                  </a></li>
+                </ul>
+              </article>
+            </div>
+
+            <div class="nw-sec">
+              <div class="nw-head"><span class="nw-rule" aria-hidden="true"></span><span class="nw-label">More from town</span></div>
+              <div class="nw-list">
+                <a class="nw-row" href="#news">
+                  <span class="nw-pip nw-row-pip" aria-hidden="true"></span>
+                  <span class="nw-row-text">
+                    <span class="nw-row-title">Arkansas Tech holds tuition flat for a third straight year</span>
+                    <span class="nw-byline nw-byline-sm">
+                      <span class="nw-mark" data-source="tech" aria-hidden="true">AT</span>
+                      <span class="nw-source">Arkansas Tech News</span>
+                      <span class="nw-dot" aria-hidden="true"></span>
+                      <span class="nw-meta">this morning &middot; 3 min</span>
+                    </span>
+                  </span>
+                  <span class="nw-photo nw-row-thumb" data-scene="civic" aria-hidden="true"></span>
+                </a>
+                <a class="nw-row" href="#news">
+                  <span class="nw-pip nw-row-pip" aria-hidden="true"></span>
+                  <span class="nw-row-text">
+                    <span class="nw-row-title">Entergy brings Unit 2 back after a 34 day refuelling outage</span>
+                    <span class="nw-byline nw-byline-sm">
+                      <span class="nw-mark" data-source="courier" aria-hidden="true">TC</span>
+                      <span class="nw-source">The Courier</span>
+                      <span class="nw-dot" aria-hidden="true"></span>
+                      <span class="nw-meta">yesterday afternoon &middot; 5 min</span>
+                    </span>
+                  </span>
+                  <span class="nw-photo nw-row-thumb" data-scene="plant" aria-hidden="true"></span>
+                </a>
+                <a class="nw-row" href="#news" data-read="true">
+                  <span class="nw-row-text">
+                    <span class="nw-row-title">The Amish store on Highway 7 is closing after 22 years</span>
+                    <span class="nw-byline nw-byline-sm">
+                      <span class="nw-mark" data-source="radio" aria-hidden="true">RV</span>
+                      <span class="nw-source">River Valley Radio</span>
+                      <span class="nw-dot" aria-hidden="true"></span>
+                      <span class="nw-meta">Tuesday</span>
+                      <span class="nw-tag" data-tone="saved"><svg class="i i-sm" aria-hidden="true"><use href="#i-bookmark-filled"/></svg>Saved</span>
+                    </span>
+                  </span>
+                </a>
+                <a class="nw-row" href="#news">
+                  <span class="nw-pip nw-row-pip" aria-hidden="true"></span>
+                  <span class="nw-row-text">
+                    <span class="nw-row-title">Bona Dea Trails closes the east loop for bridge work through September</span>
+                    <span class="nw-byline nw-byline-sm">
+                      <span class="nw-mark" data-source="post" aria-hidden="true">DP</span>
+                      <span class="nw-source">The Dardanelle Post</span>
+                      <span class="nw-dot" aria-hidden="true"></span>
+                      <span class="nw-meta">Tuesday &middot; 2 min</span>
+                    </span>
+                  </span>
+                </a>
+              </div>
+            </div>
+
+            <div class="nw-outage">
+              <svg class="i i-sm" aria-hidden="true"><use href="#i-alert-circle"/></svg>
+              <span class="nw-outage-text">Arkansas Tech News has not answered since 6:10 am. The
+              other five sources are current.</span>
+              <button class="nw-outage-retry" type="button">Try again</button>
+            </div>
+
+            <footer class="nw-signoff">
+              <div class="nw-signoff-line">That is the town through Wednesday, 3:40 pm.</div>
+              <div class="nw-signoff-meta">6 sources &middot; 14 stories &middot; nothing older than Friday</div>
+            </footer>
+          </div>
+        </div>
+      </div>
+
+      <div class="phone">
+        <div class="phone-cap">News &mdash; first load</div>
+        <div class="phone-screen">
+          <div class="nw-screen" aria-busy="true" aria-label="Loading the news">
+            <header class="nw-bar">
+              <span class="nw-bar-title">News</span>
+              <span class="nw-bar-place">Russellville</span>
+            </header>
+            <div class="nw-rail">
+              <span class="nw-skel nw-skel-chip"></span>
+              <span class="nw-skel nw-skel-chip" style="width:96px"></span>
+              <span class="nw-skel nw-skel-chip" style="width:84px"></span>
+              <span class="nw-skel nw-skel-chip" style="width:110px"></span>
+            </div>
+            <div class="nw-sec">
+              <div class="nw-head"><span class="nw-rule" aria-hidden="true"></span><span class="nw-label">Top of town</span></div>
+              <span class="nw-skel nw-skel-art"></span>
+              <span class="nw-skel nw-skel-line" style="width:96%"></span>
+              <span class="nw-skel nw-skel-line" style="width:64%"></span>
+              <span class="nw-skel nw-skel-byline"></span>
+            </div>
+            <div class="nw-sec">
+              <div class="nw-head"><span class="nw-rule" aria-hidden="true"></span><span class="nw-label">More from town</span></div>
+              <div class="nw-list">
+                <div class="nw-skel-row">
+                  <span class="nw-skel-col">
+                    <span class="nw-skel nw-skel-line" style="width:100%"></span>
+                    <span class="nw-skel nw-skel-line" style="width:58%"></span>
+                    <span class="nw-skel nw-skel-byline"></span>
+                  </span>
+                  <span class="nw-skel nw-skel-thumb"></span>
+                </div>
+                <div class="nw-skel-row">
+                  <span class="nw-skel-col">
+                    <span class="nw-skel nw-skel-line" style="width:92%"></span>
+                    <span class="nw-skel nw-skel-line" style="width:44%"></span>
+                    <span class="nw-skel nw-skel-byline"></span>
+                  </span>
+                </div>
+                <div class="nw-skel-row">
+                  <span class="nw-skel-col">
+                    <span class="nw-skel nw-skel-line" style="width:100%"></span>
+                    <span class="nw-skel nw-skel-line" style="width:70%"></span>
+                    <span class="nw-skel nw-skel-byline"></span>
+                  </span>
+                  <span class="nw-skel nw-skel-thumb"></span>
+                </div>
+                <div class="nw-skel-row">
+                  <span class="nw-skel-col">
+                    <span class="nw-skel nw-skel-line" style="width:86%"></span>
+                    <span class="nw-skel nw-skel-byline"></span>
+                  </span>
+                </div>
+              </div>
+            </div>
+            <p class="nw-skel-note">Reading 6 sources</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <p class="why">The skeleton is drawn from the same rules as the feed, not from a generic set of
+    grey bars: the lead art is 200px because the lead art is 200px, the third row has no thumbnail
+    because roughly half of stories have none, and the section labels are <b>real text, immediately</b>
+    because we always know what the sections are before we know what is in them. A skeleton that does
+    not match its own screen produces a visible jolt on every load, and the jolt is what teaches
+    people the app is slow. The one line at the foot, <b>Reading 6 sources</b>, is the only thing here
+    that is not a shape, and it is there because the wait has a real cause worth naming.</p>
+  </div>
+
+  <!-- ═══ 6. the reader page ════════════════════════════════════════════ -->
+
+  <div class="spec">
+    <div class="spec-label">The reader page <em>We can only summarise, so the page is built around handing the reader to the publisher, and says out loud that that is what it is doing.</em></div>
+    <div class="spec-row">
+      <div class="phone">
+        <div class="phone-cap">News, a story we do not host</div>
+        <div class="phone-screen">
+          <div class="nw-screen">
+            <header class="nw-bar" data-mode="reader">
+              <button class="nw-icon-btn nw-icon-btn-lead" type="button" aria-label="Back to the feed"><svg class="i" aria-hidden="true"><use href="#i-chevron-left"/></svg></button>
+              <span class="nw-bar-crumb">City Council</span>
+              <button class="nw-icon-btn" type="button" aria-label="Save this story"><svg class="i" aria-hidden="true"><use href="#i-bookmark"/></svg></button>
+              <button class="nw-icon-btn" type="button" aria-label="Share this story"><svg class="i" aria-hidden="true"><use href="#i-share"/></svg></button>
+            </header>
+
+            <article class="nw-reader">
+              <span class="nw-kind"><svg class="i i-sm" aria-hidden="true"><use href="#i-newspaper"/></svg>Reported</span>
+              <h3 class="nw-reader-title">Weir Road rezoning passes after two hours of public comment</h3>
+              <div class="nw-reader-byline">
+                <span class="nw-mark" data-size="lg" data-source="courier" aria-hidden="true">TC</span>
+                <span class="nw-reader-byline-text">
+                  <span class="nw-reader-who">Marcy Deel, The Courier</span>
+                  <span class="nw-reader-when">Yesterday, 11:04 pm &middot; 6 min read at the source</span>
+                </span>
+              </div>
+
+              <span class="nw-photo nw-reader-art" data-scene="civic" aria-hidden="true"></span>
+              <p class="nw-reader-credit">Photo: The Courier. Shown at thumbnail size, linked back, not
+              reproduced.</p>
+
+              <div class="nw-summary">
+                <div class="nw-summary-head">
+                  <span class="nw-rule" aria-hidden="true"></span>
+                  <span class="nw-label">Town Square summary</span>
+                </div>
+                <p class="nw-summary-lede">The council approved the rezoning of the six acre corner at
+                Weir Road and Parkway Drive from single family to multi family, 4 to 1.</p>
+                <ul class="nw-summary-points">
+                  <li>Around 40 residents spoke. Most of them live on the two streets that feed the
+                  corner.</li>
+                  <li>Alderman Ruby Tinsley cast the vote against, citing the traffic study's age.</li>
+                  <li>The developer has 18 months to break ground or the zoning reverts.</li>
+                </ul>
+                <p class="nw-summary-fine">Three sentences and three points, from the source's own
+                reporting. We do not reprint the article and we do not have anything The Courier does
+                not.</p>
+              </div>
+
+              <a class="nw-exit" href="#news">
+                <span class="nw-exit-text">
+                  <span class="nw-exit-title">Read the full story at The Courier</span>
+                  <span class="nw-exit-sub">couriernews.com &middot; opens outside Town Square</span>
+                </span>
+                <svg class="i" aria-hidden="true"><use href="#i-arrow-out"/></svg>
+              </a>
+
+              <div class="nw-src" data-inline="true">
+                <span class="nw-mark" data-size="lg" data-source="courier" aria-hidden="true">TC</span>
+                <div class="nw-src-text">
+                  <div class="nw-src-name">The Courier</div>
+                  <div class="nw-src-what">Russellville's daily since 1892. Two free reads a month,
+                  then a subscription.</div>
+                  <div class="nw-src-meta">41 stories this month</div>
+                </div>
+                <button class="nw-follow" type="button" aria-pressed="false">
+                  <svg class="i i-sm" aria-hidden="true"><use href="#i-plus"/></svg>Follow
+                </button>
+              </div>
+
+              <details class="nw-disclose">
+                <summary>
+                  <svg class="i i-sm" aria-hidden="true"><use href="#i-info"/></svg>
+                  Why am I seeing this
+                  <svg class="i i-sm nw-disclose-caret" aria-hidden="true"><use href="#i-chevron-down"/></svg>
+                </summary>
+                <div class="nw-disclose-body">
+                  <p>It is in the feed because you follow <b>City Council</b> and because it is the
+                  newest thing any of our six sources published about it.</p>
+                  <p>That is the whole ranking. Newest first inside the topics you chose. There is no
+                  score on you, nothing is learned from what you tap, and no source pays to sit
+                  higher.</p>
+                  <p class="nw-disclose-links">
+                    <a href="#news">Edit the topics you follow</a>
+                    <a href="#news">How the feed is built</a>
+                  </p>
+                </div>
+              </details>
+
+              <div class="nw-sec nw-sec-flush">
+                <div class="nw-head"><span class="nw-rule" aria-hidden="true"></span><span class="nw-label">Also covering this</span></div>
+                <div class="nw-list">
+                  <a class="nw-row" href="#news" data-density="compact">
+                    <span class="nw-row-text">
+                      <span class="nw-row-title">Listen: the whole comment period, and the one vote against</span>
+                      <span class="nw-byline nw-byline-sm">
+                        <span class="nw-mark" data-source="radio" aria-hidden="true">RV</span>
+                        <span class="nw-source">River Valley Radio</span>
+                        <span class="nw-dot" aria-hidden="true"></span>
+                        <span class="nw-meta">12 h</span>
+                      </span>
+                    </span>
+                    <svg class="i nw-out" aria-hidden="true"><use href="#i-arrow-out"/></svg>
+                  </a>
+                  <a class="nw-row" href="#news" data-density="compact">
+                    <span class="nw-row-text">
+                      <span class="nw-row-title">Four people decided this. I counted the room.</span>
+                      <span class="nw-byline nw-byline-sm">
+                        <span class="nw-mark" data-source="notebook" aria-hidden="true">PC</span>
+                        <span class="nw-source">Pope County Notebook</span>
+                        <span class="nw-dot" aria-hidden="true"></span>
+                        <span class="nw-meta">this morning</span>
+                      </span>
+                    </span>
+                    <svg class="i nw-out" aria-hidden="true"><use href="#i-arrow-out"/></svg>
+                  </a>
+                </div>
+              </div>
+            </article>
+          </div>
+        </div>
+      </div>
+
+      <div class="nw-slab">
+        <div class="plate">
+          <details class="nw-disclose" open>
+            <summary>
+              <svg class="i i-sm" aria-hidden="true"><use href="#i-info"/></svg>
+              Why am I seeing this
+              <svg class="i i-sm nw-disclose-caret" aria-hidden="true"><use href="#i-chevron-down"/></svg>
+            </summary>
+            <div class="nw-disclose-body">
+              <p>It is in the feed because you follow <b>City Council</b> and because it is the newest
+              thing any of our six sources published about it.</p>
+              <p>That is the whole ranking. Newest first inside the topics you chose. There is no score
+              on you, nothing is learned from what you tap, and no source pays to sit higher.</p>
+              <p class="nw-disclose-links">
+                <a href="#news">Edit the topics you follow</a>
+                <a href="#news">How the feed is built</a>
+              </p>
+            </div>
+          </details>
+        </div>
+        <p class="nw-slab-cap">Open, drawn loose. It is a <code>&lt;details&gt;</code>, closed by
+        default, and it works with the sheet's script disabled.</p>
+      </div>
+    </div>
+
+    <p class="why">This page has to be useful to a reader and respectful of a publisher in the same
+    breath, and those two pull in opposite directions: everything that makes it a better read makes it
+    a better substitute for the article. The resolution is a hard ceiling. <b>Three sentences and
+    three points, never more</b>, set in a panel that is visibly ours and labelled <b>Town Square
+    summary</b>, with the line underneath saying plainly that we have nothing The Courier does not.
+    The photograph runs at thumbnail scale with a credit and a link, not full bleed. The only
+    prominent control on the screen is the one that leaves. A reader who wants the story goes and gets
+    it from the people who did the work, and the summary is enough to decide whether to spend the
+    click, which is the actual job.</p>
+
+    <p class="why"><b>Why am I seeing this</b> is on every story, not buried in settings, because the
+    honest answer is short and it is the answer people assume they will not get. Newest first inside
+    the topics you chose. No profile, no engagement score, no paid placement. Writing it down where a
+    resident meets it costs a disclosure and buys the only thing an aggregator has, which is being
+    believed.</p>
+  </div>
+
+  <!-- ═══ 7. developing story timeline ═════════════════════════════════ -->
+
+  <div class="spec">
+    <div class="spec-label">A developing story, collapsed and open <em>A story that accretes over four days is four rows in a feed and one thing in a resident's head. The timeline matches the head.</em></div>
+    <div class="spec-row">
+      <div class="nw-slab">
+        <details class="nw-thread">
+          <summary class="nw-thread-summary">
+            <span class="nw-thread-head">
+              <span class="nw-kind" data-live="true"><span class="nw-pip" aria-hidden="true"></span>Developing</span>
+              <span class="nw-thread-title">The Weir Road rezoning</span>
+              <span class="nw-thread-count">4 updates since Friday, latest yesterday evening</span>
+            </span>
+            <span class="nw-thread-latest">
+              <span class="nw-thread-latest-date">Tue 4 Aug</span>
+              <span class="nw-thread-latest-text">The council voted 4 to 1. Ground has 18 months to
+              break or the zoning reverts.</span>
+            </span>
+            <span class="nw-thread-toggle">
+              <span data-when="closed">Show all 4 updates</span>
+              <span data-when="open">Collapse</span>
+              <svg class="i i-sm nw-thread-caret" aria-hidden="true"><use href="#i-chevron-down"/></svg>
+            </span>
+          </summary>
+        </details>
+        <p class="nw-slab-cap"><b>Collapsed.</b> The default in the feed. The newest entry is visible
+        without opening anything, because that is what a returning reader came for.</p>
+      </div>
+
+      <div class="nw-slab">
+        <details class="nw-thread" open>
+          <summary class="nw-thread-summary">
+            <span class="nw-thread-head">
+              <span class="nw-kind" data-live="true"><span class="nw-pip" aria-hidden="true"></span>Developing</span>
+              <span class="nw-thread-title">The Weir Road rezoning</span>
+              <span class="nw-thread-count">4 updates since Friday, latest yesterday evening</span>
+            </span>
+            <span class="nw-thread-toggle">
+              <span data-when="closed">Show all 4 updates</span>
+              <span data-when="open">Collapse</span>
+              <svg class="i i-sm nw-thread-caret" aria-hidden="true"><use href="#i-chevron-down"/></svg>
+            </span>
+          </summary>
+
+          <ol class="nw-thread-list">
+            <li class="nw-thread-item" data-newest="true">
+              <span class="nw-thread-date">Tue<b>4 Aug</b></span>
+              <a class="nw-thread-entry" href="#news">
+                <span class="nw-thread-text">The council voted 4 to 1. Alderman Tinsley was the vote
+                against. The developer has 18 months to break ground.</span>
+                <span class="nw-byline nw-byline-sm">
+                  <span class="nw-mark" data-source="courier" aria-hidden="true">TC</span>
+                  <span class="nw-source">The Courier</span>
+                  <span class="nw-dot" aria-hidden="true"></span>
+                  <span class="nw-meta">11:04 pm</span>
+                </span>
+              </a>
+            </li>
+            <li class="nw-thread-item">
+              <span class="nw-thread-date">Mon<b>3 Aug</b></span>
+              <a class="nw-thread-entry" href="#news">
+                <span class="nw-thread-text">The city posted Tuesday's agenda. The rezoning is item 9,
+                after the water rate hearing.</span>
+                <span class="nw-byline nw-byline-sm">
+                  <span class="nw-mark" data-source="city" aria-hidden="true">CR</span>
+                  <span class="nw-source">City of Russellville</span>
+                  <span class="nw-dot" aria-hidden="true"></span>
+                  <span class="nw-meta">4:30 pm</span>
+                </span>
+              </a>
+            </li>
+            <li class="nw-thread-item">
+              <span class="nw-thread-date">Sat<b>1 Aug</b></span>
+              <a class="nw-thread-entry" href="#news">
+                <span class="nw-thread-text">Neighbours filed a petition with 214 signatures against
+                the change.</span>
+                <span class="nw-byline nw-byline-sm">
+                  <span class="nw-mark" data-source="notebook" aria-hidden="true">PC</span>
+                  <span class="nw-source">Pope County Notebook</span>
+                  <span class="nw-dot" aria-hidden="true"></span>
+                  <span class="nw-meta">morning</span>
+                </span>
+              </a>
+            </li>
+            <li class="nw-thread-item">
+              <span class="nw-thread-date">Fri<b>31 Jul</b></span>
+              <a class="nw-thread-entry" href="#news">
+                <span class="nw-thread-text">The planning commission recommended the rezoning, 5 to 2.
+                First anyone heard of it.</span>
+                <span class="nw-byline nw-byline-sm">
+                  <span class="nw-mark" data-source="courier" aria-hidden="true">TC</span>
+                  <span class="nw-source">The Courier</span>
+                  <span class="nw-dot" aria-hidden="true"></span>
+                  <span class="nw-meta">6:15 pm</span>
+                </span>
+              </a>
+            </li>
+          </ol>
+
+          <div class="nw-thread-foot">
+            <button class="nw-follow" type="button" aria-pressed="true">
+              <svg class="i i-sm" aria-hidden="true"><use href="#i-check"/></svg>Following
+            </button>
+            <span class="nw-thread-foot-note">You will get one notice when this moves, not one per
+            source.</span>
+          </div>
+        </details>
+        <p class="nw-slab-cap"><b>Open.</b> Newest at the top, oldest at the bottom, the date rail
+        carrying the shape. Each entry is one sentence of what changed and a link to who said so.</p>
+      </div>
+    </div>
+
+    <p class="why">The rule that makes this work is that <b>every entry is one sentence about what
+    changed</b>, not a headline. Headlines stacked in date order are just the feed again with a border
+    round it. "The city posted Tuesday's agenda, the rezoning is item 9" is the thing a resident
+    following this actually needs, and it is a sentence we can write honestly from a public document
+    without touching anyone's copy. The following state promises <b>one notice per move, not one per
+    source</b>, which is the difference between a thread that is worth following and three
+    notifications about the same vote.</p>
+  </div>
+
+  <!-- ═══ 8. editorial furniture ═══════════════════════════════════════ -->
+
+  <div class="spec">
+    <div class="spec-label">Pull-quote and stat callout <em>The serif voice doing editorial work. Both carry an attribution, because a number without a source is a rumour.</em></div>
+    <div class="spec-row">
+      <div class="nw-slab">
+        <figure class="nw-pull">
+          <svg class="i nw-pull-glyph" aria-hidden="true"><use href="#i-quote"/></svg>
+          <blockquote class="nw-pull-text">The traffic study they voted on was done in 2019. My road
+          has had two subdivisions since then.</blockquote>
+          <figcaption class="nw-pull-by">
+            <span class="nw-pull-who">Ruby Tinsley</span>
+            <span class="nw-pull-role">Alderman, Ward 3, the vote against</span>
+          </figcaption>
+        </figure>
+        <p class="nw-slab-cap">Quiet, not shouty. It sits inside a reader page or a topic header and
+        never opens a feed on its own.</p>
+      </div>
+
+      <div class="nw-slab">
+        <div class="nw-stat">
+          <div class="nw-stat-figure">34<span class="nw-stat-unit">days</span></div>
+          <div class="nw-stat-label">Unit 2 was offline for refuelling</div>
+          <div class="nw-stat-note">The longest outage at Nuclear One since 2019. Entergy scheduled
+          28.</div>
+          <a class="nw-stat-src" href="#news">
+            <span class="nw-mark" data-source="courier" aria-hidden="true">TC</span>
+            Entergy filings, reported by The Courier
+            <svg class="i nw-out" aria-hidden="true"><use href="#i-arrow-out"/></svg>
+          </a>
+        </div>
+        <p class="nw-slab-cap">The figure is serif and large, the unit is small beside it, and the
+        attribution is a link. A stat we cannot source does not get drawn.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ 9. saving and sharing ════════════════════════════════════════ -->
+
+  <div class="spec">
+    <div class="spec-label">Save, in every state it has <em>Saving is optimistic and offline is normal, so the interesting state is the failure, and it holds the story rather than dropping it.</em></div>
+    <div class="spec-row">
+      <div class="nw-slab">
+        <div class="plate">
+          <div class="nw-stack">
+            <button class="nw-save" type="button" aria-pressed="false">
+              <svg class="i i-sm" aria-hidden="true"><use href="#i-bookmark"/></svg>Save
+            </button>
+            <button class="nw-save" type="button" data-state="saving" disabled>
+              <svg class="i i-sm nw-spin" aria-hidden="true"><use href="#i-loader"/></svg>Saving
+            </button>
+            <button class="nw-save" type="button" data-state="saved" aria-pressed="true">
+              <svg class="i i-sm" aria-hidden="true"><use href="#i-bookmark-filled"/></svg>Saved
+            </button>
+            <button class="nw-save" type="button" data-state="failed">
+              <svg class="i i-sm" aria-hidden="true"><use href="#i-alert-circle"/></svg>
+              <span class="nw-save-fail">Not saved yet. You are offline, tap to try again.</span>
+            </button>
+          </div>
+        </div>
+        <p class="nw-slab-cap">Four states, one control, one position. The failure keeps the story in
+        a local queue and says so in words a person can act on. It is terracotta, not the alarm
+        register: a save that has not landed yet is not an emergency.</p>
+      </div>
+
+      <div class="nw-slab">
+        <div class="nw-scrim">
+          <div class="nw-sheet" role="dialog" aria-label="Share this story">
+            <span class="nw-sheet-grab" aria-hidden="true"></span>
+            <div class="nw-sheet-head">
+              <span class="nw-mark" data-size="lg" data-source="courier" aria-hidden="true">TC</span>
+              <span class="nw-sheet-head-text">
+                <span class="nw-sheet-title">Weir Road rezoning passes after two hours of public comment</span>
+                <span class="nw-sheet-sub">The Courier &middot; couriernews.com</span>
+              </span>
+            </div>
+
+            <fieldset class="nw-sheet-pick">
+              <legend>Send</legend>
+              <label class="nw-pick">
+                <input type="radio" name="nw-share-target" checked>
+                <span class="nw-pick-text">
+                  <span class="nw-pick-title">The Courier's link</span>
+                  <span class="nw-pick-sub">Goes straight to the reporting</span>
+                </span>
+              </label>
+              <label class="nw-pick">
+                <input type="radio" name="nw-share-target">
+                <span class="nw-pick-text">
+                  <span class="nw-pick-title">The Town Square page</span>
+                  <span class="nw-pick-sub">Our summary, the source card and everyone else covering it</span>
+                </span>
+              </label>
+            </fieldset>
+
+            <div class="nw-sheet-actions">
+              <button class="nw-share-btn" type="button"><span class="nw-share-icon"><svg class="i" aria-hidden="true"><use href="#i-copy"/></svg></span>Copy link</button>
+              <button class="nw-share-btn" type="button"><span class="nw-share-icon"><svg class="i" aria-hidden="true"><use href="#i-message"/></svg></span>Message</button>
+              <button class="nw-share-btn" type="button"><span class="nw-share-icon"><svg class="i" aria-hidden="true"><use href="#i-mail"/></svg></span>Mail</button>
+              <button class="nw-share-btn" type="button"><span class="nw-share-icon"><svg class="i" aria-hidden="true"><use href="#i-more-horizontal"/></svg></span>More</button>
+            </div>
+          </div>
+        </div>
+        <p class="nw-slab-cap">The default is the publisher's URL, preselected. A neighbour who shares
+        a story should be sending traffic to the newsroom that earned it, and the aggregator's page is
+        the second option rather than the only one.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="spec">
+    <div class="spec-label">Saved, and saved when there is nothing in it <em>An empty list a resident emptied on purpose is not a failure, so it does not get a sad face and a button.</em></div>
+    <div class="spec-row">
+      <div class="nw-slab">
+        <div class="plate">
+          <div class="nw-head"><span class="nw-rule" aria-hidden="true"></span><span class="nw-label">Saved</span><span class="nw-action" data-static="true">3 stories</span></div>
+          <div class="nw-list nw-saved">
+            <a class="nw-row" href="#news">
+              <span class="nw-row-text">
+                <span class="nw-row-title">The Amish store on Highway 7 is closing after 22 years</span>
+                <span class="nw-byline nw-byline-sm">
+                  <span class="nw-mark" data-source="radio" aria-hidden="true">RV</span>
+                  <span class="nw-source">River Valley Radio</span>
+                  <span class="nw-dot" aria-hidden="true"></span>
+                  <span class="nw-meta">saved Tuesday</span>
+                </span>
+              </span>
+              <button class="nw-unsave" type="button" aria-label="Remove from saved"><svg class="i i-sm" aria-hidden="true"><use href="#i-bookmark-filled"/></svg></button>
+            </a>
+            <a class="nw-row" href="#news">
+              <span class="nw-row-text">
+                <span class="nw-row-title">Where every polling place in Pope County moved to</span>
+                <span class="nw-byline nw-byline-sm">
+                  <span class="nw-mark" data-source="city" aria-hidden="true">CR</span>
+                  <span class="nw-source">City of Russellville</span>
+                  <span class="nw-dot" aria-hidden="true"></span>
+                  <span class="nw-meta">saved 28 Jul</span>
+                </span>
+              </span>
+              <button class="nw-unsave" type="button" aria-label="Remove from saved"><svg class="i i-sm" aria-hidden="true"><use href="#i-bookmark-filled"/></svg></button>
+            </a>
+            <a class="nw-row" href="#news">
+              <span class="nw-row-text">
+                <span class="nw-row-title">A field guide to the Bona Dea wetland birds, printable</span>
+                <span class="nw-byline nw-byline-sm">
+                  <span class="nw-mark" data-source="post" aria-hidden="true">DP</span>
+                  <span class="nw-source">The Dardanelle Post</span>
+                  <span class="nw-dot" aria-hidden="true"></span>
+                  <span class="nw-meta">saved 3 Jun</span>
+                  <span class="nw-tag" data-tone="quiet"><svg class="i i-sm" aria-hidden="true"><use href="#i-alert-circle"/></svg>Link is dead</span>
+                </span>
+              </span>
+              <button class="nw-unsave" type="button" aria-label="Remove from saved"><svg class="i i-sm" aria-hidden="true"><use href="#i-bookmark-filled"/></svg></button>
+            </a>
+          </div>
+        </div>
+        <p class="nw-slab-cap">The date is when <b>you</b> saved it, not when it was published, because
+        that is the thing you would search on. A source that took its page down is flagged rather than
+        silently removed.</p>
+      </div>
+
+      <div class="nw-slab">
+        <div class="plate">
+          <div class="nw-head"><span class="nw-rule" aria-hidden="true"></span><span class="nw-label">Saved</span></div>
+          <div class="nw-empty">
+            <span class="nw-empty-icon" aria-hidden="true"><svg class="i i-lg"><use href="#i-bookmark"/></svg></span>
+            <p class="nw-empty-line">Nothing saved yet.</p>
+            <p class="nw-empty-sub">The bookmark on any story keeps it here. Handy for the ones you
+            want to read after work, and for the notices you will want to find again in October.</p>
+          </div>
+        </div>
+        <p class="nw-slab-cap">One sentence of what the thing is for, one of when it is useful. No
+        apology, no illustration of a person shrugging, no button, because there is nothing to do here
+        that is not somewhere else.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ 10. topics and tags ══════════════════════════════════════════ -->
+
+  <div class="spec">
+    <div class="spec-label">Topic header and the follow control <em>A topic is a standing question a resident has, so its page opens by answering it rather than by branding itself.</em></div>
+    <div class="spec-row">
+      <div class="nw-slab nw-slab-wide">
+        <div class="nw-topic">
+          <div class="nw-topic-head">
+            <span class="nw-topic-eyebrow">Topic</span>
+            <h3 class="nw-topic-name">Nuclear One</h3>
+            <p class="nw-topic-what">Entergy's plant on Lake Dardanelle, twelve miles west. Outages,
+            filings, hiring, and anything the NRC publishes about it.</p>
+            <div class="nw-topic-foot">
+              <button class="nw-follow" type="button" aria-pressed="false">
+                <svg class="i i-sm" aria-hidden="true"><use href="#i-plus"/></svg>Follow
+              </button>
+              <span class="nw-topic-meta">4 sources &middot; 11 stories since June</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="nw-topic" data-followed="true">
+          <div class="nw-topic-head">
+            <span class="nw-topic-eyebrow">Topic</span>
+            <h3 class="nw-topic-name">City Council</h3>
+            <p class="nw-topic-what">Agendas, minutes and every source that covers the Monday meeting.
+            Ordinances get added the morning after a vote.</p>
+            <div class="nw-topic-foot">
+              <button class="nw-follow" type="button" aria-pressed="true">
+                <svg class="i i-sm" aria-hidden="true"><use href="#i-check"/></svg>Following
+              </button>
+              <span class="nw-topic-meta">Notices are on &middot; <a href="#news">turn them off</a></span>
+            </div>
+          </div>
+        </div>
+        <p class="nw-slab-cap">Following changes the button and adds one line about what following
+        actually did. A control that changes state without saying what changed is a control people
+        press twice.</p>
+      </div>
+
+      <div class="nw-slab">
+        <div class="plate">
+          <div class="nw-rail" role="list" aria-label="Topics">
+            <a class="nw-chip" data-on="true" href="#news" role="listitem">All</a>
+            <a class="nw-chip" href="#news" role="listitem"><svg class="i i-sm" aria-hidden="true"><use href="#i-check"/></svg>Nuclear One</a>
+            <a class="nw-chip" href="#news" role="listitem"><svg class="i i-sm" aria-hidden="true"><use href="#i-check"/></svg>City Council</a>
+            <a class="nw-chip" href="#news" role="listitem">Arkansas Tech</a>
+            <a class="nw-chip" href="#news" role="listitem">Lake Dardanelle</a>
+            <a class="nw-chip" href="#news" role="listitem">Schools</a>
+          </div>
+          <div class="nw-rail">
+            <a class="nw-chip" data-size="sm" href="#news">Nuclear One</a>
+            <a class="nw-chip" data-size="sm" href="#news">Entergy</a>
+            <a class="nw-chip" data-size="sm" href="#news">Pope County</a>
+            <a class="nw-chip" data-size="sm" href="#news">NRC</a>
+          </div>
+        </div>
+        <p class="nw-slab-cap">The rail scrolls, it never wraps to a second line. Topics already
+        followed carry a tick, so the rail doubles as the list of what you chose. Under a story the
+        same chips run small and are tags, not filters.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ 11. feed states ══════════════════════════════════════════════ -->
+
+  <div class="spec">
+    <div class="spec-label">When the scrape fails <em>The API serves the last good screen rather than an error, so the banner is the only thing standing between a resident and stale news presented as fresh.</em></div>
+    <div class="spec-row">
+      <div class="nw-slab">
+        <div class="plate">
+          <div class="nw-stack">
+            <div class="nw-banner">
+              <svg class="i i-sm" aria-hidden="true"><use href="#i-clock"/></svg>
+              <span class="nw-banner-text">
+                <b>This is the news as of 6:10 this morning.</b>
+                Nothing has answered since then. We are still trying.
+              </span>
+              <button class="nw-banner-btn" type="button"><svg class="i i-sm" aria-hidden="true"><use href="#i-refresh"/></svg>Refresh</button>
+            </div>
+
+            <div class="nw-outage">
+              <svg class="i i-sm" aria-hidden="true"><use href="#i-alert-circle"/></svg>
+              <span class="nw-outage-text">Arkansas Tech News has not answered since 6:10 am. The
+              other five sources are current.</span>
+              <button class="nw-outage-retry" type="button">Try again</button>
+            </div>
+
+            <div class="nw-signoff">
+              <div class="nw-signoff-line">That is the town through Wednesday, 3:40 pm.</div>
+              <div class="nw-signoff-meta">6 sources &middot; 14 stories &middot; nothing older than Friday</div>
+            </div>
+          </div>
+        </div>
+        <p class="nw-slab-cap">Three different admissions, three different weights. Everything is
+        stale, one source is stale, and everything is current and here is where it stops.</p>
+      </div>
+
+      <div class="phone">
+        <div class="phone-cap">News, a quiet day</div>
+        <div class="phone-screen">
+          <div class="nw-screen">
+            <header class="nw-bar">
+              <span class="nw-bar-title">News</span>
+              <span class="nw-bar-place">Russellville</span>
+              <button class="nw-icon-btn" type="button" aria-label="Saved stories"><svg class="i" aria-hidden="true"><use href="#i-bookmark"/></svg></button>
+            </header>
+
+            <div class="nw-quiet">
+              <span class="nw-quiet-art" aria-hidden="true"><svg class="i i-xl"><use href="#i-sun"/></svg></span>
+              <p class="nw-quiet-line">Quiet morning in town.</p>
+              <p class="nw-quiet-sub">Nobody has published anything since the school board minutes went
+              up at 7:40. That is most Wednesdays in August, and it is usually good news.</p>
+              <div class="nw-quiet-sep"><span></span>While you are here<span></span></div>
+            </div>
+
+            <div class="nw-sec">
+              <div class="nw-head"><span class="nw-rule" aria-hidden="true"></span><span class="nw-label">Yesterday, if you missed it</span></div>
+              <div class="nw-list">
+                <a class="nw-row" href="#news" data-density="compact">
+                  <span class="nw-row-text">
+                    <span class="nw-row-title">Entergy brings Unit 2 back after a 34 day refuelling outage</span>
+                    <span class="nw-byline nw-byline-sm"><span class="nw-source">The Courier</span><span class="nw-dot" aria-hidden="true"></span><span class="nw-meta">yesterday afternoon</span></span>
+                  </span>
+                </a>
+                <a class="nw-row" href="#news" data-density="compact">
+                  <span class="nw-row-text">
+                    <span class="nw-row-title">Council votes 4 to 1 to rezone the Weir Road corner</span>
+                    <span class="nw-byline nw-byline-sm"><span class="nw-source">The Courier</span><span class="nw-dot" aria-hidden="true"></span><span class="nw-meta">yesterday, 11:04 pm</span></span>
+                  </span>
+                </a>
+                <a class="nw-row" href="#news" data-density="compact">
+                  <span class="nw-row-text">
+                    <span class="nw-row-title">Holla Bend opens the auto tour route for the season</span>
+                    <span class="nw-byline nw-byline-sm"><span class="nw-source">Dardanelle Post</span><span class="nw-dot" aria-hidden="true"></span><span class="nw-meta">Tuesday</span></span>
+                  </span>
+                </a>
+              </div>
+            </div>
+
+            <footer class="nw-signoff">
+              <div class="nw-signoff-line">We will put something here the moment anyone publishes.</div>
+              <div class="nw-signoff-meta">Checked all 6 sources at 11:20 am</div>
+            </footer>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <p class="why">A town with nothing to report is the normal case, not the error case, and the
+    difference between those two framings is the whole tone of the product. The quiet day screen
+    <b>never apologises and never pads</b>. It says what is true, it says why that is fine, and then
+    it does the one genuinely useful thing available, which is offering yesterday in a compact list
+    for somebody who was busy. What it does not do is invent a section. A screen that fills itself out
+    on a slow Wednesday teaches people it was padded on the Wednesday the river came up, and that is a
+    lesson a town information service does not get to unteach.</p>
+  </div>
+
+  <!-- ═══ 12. time ═════════════════════════════════════════════════════ -->
+
+  <div class="spec">
+    <div class="spec-label">Relative time, the whole rule set <em>We count minutes for exactly one hour, then switch to the words a neighbour would use. Nobody says "seven hours ago" out loud.</em></div>
+    <div class="nw-time">
+      <div class="nw-time-row" data-head="true">
+        <span class="nw-time-when">Age</span>
+        <span class="nw-time-out">Renders as</span>
+        <span class="nw-time-why">Why</span>
+      </div>
+      <div class="nw-time-row">
+        <span class="nw-time-when">Under a minute</span>
+        <span class="nw-time-out"><span class="nw-meta nw-fresh">just now</span></span>
+        <span class="nw-time-why">A number this small is noise. It means the page you are looking at is current.</span>
+      </div>
+      <div class="nw-time-row">
+        <span class="nw-time-when">1 to 59 minutes</span>
+        <span class="nw-time-out"><span class="nw-meta nw-fresh">18 minutes ago</span></span>
+        <span class="nw-time-why">The only place we count, and the only timestamp allowed to go dark and bold. Inside an hour, the number changes what a resident does next.</span>
+      </div>
+      <div class="nw-time-row">
+        <span class="nw-time-when">Same day, over an hour</span>
+        <span class="nw-time-out"><span class="nw-meta">this morning</span></span>
+        <span class="nw-time-why">Also <b>this afternoon</b> and <b>tonight</b>, cut at noon and 6pm. Everyone knows what this morning means without doing arithmetic against their own watch.</span>
+      </div>
+      <div class="nw-time-row">
+        <span class="nw-time-when">Yesterday</span>
+        <span class="nw-time-out"><span class="nw-meta">yesterday afternoon</span></span>
+        <span class="nw-time-why">Keeps the part of day, because "yesterday afternoon" and "yesterday, 11:04 pm" answer different questions about a council vote.</span>
+      </div>
+      <div class="nw-time-row">
+        <span class="nw-time-when">2 to 6 days</span>
+        <span class="nw-time-out"><span class="nw-meta">Tuesday</span></span>
+        <span class="nw-time-why">A weekday name inside the last week is unambiguous and it is what people say. No "4 days ago".</span>
+      </div>
+      <div class="nw-time-row">
+        <span class="nw-time-when">7 days to a year</span>
+        <span class="nw-time-out"><span class="nw-meta">3 Jun</span></span>
+        <span class="nw-time-why">Past a week the relative form stops helping. This is a date, and it is short enough to sit in a byline.</span>
+      </div>
+      <div class="nw-time-row">
+        <span class="nw-time-when">Over a year</span>
+        <span class="nw-time-out"><span class="nw-meta">3 Jun 2025</span></span>
+        <span class="nw-time-why">The year appears only when it is doing work, which is the moment a saved story could be mistaken for a current one.</span>
+      </div>
+      <div class="nw-time-row" data-special="true">
+        <span class="nw-time-when">Anything developing</span>
+        <span class="nw-time-out"><span class="nw-meta nw-fresh">updated 12 minutes ago</span></span>
+        <span class="nw-time-why">A live story keeps the minute count past the hour and takes the word <b>updated</b>, because on a developing story the question is not when it started, it is when it last moved.</span>
+      </div>
+      <div class="nw-time-row" data-special="true">
+        <span class="nw-time-when">On a scheduled item</span>
+        <span class="nw-time-out"><span class="nw-meta">Monday, 6pm</span></span>
+        <span class="nw-time-why">Anything in the future is an absolute time, always. A meeting "in 3 days" is how somebody misses a meeting.</span>
+      </div>
+    </div>
+
+    <p class="why">Every timestamp in the section is serif and sits in the byline, never in a chip and
+    never in mono. The rule set exists because inconsistent time is the fastest way for an aggregator
+    to feel untrustworthy: a feed showing <b>2 hours ago</b> beside <b>Tuesday</b> beside <b>08/04</b>
+    tells a reader the screen was assembled by three different people who never met. One ladder, one
+    voice, and the full timestamp is always on the element's <code>title</code> and in the reader page
+    byline for anyone who needs the real number.</p>
+  </div>
+</section>

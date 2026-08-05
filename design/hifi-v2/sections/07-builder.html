@@ -1,0 +1,998 @@
+<section class="sheet-section" id="builder">
+  <svg style="display:none" aria-hidden="true">
+    <symbol id="i-bd-monitor" viewBox="0 0 24 24">
+      <rect x="2.5" y="4" width="19" height="12.5" rx="2"/>
+      <path d="M8 20.5h8M12 16.5v4"/>
+    </symbol>
+    <symbol id="i-bd-tablet" viewBox="0 0 24 24">
+      <rect x="6" y="2.5" width="12" height="19" rx="2.5"/>
+      <path d="M10.5 18.5h3"/>
+    </symbol>
+  </svg>
+
+  <div class="sec-head"><span class="sec-num">07</span><h2>The builder door</h2></div>
+  <p class="sec-note">Connect an AI tool you already pay for, build against the SDK, validate, preview on a real sandbox, submit for review. Town Square generates nothing and pays for nothing. Every screen here sits behind one link, because a resident who never builds should never meet any of it.</p>
+
+  <!-- ─────────────────────────────────────────── 1. the front door ── -->
+
+  <div class="spec">
+    <div class="spec-label">Front door, hero <em>says what it costs you before it says what you get</em></div>
+    <div class="plate">
+      <div class="bd-hero">
+        <div class="bd-hero-eyebrow">Build on Town Square</div>
+        <h3 class="bd-hero-title">Russellville runs on things somebody made.</h3>
+        <p class="bd-hero-lede">If you can describe an app, your AI tool can build it, and this town square can host it. A trail conditions board. A map of every Flock camera anyone has spotted. A list of who still has generators after an ice storm.</p>
+        <div class="bd-hero-acts">
+          <a class="bd-btn bd-btn-primary" href="#builder">
+            <svg class="i i-sm" aria-hidden="true"><use href="#i-plug"/></svg>
+            Connect your AI tool
+          </a>
+          <a class="bd-btn bd-btn-quiet" href="#builder">
+            <svg class="i i-sm" aria-hidden="true"><use href="#i-book"/></svg>
+            Read the SDK first
+          </a>
+        </div>
+        <p class="bd-hero-foot">14 creations live. Last one published Tuesday by <span class="bd-handle">@oldpost</span>.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="spec">
+    <div class="spec-label">Front door, the three steps <em>three, and the third one is a person reading your code</em></div>
+    <div class="bd-steps">
+      <article class="bd-step">
+        <div class="bd-step-n">1</div>
+        <h4>Connect</h4>
+        <p>Mint a token here, paste one line into Claude Code. Your tool now knows the SDK, the manifest format, and Russellville's real data.</p>
+        <p class="bd-step-time"><svg class="i i-sm" aria-hidden="true"><use href="#i-clock"/></svg> about two minutes</p>
+      </article>
+      <article class="bd-step">
+        <div class="bd-step-n">2</div>
+        <h4>Build and preview</h4>
+        <p>Describe what you want. Your tool writes it, checks it against our rules, and puts it on a live sandbox address you can open on your phone.</p>
+        <p class="bd-step-time"><svg class="i i-sm" aria-hidden="true"><use href="#i-clock"/></svg> an evening, usually</p>
+      </article>
+      <article class="bd-step">
+        <div class="bd-step-n">3</div>
+        <h4>Submit for review</h4>
+        <p>Someone on the review committee reads your source and your permissions, then approves it or tells you what to change. Updates get read too.</p>
+        <p class="bd-step-time"><svg class="i i-sm" aria-hidden="true"><use href="#i-clock"/></svg> usually under three days</p>
+      </article>
+    </div>
+  </div>
+
+  <div class="spec">
+    <div class="spec-label">Front door, the honest prerequisite <em>the one card that is allowed to talk someone out of it</em></div>
+    <div class="bd-prereq">
+      <div class="bd-prereq-head">
+        <svg class="i i-lg" aria-hidden="true"><use href="#i-info"/></svg>
+        <h4>You will need an AI tool of your own</h4>
+      </div>
+      <p>Town Square does not write apps for you. There is no chat box here. You bring a tool you already have, it does the writing, and the cost of that writing is yours, not the town's. That is why this is free to host.</p>
+      <ul class="bd-prereq-list">
+        <li><svg class="i i-sm" aria-hidden="true"><use href="#i-check"/></svg> <b>Claude Code</b>, in a terminal. What we build against, and the smoothest path.</li>
+        <li><svg class="i i-sm" aria-hidden="true"><use href="#i-check"/></svg> <b>Claude Desktop</b> or anything else that speaks MCP. Works, with a little more setup.</li>
+        <li><svg class="i i-sm" aria-hidden="true"><use href="#i-x-circle"/></svg> <b>A phone alone</b> is not enough yet. You need a computer you can run a command on.</li>
+      </ul>
+      <p class="bd-prereq-tail">You do not need to know JavaScript. You do need to be willing to read what your tool wrote, because you are the one submitting it and your name goes on it.</p>
+    </div>
+  </div>
+
+  <p class="why">The temptation on this page is to write <b>anyone in town can make an app</b>, because it is the sentence the thesis wants to be true. It is not true today. What is true is <b>anyone with an AI subscription and a laptop</b>, and a builder who discovers the gap after signing up is a builder who does not come back. So the hero promises a specific, local, buildable thing, the prerequisite card is allowed to say no, and the tone stays flat and unhurried rather than encouraging. Warmth is earned later, at the first publish, where it costs nobody anything.</p>
+
+  <p class="why">This whole section lives behind <b>one</b> link in the site footer and one card in Settings. Nothing in the resident tab bar points here, no banner suggests it, and a resident who reads the paper and checks the weekend never sees a token, a manifest, or the word MCP. The build layer is where the value compounds, but it is not where most people live, and cluttering the reading path to advertise it would trade the many for the few.</p>
+
+  <!-- ────────────────────────────────────── 2. connect your tool ── -->
+
+  <div class="spec">
+    <div class="spec-label">Connect, step one: name the token <em>a label is the only field, because the scopes are not yours to choose</em></div>
+    <div class="spec-row">
+      <div class="bd-panel bd-panel-w">
+        <div class="bd-panel-head">
+          <svg class="i i-sm" aria-hidden="true"><use href="#i-key"/></svg>
+          <h4>New connection</h4>
+        </div>
+        <div class="bd-panel-body">
+          <label class="bd-field">
+            <span class="bd-field-label">What is this for</span>
+            <input class="bd-input" type="text" value="MacBook, Claude Code" aria-describedby="bd-lab-hint">
+            <span class="bd-field-hint" id="bd-lab-hint">So you can tell two machines apart later. Only you see it.</span>
+          </label>
+
+          <div class="bd-scopes">
+            <div class="bd-scopes-head">What this token can do</div>
+            <ul class="bd-scope-list">
+              <li><svg class="i i-sm" aria-hidden="true"><use href="#i-book"/></svg><div><b>Read the SDK and templates.</b> <span>Docs, examples, starting shapes.</span></div></li>
+              <li><svg class="i i-sm" aria-hidden="true"><use href="#i-database"/></svg><div><b>Read Russellville's public data.</b> <span>Events, notices, businesses, shared records. The same things any resident can see.</span></div></li>
+              <li><svg class="i i-sm" aria-hidden="true"><use href="#i-package"/></svg><div><b>Create and preview drafts you own.</b> <span>Nobody else's drafts, ever.</span></div></li>
+              <li><svg class="i i-sm" aria-hidden="true"><use href="#i-send"/></svg><div><b>Submit for review.</b> <span>Submit, not publish. There is no token that skips the committee.</span></div></li>
+            </ul>
+            <p class="bd-scopes-note">These are fixed. A token that could do less would not be useful, and a token that could do more does not exist.</p>
+          </div>
+
+          <button class="bd-btn bd-btn-primary bd-btn-full" type="button">Mint token</button>
+        </div>
+      </div>
+
+      <div class="bd-panel bd-panel-w">
+        <div class="bd-panel-head bd-panel-head-warn">
+          <svg class="i i-sm" aria-hidden="true"><use href="#i-eye"/></svg>
+          <h4>Copy this now</h4>
+        </div>
+        <div class="bd-panel-body">
+          <div class="bd-once">
+            <svg class="i i-sm" aria-hidden="true"><use href="#i-warning"/></svg>
+            <p>This is the only time we will show you this. We store a one-way hash of it, so we genuinely cannot recover it, not even for you. Lose it and you mint another.</p>
+          </div>
+
+          <div class="bd-secret">
+            <code class="bd-secret-val">ts_live_8kQ2vRn4xLpDq7Wm3fYbT1cJhZs9NrE6uKgVi0aXoPl2dSj5RtBnMwF</code>
+            <button class="bd-copy bd-copy-solid" type="button" data-bd-copy="ts_live_8kQ2vRn4xLpDq7Wm3fYbT1cJhZs9NrE6uKgVi0aXoPl2dSj5RtBnMwF">
+              <svg class="i i-sm bd-copy-idle" aria-hidden="true"><use href="#i-copy"/></svg>
+              <svg class="i i-sm bd-copy-done" aria-hidden="true"><use href="#i-check"/></svg>
+              <span class="bd-copy-idle">Copy</span><span class="bd-copy-done">Copied</span>
+            </button>
+          </div>
+
+          <p class="bd-secret-note">The <code>ts_live_</code> prefix is deliberate. GitHub's secret scanner knows it, and so does our own bundle checker, so if this ever lands in a file you publish, something catches it.</p>
+
+          <figure class="bd-code bd-code-dark">
+            <figcaption class="bd-code-head">
+              <svg class="i i-sm" aria-hidden="true"><use href="#i-terminal"/></svg>
+              <span class="bd-code-name">Paste this in your terminal</span>
+              <button class="bd-copy" type="button" data-bd-copy="claude mcp add">
+                <svg class="i i-sm bd-copy-idle" aria-hidden="true"><use href="#i-copy"/></svg>
+                <svg class="i i-sm bd-copy-done" aria-hidden="true"><use href="#i-check"/></svg>
+                <span class="bd-copy-idle">Copy</span><span class="bd-copy-done">Copied</span>
+              </button>
+            </figcaption>
+            <pre class="bd-code-body"><code><span class="bd-line"><span class="bd-k">claude</span> mcp add --transport http townsquare \</span><span class="bd-line">  <span class="bd-s">https://mcp.townsquare.org/russellville-ar</span> \</span><span class="bd-line">  --header <span class="bd-s">"Authorization: Bearer ts_live_8kQ2…MwF"</span></span></code></pre>
+          </figure>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="spec">
+    <div class="spec-label">Connect, the copied state and the gone state <em>the confirmation is a state on the button, not a toast that floats away</em></div>
+    <div class="spec-row">
+      <div class="plate bd-plate-narrow">
+        <div class="bd-secret">
+          <code class="bd-secret-val">ts_live_8kQ2vRn4xLpDq7Wm3fYbT1cJhZs9NrE6uKgVi0aXoPl2dSj5RtBnMwF</code>
+          <button class="bd-copy bd-copy-solid" type="button" data-copied>
+            <svg class="i i-sm bd-copy-idle" aria-hidden="true"><use href="#i-copy"/></svg>
+            <svg class="i i-sm bd-copy-done" aria-hidden="true"><use href="#i-check"/></svg>
+            <span class="bd-copy-idle">Copy</span><span class="bd-copy-done">Copied</span>
+          </button>
+        </div>
+        <p class="bd-microcopy">On the clipboard. Paste it before you close this tab.</p>
+      </div>
+
+      <div class="plate bd-plate-narrow">
+        <div class="bd-gone">
+          <svg class="i i-lg" aria-hidden="true"><use href="#i-lock"/></svg>
+          <h4>That token is gone from here</h4>
+          <p>You left the page, so we cannot show <code>ts_live_8kQ2vRn4xLpD…</code> again. It still works if you copied it. If you did not, revoke it and mint another. It takes ten seconds and costs nothing.</p>
+          <div class="bd-gone-acts">
+            <button class="bd-btn bd-btn-primary" type="button">Mint another</button>
+            <button class="bd-btn bd-btn-quiet" type="button">Back to my tokens</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <p class="why">Shown once is the whole point, so the page has to say <b>why</b> rather than just warn. "We store a one-way hash" is a sentence a non-technical resident can still follow to the conclusion that matters: nobody at Town Square can read your token, including whoever answers the email when you lose it. The recovery path is deliberately cheap, because a scary irreversible action with an expensive recovery is how people end up pasting credentials into notes apps.</p>
+
+  <!-- ──────────────────────────────────── 3. token management ── -->
+
+  <div class="spec">
+    <div class="spec-label">Your tokens <em>last used is the field that answers "can I safely kill this one"</em></div>
+    <div class="bd-tokens">
+      <div class="bd-tok">
+        <div class="bd-tok-main">
+          <div class="bd-tok-label">MacBook, Claude Code</div>
+          <code class="bd-tok-id">ts_live_8kQ2vRn4xLpD••••••••••••</code>
+        </div>
+        <div class="bd-tok-when">
+          <span class="bd-dot bd-dot-live" aria-hidden="true"></span>
+          <span>Used 14 minutes ago</span>
+          <span class="bd-tok-made">Minted 2 August</span>
+        </div>
+        <button class="bd-btn bd-btn-ghost" type="button">Revoke</button>
+      </div>
+
+      <div class="bd-tok">
+        <div class="bd-tok-main">
+          <div class="bd-tok-label">Studio desktop</div>
+          <code class="bd-tok-id">ts_live_pW7hL2mQzR4a••••••••••••</code>
+        </div>
+        <div class="bd-tok-when">
+          <span class="bd-dot" aria-hidden="true"></span>
+          <span>Used 6 days ago</span>
+          <span class="bd-tok-made">Minted 19 June</span>
+        </div>
+        <button class="bd-btn bd-btn-ghost" type="button">Revoke</button>
+      </div>
+
+      <div class="bd-tok">
+        <div class="bd-tok-main">
+          <div class="bd-tok-label">Claude Desktop, trying it out</div>
+          <code class="bd-tok-id">ts_live_c3Nk9tYvB6xE••••••••••••</code>
+        </div>
+        <div class="bd-tok-when">
+          <span class="bd-dot bd-dot-idle" aria-hidden="true"></span>
+          <span class="bd-tok-never">Never used</span>
+          <span class="bd-tok-made">Minted 4 minutes ago</span>
+        </div>
+        <button class="bd-btn bd-btn-ghost" type="button">Revoke</button>
+      </div>
+
+      <div class="bd-tok bd-tok-confirming">
+        <div class="bd-tok-main">
+          <div class="bd-tok-label">Old laptop</div>
+          <code class="bd-tok-id">ts_live_Ju5rD8sAqM1w••••••••••••</code>
+        </div>
+        <div class="bd-tok-confirm">
+          <p><b>Revoke "Old laptop"?</b> Whatever is using it stops working on its very next call. Your drafts, your published creations and everything you have built stay exactly where they are.</p>
+          <div class="bd-tok-confirm-acts">
+            <button class="bd-btn bd-btn-danger" type="button">Yes, revoke it</button>
+            <button class="bd-btn bd-btn-quiet" type="button">Keep it</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="bd-tok bd-tok-dead">
+        <div class="bd-tok-main">
+          <div class="bd-tok-label">Sold this machine</div>
+          <code class="bd-tok-id">ts_live_Ze4pV0gHnT7y••••••••••••</code>
+        </div>
+        <div class="bd-tok-when">
+          <span class="bd-tok-revoked"><svg class="i i-sm" aria-hidden="true"><use href="#i-x-circle"/></svg> Revoked 12 July</span>
+          <span class="bd-tok-made">Kept on the list so you know it is dead, not missing</span>
+        </div>
+      </div>
+    </div>
+    <p class="bd-listnote">3 of 10 active. A resident with ten tokens is a resident who has lost track of one.</p>
+  </div>
+
+  <!-- ────────────────────────────────────── 4. code surfaces ── -->
+
+  <div class="spec">
+    <div class="spec-label">Code block, a file <em>filename header, line numbers, copy; light because you read it like a document</em></div>
+    <figure class="bd-code" data-lines>
+      <figcaption class="bd-code-head">
+        <svg class="i i-sm" aria-hidden="true"><use href="#i-document"/></svg>
+        <span class="bd-code-name">townsquare.json</span>
+        <span class="bd-code-meta">the manifest, 1.2 KB</span>
+        <button class="bd-copy" type="button" data-bd-copy="manifest">
+          <svg class="i i-sm bd-copy-idle" aria-hidden="true"><use href="#i-copy"/></svg>
+          <svg class="i i-sm bd-copy-done" aria-hidden="true"><use href="#i-check"/></svg>
+          <span class="bd-copy-idle">Copy</span><span class="bd-copy-done">Copied</span>
+        </button>
+      </figcaption>
+      <pre class="bd-code-body"><code><span class="bd-line">{</span><span class="bd-line">  <span class="bd-k">"manifest_version"</span>: <span class="bd-v">1</span>,</span><span class="bd-line">  <span class="bd-k">"sdk"</span>: <span class="bd-v">1</span>,</span><span class="bd-line"></span><span class="bd-line">  <span class="bd-k">"name"</span>: <span class="bd-s">"Flock Camera Map"</span>,</span><span class="bd-line">  <span class="bd-k">"tagline"</span>: <span class="bd-s">"Every ALPR camera anyone has reported in Russellville"</span>,</span><span class="bd-line">  <span class="bd-k">"version"</span>: <span class="bd-s">"1.2.0"</span>,</span><span class="bd-line">  <span class="bd-k">"tags"</span>: [<span class="bd-s">"maps"</span>, <span class="bd-s">"privacy"</span>, <span class="bd-s">"civic"</span>],</span><span class="bd-line"></span><span class="bd-line">  <span class="bd-k">"entry"</span>: <span class="bd-s">"index.html"</span>,</span><span class="bd-line">  <span class="bd-k">"icon"</span>: <span class="bd-s">"icon.svg"</span>,</span><span class="bd-line"></span><span class="bd-line">  <span class="bd-k">"permissions"</span>: {</span><span class="bd-line">    <span class="bd-k">"identity"</span>: <span class="bd-s">"handle"</span>,</span><span class="bd-line">    <span class="bd-k">"read"</span>:     [<span class="bd-s">"flock_camera"</span>],</span><span class="bd-line">    <span class="bd-k">"write"</span>:    [<span class="bd-s">"flock_camera"</span>],</span><span class="bd-line">    <span class="bd-k">"network"</span>:  [<span class="bd-s">"tile.openstreetmap.org"</span>],</span><span class="bd-line">    <span class="bd-k">"storage"</span>:  <span class="bd-v">true</span>,</span><span class="bd-line">    <span class="bd-k">"device"</span>:   []</span><span class="bd-line">  }</span><span class="bd-line">}</span></code></pre>
+    </figure>
+    <p class="bd-listnote">No <code>author</code> and no <code>id</code>. The platform assigns both from whoever submitted, because a manifest that names its own author is an impersonation hole and one that names its own id is slug squatting.</p>
+  </div>
+
+  <div class="spec">
+    <div class="spec-label">Code block, an SDK call <em>same component, line numbers off, because eight lines do not need addressing</em></div>
+    <figure class="bd-code">
+      <figcaption class="bd-code-head">
+        <svg class="i i-sm" aria-hidden="true"><use href="#i-code"/></svg>
+        <span class="bd-code-name">app.js</span>
+        <span class="bd-code-meta">excerpt</span>
+        <button class="bd-copy" type="button" data-bd-copy="sdk">
+          <svg class="i i-sm bd-copy-idle" aria-hidden="true"><use href="#i-copy"/></svg>
+          <svg class="i i-sm bd-copy-done" aria-hidden="true"><use href="#i-check"/></svg>
+          <span class="bd-copy-idle">Copy</span><span class="bd-copy-done">Copied</span>
+        </button>
+      </figcaption>
+      <pre class="bd-code-body"><code><span class="bd-line"><span class="bd-k">import</span> { town, user, records, app } <span class="bd-k">from</span> <span class="bd-s">'@townsquare/sdk'</span></span><span class="bd-line"></span><span class="bd-line"><span class="bd-c">// Anyone can look. Only a verified resident can add one,</span></span><span class="bd-line"><span class="bd-c">// and the bridge enforces that, not this file.</span></span><span class="bd-line"><span class="bd-k">const</span> me = <span class="bd-k">await</span> user.current()</span><span class="bd-line"><span class="bd-k">const</span> found = <span class="bd-k">await</span> records.list(<span class="bd-s">'flock_camera'</span>, { limit: <span class="bd-v">200</span> })</span><span class="bd-line"></span><span class="bd-line"><span class="bd-k">for</span> (<span class="bd-k">const</span> c <span class="bd-k">of</span> found.items) drawPin(c.data.lat, c.data.lng, c.data.note)</span><span class="bd-line"></span><span class="bd-line">app.setTitle(<span class="bd-s">`${found.items.length} cameras mapped`</span>)</span><span class="bd-line">app.ready()</span></code></pre>
+    </figure>
+  </div>
+
+  <div class="spec">
+    <div class="spec-label">Terminal transcript <em>dark, no filename, a prompt glyph; it is a recording of a session, not a file you edit</em></div>
+    <div class="bd-term">
+      <div class="bd-term-head">
+        <span class="bd-term-dots" aria-hidden="true"><i></i><i></i><i></i></span>
+        <span class="bd-term-path">~/creations/flock-camera-map</span>
+      </div>
+      <pre class="bd-term-body"><code><span class="bd-tline"><span class="bd-prompt">$</span> claude</span><span class="bd-tline"><span class="bd-caret">&gt;</span> map the Flock cameras people have reported around town</span><span class="bd-tline"></span><span class="bd-tline"><span class="bd-tool">townsquare</span> whoami            <span class="bd-ok">@wgatlin, verified resident</span></span><span class="bd-tline"><span class="bd-tool">townsquare</span> get_sdk_docs      <span class="bd-dim">sdk 1, 14 methods, hash 9f2c…</span></span><span class="bd-tline"><span class="bd-tool">townsquare</span> list_record_types <span class="bd-dim">flock_camera already exists, defined by @oldpost</span></span><span class="bd-tline"><span class="bd-tool">townsquare</span> scaffold          <span class="bd-dim">template: map-over-records</span></span><span class="bd-tline"><span class="bd-tool">townsquare</span> begin_upload      <span class="bd-dim">12 files, 148 KB declared</span></span><span class="bd-tline"></span><span class="bd-tline"><span class="bd-prompt">$</span> curl -s --upload-file ... # 12 of 12 uploaded</span><span class="bd-tline"></span><span class="bd-tline"><span class="bd-tool">townsquare</span> validate          <span class="bd-warn">8 passed, 1 warning, 0 errors</span></span><span class="bd-tline"><span class="bd-tool">townsquare</span> preview           <span class="bd-ok">https://p-3f9c2a.townsquare-apps.net</span></span><span class="bd-tline"></span><span class="bd-tline"><span class="bd-dim">Open that in a browser. Your app's console errors show up</span></span><span class="bd-tline"><span class="bd-dim">there, not here.</span></span><span class="bd-tline"><span class="bd-prompt">$</span> <span class="bd-cursor" aria-hidden="true"></span></span></code></pre>
+    </div>
+    <p class="bd-listnote">The bytes never travel through the model. The agent declares a path, a sha256 and a length for every file, gets a one-time ticket, and one shell command moves the actual bytes. A file in the upload that was not in the inventory is rejected, which is what turns "everything is vendored" from a promise into a check.</p>
+  </div>
+
+  <p class="why">Two code treatments, on purpose. A <b>file</b> is light, titled, numbered and copyable, because you read it, quote a line of it to someone, and paste it into an editor. A <b>terminal</b> is dark with a prompt glyph and no line numbers, because line 7 of a transcript is not a thing anyone refers to. Syntax colour is the same four registers everywhere: navy for the words the language owns, terracotta for anything quoted, sage for bare values, muted ink for comments. Four is enough to read structure and few enough that a code block never out-shouts the page it sits on.</p>
+
+  <!-- ─────────────────────────────────── 5. the manifest editor ── -->
+
+  <div class="spec">
+    <div class="spec-label">Permission row <em>the machine value and its consequence sit on one line, so declaring is never abstract</em></div>
+    <div class="bd-perms">
+      <div class="bd-perms-head">
+        <svg class="i i-sm" aria-hidden="true"><use href="#i-shield"/></svg>
+        <div>
+          <h4>What this creation may reach</h4>
+          <p>A reviewer decides from this block alone, usually in under a minute. Everything not declared here is refused at runtime even if your code tries.</p>
+        </div>
+      </div>
+
+      <div class="bd-perm" data-on>
+        <span class="bd-switch" role="img" aria-label="declared"><i></i></span>
+        <code class="bd-perm-val"><span class="bd-k">"identity"</span>: <span class="bd-s">"handle"</span></code>
+        <p class="bd-perm-say">Your app can ask who is signed in and gets back <b>a handle and whether they are verified</b>. Never an email, never a real name, never a location.</p>
+      </div>
+
+      <div class="bd-perm" data-on>
+        <span class="bd-switch" role="img" aria-label="declared"><i></i></span>
+        <code class="bd-perm-val"><span class="bd-k">"read"</span>: [<span class="bd-s">"flock_camera"</span>]</code>
+        <p class="bd-perm-say">Your app can list every camera anyone in town has recorded, including ones added by other creations. <b>@oldpost defined this type in March</b> and 340 rows already exist.</p>
+      </div>
+
+      <div class="bd-perm" data-on data-heavy>
+        <span class="bd-switch" role="img" aria-label="declared"><i></i></span>
+        <code class="bd-perm-val"><span class="bd-k">"write"</span>: [<span class="bd-s">"flock_camera"</span>]</code>
+        <p class="bd-perm-say">Your app can add and edit cameras, and <b>every change is stamped with the resident who made it and with your creation</b>. This is the one a reviewer will ask you about, so say in your note why it needs it.</p>
+      </div>
+
+      <div class="bd-perm">
+        <span class="bd-switch" role="img" aria-label="not declared"><i></i></span>
+        <code class="bd-perm-val"><span class="bd-k">"storage"</span>: <span class="bd-v">false</span></code>
+        <p class="bd-perm-say">Off. Turn it on only if you save something per person, like a filter they picked. 64 KB each, private to them, invisible to every other creation.</p>
+      </div>
+
+      <div class="bd-perm" data-locked>
+        <span class="bd-switch" role="img" aria-label="unavailable"><i></i></span>
+        <code class="bd-perm-val"><span class="bd-k">"device"</span>: []</code>
+        <p class="bd-perm-say"><b>Not available yet.</b> Geolocation and camera access land in a later SDK. The field exists now so a map has somewhere to ask later without breaking every manifest written before it.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="spec">
+    <div class="spec-label">Network allowlist entry <em>a hostname, and underneath it the exact policy line a human will approve</em></div>
+    <div class="bd-net">
+      <label class="bd-field">
+        <span class="bd-field-label">Outside hosts this creation may contact</span>
+        <div class="bd-net-input">
+          <span class="bd-net-scheme">https://</span>
+          <input class="bd-input bd-input-mono" type="text" value="tile.openstreetmap.org">
+          <button class="bd-btn bd-btn-quiet" type="button">Add</button>
+        </div>
+        <span class="bd-field-hint">Bare hostnames only. No wildcards, no ports, no paths, and https is not optional.</span>
+      </label>
+
+      <div class="bd-net-row">
+        <svg class="i i-sm" aria-hidden="true"><use href="#i-globe"/></svg>
+        <code>tile.openstreetmap.org</code>
+        <span class="bd-chip bd-chip-sage">map tiles</span>
+        <button class="bd-btn bd-btn-ghost" type="button" aria-label="Remove tile.openstreetmap.org">
+          <svg class="i i-sm" aria-hidden="true"><use href="#i-close"/></svg>
+        </button>
+      </div>
+
+      <div class="bd-net-csp">
+        <div class="bd-net-csp-head">What the reviewer will see, and what the browser will enforce</div>
+        <pre class="bd-code-body bd-code-inline"><code><span class="bd-line"><span class="bd-k">img-src</span>     <span class="bd-v">'self'</span> data: <span class="bd-s">tile.openstreetmap.org</span></span><span class="bd-line"><span class="bd-k">connect-src</span> <span class="bd-v">'self'</span> <span class="bd-s">tile.openstreetmap.org</span></span><span class="bd-line"><span class="bd-k">script-src</span>  <span class="bd-v">'self'</span>  <span class="bd-c">// never yours to change</span></span></code></pre>
+        <p>Declared hosts reach four directives and no more: <code>connect-src</code>, <code>img-src</code>, <code>media-src</code>, <code>font-src</code>. <code>script-src</code> stays <code>'self'</code> no matter what you write here, which is the mechanism that makes vendoring real rather than a rule nobody checks.</p>
+      </div>
+    </div>
+    <p class="bd-listnote">Images are in that list on purpose. Lock down <code>fetch</code> and leave images open and <code>new Image().src = 'https://…?' + secret</code> still walks data out the door without ever needing a reply.</p>
+  </div>
+
+  <div class="spec">
+    <div class="spec-label">Defining a record type <em>the one place a builder is creating something the whole town inherits</em></div>
+    <div class="bd-defines">
+      <div class="bd-defines-head">
+        <svg class="i i-sm" aria-hidden="true"><use href="#i-database"/></svg>
+        <h4>This creation defines a new kind of record</h4>
+        <span class="bd-chip bd-chip-gold">town-wide, forever</span>
+      </div>
+
+      <div class="bd-def-ids">
+        <label class="bd-field bd-field-inline">
+          <span class="bd-field-label">Type</span>
+          <input class="bd-input bd-input-mono" type="text" value="trail_condition">
+          <span class="bd-field-hint">snake_case, singular</span>
+        </label>
+        <label class="bd-field bd-field-inline">
+          <span class="bd-field-label">Label people see</span>
+          <input class="bd-input" type="text" value="Trail condition">
+        </label>
+      </div>
+
+      <table class="bd-schema">
+        <thead>
+          <tr><th>Field</th><th>Type</th><th>Required</th><th>Limits</th><th><span class="bd-sr">Remove</span></th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code>trail</code></td>
+            <td><code>string</code></td>
+            <td><span class="bd-chip bd-chip-navy">required</span></td>
+            <td class="bd-schema-lim">one of: Bona Dea, Old Post Road, Lake Dardanelle, Prairie Creek</td>
+            <td><button class="bd-btn bd-btn-ghost" type="button" aria-label="Remove trail"><svg class="i i-sm" aria-hidden="true"><use href="#i-close"/></svg></button></td>
+          </tr>
+          <tr>
+            <td><code>status</code></td>
+            <td><code>string</code></td>
+            <td><span class="bd-chip bd-chip-navy">required</span></td>
+            <td class="bd-schema-lim">one of: clear, muddy, flooded, closed</td>
+            <td><button class="bd-btn bd-btn-ghost" type="button" aria-label="Remove status"><svg class="i i-sm" aria-hidden="true"><use href="#i-close"/></svg></button></td>
+          </tr>
+          <tr>
+            <td><code>note</code></td>
+            <td><code>string</code></td>
+            <td><span class="bd-schema-opt">optional</span></td>
+            <td class="bd-schema-lim">maxLength 500</td>
+            <td><button class="bd-btn bd-btn-ghost" type="button" aria-label="Remove note"><svg class="i i-sm" aria-hidden="true"><use href="#i-close"/></svg></button></td>
+          </tr>
+          <tr>
+            <td><code>checked_on</code></td>
+            <td><code>date</code></td>
+            <td><span class="bd-chip bd-chip-navy">required</span></td>
+            <td class="bd-schema-lim">no limit</td>
+            <td><button class="bd-btn bd-btn-ghost" type="button" aria-label="Remove checked_on"><svg class="i i-sm" aria-hidden="true"><use href="#i-close"/></svg></button></td>
+          </tr>
+        </tbody>
+      </table>
+      <button class="bd-btn bd-btn-quiet" type="button"><svg class="i i-sm" aria-hidden="true"><use href="#i-plus"/></svg> Add a field</button>
+
+      <div class="bd-def-warn">
+        <svg class="i i-sm" aria-hidden="true"><use href="#i-alert-circle"/></svg>
+        <div>
+          <p><b>Read this before you save.</b> Once <code>trail_condition</code> exists, any other creation in Russellville can ask to read it, and nobody, including you, can ever retype or remove a field. Later creations may add optional fields. That is the entire list of changes that will ever be allowed.</p>
+          <p>You do not own this type. If you stop maintaining this app, the data stays and someone else picks it up. That is the point of it.</p>
+        </div>
+      </div>
+
+      <div class="bd-def-echo">
+        <svg class="i i-sm" aria-hidden="true"><use href="#i-check-circle"/></svg>
+        <span>No conflict. Russellville has 6 record types and none is named <code>trail_condition</code>.</span>
+      </div>
+    </div>
+  </div>
+
+  <p class="why">The permissions block is the reviewer's entire job, so the authoring surface has to slow a builder down at exactly the moment their AI tool has offered to move fast. Three choices do that. The <b>consequence sits beside the value</b>, in the second person, so nobody declares <code>write</code> without reading what write means. The <b>compiled CSP is shown while you type</b>, because the thing being approved is a policy string and hiding it until review means the builder is surprised twice. And <code>defines</code> carries a plainly worded permanence warning, because additive-only forever is genuinely unusual and a builder who learns it from a rejection learned it too late.</p>
+
+  <!-- ──────────────────────────────────────────── 6. validate ── -->
+
+  <div class="spec">
+    <div class="spec-label">Validation results, mixed <em>one blocker, one warning, the rest folded away; errors carry a file, a line and the fix</em></div>
+    <div class="bd-val">
+      <div class="bd-val-head">
+        <div class="bd-val-verdict">
+          <svg class="i i-lg" aria-hidden="true"><use href="#i-alert-circle"/></svg>
+          <div>
+            <h4>One thing is blocking</h4>
+            <p>Fix it and this is ready to submit. The queue runs this exact same check, so a clean result here means the queue accepts it.</p>
+          </div>
+        </div>
+        <div class="bd-val-tally">
+          <span class="bd-tally bd-tally-err">1 error</span>
+          <span class="bd-tally bd-tally-warn">1 warning</span>
+          <span class="bd-tally bd-tally-ok">8 passed</span>
+        </div>
+      </div>
+
+      <div class="bd-finding" data-kind="error">
+        <svg class="i i-sm" aria-hidden="true"><use href="#i-x-circle"/></svg>
+        <div class="bd-finding-body">
+          <div class="bd-finding-top">
+            <code class="bd-finding-code">dynamic_record_type</code>
+            <code class="bd-finding-at">app.js:88</code>
+          </div>
+          <p class="bd-finding-msg"><code>records.list(kind)</code> is called with a variable. A reviewer reading this file cannot tell what your app reads, so neither can we.</p>
+          <p class="bd-finding-fix"><svg class="i i-sm" aria-hidden="true"><use href="#i-wrench"/></svg> Pass the type as a plain string: <code>records.list('flock_camera')</code>. If you need two types, write two calls and declare both.</p>
+        </div>
+      </div>
+
+      <div class="bd-finding" data-kind="warn">
+        <svg class="i i-sm" aria-hidden="true"><use href="#i-warning"/></svg>
+        <div class="bd-finding-body">
+          <div class="bd-finding-top">
+            <code class="bd-finding-code">over_declared_permission</code>
+            <code class="bd-finding-at">townsquare.json:19</code>
+          </div>
+          <p class="bd-finding-msg"><code>"storage": true</code> is declared but <code>storage.get</code> and <code>storage.set</code> are never called anywhere in the bundle.</p>
+          <p class="bd-finding-fix"><svg class="i i-sm" aria-hidden="true"><use href="#i-wrench"/></svg> Set it to <code>false</code>. This will not block you, but a permissions block full of things you do not use is a slower review, and AI tools ask for storage out of habit.</p>
+        </div>
+      </div>
+
+      <div class="bd-finding" data-kind="pass">
+        <svg class="i i-sm" aria-hidden="true"><use href="#i-check-circle"/></svg>
+        <div class="bd-finding-body">
+          <div class="bd-finding-top">
+            <code class="bd-finding-code">vendoring</code>
+            <code class="bd-finding-at">12 files</code>
+          </div>
+          <p class="bd-finding-msg">Every import resolves inside your bundle. <code>vendor/maplibre.js</code> is a real file, not a CDN link, so this app still works in five years when that CDN does not.</p>
+        </div>
+      </div>
+
+      <div class="bd-finding" data-kind="pass">
+        <svg class="i i-sm" aria-hidden="true"><use href="#i-check-circle"/></svg>
+        <div class="bd-finding-body">
+          <div class="bd-finding-top">
+            <code class="bd-finding-code">network_hosts</code>
+            <code class="bd-finding-at">townsquare.json:20</code>
+          </div>
+          <p class="bd-finding-msg">One outbound host found in the code, <code>tile.openstreetmap.org</code>, and it is the one you declared. Nothing else in this bundle talks to the outside.</p>
+        </div>
+      </div>
+
+      <button class="bd-val-more" type="button">
+        <svg class="i i-sm" aria-hidden="true"><use href="#i-chevron-down"/></svg>
+        Show the 6 other checks that passed
+      </button>
+    </div>
+    <p class="bd-listnote">Errors are terracotta, not brick. Brick is the flood siren, and spending it on a missing comma means it says nothing at 6am when the river is actually up.</p>
+  </div>
+
+  <!-- ───────────────────────────────────────────── 7. preview ── -->
+
+  <div class="spec">
+    <div class="spec-label">Preview <em>real hosting on a real other domain, said plainly rather than framed as a mockup</em></div>
+    <div class="bd-pv">
+      <div class="bd-pv-bar">
+        <span class="bd-pv-lock"><svg class="i i-sm" aria-hidden="true"><use href="#i-lock"/></svg></span>
+        <code class="bd-pv-origin">p-3f9c2a.townsquare-apps.net</code>
+        <div class="bd-pv-dev" role="group" aria-label="Preview at size">
+          <input type="radio" name="bd-dev" id="bd-dev-phone" checked>
+          <label for="bd-dev-phone" title="Phone"><svg class="i i-sm" aria-hidden="true"><use href="#i-phone"/></svg><span class="bd-sr">Phone</span></label>
+          <input type="radio" name="bd-dev" id="bd-dev-tab">
+          <label for="bd-dev-tab" title="Tablet"><svg class="i i-sm" aria-hidden="true"><use href="#i-bd-tablet"/></svg><span class="bd-sr">Tablet</span></label>
+          <input type="radio" name="bd-dev" id="bd-dev-desk">
+          <label for="bd-dev-desk" title="Desktop"><svg class="i i-sm" aria-hidden="true"><use href="#i-bd-monitor"/></svg><span class="bd-sr">Desktop</span></label>
+        </div>
+        <button class="bd-btn bd-btn-ghost" type="button"><svg class="i i-sm" aria-hidden="true"><use href="#i-refresh"/></svg> Reload</button>
+        <button class="bd-btn bd-btn-ghost" type="button"><svg class="i i-sm" aria-hidden="true"><use href="#i-external"/></svg> Open</button>
+      </div>
+
+      <div class="bd-pv-stage">
+        <div class="bd-pv-port">
+          <div class="bd-pv-app">
+            <div class="bd-pv-map" aria-hidden="true">
+              <span class="bd-pin" style="left:26%;top:31%"></span>
+              <span class="bd-pin" style="left:54%;top:22%"></span>
+              <span class="bd-pin" style="left:63%;top:58%"></span>
+              <span class="bd-pin" style="left:38%;top:66%"></span>
+              <span class="bd-pin bd-pin-new" style="left:47%;top:44%"></span>
+            </div>
+            <div class="bd-pv-appbar">
+              <span class="bd-pv-apptitle">340 cameras mapped</span>
+              <span class="bd-pv-appmeta">last added on E Main at Arkansas Ave</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="bd-pv-note">
+        <svg class="i i-sm" aria-hidden="true"><use href="#i-shield"/></svg>
+        <div>
+          <p><b>This is not a mockup.</b> It is your bundle, on a real address, under the same sandbox, the same bridge and the same compiled policy a published creation runs under. Anything that works here works after approval, and anything blocked here would have been blocked there.</p>
+          <p class="bd-pv-note-2">The address is on <code>townsquare-apps.net</code>, a different domain from Russellville's own on purpose, so the browser puts your app in its own process and your Town Square session cookie is structurally unable to reach it. Link expires in 24 hours and only you can open it.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ──────────────────────────────── 8. submit and review ── -->
+
+  <div class="spec">
+    <div class="spec-label">Review status, the whole ladder <em>shape and word carry the state, colour only reinforces it</em></div>
+    <div class="bd-statuses">
+      <span class="bd-st" data-s="draft"><span class="bd-st-mark" aria-hidden="true"></span>Draft</span>
+      <span class="bd-st" data-s="queued"><span class="bd-st-mark" aria-hidden="true"></span>Submitted</span>
+      <span class="bd-st" data-s="review"><span class="bd-st-mark" aria-hidden="true"></span>In review</span>
+      <span class="bd-st" data-s="changes"><span class="bd-st-mark" aria-hidden="true"></span>Changes requested</span>
+      <span class="bd-st" data-s="approved"><span class="bd-st-mark" aria-hidden="true"></span>Approved</span>
+      <span class="bd-st" data-s="live"><span class="bd-st-mark" aria-hidden="true"></span>Live</span>
+      <span class="bd-st bd-st-pair" data-s="live">
+        <span class="bd-st-mark" aria-hidden="true"></span>Live, v1.1.0
+        <span class="bd-st-sub" data-s="review">v1.2.0 in review</span>
+      </span>
+    </div>
+    <p class="bd-listnote">The last one is the state that matters most and the easiest to forget to design. An approved creation keeps serving its approved version while its update waits. Nobody gets the unreviewed one, which is exactly how a well-behaved app becomes a malicious one everywhere else this has been tried.</p>
+  </div>
+
+  <div class="spec">
+    <div class="spec-label">A submission, in full <em>the reviewer's note is a person writing to a neighbour, not a rejection code</em></div>
+    <div class="bd-sub">
+      <div class="bd-sub-head">
+        <div class="bd-sub-icon" aria-hidden="true"><svg class="i i-lg"><use href="#i-map-pin"/></svg></div>
+        <div class="bd-sub-id">
+          <h4>Flock Camera Map</h4>
+          <p><code>v1.2.0</code> · submitted Tuesday 3:12pm · bundle <code>sha256:9f2c41…</code> pinned</p>
+        </div>
+        <span class="bd-st" data-s="changes"><span class="bd-st-mark" aria-hidden="true"></span>Changes requested</span>
+      </div>
+
+      <ol class="bd-time">
+        <li class="bd-tev" data-done>
+          <div class="bd-tev-dot" aria-hidden="true"></div>
+          <div class="bd-tev-body">
+            <div class="bd-tev-top"><b>You submitted it</b><time>Tue 3:12pm</time></div>
+            <p>With a note: "Adds the confirmed_on field so people can tell a camera that is still there from one somebody spotted in 2024."</p>
+          </div>
+        </li>
+        <li class="bd-tev" data-done>
+          <div class="bd-tev-dot" aria-hidden="true"></div>
+          <div class="bd-tev-body">
+            <div class="bd-tev-top"><b>Automated checks passed</b><time>Tue 3:12pm</time></div>
+            <p>9 of 9. Nothing mechanical is left for a person to find, which is the whole point of running them first.</p>
+          </div>
+        </li>
+        <li class="bd-tev" data-done>
+          <div class="bd-tev-dot" aria-hidden="true"></div>
+          <div class="bd-tev-body">
+            <div class="bd-tev-top"><b>Picked up by Dana Whitfield</b><time>Wed 8:40am</time></div>
+            <p>Review committee. Reads the source, the permissions diff and the compiled policy.</p>
+          </div>
+        </li>
+        <li class="bd-tev" data-current>
+          <div class="bd-tev-dot" aria-hidden="true"></div>
+          <div class="bd-tev-body">
+            <div class="bd-tev-top"><b>Changes requested</b><time>Wed 9:05am</time></div>
+            <div class="bd-note">
+              <p>"The map itself is good and I would use it. Two things before I can approve this one.</p>
+              <p>v1.1.0 did not ask for <code>write</code> and this one does, and the description does not mention that anyone can now add a camera. Please say that in the tagline so people know what they are opening.</p>
+              <p>Second, the <code>note</code> field has no length limit in your defines, and a free text box on a privacy app is going to collect somebody's neighbour's name eventually. Cap it and I will take another look same day."</p>
+              <footer>Dana Whitfield · review committee · <span class="bd-handle">@dwhitfield</span></footer>
+            </div>
+            <div class="bd-sub-acts">
+              <button class="bd-btn bd-btn-primary" type="button">Resubmit v1.2.1</button>
+              <button class="bd-btn bd-btn-quiet" type="button">Reply to Dana</button>
+            </div>
+          </div>
+        </li>
+        <li class="bd-tev" data-pending>
+          <div class="bd-tev-dot" aria-hidden="true"></div>
+          <div class="bd-tev-body">
+            <div class="bd-tev-top"><b>Approved and live</b><time>not yet</time></div>
+            <p>v1.1.0 is still serving to everyone in the meantime. Nobody sees a half-approved version.</p>
+          </div>
+        </li>
+      </ol>
+    </div>
+  </div>
+
+  <p class="why">A rejection with no reason is how a light-touch community turns into a bureaucracy people route around. So the note is <b>free prose from a named neighbour</b>, not a checkbox, and it is allowed to open by saying the app is good. Two structural choices back that up: the mechanical checks run first so a reviewer never spends goodwill on a missing comma, and the <b>permissions diff</b> is what the reviewer is actually reading, which is why Dana's note is about a capability that was not there in v1.1.0 rather than about code style.</p>
+
+  <!-- ─────────────────────────── 9. the builder's dashboard ── -->
+
+  <div class="spec">
+    <div class="spec-label">Builder dashboard <em>status, reach and open reports on one line each; the update button is the main verb</em></div>
+    <div class="bd-dash">
+      <div class="bd-dash-head">
+        <h4>What you have built</h4>
+        <button class="bd-btn bd-btn-primary" type="button"><svg class="i i-sm" aria-hidden="true"><use href="#i-plus"/></svg> Start something new</button>
+      </div>
+
+      <div class="bd-crt">
+        <div class="bd-crt-icon" aria-hidden="true"><svg class="i i-lg"><use href="#i-map-pin"/></svg></div>
+        <div class="bd-crt-main">
+          <div class="bd-crt-name">Flock Camera Map <span class="bd-st bd-st-sm bd-st-pair" data-s="live"><span class="bd-st-mark" aria-hidden="true"></span>Live v1.1.0<span class="bd-st-sub" data-s="changes">v1.2.0 needs changes</span></span></div>
+          <div class="bd-crt-meta"><span>1,240 opens this week</span><span>340 cameras recorded</span><span class="bd-crt-quiet">0 open reports</span></div>
+        </div>
+        <button class="bd-btn bd-btn-quiet" type="button">Fix and resubmit</button>
+      </div>
+
+      <div class="bd-crt">
+        <div class="bd-crt-icon" aria-hidden="true"><svg class="i i-lg"><use href="#i-tree"/></svg></div>
+        <div class="bd-crt-main">
+          <div class="bd-crt-name">Bona Dea trail conditions <span class="bd-st bd-st-sm" data-s="live"><span class="bd-st-mark" aria-hidden="true"></span>Live v2.0.1</span></div>
+          <div class="bd-crt-meta"><span>612 opens this week</span><span>18 reports posted since Friday's rain</span><span class="bd-crt-quiet">0 open reports</span></div>
+        </div>
+        <button class="bd-btn bd-btn-quiet" type="button">Update</button>
+      </div>
+
+      <div class="bd-crt">
+        <div class="bd-crt-icon" aria-hidden="true"><svg class="i i-lg"><use href="#i-storefront"/></svg></div>
+        <div class="bd-crt-main">
+          <div class="bd-crt-name">Saturday market vendor list <span class="bd-st bd-st-sm" data-s="review"><span class="bd-st-mark" aria-hidden="true"></span>In review</span></div>
+          <div class="bd-crt-meta"><span>Submitted Thursday</span><span>Third in the queue</span></div>
+        </div>
+        <button class="bd-btn bd-btn-quiet" type="button">See status</button>
+      </div>
+
+      <div class="bd-crt" data-flagged>
+        <div class="bd-crt-icon" aria-hidden="true"><svg class="i i-lg"><use href="#i-calendar"/></svg></div>
+        <div class="bd-crt-main">
+          <div class="bd-crt-name">Tech home game countdown <span class="bd-st bd-st-sm" data-s="live"><span class="bd-st-mark" aria-hidden="true"></span>Live v1.0.0</span></div>
+          <div class="bd-crt-meta"><span>84 opens this week</span><span class="bd-crt-flag"><svg class="i i-sm" aria-hidden="true"><use href="#i-flag"/></svg> 2 open reports</span></div>
+        </div>
+        <button class="bd-btn bd-btn-quiet" type="button">Read reports</button>
+      </div>
+
+      <div class="bd-ladder">
+        <div class="bd-ladder-top">
+          <svg class="i i-sm" aria-hidden="true"><use href="#i-badge-check"/></svg>
+          <div>
+            <b>3 of 5 approvals toward a shorter wait</b>
+            <p>After five approved versions, your updates go live once the automated checks pass and a reviewer reads them afterwards instead of before. New creations are still reviewed first, always.</p>
+          </div>
+        </div>
+        <div class="bd-ladder-bar" role="img" aria-label="3 of 5 approvals">
+          <span data-on></span><span data-on></span><span data-on></span><span></span><span></span>
+        </div>
+        <p class="bd-ladder-foot">Two more. The market vendor list counts if it is approved.</p>
+      </div>
+    </div>
+    <p class="bd-listnote">Progress toward the ladder, never a locked badge with a padlock on it. A locked badge tells a builder they are outside something. A count of three tells them where they are.</p>
+  </div>
+
+  <!-- ────────────────────────────────────── phone specimen ── -->
+
+  <div class="spec">
+    <div class="spec-label">On a phone <em>building happens on a laptop; waiting to hear back happens in a truck</em></div>
+    <div class="spec-row">
+      <div class="phone">
+        <div class="phone-cap">Builder, checking a submission</div>
+        <div class="phone-screen">
+          <div class="bd-ph">
+            <header class="bd-ph-top">
+              <button class="bd-ph-back" type="button" aria-label="Back"><svg class="i" aria-hidden="true"><use href="#i-chevron-left"/></svg></button>
+              <span>Your submission</span>
+            </header>
+
+            <div class="bd-ph-card">
+              <div class="bd-ph-name">Flock Camera Map</div>
+              <div class="bd-ph-ver"><code>v1.2.0</code> · submitted Tuesday</div>
+              <span class="bd-st" data-s="changes"><span class="bd-st-mark" aria-hidden="true"></span>Changes requested</span>
+              <p class="bd-ph-serving">v1.1.0 is still live and running normally for everyone.</p>
+            </div>
+
+            <div class="bd-ph-sec">Dana asked for two things</div>
+            <div class="bd-note bd-note-ph">
+              <p>"The map itself is good and I would use it. Please say in the tagline that anyone can add a camera, since v1.1.0 could not write and this one can.</p>
+              <p>And cap the <code>note</code> field. A free text box on a privacy app collects somebody's neighbour's name eventually. Do that and I will look again same day."</p>
+              <footer>Dana Whitfield · review committee</footer>
+            </div>
+
+            <div class="bd-ph-sec">Where it stands</div>
+            <ol class="bd-time bd-time-ph">
+              <li class="bd-tev" data-done><div class="bd-tev-dot" aria-hidden="true"></div><div class="bd-tev-body"><div class="bd-tev-top"><b>Submitted</b><time>Tue 3:12pm</time></div></div></li>
+              <li class="bd-tev" data-done><div class="bd-tev-dot" aria-hidden="true"></div><div class="bd-tev-body"><div class="bd-tev-top"><b>Checks passed</b><time>Tue 3:12pm</time></div></div></li>
+              <li class="bd-tev" data-current><div class="bd-tev-dot" aria-hidden="true"></div><div class="bd-tev-body"><div class="bd-tev-top"><b>Changes requested</b><time>Wed 9:05am</time></div></div></li>
+              <li class="bd-tev" data-pending><div class="bd-tev-dot" aria-hidden="true"></div><div class="bd-tev-body"><div class="bd-tev-top"><b>Approved and live</b><time>not yet</time></div></div></li>
+            </ol>
+
+            <div class="bd-ph-foot">
+              <p>Nothing to do from here. Open this on the computer with your AI tool on it.</p>
+              <button class="bd-btn bd-btn-quiet bd-btn-full" type="button"><svg class="i i-sm" aria-hidden="true"><use href="#i-mail"/></svg> Reply to Dana</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="bd-side">
+        <p class="why bd-why-tight">A phone cannot run Claude Code, so the phone build of this path deliberately <b>does nothing</b>. It reads status, it shows the reviewer's note in full, and it says out loud that the next step is on a computer. The one thing it must get right is the reassurance line: a builder who sees "changes requested" on a lock screen wants to know within one second whether the live version broke. It did not, and that sentence sits above the fold.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ─────────────────────────────────────── 10. docs surface ── -->
+
+  <div class="spec">
+    <div class="spec-label">SDK reference <em>five namespaces, and every method states the permission it needs before the example</em></div>
+    <div class="bd-docs">
+      <nav class="bd-docs-nav" aria-label="SDK reference">
+        <div class="bd-docs-ns">
+          <div class="bd-docs-nsname">town</div>
+          <a href="#builder">info()</a>
+          <a href="#builder">thisWeek()</a>
+          <a href="#builder">items()</a>
+          <a href="#builder">businesses()</a>
+        </div>
+        <div class="bd-docs-ns">
+          <div class="bd-docs-nsname">user</div>
+          <a href="#builder">current()</a>
+        </div>
+        <div class="bd-docs-ns">
+          <div class="bd-docs-nsname">records</div>
+          <a href="#builder">list()</a>
+          <a href="#builder">get()</a>
+          <a class="bd-on" href="#builder">create()</a>
+          <a href="#builder">update()</a>
+          <a href="#builder">history()</a>
+        </div>
+        <div class="bd-docs-ns">
+          <div class="bd-docs-nsname">storage</div>
+          <a href="#builder">get()</a>
+          <a href="#builder">set()</a>
+        </div>
+        <div class="bd-docs-ns">
+          <div class="bd-docs-nsname">app</div>
+          <a href="#builder">ready()</a>
+          <a href="#builder">setHeight()</a>
+          <a href="#builder">setTitle()</a>
+        </div>
+      </nav>
+
+      <article class="bd-docs-body">
+        <div class="bd-docs-sig">
+          <code><span class="bd-k">await</span> records.create(<span class="bd-arg">type</span>, <span class="bd-arg">data</span>)</code>
+          <span class="bd-chip bd-chip-terra">needs <code>write</code></span>
+        </div>
+        <p class="bd-docs-lede">Adds one record of a type your manifest declares under <code>permissions.write</code>. Attribution is automatic: the acting resident and your creation are both stamped on the row, and you cannot set either, which is precisely why neither can be forged.</p>
+
+        <div class="bd-docs-block">
+          <h5>Parameters</h5>
+          <dl class="bd-params">
+            <dt><code>type</code> <span>string literal</span></dt>
+            <dd>The record type, written out as a quoted string. A variable here is a validation error, because a reviewer cannot see what an app writes if the source does not say it.</dd>
+            <dt><code>data</code> <span>object</span></dt>
+            <dd>Must match the type's schema. Anything extra is rejected rather than ignored.</dd>
+          </dl>
+        </div>
+
+        <div class="bd-docs-block">
+          <h5>Returns</h5>
+          <pre class="bd-code-body bd-code-inline"><code><span class="bd-line">{ <span class="bd-k">id</span>: <span class="bd-s">'rec_8fJ2q'</span>, <span class="bd-k">version</span>: <span class="bd-v">1</span>, <span class="bd-k">created_at</span>: <span class="bd-s">'2026-08-05T14:02:11Z'</span> }</span></code></pre>
+        </div>
+
+        <div class="bd-docs-block">
+          <h5>Example</h5>
+          <figure class="bd-code">
+            <figcaption class="bd-code-head">
+              <svg class="i i-sm" aria-hidden="true"><use href="#i-code"/></svg>
+              <span class="bd-code-name">add-camera.js</span>
+              <button class="bd-copy" type="button" data-bd-copy="example">
+                <svg class="i i-sm bd-copy-idle" aria-hidden="true"><use href="#i-copy"/></svg>
+                <svg class="i i-sm bd-copy-done" aria-hidden="true"><use href="#i-check"/></svg>
+                <span class="bd-copy-idle">Copy</span><span class="bd-copy-done">Copied</span>
+              </button>
+            </figcaption>
+            <pre class="bd-code-body"><code><span class="bd-line"><span class="bd-k">try</span> {</span><span class="bd-line">  <span class="bd-k">await</span> records.create(<span class="bd-s">'flock_camera'</span>, {</span><span class="bd-line">    lat: <span class="bd-v">35.2784</span>, lng: <span class="bd-v">-93.1338</span>,</span><span class="bd-line">    note: <span class="bd-s">'E Main at S Arkansas Ave, pole mounted, northbound'</span></span><span class="bd-line">  })</span><span class="bd-line">} <span class="bd-k">catch</span> (e) {</span><span class="bd-line">  <span class="bd-c">// Signed out and not-yet-verified are the two you will actually hit.</span></span><span class="bd-line">  <span class="bd-k">if</span> (e.code === <span class="bd-s">'not_verified'</span>) askForVouches()</span><span class="bd-line">}</span></code></pre>
+          </figure>
+        </div>
+
+        <div class="bd-docs-block">
+          <h5>Throws</h5>
+          <ul class="bd-errs">
+            <li><code>not_verified</code><span>Signed in, but neighbours have not vouched yet. Not retryable.</span></li>
+            <li><code>unauthenticated</code><span>Signed out. The common case, so handle it first.</span></li>
+            <li><code>permission_denied</code><span>The type is not in your manifest's <code>write</code> list.</span></li>
+            <li><code>invalid_record</code><span>Payload does not match the schema.</span></li>
+            <li><code>rate_limited</code><span>Carries <code>retry_after</code>. One of only two worth retrying.</span></li>
+          </ul>
+        </div>
+      </article>
+    </div>
+  </div>
+
+  <div class="spec">
+    <div class="spec-label">Machine-readable docs callout <em>an LLM writes most of these, so the docs have a second audience that does not click</em></div>
+    <div class="bd-llms">
+      <div class="bd-llms-icon" aria-hidden="true"><svg class="i i-xl"><use href="#i-wand"/></svg></div>
+      <div class="bd-llms-body">
+        <h4>Your AI tool should read this, not you</h4>
+        <p>Everything on this page is generated from the SDK source, so it cannot drift from what actually runs. The same artifact is served three ways, and the MCP server refuses to start if the three disagree.</p>
+        <ul class="bd-llms-list">
+          <li><code>llms.txt</code><span>the whole contract as one flat file, for pasting into any tool</span></li>
+          <li><code>AGENTS.md</code><span>ships inside every scaffold, so a coding agent picks up the rules without being told</span></li>
+          <li><code>get_sdk_docs</code><span>the MCP tool, which is what your tool will actually call first</span></li>
+        </ul>
+        <p class="bd-llms-foot">Version <code>sdk 1</code>, hash <code>9f2c41a8</code>. SDK 1 never breaks. Things get added, nothing gets removed, because no resident is going to come back and maintain an app they made one Saturday.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ─────────────────────────────────────── 11. fork and remix ── -->
+
+  <div class="spec">
+    <div class="spec-label">Fork <em>we store source, so starting from somebody's working app is the normal way to start</em></div>
+    <div class="spec-row">
+      <div class="bd-fork">
+        <div class="bd-fork-src">
+          <div class="bd-crt-icon" aria-hidden="true"><svg class="i i-lg"><use href="#i-utensils"/></svg></div>
+          <div>
+            <div class="bd-fork-name">Where to eat after 9</div>
+            <p class="bd-fork-by">by <span class="bd-handle">@marina7</span> · 8 files · source is public</p>
+          </div>
+        </div>
+        <p class="bd-fork-say">You get every file exactly as it runs, as your own draft. Change the query, change the map, change all of it. The original keeps running and its author is not notified, because a fork is not a request.</p>
+        <div class="bd-fork-acts">
+          <button class="bd-btn bd-btn-primary" type="button"><svg class="i i-sm" aria-hidden="true"><use href="#i-git-branch"/></svg> Fork into a draft</button>
+          <button class="bd-btn bd-btn-quiet" type="button"><svg class="i i-sm" aria-hidden="true"><use href="#i-eye"/></svg> Read the source first</button>
+        </div>
+      </div>
+
+      <div class="bd-fork bd-fork-after">
+        <div class="bd-fork-src">
+          <div class="bd-crt-icon" aria-hidden="true"><svg class="i i-lg"><use href="#i-coffee"/></svg></div>
+          <div>
+            <div class="bd-fork-name">Open before 7 on a weekday</div>
+            <p class="bd-fork-by">by <span class="bd-handle">@wgatlin</span> · live v1.0.0</p>
+          </div>
+        </div>
+        <div class="bd-lineage">
+          <svg class="i i-sm" aria-hidden="true"><use href="#i-git-branch"/></svg>
+          <span>Forked from <b>Where to eat after 9</b> by <span class="bd-handle">@marina7</span>, 14 July</span>
+        </div>
+        <p class="bd-fork-say">That line renders on the creation's page in the gallery and cannot be edited or removed, because it lives on the creation row rather than in the manifest. Same reason the manifest has no <code>author</code> field: anything a builder can write, a builder can rewrite.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ────────────────────────────── 12. empty and first run ── -->
+
+  <div class="spec">
+    <div class="spec-label">Nothing built yet <em>an empty state that hands over a specific first thing, not a "get started" button</em></div>
+    <div class="bd-empty">
+      <div class="bd-empty-mark" aria-hidden="true"><svg class="i i-xl"><use href="#i-puzzle"/></svg></div>
+      <h4>You have not built anything yet</h4>
+      <p>Most first creations take an evening and start from something that already works. These four are the shapes almost every community app turns out to be.</p>
+      <div class="bd-seeds">
+        <button class="bd-seed" type="button">
+          <svg class="i" aria-hidden="true"><use href="#i-map"/></svg>
+          <b>A map over town records</b>
+          <span>What the Flock camera map is. Pins, a form, a list.</span>
+        </button>
+        <button class="bd-seed" type="button">
+          <svg class="i" aria-hidden="true"><use href="#i-list"/></svg>
+          <b>A filtered list of businesses</b>
+          <span>Open right now, open late, open on Sunday.</span>
+        </button>
+        <button class="bd-seed" type="button">
+          <svg class="i" aria-hidden="true"><use href="#i-calendar"/></svg>
+          <b>A calendar of one kind of thing</b>
+          <span>Just the Tech home games. Just the council meetings.</span>
+        </button>
+        <button class="bd-seed" type="button">
+          <svg class="i" aria-hidden="true"><use href="#i-thumb-up"/></svg>
+          <b>A ranked list people vote on</b>
+          <span>Best tamales in Pope County, settled once.</span>
+        </button>
+      </div>
+      <p class="bd-empty-foot">Or describe your own to your AI tool. The scaffolds are a starting point, not a menu.</p>
+    </div>
+  </div>
+
+  <div class="spec">
+    <div class="spec-label">The first one goes live <em>the only genuinely warm moment on this path, and it is earned</em></div>
+    <div class="bd-first">
+      <div class="bd-first-spark" aria-hidden="true"><svg class="i i-lg"><use href="#i-sparkle"/></svg></div>
+      <p class="bd-first-eyebrow">Approved by Dana Whitfield, 9:20 this morning</p>
+      <h4>Bona Dea trail conditions is live in Russellville.</h4>
+      <p class="bd-first-say">It is in the gallery under Outdoors, and anybody who opens Town Square today can use it. You are the first person to build something on this. That is a real thing and it will be true whatever happens to the app.</p>
+
+      <div class="bd-first-link">
+        <svg class="i i-sm" aria-hidden="true"><use href="#i-link"/></svg>
+        <code>russellville.townsquare.org/c/bona-dea-trail-conditions</code>
+        <button class="bd-copy bd-copy-solid" type="button" data-bd-copy="link">
+          <svg class="i i-sm bd-copy-idle" aria-hidden="true"><use href="#i-copy"/></svg>
+          <svg class="i i-sm bd-copy-done" aria-hidden="true"><use href="#i-check"/></svg>
+          <span class="bd-copy-idle">Copy</span><span class="bd-copy-done">Copied</span>
+        </button>
+      </div>
+
+      <div class="bd-first-acts">
+        <button class="bd-btn bd-btn-primary" type="button">See it in the gallery</button>
+        <button class="bd-btn bd-btn-quiet" type="button">Tell the trails group</button>
+      </div>
+
+      <p class="bd-first-foot">One approval down. Four more and your updates stop waiting on a person.</p>
+    </div>
+    <p class="bd-listnote">No confetti, no modal that has to be dismissed. A serif sentence naming the town, the reviewer's name, and a link the builder will paste into a group chat within the minute. The warmth is in the specificity.</p>
+  </div>
+
+  <script>
+    (function () {
+      var root = document.getElementById('builder')
+      if (!root || !navigator.clipboard) return
+      root.addEventListener('click', function (e) {
+        var b = e.target.closest('.bd-copy[data-bd-copy]')
+        if (!b || !root.contains(b)) return
+        navigator.clipboard.writeText(b.getAttribute('data-bd-copy')).then(function () {
+          b.setAttribute('data-copied', '')
+          setTimeout(function () { b.removeAttribute('data-copied') }, 1600)
+        })
+      })
+    })()
+  </script>
+</section>

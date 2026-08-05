@@ -1,0 +1,1204 @@
+<section class="sheet-section" id="civic">
+  <svg style="display:none" aria-hidden="true">
+    <symbol id="cv-i-droplet" viewBox="0 0 24 24"><path d="M12 3.5c3.4 3.7 5.5 6.4 5.5 9.1a5.5 5.5 0 0 1-11 0c0-2.7 2.1-5.4 5.5-9.1Z"/></symbol>
+    <symbol id="cv-i-waves" viewBox="0 0 24 24"><path d="M2 8.5c2 0 2.5-2 5-2s3 2 5 2 2.5-2 5-2 3 2 5 2M2 14c2 0 2.5-2 5-2s3 2 5 2 2.5-2 5-2 3 2 5 2M2 19.5c2 0 2.5-2 5-2s3 2 5 2 2.5-2 5-2 3 2 5 2"/></symbol>
+    <symbol id="cv-i-cone" viewBox="0 0 24 24"><path d="M10.4 3.8h3.2L18 19H6L10.4 3.8Z"/><path d="M8.2 12.4h7.6M3.5 19h17"/></symbol>
+  </svg>
+
+  <div class="sec-head"><span class="sec-num">09</span><h2>Civic, notices, and emergency</h2></div>
+  <p class="sec-note">City hall, the notice ladder, and the one screen that is allowed to take over the phone. The emergency register exists so that every ordinary day can stay calm, which means most of this section is about restraint: four severities and no more, one alarm colour used once per screen, and a default subscription that will not wake anyone up for a planning commission agenda.</p>
+
+  <!-- ────────────────────────────────────────────────────────────────────
+       1. The notice card and the severity ladder
+       ──────────────────────────────────────────────────────────────── -->
+
+  <div class="spec">
+    <div class="spec-label">The severity ladder, all four together <em>ships as <code>.notice</code>; the only tinted card on the screen, and most days it is not rendered at all</em></div>
+    <div class="cv-ladder">
+      <div class="cv-ladder-rail">
+        <div class="cv-rail-step" data-sev="info"><span>Informational</span><b>in app only</b></div>
+        <div class="cv-rail-step" data-sev="advisory"><span>Advisory</span><b>quiet push</b></div>
+        <div class="cv-rail-step" data-sev="urgent"><span>Urgent</span><b>push, bar, takeover</b></div>
+        <div class="cv-rail-step" data-sev="emergency"><span>Emergency</span><b>breaks through silent</b></div>
+      </div>
+      <div class="cv-ladder-cards">
+        <a class="cv-notice" data-sev="info" href="#civic">
+          <span class="cv-notice-icon"><svg class="i-sm" aria-hidden="true"><use href="#i-info"/></svg></span>
+          <span class="cv-notice-body">
+            <span class="cv-notice-sev">Informational</span>
+            <span class="cv-notice-title">Leaf and limb pickup starts Monday on the east side</span>
+            <span class="cv-notice-detail">Piles at the curb by 6 am. Sanitation is running the Weir Road and Skyline routes first.</span>
+            <span class="cv-prov"><svg class="i-sm" aria-hidden="true"><use href="#i-history"/></svg> City of Russellville, Sanitation <i>·</i> fetched 6:10 am</span>
+          </span>
+          <svg class="i-sm cv-notice-go" aria-hidden="true"><use href="#i-chevron-right"/></svg>
+        </a>
+
+        <a class="cv-notice" data-sev="advisory" href="#civic">
+          <span class="cv-notice-icon"><svg class="i-sm" aria-hidden="true"><use href="#cv-i-waves"/></svg></span>
+          <span class="cv-notice-body">
+            <span class="cv-notice-sev">Advisory</span>
+            <span class="cv-notice-title">Arkansas River is forecast to reach 22.4 ft at Dardanelle by Thursday</span>
+            <span class="cv-notice-detail">Action stage is 23 ft. Low-lying access at Old Post Road park may close if it keeps rising.</span>
+            <span class="cv-prov"><svg class="i-sm" aria-hidden="true"><use href="#i-history"/></svg> NWS Little Rock, river forecast <i>·</i> fetched 5:45 am</span>
+          </span>
+          <svg class="i-sm cv-notice-go" aria-hidden="true"><use href="#i-chevron-right"/></svg>
+        </a>
+
+        <a class="cv-notice" data-sev="urgent" href="#civic">
+          <span class="cv-notice-icon"><svg class="i-sm" aria-hidden="true"><use href="#cv-i-droplet"/></svg></span>
+          <span class="cv-notice-body">
+            <span class="cv-notice-sev">Urgent</span>
+            <span class="cv-notice-title">Boil order for everything north of Main between Denver and Knoxville</span>
+            <span class="cv-notice-detail">Bring water to a rolling boil for one minute before drinking or cooking. In effect until two clear samples come back, expected Friday.</span>
+            <span class="cv-prov"><svg class="i-sm" aria-hidden="true"><use href="#i-history"/></svg> Russellville Water Utility <i>·</i> fetched 11 minutes ago</span>
+          </span>
+          <svg class="i-sm cv-notice-go" aria-hidden="true"><use href="#i-chevron-right"/></svg>
+        </a>
+
+        <a class="cv-notice" data-sev="emergency" href="#civic">
+          <span class="cv-notice-icon"><svg class="i-sm" aria-hidden="true"><use href="#i-warning"/></svg></span>
+          <span class="cv-notice-body">
+            <span class="cv-notice-sev">Emergency</span>
+            <span class="cv-notice-title">Tornado warning for Russellville and central Pope County until 11:45 pm</span>
+            <span class="cv-notice-detail">Take shelter now. Interior room, lowest floor, away from windows.</span>
+            <span class="cv-prov"><svg class="i-sm" aria-hidden="true"><use href="#i-history"/></svg> NWS Little Rock <i>·</i> issued 11:04 pm</span>
+          </span>
+          <svg class="i-sm cv-notice-go" aria-hidden="true"><use href="#i-chevron-right"/></svg>
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <p class="why">Four, not seven. <b>Every severity level you add is a level someone has to learn</b>, and the ones in the middle are the ones nobody can tell apart. A resident does not need to know the difference between a level 3 and a level 4; they need to know four things, in this order: <b>is this for me, is it happening now, do I have to do something, and does it wake me up.</b> Four levels answer that with one question each. Informational is news you would want anyway. Advisory is a condition to be aware of. Urgent changes what you do today. Emergency changes what you do in the next ten minutes. <b>Seven levels would only give the middle three a false precision no source actually supplies</b> – the National Weather Service publishes watch, advisory, and warning; the water utility publishes an order or nothing. We are mapping upstream vocabularies, not inventing one, and the ladder has to be lossy in the safe direction. When a source is ambiguous we round <em>down</em>, then let the resident raise their own threshold. Colour is never the carrier: each notice states its severity in words above the headline, because the whole ladder has to survive a screenshot, a screen reader, and colour blindness.</p>
+
+  <div class="spec">
+    <div class="spec-label">Notice states <em>the pressed state is a real state because this card is the most-tapped thing on the screen the day it exists</em></div>
+    <div class="spec-row">
+      <div class="cv-state">
+        <div class="cv-state-cap">Default</div>
+        <a class="cv-notice cv-notice-sm" data-sev="urgent" href="#civic">
+          <span class="cv-notice-icon"><svg class="i-sm" aria-hidden="true"><use href="#cv-i-droplet"/></svg></span>
+          <span class="cv-notice-body">
+            <span class="cv-notice-sev">Urgent</span>
+            <span class="cv-notice-title">Boil order north of Main</span>
+          </span>
+          <svg class="i-sm cv-notice-go" aria-hidden="true"><use href="#i-chevron-right"/></svg>
+        </a>
+      </div>
+      <div class="cv-state">
+        <div class="cv-state-cap">Pressed</div>
+        <a class="cv-notice cv-notice-sm" data-sev="urgent" data-pressed href="#civic">
+          <span class="cv-notice-icon"><svg class="i-sm" aria-hidden="true"><use href="#cv-i-droplet"/></svg></span>
+          <span class="cv-notice-body">
+            <span class="cv-notice-sev">Urgent</span>
+            <span class="cv-notice-title">Boil order north of Main</span>
+          </span>
+          <svg class="i-sm cv-notice-go" aria-hidden="true"><use href="#i-chevron-right"/></svg>
+        </a>
+      </div>
+      <div class="cv-state">
+        <div class="cv-state-cap">Focus</div>
+        <a class="cv-notice cv-notice-sm" data-sev="urgent" data-focus href="#civic">
+          <span class="cv-notice-icon"><svg class="i-sm" aria-hidden="true"><use href="#cv-i-droplet"/></svg></span>
+          <span class="cv-notice-body">
+            <span class="cv-notice-sev">Urgent</span>
+            <span class="cv-notice-title">Boil order north of Main</span>
+          </span>
+          <svg class="i-sm cv-notice-go" aria-hidden="true"><use href="#i-chevron-right"/></svg>
+        </a>
+      </div>
+      <div class="cv-state">
+        <div class="cv-state-cap">Read, still active</div>
+        <a class="cv-notice cv-notice-sm" data-sev="urgent" data-read href="#civic">
+          <span class="cv-notice-icon"><svg class="i-sm" aria-hidden="true"><use href="#cv-i-droplet"/></svg></span>
+          <span class="cv-notice-body">
+            <span class="cv-notice-sev">Urgent <i>·</i> read</span>
+            <span class="cv-notice-title">Boil order north of Main</span>
+          </span>
+          <svg class="i-sm cv-notice-go" aria-hidden="true"><use href="#i-chevron-right"/></svg>
+        </a>
+      </div>
+      <div class="cv-state">
+        <div class="cv-state-cap">Cleared, ages out in 24h</div>
+        <a class="cv-notice cv-notice-sm" data-sev="cleared" href="#civic">
+          <span class="cv-notice-icon"><svg class="i-sm" aria-hidden="true"><use href="#i-check-circle"/></svg></span>
+          <span class="cv-notice-body">
+            <span class="cv-notice-sev">Cleared 2:15 pm</span>
+            <span class="cv-notice-title">Boil order lifted north of Main</span>
+          </span>
+          <svg class="i-sm cv-notice-go" aria-hidden="true"><use href="#i-chevron-right"/></svg>
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- ────────────────────────────────────────────────────────────────────
+       2. The emergency takeover
+       ──────────────────────────────────────────────────────────────── -->
+
+  <div class="spec">
+    <div class="spec-label">The takeover <em>one register, one action, nothing to navigate; the tab bar is gone because there is nowhere else to be</em></div>
+    <div class="spec-row">
+
+      <div class="phone">
+        <div class="phone-cap">Emergency takeover – 11:06 pm</div>
+        <div class="phone-screen">
+          <div class="cv-over" data-sev="emergency">
+            <div class="cv-over-band">
+              <svg class="i-lg" aria-hidden="true"><use href="#i-warning"/></svg>
+              <span class="cv-over-band-t">Tornado warning</span>
+              <span class="cv-over-band-x">Until 11:45 pm</span>
+            </div>
+            <div class="cv-over-body">
+              <h3 class="cv-over-head">Take shelter now.</h3>
+              <p class="cv-over-lede">A tornado warning is in effect for Russellville and central Pope County until 11:45 pm.</p>
+              <ul class="cv-over-do">
+                <li>Interior room, lowest floor.</li>
+                <li>Away from windows and exterior walls.</li>
+                <li>If you are in a mobile home, leave now for a permanent building.</li>
+              </ul>
+              <a class="cv-over-act" href="#civic">Nearest shelter, 0.8 mi</a>
+              <div class="cv-over-src">
+                <div class="cv-over-src-a">National Weather Service, Little Rock</div>
+                <div class="cv-over-src-b">Issued 11:04 pm <i>·</i> relayed by Town Square <i>·</i> we did not write this</div>
+              </div>
+              <button class="cv-over-hide" type="button">
+                <svg class="i-sm" aria-hidden="true"><use href="#i-eye-off"/></svg>
+                I am safe, hide this until it changes
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="phone">
+        <div class="phone-cap">Urgent takeover – boil order</div>
+        <div class="phone-screen">
+          <div class="cv-over" data-sev="urgent">
+            <div class="cv-over-band">
+              <svg class="i-lg" aria-hidden="true"><use href="#cv-i-droplet"/></svg>
+              <span class="cv-over-band-t">Boil order</span>
+              <span class="cv-over-band-x">Since 4:20 pm</span>
+            </div>
+            <div class="cv-over-body">
+              <h3 class="cv-over-head">Boil your water before you drink it.</h3>
+              <p class="cv-over-lede">A main break on El Paso Avenue dropped pressure north of Main between Denver and Knoxville. Your address is inside the affected zone.</p>
+              <ul class="cv-over-do">
+                <li>Rolling boil for one full minute.</li>
+                <li>Drinking, cooking, ice, brushing teeth, pets.</li>
+                <li>Bathing is fine.</li>
+              </ul>
+              <a class="cv-over-act" href="#civic">See the affected streets</a>
+              <div class="cv-over-src">
+                <div class="cv-over-src-a">Russellville Water Utility</div>
+                <div class="cv-over-src-b">Posted 4:20 pm <i>·</i> relayed by Town Square <i>·</i> lifts after two clear samples</div>
+              </div>
+              <button class="cv-over-hide" type="button">
+                <svg class="i-sm" aria-hidden="true"><use href="#i-eye-off"/></svg>
+                Got it, hide this until it changes
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="phone">
+        <div class="phone-cap">After it clears – the what-happened card</div>
+        <div class="phone-screen">
+          <div class="cv-after-screen">
+            <div class="cv-after-top">
+              <span class="cv-eyebrow">Today</span>
+              <span class="cv-after-date">Thursday, 4 June</span>
+            </div>
+            <div class="cv-after">
+              <div class="cv-after-h">
+                <svg class="i-sm" aria-hidden="true"><use href="#i-check-circle"/></svg>
+                The tornado warning expired at 11:45 pm
+              </div>
+              <p class="cv-after-p">Nothing further has been issued for Pope County. The county is still under a severe thunderstorm watch until 2 am.</p>
+              <ol class="cv-tl">
+                <li><span class="cv-tl-t">11:04 pm</span><span class="cv-tl-b">Tornado warning issued, NWS Little Rock</span></li>
+                <li><span class="cv-tl-t">11:19 pm</span><span class="cv-tl-b">Warning polygon narrowed to east of Hwy 7</span></li>
+                <li><span class="cv-tl-t">11:45 pm</span><span class="cv-tl-b">Warning expired, not renewed</span></li>
+                <li data-now><span class="cv-tl-t">6:02 am</span><span class="cv-tl-b">City reports three trees down on Parkway Drive, no injuries</span></li>
+              </ol>
+              <div class="cv-after-foot">
+                <a class="cv-ghost" href="#civic">What was sent, and when</a>
+                <span class="cv-after-age">This card disappears tomorrow morning</span>
+              </div>
+            </div>
+            <div class="cv-after-rest">
+              <div class="cv-eyebrow">The rest of your morning</div>
+              <div class="cv-quiet-row"><svg class="i-sm" aria-hidden="true"><use href="#i-calendar"/></svg> Farmers market, 7 am, downtown pavilion</div>
+              <div class="cv-quiet-row"><svg class="i-sm" aria-hidden="true"><use href="#i-newspaper"/></svg> Courier: Tech trustees approve the dorm plan</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <p class="why">The dismissal is the hard part. <b>An X in the top corner trains people to close the screen before they read it</b>, and it puts the escape at the exact spot a thumb lands when a phone buzzes at 11pm. So there is no X. The dismissal sits at the bottom, after the instruction and after the source, it is a full sentence, and it says what it does: hide this <em>until it changes</em>. Any update from the source brings it straight back, and hiding never unsubscribes. The one action is one action, always: <b>a second button here is a decision, and a decision at 11pm is a delay.</b> Everything else on the screen is text you can act on without tapping anything, because the most likely outcome is that the phone gets put down and the person moves. After it clears, the takeover does not just vanish – it becomes a calm card with the whole sequence in it, because <b>the question the next morning is always "what actually happened last night", and if we do not answer it the answer comes from a rumour.</b></p>
+
+  <div class="spec">
+    <div class="spec-label">The mark on the takeover <em>the open problem, and the fix that needs no new asset</em></div>
+    <div class="cv-mark-grid">
+      <div class="cv-mark-case" data-verdict="no">
+        <div class="cv-mark-cap"><span class="cv-verdict" data-v="no">Shipping today</span> full-colour mark</div>
+        <div class="cv-mark-stage">
+          <div class="cv-mark-chip"><span class="cv-mark-tile"></span> Relayed by Town Square</div>
+        </div>
+        <p class="cv-mark-note">Terracotta bubble, navy figures, cream tile. Three extra colours land two inches under a brick alarm band and the screen stops being one register.</p>
+      </div>
+      <div class="cv-mark-case" data-verdict="no">
+        <div class="cv-mark-cap"><span class="cv-verdict" data-v="no">Tempting</span> mono knockout</div>
+        <div class="cv-mark-stage">
+          <div class="cv-mark-chip"><span class="cv-mark-tile" data-mono></span> Relayed by Town Square</div>
+        </div>
+        <p class="cv-mark-note">Needs a purpose-built mono lockup that does not exist, and the real mark's internal separations are thin strokes that vanish flattened at 22px. It also still spends a look on our logo.</p>
+      </div>
+      <div class="cv-mark-case" data-verdict="yes">
+        <div class="cv-mark-cap"><span class="cv-verdict" data-v="yes">Proposed</span> no mark, source first</div>
+        <div class="cv-mark-stage">
+          <div class="cv-over-src cv-mark-src">
+            <div class="cv-over-src-a">National Weather Service, Little Rock</div>
+            <div class="cv-over-src-b">Issued 11:04 pm <i>·</i> relayed by Town Square</div>
+          </div>
+        </div>
+        <p class="cv-mark-note">Attribution becomes typographic. The brand survives as five words in the quietest line on the screen, and the mark comes back on the what-happened card where the register is neutral again.</p>
+      </div>
+    </div>
+  </div>
+
+  <p class="why">The resolution is removal, not redrawing. <b>The mark's job is to tell you which app you are in, and on a takeover that is the one thing the person already knows</b> – their own phone woke them up. Worse, the mark at the attribution point implies we are the source. We are not. The National Weather Service issued the warning; we carried it. Putting our logo where the issuing agency's name belongs is a small credit-taking that becomes a real problem the first time an alert is wrong. So the takeover carries no mark at all, the source agency gets the emphatic line, and "relayed by Town Square" is a clause in the quiet line underneath. <b>This ships today with no asset work</b>, which is the argument that settles it: the mono lockup is still worth commissioning for dark headers elsewhere, but it was never the fix for this screen.</p>
+
+  <!-- ────────────────────────────────────────────────────────────────────
+       3. The alert bar
+       ──────────────────────────────────────────────────────────────── -->
+
+  <div class="spec">
+    <div class="spec-label">The alert bar, collapsed and expanded <em>a takeover is for the first ten minutes; day three of a river rise needs a bar you can live above</em></div>
+    <div class="cv-bar-stack">
+      <div class="cv-bar-demo">
+        <div class="cv-bar-cap">Collapsed – the persistent form, 44px, above the header on every screen</div>
+        <div class="cv-frame">
+          <div class="cv-bar" data-sev="advisory">
+            <span class="cv-bar-dot" aria-hidden="true"></span>
+            <span class="cv-bar-sev">Advisory</span>
+            <span class="cv-bar-t">River at 22.9 ft and rising, action stage is 23</span>
+            <button class="cv-bar-more" type="button" aria-expanded="false" aria-label="Expand river advisory">
+              <svg class="i-sm" aria-hidden="true"><use href="#i-chevron-down"/></svg>
+            </button>
+          </div>
+          <div class="cv-frame-under">
+            <div class="cv-fake-head"><span>Town Square</span><span class="cv-fake-town">Russellville</span></div>
+            <div class="cv-fake-line" style="width:78%"></div>
+            <div class="cv-fake-line" style="width:54%"></div>
+            <div class="cv-fake-card"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="cv-bar-demo">
+        <div class="cv-bar-cap">Expanded – tap once, it pushes the page down rather than covering it</div>
+        <div class="cv-frame">
+          <div class="cv-bar" data-sev="advisory" data-open>
+            <div class="cv-bar-top">
+              <span class="cv-bar-dot" aria-hidden="true"></span>
+              <span class="cv-bar-sev">Advisory</span>
+              <span class="cv-bar-t">River at 22.9 ft and rising, action stage is 23</span>
+              <button class="cv-bar-more" type="button" aria-expanded="true" aria-label="Collapse river advisory">
+                <svg class="i-sm" aria-hidden="true"><use href="#i-chevron-up"/></svg>
+              </button>
+            </div>
+            <div class="cv-bar-open">
+              <p>Dardanelle gauge read 22.9 ft at 5 am, up 0.4 ft overnight. NWS expects a crest near 23.6 ft Friday afternoon. At 23 ft the low road into Old Post Road park floods and the boat ramp closes.</p>
+              <div class="cv-bar-actions">
+                <a class="cv-btn" href="#civic">Gauge and forecast</a>
+                <a class="cv-ghost" href="#civic">What floods at each stage</a>
+              </div>
+              <div class="cv-prov cv-prov-onbar">
+                <svg class="i-sm" aria-hidden="true"><use href="#i-history"/></svg>
+                NWS Little Rock, Dardanelle gauge <i>·</i> fetched 5:45 am <i>·</i> day 3
+                <button class="cv-bar-mute" type="button">Keep collapsed until the number changes</button>
+              </div>
+            </div>
+          </div>
+          <div class="cv-frame-under">
+            <div class="cv-fake-head"><span>Town Square</span><span class="cv-fake-town">Russellville</span></div>
+            <div class="cv-fake-line" style="width:78%"></div>
+            <div class="cv-fake-card"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="cv-bar-demo">
+        <div class="cv-bar-cap">Urgent, still a bar – the takeover already happened, this is what is left</div>
+        <div class="cv-frame">
+          <div class="cv-bar" data-sev="urgent">
+            <span class="cv-bar-dot" aria-hidden="true"></span>
+            <span class="cv-bar-sev">Urgent</span>
+            <span class="cv-bar-t">Boil order still in effect north of Main</span>
+            <button class="cv-bar-more" type="button" aria-expanded="false" aria-label="Expand boil order">
+              <svg class="i-sm" aria-hidden="true"><use href="#i-chevron-down"/></svg>
+            </button>
+          </div>
+          <div class="cv-frame-under">
+            <div class="cv-fake-head"><span>Town Square</span><span class="cv-fake-town">Russellville</span></div>
+            <div class="cv-fake-line" style="width:66%"></div>
+            <div class="cv-fake-card"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <p class="why">The bar is the answer to the thing that actually kills emergency design: <b>a situation that lasts four days.</b> A takeover on day one is right and a takeover on day three is an app you delete. So urgency decays on a schedule the resident can feel – a takeover collapses to a bar after the first view or after 30 minutes, whichever comes first, and the bar collapses to a line. It never covers content, it pushes content, because <b>anything that covers the page in a long situation gets swiped away reflexively and takes the real update with it.</b> The one control that is not an action is "keep collapsed until the number changes": people will absolutely mute a four-day river, and the honest move is to give them a mute that re-arms itself rather than let them turn the whole thing off.</p>
+
+  <!-- ────────────────────────────────────────────────────────────────────
+       4. City hall
+       ──────────────────────────────────────────────────────────────── -->
+
+  <div class="spec">
+    <div class="spec-label">City hall <em>ships as <code>.civic-list</code> / <code>.civic-row</code>; an index, not a portal, and never a wall of PDFs named <code>2026-06-02-agn.pdf</code></em></div>
+    <div class="spec-row">
+      <div class="phone">
+        <div class="phone-cap">City hall – index</div>
+        <div class="phone-screen">
+          <div class="cv-hall">
+            <div class="cv-hall-head">
+              <div class="cv-eyebrow">From city hall</div>
+              <h3>What is coming up</h3>
+              <p>Four bodies meet in Russellville. We pull their calendars every morning and tell you when an agenda actually appears.</p>
+            </div>
+
+            <div class="cv-hall-sec">
+              <div class="cv-eyebrow">This week</div>
+              <div class="cv-list">
+                <a class="cv-meet" data-state="tonight" href="#civic">
+                  <span class="cv-meet-date"><b>02</b><span>Jun</span></span>
+                  <span class="cv-meet-body">
+                    <span class="cv-meet-body-t">City Council, regular meeting</span>
+                    <span class="cv-meet-body-d">Tonight, 6:00 pm <i>·</i> Council chamber, 203 S Commerce</span>
+                    <span class="cv-tags"><span class="cv-tag" data-t="ready">Agenda posted</span><span class="cv-tag" data-t="comment">Comment open</span></span>
+                  </span>
+                  <svg class="i-sm cv-meet-go" aria-hidden="true"><use href="#i-chevron-right"/></svg>
+                </a>
+                <a class="cv-meet" href="#civic">
+                  <span class="cv-meet-date"><b>05</b><span>Jun</span></span>
+                  <span class="cv-meet-body">
+                    <span class="cv-meet-body-t">Planning Commission</span>
+                    <span class="cv-meet-body-d">Thursday, 5:30 pm <i>·</i> Council chamber</span>
+                    <span class="cv-tags"><span class="cv-tag" data-t="wait">Agenda not out yet</span></span>
+                  </span>
+                  <svg class="i-sm cv-meet-go" aria-hidden="true"><use href="#i-chevron-right"/></svg>
+                </a>
+              </div>
+            </div>
+
+            <div class="cv-hall-sec">
+              <div class="cv-eyebrow">Later this month</div>
+              <div class="cv-list">
+                <a class="cv-meet" href="#civic">
+                  <span class="cv-meet-date"><b>09</b><span>Jun</span></span>
+                  <span class="cv-meet-body">
+                    <span class="cv-meet-body-t">School Board</span>
+                    <span class="cv-meet-body-d">Monday, 6:00 pm <i>·</i> District admin building</span>
+                    <span class="cv-tags"><span class="cv-tag" data-t="wait">Agenda not out yet</span></span>
+                  </span>
+                  <svg class="i-sm cv-meet-go" aria-hidden="true"><use href="#i-chevron-right"/></svg>
+                </a>
+                <a class="cv-meet" data-state="off" href="#civic">
+                  <span class="cv-meet-date"><b>10</b><span>Jun</span></span>
+                  <span class="cv-meet-body">
+                    <span class="cv-meet-body-t">Pope County Quorum Court</span>
+                    <span class="cv-meet-body-d">Cancelled, no quorum expected</span>
+                    <span class="cv-tags"><span class="cv-tag" data-t="off">Cancelled 30 May</span></span>
+                  </span>
+                  <svg class="i-sm cv-meet-go" aria-hidden="true"><use href="#i-chevron-right"/></svg>
+                </a>
+                <a class="cv-meet" href="#civic">
+                  <span class="cv-meet-date"><b>16</b><span>Jun</span></span>
+                  <span class="cv-meet-body">
+                    <span class="cv-meet-body-t">City Council, regular meeting</span>
+                    <span class="cv-meet-body-d">Monday, 6:00 pm <i>·</i> Council chamber</span>
+                    <span class="cv-tags"><span class="cv-tag" data-t="wait">Agenda due 12 Jun</span></span>
+                  </span>
+                  <svg class="i-sm cv-meet-go" aria-hidden="true"><use href="#i-chevron-right"/></svg>
+                </a>
+              </div>
+            </div>
+
+            <div class="cv-hall-sec">
+              <div class="cv-eyebrow">Recently decided</div>
+              <div class="cv-list">
+                <a class="cv-meet" data-state="done" href="#civic">
+                  <span class="cv-meet-date"><b>19</b><span>May</span></span>
+                  <span class="cv-meet-body">
+                    <span class="cv-meet-body-t">City Council, regular meeting</span>
+                    <span class="cv-meet-body-d">11 items <i>·</i> 4 votes taken</span>
+                    <span class="cv-tags"><span class="cv-tag" data-t="ready">Minutes posted</span><span class="cv-tag" data-t="ready">Vote record</span></span>
+                  </span>
+                  <svg class="i-sm cv-meet-go" aria-hidden="true"><use href="#i-chevron-right"/></svg>
+                </a>
+              </div>
+            </div>
+
+            <div class="cv-prov cv-prov-block">
+              <svg class="i-sm" aria-hidden="true"><use href="#i-history"/></svg>
+              City of Russellville meeting calendar <i>·</i> checked 6:10 am
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="cv-side">
+        <div class="cv-side-cap">Meeting row, every state</div>
+        <div class="cv-list cv-list-plate">
+          <div class="cv-meet" data-state="tonight">
+            <span class="cv-meet-date"><b>02</b><span>Jun</span></span>
+            <span class="cv-meet-body">
+              <span class="cv-meet-body-t">Tonight <i>·</i> agenda posted, comment open</span>
+              <span class="cv-meet-body-d">The only row that gets a marker. One per screen at most.</span>
+            </span>
+          </div>
+          <div class="cv-meet">
+            <span class="cv-meet-date"><b>05</b><span>Jun</span></span>
+            <span class="cv-meet-body">
+              <span class="cv-meet-body-t">Scheduled <i>·</i> agenda not out yet</span>
+              <span class="cv-meet-body-d">We say "not out yet" rather than leaving a gap, because the gap reads as our bug.</span>
+            </span>
+          </div>
+          <div class="cv-meet">
+            <span class="cv-meet-date"><b>16</b><span>Jun</span></span>
+            <span class="cv-meet-body">
+              <span class="cv-meet-body-t">Scheduled <i>·</i> agenda due in 4 days</span>
+              <span class="cv-meet-body-d">Arkansas requires notice, so "due" is a real date, not a guess.</span>
+            </span>
+          </div>
+          <div class="cv-meet" data-state="off">
+            <span class="cv-meet-date"><b>10</b><span>Jun</span></span>
+            <span class="cv-meet-body">
+              <span class="cv-meet-body-t">Cancelled</span>
+              <span class="cv-meet-body-d">Struck, not removed. A meeting that disappears looks like we lost it.</span>
+            </span>
+          </div>
+          <div class="cv-meet" data-state="done">
+            <span class="cv-meet-date"><b>19</b><span>May</span></span>
+            <span class="cv-meet-body">
+              <span class="cv-meet-body-t">Held <i>·</i> minutes and votes posted</span>
+              <span class="cv-meet-body-d">The date block goes quiet once the meeting is behind us.</span>
+            </span>
+          </div>
+          <div class="cv-meet" data-state="done">
+            <span class="cv-meet-date"><b>05</b><span>May</span></span>
+            <span class="cv-meet-body">
+              <span class="cv-meet-body-t">Held <i>·</i> minutes not posted yet, 28 days</span>
+              <span class="cv-meet-body-d">We count the days. It is the only pressure a resident has.</span>
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ────────────────────────────────────────────────────────────────────
+       5. The agenda reader
+       ──────────────────────────────────────────────────────────────── -->
+
+  <div class="spec">
+    <div class="spec-label">The agenda reader <em>the city publishes a PDF; we render it readably and say so out loud</em></div>
+    <div class="plate">
+      <div class="cv-doc">
+        <div class="cv-doc-head">
+          <div>
+            <div class="cv-eyebrow">Russellville City Council <i>·</i> regular meeting</div>
+            <h3 class="cv-doc-title">Agenda, Monday 2 June 2026, 6:00 pm</h3>
+            <div class="cv-doc-sub">Council chamber, 203 South Commerce Avenue <i>·</i> 11 items <i>·</i> 3 with public comment</div>
+          </div>
+          <div class="cv-doc-actions">
+            <a class="cv-btn" href="#civic"><svg class="i-sm" aria-hidden="true"><use href="#i-document"/></svg> Original PDF, 1.4 MB</a>
+            <a class="cv-ghost" href="#civic">Add to calendar</a>
+          </div>
+        </div>
+
+        <div class="cv-honest">
+          <svg class="i-sm" aria-hidden="true"><use href="#i-info"/></svg>
+          <p><b>This is the city's own agenda packet, republished.</b> We extracted the text so it is searchable and readable on a phone. We did not rewrite, reorder, or shorten any item. Where our text and the PDF disagree, the PDF is the record.</p>
+        </div>
+
+        <ol class="cv-items">
+          <li class="cv-item">
+            <span class="cv-item-n">1.</span>
+            <div class="cv-item-b">
+              <div class="cv-item-t">Call to order, invocation, roll call</div>
+            </div>
+          </li>
+          <li class="cv-item">
+            <span class="cv-item-n">2.</span>
+            <div class="cv-item-b">
+              <div class="cv-item-t">Approval of minutes, 19 May 2026 regular meeting</div>
+              <div class="cv-item-atts"><a class="cv-att" href="#civic"><svg class="i-sm" aria-hidden="true"><use href="#i-document"/></svg> Minutes draft, 6 pp</a></div>
+            </div>
+          </li>
+          <li class="cv-item" data-kind="ordinance">
+            <span class="cv-item-n">3.</span>
+            <div class="cv-item-b">
+              <div class="cv-item-t">An ordinance rezoning 4.1 acres at the corner of East Main Street and North Arkansas Avenue from R-1 single family to C-2 general commercial</div>
+              <div class="cv-item-meta">
+                <span class="cv-ref">Ordinance 2568</span>
+                <span class="cv-item-stage">Second reading</span>
+                <span class="cv-item-tagline">Planning Commission recommended approval 5 to 1 on 8 May</span>
+              </div>
+              <div class="cv-item-atts">
+                <a class="cv-att" href="#civic"><svg class="i-sm" aria-hidden="true"><use href="#i-document"/></svg> Ordinance text, 4 pp</a>
+                <a class="cv-att" href="#civic"><svg class="i-sm" aria-hidden="true"><use href="#i-map"/></svg> Site map</a>
+                <a class="cv-att" href="#civic"><svg class="i-sm" aria-hidden="true"><use href="#i-mail"/></svg> 14 letters received</a>
+              </div>
+              <div class="cv-item-flag"><svg class="i-sm" aria-hidden="true"><use href="#i-megaphone"/></svg> Public comment at the meeting, 3 minutes per speaker</div>
+            </div>
+          </li>
+          <li class="cv-item" data-kind="resolution">
+            <span class="cv-item-n">4.</span>
+            <div class="cv-item-b">
+              <div class="cv-item-t">A resolution authorizing the mayor to execute a contract with Crow Construction for the Main Street bridge deck rehabilitation</div>
+              <div class="cv-item-meta">
+                <span class="cv-ref">Resolution 2026-31</span>
+                <span class="cv-item-tagline">$1,847,300 <i>·</i> low bid of four</span>
+              </div>
+              <div class="cv-item-atts">
+                <a class="cv-att" href="#civic"><svg class="i-sm" aria-hidden="true"><use href="#i-document"/></svg> Bid tabulation, 2 pp</a>
+                <a class="cv-att" href="#civic"><svg class="i-sm" aria-hidden="true"><use href="#i-document"/></svg> Contract, 31 pp</a>
+              </div>
+            </div>
+          </li>
+          <li class="cv-item">
+            <span class="cv-item-n">5.</span>
+            <div class="cv-item-b">
+              <div class="cv-item-t">Report from the Parks and Recreation Commission on Lake Dardanelle access improvements</div>
+              <div class="cv-item-meta"><span class="cv-item-tagline">Informational, no vote expected</span></div>
+            </div>
+          </li>
+          <li class="cv-item" data-kind="skip">
+            <span class="cv-item-n">6.</span>
+            <div class="cv-item-b">
+              <div class="cv-item-t">Executive session, personnel</div>
+              <div class="cv-item-meta"><span class="cv-item-tagline">Closed to the public under Ark. Code 25-19-106. No minutes are published for this item.</span></div>
+            </div>
+          </li>
+        </ol>
+
+        <div class="cv-items-more"><button class="cv-ghost" type="button">Show items 7 to 11</button></div>
+
+        <div class="cv-prov cv-prov-block">
+          <svg class="i-sm" aria-hidden="true"><use href="#i-history"/></svg>
+          City of Russellville, agenda packet PDF <i>·</i> published 29 May 4:41 pm <i>·</i> fetched 30 May 6:10 am <i>·</i> text extracted, not edited
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="spec">
+    <div class="spec-label">Item detail, the plain-terms panel <em>we describe the document, we never grade it; every claim points at a page</em></div>
+    <div class="plate">
+      <div class="cv-detail">
+        <div class="cv-detail-head">
+          <span class="cv-ref">Ordinance 2568</span>
+          <span class="cv-item-stage">Second reading</span>
+          <span class="cv-detail-when">On the agenda for tonight, item 3</span>
+        </div>
+        <h3 class="cv-detail-t">An ordinance rezoning 4.1 acres at the corner of East Main Street and North Arkansas Avenue from R-1 single family to C-2 general commercial</h3>
+
+        <div class="cv-plain">
+          <div class="cv-plain-h">
+            <svg class="i-sm" aria-hidden="true"><use href="#i-lightbulb"/></svg>
+            In plain terms
+            <button class="cv-plain-how" type="button">How we write these</button>
+          </div>
+          <ul class="cv-plain-l">
+            <li>The land is the old Dawson nursery lot, vacant since 2019. <span class="cv-cite">p. 2</span></li>
+            <li>R-1 allows single family houses. C-2 allows retail, restaurants, offices, and a drive-through with a conditional use permit. <span class="cv-cite">p. 3, Table 4</span></li>
+            <li>The applicant is Arkansas Valley Holdings LLC. The ordinance does not name a tenant or a building. <span class="cv-cite">p. 1</span></li>
+            <li>A rezoning does not approve a specific project. Anything built would come back for site plan review. <span class="cv-cite">p. 4</span></li>
+            <li>Planning Commission recommended approval 5 to 1 on 8 May. Their recommendation is advisory. <span class="cv-cite">minutes, p. 3</span></li>
+            <li>Second reading means the council may vote tonight, or suspend the rules and pass it on third reading the same night. <span class="cv-cite">p. 4</span></li>
+          </ul>
+          <p class="cv-plain-rule">
+            Every line above restates something the document says and links the page it says it on. We do not say whether a rezoning is good for the neighbourhood, we do not count the letters for and against, and we do not describe anyone's motive. Where the packet is silent, we write that it is silent rather than filling it in.
+          </p>
+        </div>
+
+        <div class="cv-detail-grid">
+          <div class="cv-detail-col">
+            <div class="cv-eyebrow">In the packet</div>
+            <a class="cv-att" href="#civic"><svg class="i-sm" aria-hidden="true"><use href="#i-document"/></svg> Ordinance text, 4 pp</a>
+            <a class="cv-att" href="#civic"><svg class="i-sm" aria-hidden="true"><use href="#i-map"/></svg> Site map and legal description</a>
+            <a class="cv-att" href="#civic"><svg class="i-sm" aria-hidden="true"><use href="#i-mail"/></svg> Correspondence, 14 letters, 22 pp</a>
+            <a class="cv-att" href="#civic"><svg class="i-sm" aria-hidden="true"><use href="#i-gavel"/></svg> Planning Commission minutes, 8 May</a>
+          </div>
+          <div class="cv-detail-col">
+            <div class="cv-eyebrow">How it got here</div>
+            <ol class="cv-tl cv-tl-light">
+              <li><span class="cv-tl-t">17 Mar</span><span class="cv-tl-b">Application filed</span></li>
+              <li><span class="cv-tl-t">08 May</span><span class="cv-tl-b">Planning Commission, recommended 5 to 1</span></li>
+              <li><span class="cv-tl-t">19 May</span><span class="cv-tl-b">First reading, no vote</span></li>
+              <li data-now><span class="cv-tl-t">02 Jun</span><span class="cv-tl-b">Second reading, tonight</span></li>
+            </ol>
+          </div>
+        </div>
+
+        <div class="cv-prov cv-prov-block">
+          <svg class="i-sm" aria-hidden="true"><use href="#i-history"/></svg>
+          City of Russellville, agenda packet pp. 1 to 8 <i>·</i> fetched 30 May 6:10 am <i>·</i> plain-terms lines written by a Town Square editor and checked against the pages cited
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <p class="why">"What this actually means" is the most valuable thing on the screen and the fastest way to lose the town's trust. So the panel has a rule it cannot break: <b>every line restates something in the document and names the page.</b> No line may contain a judgement, a consequence we predict, a count of who is for and against, or a characterisation of anyone's motive. When the packet is silent, the panel says it is silent – <b>"the ordinance does not name a tenant" is the single most useful line in that list, and it is pure description.</b> The disclosure is not buried: it names a human editor, because "the AI summarised it" is not an answer anyone in a council chamber will accept.</p>
+
+  <!-- ────────────────────────────────────────────────────────────────────
+       6. Minutes and the vote record
+       ──────────────────────────────────────────────────────────────── -->
+
+  <div class="spec">
+    <div class="spec-label">The vote record <em>no red and green; the outcome is a sentence and every name is on the same row treatment</em></div>
+    <div class="plate">
+      <div class="cv-vote">
+        <div class="cv-vote-head">
+          <div>
+            <div class="cv-eyebrow">City Council <i>·</i> 19 May 2026 <i>·</i> item 7</div>
+            <h3 class="cv-vote-t">Ordinance 2566, extending the downtown parking district two blocks east along Main Street</h3>
+          </div>
+          <a class="cv-ghost" href="#civic">Full minutes</a>
+        </div>
+
+        <div class="cv-outcome">
+          <div class="cv-outcome-line">
+            <span class="cv-outcome-word">Passed</span>
+            <span class="cv-outcome-tally">5 for, 2 against, 1 absent</span>
+          </div>
+          <div class="cv-tally-bar" role="img" aria-label="Five voted for, two against, one absent">
+            <span class="cv-tally-seg" data-v="for" style="flex:5"></span>
+            <span class="cv-tally-seg" data-v="against" style="flex:2"></span>
+            <span class="cv-tally-seg" data-v="absent" style="flex:1"></span>
+          </div>
+          <div class="cv-outcome-note">Roll call vote. Simple majority of the seated council required, so 5 was enough. The mayor does not vote except to break a tie.</div>
+        </div>
+
+        <div class="cv-roll">
+          <div class="cv-roll-group">
+            <div class="cv-roll-cap"><span class="cv-vdot" data-v="for" aria-hidden="true"></span> For <b>5</b></div>
+            <div class="cv-roll-row"><span class="cv-vdot" data-v="for" aria-hidden="true"></span><span class="cv-roll-name">Dana Whitcomb</span><span class="cv-roll-ward">Ward 1</span><span class="cv-roll-vote">For</span></div>
+            <div class="cv-roll-row"><span class="cv-vdot" data-v="for" aria-hidden="true"></span><span class="cv-roll-name">Ellis Pryor</span><span class="cv-roll-ward">Ward 1</span><span class="cv-roll-vote">For</span></div>
+            <div class="cv-roll-row"><span class="cv-vdot" data-v="for" aria-hidden="true"></span><span class="cv-roll-name">Marla Sutton</span><span class="cv-roll-ward">Ward 2</span><span class="cv-roll-vote">For</span></div>
+            <div class="cv-roll-row"><span class="cv-vdot" data-v="for" aria-hidden="true"></span><span class="cv-roll-name">Bethany Cole</span><span class="cv-roll-ward">Ward 3</span><span class="cv-roll-vote">For</span></div>
+            <div class="cv-roll-row"><span class="cv-vdot" data-v="for" aria-hidden="true"></span><span class="cv-roll-name">Alicia Vance</span><span class="cv-roll-ward">Ward 4</span><span class="cv-roll-vote">For</span></div>
+          </div>
+          <div class="cv-roll-group">
+            <div class="cv-roll-cap"><span class="cv-vdot" data-v="against" aria-hidden="true"></span> Against <b>2</b></div>
+            <div class="cv-roll-row"><span class="cv-vdot" data-v="against" aria-hidden="true"></span><span class="cv-roll-name">Ray Ferguson</span><span class="cv-roll-ward">Ward 2</span><span class="cv-roll-vote">Against</span></div>
+            <div class="cv-roll-row"><span class="cv-vdot" data-v="against" aria-hidden="true"></span><span class="cv-roll-name">Tom Ridgeway</span><span class="cv-roll-ward">Ward 3</span><span class="cv-roll-vote">Against</span></div>
+            <div class="cv-roll-cap cv-roll-cap-2"><span class="cv-vdot" data-v="absent" aria-hidden="true"></span> Absent <b>1</b></div>
+            <div class="cv-roll-row" data-quiet><span class="cv-vdot" data-v="absent" aria-hidden="true"></span><span class="cv-roll-name">Doug Meineke</span><span class="cv-roll-ward">Ward 4</span><span class="cv-roll-vote">Absent</span></div>
+          </div>
+        </div>
+
+        <div class="cv-vote-quotes">
+          <div class="cv-eyebrow">From the minutes</div>
+          <blockquote class="cv-quote">
+            Council member Ferguson stated that he could not support the extension without a plan for the businesses on the 400 block that would lose their unmetered frontage.
+            <cite>Minutes, p. 5</cite>
+          </blockquote>
+          <p class="cv-vote-note">We quote the minutes verbatim and only where a member's own reason is recorded. We do not summarise a member's position, and we never quote from the video without the clerk's transcript.</p>
+        </div>
+
+        <div class="cv-prov cv-prov-block">
+          <svg class="i-sm" aria-hidden="true"><use href="#i-history"/></svg>
+          City of Russellville, approved minutes 2 June 2026 <i>·</i> fetched 3 June 6:10 am <i>·</i> roll call transcribed from p. 5, checked twice
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="spec">
+    <div class="spec-label">Vote record, edge cases <em>the three shapes that break every vote table ever built</em></div>
+    <div class="spec-row">
+      <div class="cv-vote-card">
+        <div class="cv-eyebrow">Unanimous</div>
+        <div class="cv-outcome-line"><span class="cv-outcome-word">Passed</span><span class="cv-outcome-tally">8 for, 0 against</span></div>
+        <div class="cv-tally-bar"><span class="cv-tally-seg" data-v="for" style="flex:8"></span></div>
+        <p class="cv-vote-mini">Every seated member voted for. We collapse the roll to one line and let it expand, because a unanimous roll is eight identical rows and eight identical rows teach nothing.</p>
+        <button class="cv-ghost" type="button">Show all 8 names</button>
+      </div>
+      <div class="cv-vote-card">
+        <div class="cv-eyebrow">Failed on a tie</div>
+        <div class="cv-outcome-line"><span class="cv-outcome-word">Failed</span><span class="cv-outcome-tally">3 for, 3 against, 2 absent</span></div>
+        <div class="cv-tally-bar"><span class="cv-tally-seg" data-v="for" style="flex:3"></span><span class="cv-tally-seg" data-v="against" style="flex:3"></span><span class="cv-tally-seg" data-v="absent" style="flex:2"></span></div>
+        <p class="cv-vote-mini">The mayor was present and declined to break the tie, which the minutes record. "Failed" is stated as a word before any number, because a tally alone does not tell you which way it went.</p>
+      </div>
+      <div class="cv-vote-card">
+        <div class="cv-eyebrow">No vote taken</div>
+        <div class="cv-outcome-line" data-none><span class="cv-outcome-word">Tabled</span><span class="cv-outcome-tally">no roll call</span></div>
+        <div class="cv-tally-bar" data-none><span class="cv-tally-seg" data-v="none" style="flex:1"></span></div>
+        <p class="cv-vote-mini">Moved to the 16 June agenda by voice vote. There is no roll to show, so we show none rather than inventing an eight-row table of dashes.</p>
+      </div>
+    </div>
+  </div>
+
+  <p class="why">Vote records are ugly because they are built as spreadsheets, and a spreadsheet answers "what were the numbers" when the resident is asking <b>"did it pass, and how did my ward vote."</b> So the outcome is a word first and a tally second, the ward is printed beside every name because that is how a resident finds themselves in the list, and the roll is grouped by how people voted rather than sorted by seat. There is deliberately <b>no red and no green</b>: it is the one thing every civic data product reaches for and it does three bad things at once – it fails for colour blind readers, it makes a routine procedural vote look like a fight, and in this system red is spoken for. Sage marks the affirmative, a hollow ring marks the negative, and both are labelled in words, so the record survives being screenshotted into a group chat.</p>
+
+  <!-- ────────────────────────────────────────────────────────────────────
+       7. Public comment
+       ──────────────────────────────────────────────────────────────── -->
+
+  <div class="spec">
+    <div class="spec-label">Public comment <em>we tell you how to be heard by the city, we never collect the comment ourselves</em></div>
+    <div class="spec-row">
+      <div class="cv-comment" data-state="open">
+        <div class="cv-comment-h">
+          <svg class="i-sm" aria-hidden="true"><use href="#i-megaphone"/></svg>
+          <span>Comment period open</span>
+          <span class="cv-comment-clock">Closes in 3 days</span>
+        </div>
+        <h4 class="cv-comment-t">Rezoning at East Main and North Arkansas, Ordinance 2568</h4>
+        <div class="cv-comment-dl">
+          <span class="cv-dl-k">Written comment by</span>
+          <span class="cv-dl-v">Friday 30 May, 4:30 pm</span>
+        </div>
+        <div class="cv-comment-dl">
+          <span class="cv-dl-k">In person</span>
+          <span class="cv-dl-v">Monday 2 June, 6:00 pm, sign the card at the door before the meeting starts</span>
+        </div>
+        <ol class="cv-how">
+          <li>Email <span class="cv-mono">cityclerk@russellvillearkansas.gov</span> with "Ordinance 2568" in the subject.</li>
+          <li>Or drop a letter at the clerk's office, 203 S Commerce, weekdays 8 to 4:30.</li>
+          <li>Or speak at the meeting. Three minutes each, sign in before 6:00.</li>
+        </ol>
+        <div class="cv-comment-actions">
+          <a class="cv-btn" href="#civic">Email the clerk</a>
+          <a class="cv-ghost" href="#civic">Read the 14 letters already filed</a>
+        </div>
+        <p class="cv-comment-note">Comments go to the city, not to Town Square. We do not host them, moderate them, or forward them, and nothing you send the clerk appears here unless the city publishes it in the packet.</p>
+        <div class="cv-prov"><svg class="i-sm" aria-hidden="true"><use href="#i-history"/></svg> City Clerk's office, notice of hearing <i>·</i> fetched 30 May 6:10 am</div>
+      </div>
+
+      <div class="cv-comment" data-state="closed">
+        <div class="cv-comment-h">
+          <svg class="i-sm" aria-hidden="true"><use href="#i-lock"/></svg>
+          <span>Comment period closed</span>
+          <span class="cv-comment-clock">Closed 16 May</span>
+        </div>
+        <h4 class="cv-comment-t">Water and sewer rate schedule for 2027, Ordinance 2564</h4>
+        <p class="cv-comment-body">The clerk received 31 written comments. The council adopted the schedule 6 to 1 on 19 May.</p>
+        <div class="cv-comment-actions">
+          <a class="cv-ghost" href="#civic">The 31 comments, as published</a>
+          <a class="cv-ghost" href="#civic">The vote</a>
+        </div>
+        <p class="cv-comment-note">A closed period stays visible for 90 days. Removing it makes the record look thinner than it was.</p>
+        <div class="cv-prov"><svg class="i-sm" aria-hidden="true"><use href="#i-history"/></svg> City Clerk's office <i>·</i> fetched 20 May 6:10 am</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ────────────────────────────────────────────────────────────────────
+       8. Service status
+       ──────────────────────────────────────────────────────────────── -->
+
+  <div class="spec">
+    <div class="spec-label">Service status <em>a dashboard of green ticks is a machine telling you it is fine; one sentence is a neighbour telling you</em></div>
+    <div class="spec-row">
+      <div class="cv-side">
+        <div class="cv-side-cap">Something is going on</div>
+        <div class="cv-svc">
+          <div class="cv-svc-h"><div class="cv-eyebrow">Services</div><span class="cv-svc-count">3 disruptions</span></div>
+          <div class="cv-list">
+            <div class="cv-svc-row">
+              <span class="cv-svc-icon"><svg class="i-sm" aria-hidden="true"><use href="#i-trash"/></svg></span>
+              <span class="cv-svc-b">
+                <span class="cv-svc-t">Trash pickup running a day late</span>
+                <span class="cv-svc-d">Thursday routes move to Friday after the storm. Leave carts out.</span>
+                <span class="cv-prov"><svg class="i-sm" aria-hidden="true"><use href="#i-history"/></svg> Sanitation <i>·</i> 6:02 am</span>
+              </span>
+            </div>
+            <div class="cv-svc-row">
+              <span class="cv-svc-icon"><svg class="i-sm" aria-hidden="true"><use href="#cv-i-droplet"/></svg></span>
+              <span class="cv-svc-b">
+                <span class="cv-svc-t">Water main work on El Paso Avenue</span>
+                <span class="cv-svc-d">Between Denver and Knoxville. Low pressure through Thursday, no outage expected.</span>
+                <span class="cv-prov"><svg class="i-sm" aria-hidden="true"><use href="#i-history"/></svg> Water Utility <i>·</i> yesterday 3:40 pm</span>
+              </span>
+            </div>
+            <div class="cv-svc-row">
+              <span class="cv-svc-icon"><svg class="i-sm" aria-hidden="true"><use href="#cv-i-cone"/></svg></span>
+              <span class="cv-svc-b">
+                <span class="cv-svc-t">Main Street bridge, one lane each way</span>
+                <span class="cv-svc-d">Deck work through 12 September. Expect 5 to 8 minutes at 5 pm.</span>
+                <span class="cv-prov"><svg class="i-sm" aria-hidden="true"><use href="#i-history"/></svg> ARDOT <i>·</i> 28 May</span>
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="cv-side">
+        <div class="cv-side-cap">The normal day, which is most days</div>
+        <div class="cv-svc">
+          <div class="cv-svc-h"><div class="cv-eyebrow">Services</div></div>
+          <div class="cv-normal">
+            <span class="cv-normal-dot" aria-hidden="true"></span>
+            <p>Trash, water, and roads are all running normally. Last checked 6:10 am.</p>
+          </div>
+          <button class="cv-ghost cv-normal-more" type="button">What we check, and how often</button>
+        </div>
+        <div class="cv-side-cap cv-side-cap-2">And in the feed, it is one line</div>
+        <div class="cv-frame cv-frame-quiet">
+          <div class="cv-normal cv-normal-inline">
+            <span class="cv-normal-dot" aria-hidden="true"></span>
+            <p>Services normal. Checked 6:10 am.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ────────────────────────────────────────────────────────────────────
+       9. Alert subscriptions
+       ──────────────────────────────────────────────────────────────── -->
+
+  <div class="spec">
+    <div class="spec-label">Alert subscriptions <em>the threshold is a slider through the same four rungs, so the setting and the ladder are literally the same object</em></div>
+    <div class="spec-row">
+      <div class="phone">
+        <div class="phone-cap">Settings – alerts</div>
+        <div class="phone-screen">
+          <div class="cv-subs">
+            <div class="cv-subs-head">
+              <div class="cv-eyebrow">Alerts</div>
+              <h3>What should wake you up</h3>
+              <p>You are set to the default. Most people never change this, which is why the default has to be right.</p>
+            </div>
+
+            <div class="cv-subs-block">
+              <div class="cv-subs-label">Send me a push notification for</div>
+              <div class="cv-thresh" role="radiogroup" aria-label="Severity threshold">
+                <button class="cv-thresh-opt" type="button" role="radio" aria-checked="false" data-sev="info">
+                  <span class="cv-thresh-dot" data-sev="info" aria-hidden="true"></span>
+                  <span class="cv-thresh-b"><b>Everything</b><i>Leaf pickup, agendas, all of it. About 9 a week.</i></span>
+                </button>
+                <button class="cv-thresh-opt" type="button" role="radio" aria-checked="false" data-sev="advisory">
+                  <span class="cv-thresh-dot" data-sev="advisory" aria-hidden="true"></span>
+                  <span class="cv-thresh-b"><b>Advisory and up</b><i>River stages, heat, air quality. About 2 a week.</i></span>
+                </button>
+                <button class="cv-thresh-opt" type="button" role="radio" aria-checked="true" data-sev="urgent" data-default>
+                  <span class="cv-thresh-dot" data-sev="urgent" aria-hidden="true"></span>
+                  <span class="cv-thresh-b"><b>Urgent and up</b><i>Boil orders, closures, evacuations. About 1 a month.</i><em>Default</em></span>
+                </button>
+                <button class="cv-thresh-opt" type="button" role="radio" aria-checked="false" data-sev="emergency">
+                  <span class="cv-thresh-dot" data-sev="emergency" aria-hidden="true"></span>
+                  <span class="cv-thresh-b"><b>Emergency only</b><i>Tornado, flash flood, Nuclear One. A few times a year.</i></span>
+                </button>
+              </div>
+            </div>
+
+            <div class="cv-subs-block">
+              <div class="cv-subs-label">Quiet hours</div>
+              <div class="cv-quiet">
+                <div class="cv-quiet-h">
+                  <span>10:00 pm to 6:30 am</span>
+                  <button class="cv-switch" type="button" role="switch" aria-checked="true" aria-label="Quiet hours on"><span></span></button>
+                </div>
+                <p class="cv-quiet-p">Advisories and anything below hold until morning. <b>An emergency always comes through, and it comes through on silent.</b> There is no setting that turns that off, and we would rather tell you that plainly than hide it in a toggle you find at 3 am.</p>
+              </div>
+            </div>
+
+            <div class="cv-subs-block">
+              <div class="cv-subs-label">Also tell me about</div>
+              <div class="cv-topics">
+                <div class="cv-topic"><span>City Council agendas</span><button class="cv-switch" type="button" role="switch" aria-checked="false" aria-label="City Council agendas"><span></span></button></div>
+                <div class="cv-topic"><span>School board and closings</span><button class="cv-switch" type="button" role="switch" aria-checked="true" aria-label="School board and closings"><span></span></button></div>
+                <div class="cv-topic"><span>Planning and rezonings</span><button class="cv-switch" type="button" role="switch" aria-checked="false" aria-label="Planning and rezonings"><span></span></button></div>
+                <div class="cv-topic"><span>Trash and recycling changes</span><button class="cv-switch" type="button" role="switch" aria-checked="true" aria-label="Trash and recycling changes"><span></span></button></div>
+                <div class="cv-topic"><span>Road closures</span><button class="cv-switch" type="button" role="switch" aria-checked="true" aria-label="Road closures"><span></span></button></div>
+                <div class="cv-topic"><span>Arkansas Nuclear One notices</span><button class="cv-switch" type="button" role="switch" aria-checked="true" aria-label="Nuclear One notices"><span></span></button></div>
+              </div>
+            </div>
+
+            <div class="cv-subs-foot">
+              <svg class="i-sm" aria-hidden="true"><use href="#i-shield"/></svg>
+              <p>We never ask for your address. Alerts are matched to the town and to zones you pick by name, never to a location we track.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="cv-side">
+        <div class="cv-side-cap">Threshold rungs, out of the phone</div>
+        <div class="cv-thresh cv-thresh-plate">
+          <div class="cv-thresh-opt" data-sev="info"><span class="cv-thresh-dot" data-sev="info"></span><span class="cv-thresh-b"><b>Everything</b><i>~9 a week</i></span></div>
+          <div class="cv-thresh-opt" data-sev="advisory"><span class="cv-thresh-dot" data-sev="advisory"></span><span class="cv-thresh-b"><b>Advisory and up</b><i>~2 a week</i></span></div>
+          <div class="cv-thresh-opt" data-sev="urgent" data-on><span class="cv-thresh-dot" data-sev="urgent"></span><span class="cv-thresh-b"><b>Urgent and up</b><i>~1 a month</i><em>Default</em></span></div>
+          <div class="cv-thresh-opt" data-sev="emergency"><span class="cv-thresh-dot" data-sev="emergency"></span><span class="cv-thresh-b"><b>Emergency only</b><i>a few a year</i></span></div>
+        </div>
+        <div class="cv-side-cap cv-side-cap-2">Switch states</div>
+        <div class="cv-switch-row">
+          <span><button class="cv-switch" type="button" role="switch" aria-checked="false" aria-label="Off"><span></span></button> Off</span>
+          <span><button class="cv-switch" type="button" role="switch" aria-checked="true" aria-label="On"><span></span></button> On</span>
+          <span><button class="cv-switch" type="button" role="switch" aria-checked="true" data-focus aria-label="Focused"><span></span></button> Focus</span>
+          <span><button class="cv-switch" type="button" role="switch" aria-checked="true" disabled aria-label="Locked"><span></span></button> Locked on</span>
+        </div>
+        <p class="cv-side-note">"Locked on" is the emergency channel. It renders as a switch so its state is legible, and it is disabled with an explanation rather than hidden, because a control you cannot find is worse than one you cannot move.</p>
+      </div>
+    </div>
+  </div>
+
+  <p class="why">The default is <b>urgent and up, quiet hours on</b>, and it has to be conservative for a reason that is not politeness. <b>Notification permission is spent once.</b> A resident installs this in July because they want to know what is on this weekend; if the first three pushes are a planning commission agenda, a leaf pickup schedule, and a heat advisory, notifications are off by August and they are off in November when the ice storm comes. The subscription screen is therefore an argument for turning things <em>on</em>, made after the app has earned it, not a wall of switches at signup. Frequencies are printed next to every rung because <b>"about 9 a week" is the only honest way to describe what a person is agreeing to</b>, and it is the number that stops them picking Everything and regretting it. The one thing we do not let anyone turn off is the emergency channel, and we say so in a sentence instead of quietly enforcing it.</p>
+
+  <!-- ────────────────────────────────────────────────────────────────────
+       10. Notification specimens
+       ──────────────────────────────────────────────────────────────── -->
+
+  <div class="spec">
+    <div class="spec-label">Lock screen specimens <em>the first line has to carry the whole alert, because for most people the first line is the whole alert</em></div>
+    <div class="spec-row">
+      <div class="phone">
+        <div class="phone-cap">Lock screen – the three that push</div>
+        <div class="phone-screen">
+          <div class="cv-lock">
+            <div class="cv-lock-clock">
+              <div class="cv-lock-time">11:04</div>
+              <div class="cv-lock-date">Wednesday, 3 June</div>
+            </div>
+            <div class="cv-lock-stack">
+              <div class="cv-push" data-sev="emergency">
+                <div class="cv-push-h">
+                  <span class="cv-push-app">Town Square</span>
+                  <span class="cv-push-sev">Emergency</span>
+                  <span class="cv-push-time">now</span>
+                </div>
+                <div class="cv-push-t">Tornado warning until 11:45 pm</div>
+                <div class="cv-push-b">Take shelter now. Interior room, lowest floor, away from windows. NWS Little Rock.</div>
+                <div class="cv-push-crit"><svg class="i-sm" aria-hidden="true"><use href="#i-zap"/></svg> Delivered on silent</div>
+              </div>
+              <div class="cv-push" data-sev="urgent">
+                <div class="cv-push-h">
+                  <span class="cv-push-app">Town Square</span>
+                  <span class="cv-push-sev">Urgent</span>
+                  <span class="cv-push-time">4:21 pm</span>
+                </div>
+                <div class="cv-push-t">Boil order north of Main</div>
+                <div class="cv-push-b">Between Denver and Knoxville. Boil one minute before drinking or cooking.</div>
+              </div>
+              <div class="cv-push" data-sev="advisory">
+                <div class="cv-push-h">
+                  <span class="cv-push-app">Town Square</span>
+                  <span class="cv-push-sev">Advisory</span>
+                  <span class="cv-push-time">6:02 am</span>
+                </div>
+                <div class="cv-push-t">River forecast to reach 23.6 ft Friday</div>
+                <div class="cv-push-b">Action stage is 23. Old Post Road park access may close.</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="cv-side">
+        <div class="cv-side-cap">Anatomy, at size</div>
+        <div class="cv-push-plate">
+          <div class="cv-push" data-sev="emergency">
+            <div class="cv-push-h">
+              <span class="cv-push-app">Town Square</span>
+              <span class="cv-push-sev">Emergency</span>
+              <span class="cv-push-time">now</span>
+            </div>
+            <div class="cv-push-t">Tornado warning until 11:45 pm</div>
+            <div class="cv-push-b">Take shelter now. Interior room, lowest floor, away from windows. NWS Little Rock.</div>
+            <div class="cv-push-crit"><svg class="i-sm" aria-hidden="true"><use href="#i-zap"/></svg> Delivered on silent</div>
+          </div>
+          <ul class="cv-anat">
+            <li><b>Severity is a word in the header</b>, beside the app name, where iOS and Android both leave room. It is not in the title, because the title has one job.</li>
+            <li><b>The title is an instruction or a fact, never a teaser.</b> "Tornado warning until 11:45 pm" is complete on its own. "Important weather update" is not a notification, it is an ad for one.</li>
+            <li><b>The body names the source in its last clause</b> so a person deciding whether to believe it can, without unlocking.</li>
+            <li><b>No emoji, no siren glyph, no all caps.</b> The escalation is carried by the words and by the fact that it arrived at all.</li>
+            <li><b>Only emergency requests the critical channel</b> that breaks silent mode. That request is made once, at setup, and never for anything else.</li>
+          </ul>
+        </div>
+        <div class="cv-side-cap cv-side-cap-2">Informational never pushes</div>
+        <div class="cv-noship">
+          <svg class="i-sm" aria-hidden="true"><use href="#i-bell-off"/></svg>
+          <div>
+            <b>There is no informational push specimen because there is no informational push.</b>
+            Leaf pickup, agendas, and rate schedules appear in the app and in the weekly digest. The ladder has four rungs and only three of them are allowed to reach the lock screen, which is the single most load-bearing decision in this section.
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ────────────────────────────────────────────────────────────────────
+       11. Elections
+       ──────────────────────────────────────────────────────────────── -->
+
+  <div class="spec">
+    <div class="spec-label">The ballot module <em>neutrality is a layout problem: identical rows, alphabetical order, no photographs, no summaries of anyone</em></div>
+    <div class="plate">
+      <div class="cv-ballot">
+        <div class="cv-ballot-head">
+          <div>
+            <div class="cv-eyebrow">Election</div>
+            <h3 class="cv-ballot-t">Tuesday 3 November 2026, general election</h3>
+            <div class="cv-ballot-sub">Polls open 7:30 am to 7:30 pm <i>·</i> 27 days away</div>
+          </div>
+          <a class="cv-btn" href="#civic"><svg class="i-sm" aria-hidden="true"><use href="#i-external"/></svg> Check your registration</a>
+        </div>
+
+        <div class="cv-ballot-grid">
+          <div class="cv-ballot-col">
+            <div class="cv-eyebrow">On your ballot in Russellville</div>
+            <div class="cv-race">
+              <div class="cv-race-t">Mayor, City of Russellville</div>
+              <div class="cv-race-n">Vote for one</div>
+              <div class="cv-cands">
+                <div class="cv-cand"><span class="cv-cand-n">Hollis Barnett</span><a class="cv-cand-l" href="#civic">Filing <svg class="i-sm" aria-hidden="true"><use href="#i-external"/></svg></a></div>
+                <div class="cv-cand"><span class="cv-cand-n">Renee Castleberry</span><a class="cv-cand-l" href="#civic">Filing <svg class="i-sm" aria-hidden="true"><use href="#i-external"/></svg></a></div>
+                <div class="cv-cand"><span class="cv-cand-n">Marcus Ogle</span><a class="cv-cand-l" href="#civic">Filing <svg class="i-sm" aria-hidden="true"><use href="#i-external"/></svg></a></div>
+              </div>
+              <div class="cv-race-f">Listed alphabetically by surname. Municipal offices in Arkansas are nonpartisan, so no party appears.</div>
+            </div>
+            <div class="cv-race">
+              <div class="cv-race-t">City Council, Ward 2, Position 1</div>
+              <div class="cv-race-n">Vote for one</div>
+              <div class="cv-cands">
+                <div class="cv-cand"><span class="cv-cand-n">Ray Ferguson</span><span class="cv-cand-i">incumbent</span><a class="cv-cand-l" href="#civic">Filing <svg class="i-sm" aria-hidden="true"><use href="#i-external"/></svg></a></div>
+                <div class="cv-cand"><span class="cv-cand-n">Priya Raghavan</span><a class="cv-cand-l" href="#civic">Filing <svg class="i-sm" aria-hidden="true"><use href="#i-external"/></svg></a></div>
+              </div>
+              <div class="cv-race-f">"Incumbent" is a fact from the county filing record, printed in the same weight as everything else.</div>
+            </div>
+            <div class="cv-race">
+              <div class="cv-race-t">Pope County, Question 1</div>
+              <div class="cv-race-n">For or against</div>
+              <div class="cv-measure">
+                <div class="cv-measure-q">A one-eighth cent sales tax for eight years to fund construction and equipping of a county detention facility.</div>
+                <div class="cv-measure-f">This is the ballot title exactly as certified. We do not paraphrase a ballot question, ever.</div>
+                <a class="cv-ghost" href="#civic">Full text as certified <svg class="i-sm" aria-hidden="true"><use href="#i-external"/></svg></a>
+              </div>
+            </div>
+          </div>
+
+          <div class="cv-ballot-col">
+            <div class="cv-eyebrow">Where and when</div>
+            <div class="cv-vote-info">
+              <div class="cv-vi-row"><span class="cv-vi-k">Early voting</span><span class="cv-vi-v">19 Oct to 2 Nov, Pope County Courthouse annex, weekdays 8 to 6</span></div>
+              <div class="cv-vi-row"><span class="cv-vi-k">Election day</span><span class="cv-vi-v">Your assigned polling place. Look it up on the state's site, we do not guess it from your device.</span></div>
+              <div class="cv-vi-row"><span class="cv-vi-k">What to bring</span><span class="cv-vi-v">A photo ID. The county lists which ones count.</span></div>
+              <div class="cv-vi-row"><span class="cv-vi-k">Absentee</span><span class="cv-vi-v">Application due to the county clerk by 27 Oct</span></div>
+            </div>
+            <div class="cv-official">
+              <div class="cv-eyebrow">The official sources</div>
+              <a class="cv-att" href="#civic"><svg class="i-sm" aria-hidden="true"><use href="#i-external"/></svg> Arkansas Secretary of State, voter view</a>
+              <a class="cv-att" href="#civic"><svg class="i-sm" aria-hidden="true"><use href="#i-external"/></svg> Pope County Clerk, sample ballots</a>
+              <a class="cv-att" href="#civic"><svg class="i-sm" aria-hidden="true"><use href="#i-external"/></svg> Pope County Election Commission, polling places</a>
+            </div>
+            <div class="cv-neutral">
+              <svg class="i-sm" aria-hidden="true"><use href="#i-scale"/></svg>
+              <div>
+                <b>What this module will never do.</b>
+                <ul>
+                  <li>Rank, score, endorse, or recommend a candidate or a position.</li>
+                  <li>Summarise what a candidate believes, or publish a photograph.</li>
+                  <li>Reorder the list for any reason other than the alphabet.</li>
+                  <li>Show turnout, polling, or fundraising totals during the race.</li>
+                  <li>Accept a paid placement of any kind, in this module or beside it.</li>
+                </ul>
+                <span>Every name links out to the county's own filing record. If a resident wants to know more, we send them to the source rather than becoming one.</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="cv-prov cv-prov-block">
+          <svg class="i-sm" aria-hidden="true"><use href="#i-history"/></svg>
+          Pope County Clerk, certified candidate list <i>·</i> Arkansas Secretary of State, election calendar <i>·</i> fetched 6 Oct 6:10 am
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <p class="why">Neutrality has to be built out of layout, not promised in a policy page nobody reads. <b>Every candidate gets the same row, the same weight, the same one link, and the alphabet decides the order</b> – there is no editorial surface left to be biased with. No photographs, because a photograph is a persuasive object and we cannot source eight of them evenly. No summaries of a candidate's positions, because writing six of those fairly is beyond what a town platform can defend, and writing five of them fairly while getting one wrong is worse than writing none. Ballot questions are printed as certified, word for word, since <b>a paraphrase of a ballot title is an argument about it.</b> The list of things this module will never do is on the screen and not in a policy document, because in a town of 29,000 the person who thinks we tilted it is going to be standing in front of us at the farmers market.</p>
+
+  <!-- ────────────────────────────────────────────────────────────────────
+       12. Provenance
+       ──────────────────────────────────────────────────────────────── -->
+
+  <div class="spec">
+    <div class="spec-label">Provenance <em>the smallest line on the screen and the reason any of the rest can be believed</em></div>
+    <div class="spec-row">
+      <div class="cv-side">
+        <div class="cv-side-cap">The footer, four freshness states</div>
+        <div class="cv-prov-set">
+          <div class="cv-prov-case">
+            <div class="cv-prov-cap">Fresh, the normal case</div>
+            <div class="cv-prov">
+              <svg class="i-sm" aria-hidden="true"><use href="#i-history"/></svg>
+              City of Russellville, agenda packet PDF <i>·</i> published 29 May 4:41 pm <i>·</i> fetched 11 minutes ago
+            </div>
+          </div>
+          <div class="cv-prov-case">
+            <div class="cv-prov-cap">Live, checked constantly</div>
+            <div class="cv-prov">
+              <svg class="i-sm" aria-hidden="true"><use href="#i-refresh"/></svg>
+              NWS Little Rock, active alerts feed <i>·</i> checked every 60 seconds <i>·</i> last 40 seconds ago
+            </div>
+          </div>
+          <div class="cv-prov-case">
+            <div class="cv-prov-cap">Stale – the source has gone quiet, which is not an alarm</div>
+            <div class="cv-prov" data-stale>
+              <svg class="i-sm" aria-hidden="true"><use href="#i-clock"/></svg>
+              Russellville School District, board page <i>·</i> nothing new since 18 April, 47 days <i>·</i> we are still checking every morning
+            </div>
+          </div>
+          <div class="cv-prov-case">
+            <div class="cv-prov-cap">Broken – we cannot reach it at all</div>
+            <div class="cv-prov" data-broken>
+              <svg class="i-sm" aria-hidden="true"><use href="#i-alert-circle"/></svg>
+              Pope County meeting calendar <i>·</i> last good fetch 2 June 6:10 am <i>·</i> failing since yesterday, showing what we had
+              <a class="cv-prov-link" href="#civic">The county's page</a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="cv-side">
+        <div class="cv-side-cap">Stale, escalated into the card it belongs to</div>
+        <div class="cv-stale-card">
+          <div class="cv-stale-h">
+            <svg class="i-sm" aria-hidden="true"><use href="#i-clock"/></svg>
+            <span>The school board page has not changed in 47 days</span>
+          </div>
+          <p>The district posts agendas on its own site and it has been quiet since 18 April. That usually means no meetings were called, but we cannot tell the difference between "nothing happened" and "nobody posted it".</p>
+          <div class="cv-stale-actions">
+            <a class="cv-ghost" href="#civic">Open the district's page</a>
+            <a class="cv-ghost" href="#civic">Tell us if we are missing something</a>
+          </div>
+        </div>
+        <p class="cv-side-note">Stale is set in ink, not gold and never brick. A source going quiet is a fact about the source, and dressing it as a warning would spend the alert registers on our own plumbing. The escalated card only appears on the body's own page, never in the feed.</p>
+
+        <div class="cv-side-cap cv-side-cap-2">Attached to a real item</div>
+        <div class="cv-list cv-list-plate">
+          <div class="cv-meet" data-state="done">
+            <span class="cv-meet-date"><b>19</b><span>May</span></span>
+            <span class="cv-meet-body">
+              <span class="cv-meet-body-t">City Council, regular meeting</span>
+              <span class="cv-meet-body-d">11 items <i>·</i> 4 votes taken</span>
+              <span class="cv-prov"><svg class="i-sm" aria-hidden="true"><use href="#i-history"/></svg> City Clerk, approved minutes <i>·</i> fetched 3 Jun 6:10 am</span>
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <p class="why">Every civic item carries where it came from and when we got it, because <b>the whole product is a claim about someone else's document.</b> The line is deliberately the quietest thing in the card: it is there for the one reader in fifty who wants it, and for the argument in the comments that it settles in four words. Freshness is stated as an interval a person can feel ("11 minutes ago", "47 days") rather than a timestamp they have to do arithmetic on. And staleness is never styled as an alert. <b>The city's website not updating is our problem to disclose, not the resident's problem to worry about</b> – so it is grey, it says what we are still doing about it, and it links out so anyone can check us.</p>
+</section>

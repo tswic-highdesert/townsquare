@@ -1,0 +1,1840 @@
+/*
+ * 01 — Foundations and primitives.
+ *
+ * Everything here is `var(--ts-*)` or a `color-mix()` derived from one. A hex
+ * literal in this file would be a colour that cannot follow a town reskin, and
+ * the swatches on this page are the one place that failure would be invisible.
+ */
+
+/* ── colour swatches ────────────────────────────────────────────────────── */
+
+.fd-swatches {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+  gap: var(--ts-space-4);
+  margin-bottom: var(--ts-space-4);
+}
+
+.fd-sw {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: baseline;
+  gap: 2px var(--ts-space-2);
+  padding: var(--ts-space-3);
+  background: var(--ts-surface);
+  border: 1px solid var(--ts-hairline);
+  border-radius: var(--ts-radius-card);
+}
+
+/*
+ * The chip sits on a checker so an alpha token reads as translucent rather than
+ * as a slightly different flat grey. Cream is the ground because that is what
+ * these actually sit on in the product.
+ */
+.fd-sw-chip {
+  grid-column: 1 / -1;
+  height: 56px;
+  border-radius: var(--ts-radius-input);
+  border: 1px solid var(--ts-hairline);
+  margin-bottom: var(--ts-space-2);
+  background-color: var(--fd-c);
+  background-image: linear-gradient(var(--fd-c), var(--fd-c)),
+    linear-gradient(45deg, var(--ts-stone) 25%, transparent 25%, transparent 75%, var(--ts-stone) 75%),
+    linear-gradient(45deg, var(--ts-stone) 25%, var(--ts-cream) 25%, var(--ts-cream) 75%, var(--ts-stone) 75%);
+  background-size: auto, 12px 12px, 12px 12px;
+  background-position: 0 0, 0 0, 6px 6px;
+}
+
+.fd-sw code,
+.fd-ramp-row code,
+.fd-scale-row code,
+.fd-space-row code,
+.fd-elev-card code,
+.fd-radius-demo code,
+.fd-av-demo code,
+.fd-table-note code,
+.why code,
+.fd-contrast code {
+  font-family: var(--ts-font-mono);
+  font-size: 11px;
+  color: var(--ts-ink);
+  white-space: nowrap;
+}
+
+.fd-sw-val {
+  font-family: var(--ts-font-mono);
+  font-size: 10.5px;
+  color: var(--ts-ink45);
+  text-align: right;
+}
+
+.fd-sw-job {
+  grid-column: 1 / -1;
+  font-family: var(--ts-font-sans);
+  font-size: 12.5px;
+  line-height: 1.35;
+  color: var(--ts-ink60);
+}
+
+.fd-sw-alarm {
+  border-color: color-mix(in srgb, var(--ts-brick) 40%, transparent);
+}
+
+/* ── the ink ramp ───────────────────────────────────────────────────────── */
+
+.fd-ramp {
+  background: var(--ts-cream);
+  border: 1px solid var(--ts-hairline);
+  border-radius: var(--ts-radius-card);
+  padding: var(--ts-space-4);
+}
+
+.fd-ramp-row {
+  display: grid;
+  grid-template-columns: 120px 130px 44px 1fr;
+  align-items: center;
+  gap: var(--ts-space-3);
+  padding: var(--ts-space-2) 0;
+}
+
+.fd-ramp-row + .fd-ramp-row {
+  border-top: 1px solid var(--ts-ink08);
+}
+
+/* Full-bleed bars over one ground, so the steps read as a ramp end to end. */
+.fd-ramp-bar {
+  height: 30px;
+  border-radius: 6px;
+  background: var(--fd-c);
+}
+
+/* ── on-dark sample ─────────────────────────────────────────────────────── */
+
+.fd-ondark {
+  margin-top: var(--ts-space-4);
+}
+
+.fd-ondark-row {
+  display: flex;
+  align-items: center;
+  gap: var(--ts-space-4);
+  padding: var(--ts-space-2) 0;
+}
+
+.fd-ondark-a {
+  color: var(--ts-cream);
+  font-size: var(--ts-text-label);
+}
+
+.fd-ondark-b {
+  color: var(--ts-cream-muted);
+  font-size: var(--ts-text-label);
+}
+
+.fd-ondark-rule {
+  flex: 1;
+  max-width: 260px;
+  height: 1px;
+  background: var(--ts-cream14);
+}
+
+.fd-ondark-code {
+  margin-left: auto;
+  font-family: var(--ts-font-mono);
+  font-size: 11px;
+  color: var(--ts-cream-muted);
+}
+
+/* ── contrast table ─────────────────────────────────────────────────────── */
+
+.fd-contrast {
+  width: 100%;
+  border-collapse: collapse;
+  background: var(--ts-surface);
+  border: 1px solid var(--ts-hairline);
+  border-radius: var(--ts-radius-card);
+  overflow: hidden;
+  font-size: 13.5px;
+}
+
+.fd-contrast th {
+  font-family: var(--ts-font-mono);
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--ts-ink45);
+  text-align: left;
+  padding: var(--ts-space-3) var(--ts-space-3);
+  border-bottom: 1px solid var(--ts-ink13);
+}
+
+.fd-contrast td {
+  padding: var(--ts-space-2) var(--ts-space-3);
+  border-bottom: 1px solid var(--ts-ink08);
+  vertical-align: middle;
+}
+
+.fd-contrast tr:last-child td {
+  border-bottom: 0;
+}
+
+.fd-num {
+  font-family: var(--ts-font-mono);
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+/* The sample is set at body size on the real ground, not a tinted approximation. */
+.fd-cs {
+  display: inline-block;
+  padding: 4px var(--ts-space-2);
+  border-radius: 6px;
+  font-family: var(--ts-font-serif);
+  font-size: var(--ts-text-body);
+  white-space: nowrap;
+}
+
+.fd-cs[data-p='ink-cream'] {
+  background: var(--ts-cream);
+  color: var(--ts-ink);
+}
+.fd-cs[data-p='ink60-cream'] {
+  background: var(--ts-cream);
+  color: var(--ts-ink60);
+}
+.fd-cs[data-p='ink45-cream'] {
+  background: var(--ts-cream);
+  color: var(--ts-ink45);
+}
+.fd-cs[data-p='cream-navy'] {
+  background: var(--ts-navy);
+  color: var(--ts-cream);
+}
+.fd-cs[data-p='creammuted-navydark'] {
+  background: var(--ts-navy-dark);
+  color: var(--ts-cream-muted);
+}
+.fd-cs[data-p='terr-cream'] {
+  background: var(--ts-cream);
+  color: var(--ts-terracotta);
+}
+.fd-cs[data-p='terr-surface'] {
+  background: var(--ts-surface);
+  border: 1px solid var(--ts-ink08);
+  color: var(--ts-terracotta);
+}
+.fd-cs[data-p='sage-cream'] {
+  background: var(--ts-cream);
+  color: var(--ts-sage);
+}
+.fd-cs[data-p='goldtext-gold14'] {
+  background: var(--ts-gold14);
+  color: var(--ts-gold-text);
+}
+.fd-cs[data-p='cream-brick'] {
+  background: var(--ts-brick);
+  color: var(--ts-cream);
+}
+
+.fd-verdict {
+  display: inline-block;
+  padding: 2px var(--ts-space-2);
+  border-radius: var(--ts-radius-chip);
+  font-family: var(--ts-font-sans);
+  font-size: 11.5px;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.fd-verdict[data-v='aaa'] {
+  background: var(--ts-sage14);
+  color: var(--ts-sage);
+}
+
+.fd-verdict[data-v='aa'] {
+  background: var(--ts-ink08);
+  color: var(--ts-ink60);
+}
+
+/*
+ * A failure is stated, not softened. Outlined rather than filled because a solid
+ * red row would read as an incident and these are known, documented limits.
+ */
+.fd-verdict[data-v='fail'] {
+  background: transparent;
+  border: 1px solid color-mix(in srgb, var(--ts-terracotta) 55%, transparent);
+  color: var(--ts-terracotta-hover);
+}
+
+.fd-table-note {
+  max-width: 76ch;
+  margin: var(--ts-space-4) 0 0;
+  font-size: 13.5px;
+  line-height: 1.55;
+  color: var(--ts-ink60);
+}
+
+.fd-table-note b {
+  color: var(--ts-ink);
+  font-weight: 500;
+}
+
+/* ── type ───────────────────────────────────────────────────────────────── */
+
+.fd-serif {
+  font-family: var(--ts-font-serif);
+}
+.fd-sans {
+  font-family: var(--ts-font-sans);
+}
+.fd-mono {
+  font-family: var(--ts-font-mono);
+}
+
+.fd-voice {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ts-space-3);
+}
+
+.fd-voice-tag {
+  font-family: var(--ts-font-mono);
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ts-terracotta);
+}
+
+.fd-voice-sample {
+  font-size: var(--ts-text-card-title);
+  line-height: 1.25;
+  color: var(--ts-ink);
+}
+
+.fd-voice-sample.fd-mono {
+  font-size: 13px;
+  letter-spacing: 0.06em;
+  line-height: 1.45;
+}
+
+.fd-voice-small {
+  font-size: 13.5px;
+  color: var(--ts-ink60);
+}
+
+.fd-voice-sample.fd-mono.fd-voice-small {
+  font-size: 10.5px;
+  letter-spacing: 0.12em;
+}
+
+.fd-voice-note {
+  margin: auto 0 0;
+  padding-top: var(--ts-space-3);
+  border-top: 1px solid var(--ts-ink13);
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--ts-ink60);
+}
+
+.fd-voice-note em {
+  font-style: italic;
+  color: var(--ts-ink);
+}
+
+.fd-scale {
+  background: var(--ts-surface);
+  border: 1px solid var(--ts-hairline);
+  border-radius: var(--ts-radius-card);
+  padding: var(--ts-space-4) var(--ts-space-5);
+}
+
+.fd-scale-row {
+  display: grid;
+  grid-template-columns: 150px 48px minmax(0, 1fr) 210px;
+  align-items: baseline;
+  gap: var(--ts-space-4);
+  padding: var(--ts-space-3) 0;
+}
+
+.fd-scale-row + .fd-scale-row {
+  border-top: 1px solid var(--ts-ink08);
+}
+
+.fd-scale-px {
+  font-family: var(--ts-font-mono);
+  font-size: 10.5px;
+  color: var(--ts-ink45);
+}
+
+.fd-scale-line {
+  font-size: var(--fd-s);
+  line-height: 1.2;
+  color: var(--ts-ink);
+}
+
+.fd-scale-line.fd-mono {
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ts-ink45);
+}
+
+.fd-scale-job {
+  font-size: 12.5px;
+  color: var(--ts-ink60);
+}
+
+@media (max-width: 760px) {
+  .fd-scale-row {
+    grid-template-columns: 1fr;
+    gap: var(--ts-space-1);
+  }
+  .fd-ramp-row {
+    grid-template-columns: 90px 1fr;
+  }
+}
+
+/* ── measure ────────────────────────────────────────────────────────────── */
+
+.fd-measure {
+  position: relative;
+  padding: var(--ts-space-6);
+  background: var(--ts-cream);
+  border: 1px solid var(--ts-hairline);
+  border-radius: var(--ts-radius-card);
+}
+
+/*
+ * 66ch, not 80. Newsreader's lowercase is wide for its point size, so the same
+ * character count runs physically longer than it would in DM Sans.
+ */
+.fd-prose {
+  max-width: 66ch;
+  margin: 0 0 var(--ts-space-4);
+  font-family: var(--ts-font-serif);
+  font-size: var(--ts-text-body);
+  line-height: 1.6;
+  color: var(--ts-ink);
+}
+
+.fd-prose:last-of-type {
+  margin-bottom: 0;
+}
+
+.fd-measure-rule {
+  position: relative;
+  max-width: 66ch;
+  margin-top: var(--ts-space-5);
+  border-top: 1px dashed var(--ts-terracotta);
+}
+
+.fd-measure-rule span {
+  position: absolute;
+  top: -8px;
+  right: 0;
+  padding-left: var(--ts-space-2);
+  background: var(--ts-cream);
+  font-family: var(--ts-font-mono);
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  color: var(--ts-terracotta);
+}
+
+/* ── spacing ────────────────────────────────────────────────────────────── */
+
+.fd-space {
+  background: var(--ts-surface);
+  border: 1px solid var(--ts-hairline);
+  border-radius: var(--ts-radius-card);
+  padding: var(--ts-space-4) var(--ts-space-5);
+}
+
+.fd-space-row {
+  display: grid;
+  grid-template-columns: 130px 68px 28px 1fr;
+  align-items: center;
+  gap: var(--ts-space-3);
+  padding: 5px 0;
+}
+
+.fd-space-bar {
+  display: block;
+  width: var(--fd-w);
+  height: 18px;
+  border-radius: 3px;
+  background: var(--ts-terracotta);
+}
+
+.fd-space-px {
+  font-family: var(--ts-font-mono);
+  font-size: 10.5px;
+  color: var(--ts-ink45);
+  text-align: right;
+}
+
+/* ── radius ─────────────────────────────────────────────────────────────── */
+
+.fd-radii {
+  align-items: flex-end;
+}
+
+.fd-radius-demo {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ts-space-1);
+  max-width: 240px;
+}
+
+.fd-radius-demo code {
+  margin-top: var(--ts-space-2);
+}
+
+.fd-radius-shape {
+  border-radius: var(--fd-r);
+  background: var(--ts-surface);
+  border: 1px solid var(--ts-hairline);
+  display: flex;
+  align-items: center;
+  padding: 0 var(--ts-space-3);
+  height: 44px;
+  color: var(--ts-ink45);
+  font-size: var(--ts-text-label);
+}
+
+.fd-radius-inner {
+  color: var(--ts-ink45);
+}
+
+.fd-radius-btn {
+  background: var(--ts-terracotta);
+  border-color: transparent;
+  color: var(--ts-surface);
+  font-family: var(--ts-font-sans);
+  font-weight: 500;
+  justify-content: center;
+}
+
+.fd-radius-chip {
+  height: 32px;
+  background: var(--ts-navy10);
+  border-color: transparent;
+  color: var(--ts-navy);
+  font-family: var(--ts-font-sans);
+  font-size: 13px;
+  align-self: flex-start;
+}
+
+.fd-radius-card,
+.fd-radius-sheet {
+  height: auto;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  gap: 2px;
+  padding: var(--ts-space-4);
+  width: 240px;
+}
+
+.fd-radius-sheet {
+  background: var(--ts-surface);
+  box-shadow: var(--ts-shadow-overlay);
+  border-color: transparent;
+  align-items: center;
+  padding-top: var(--ts-space-3);
+}
+
+.fd-sheet-grab {
+  width: 36px;
+  height: 4px;
+  border-radius: var(--ts-radius-full);
+  background: var(--ts-ink13);
+  margin-bottom: var(--ts-space-3);
+}
+
+.fd-radius-cardtitle {
+  font-size: var(--ts-text-card-title);
+  font-weight: 600;
+  color: var(--ts-ink);
+  line-height: 1.2;
+}
+
+.fd-radius-cardmeta {
+  font-size: 13px;
+  color: var(--ts-ink60);
+}
+
+/* ── elevation ──────────────────────────────────────────────────────────── */
+
+.fd-elev {
+  align-items: stretch;
+}
+
+.fd-elev-card {
+  width: 216px;
+  padding: var(--ts-space-4);
+  background: var(--ts-surface);
+  border: 1px solid var(--ts-hairline);
+  border-radius: var(--ts-radius-card);
+  box-shadow: var(--fd-sh);
+}
+
+.fd-elev-card p {
+  margin: var(--ts-space-2) 0 0;
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--ts-ink60);
+}
+
+.fd-elev-navy {
+  background: var(--ts-navy);
+  border-color: transparent;
+}
+
+.fd-elev-navy code {
+  color: var(--ts-cream);
+}
+
+.fd-elev-navy p {
+  color: var(--ts-cream-muted);
+}
+
+/* ── buttons ────────────────────────────────────────────────────────────────
+ *
+ * One base, four intents, three sizes. Every state is expressed twice: as a
+ * live pseudo-class and as a `[data-state]` attribute, so the specimen sheet can
+ * show the whole matrix at once without a screenshot going stale.
+ */
+
+.fd-btn {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--ts-space-2);
+  font-family: var(--ts-font-sans);
+  font-weight: 500;
+  line-height: 1;
+  white-space: nowrap;
+  border: 1px solid transparent;
+  border-radius: var(--ts-radius-button);
+  cursor: pointer;
+  text-decoration: none;
+  transition: background-color var(--ts-dur-1) var(--ts-ease),
+    border-color var(--ts-dur-1) var(--ts-ease),
+    color var(--ts-dur-1) var(--ts-ease),
+    box-shadow var(--ts-dur-2) var(--ts-ease),
+    transform var(--ts-dur-1) var(--ts-ease);
+}
+
+/*
+ * A 34px button is the right visual weight in a dense row and the wrong touch
+ * target everywhere. The pseudo-element pads the hit area out to 44px without
+ * touching the layout.
+ */
+.fd-btn::after {
+  content: '';
+  position: absolute;
+  inset: 50% 0 auto;
+  transform: translateY(-50%);
+  height: max(100%, 44px);
+}
+
+.fd-btn[data-size='sm'] {
+  height: 34px;
+  padding: 0 var(--ts-space-3);
+  font-size: 13.5px;
+}
+
+.fd-btn[data-size='md'] {
+  height: 40px;
+  padding: 0 var(--ts-space-4);
+  font-size: 14.5px;
+}
+
+.fd-btn[data-size='lg'] {
+  height: 48px;
+  padding: 0 var(--ts-space-5);
+  font-size: var(--ts-text-label);
+}
+
+.fd-btn[data-icon-only] {
+  padding: 0;
+  width: 40px;
+}
+
+.fd-btn[data-icon-only][data-size='sm'] {
+  width: 34px;
+}
+
+.fd-btn[data-icon-only][data-size='lg'] {
+  width: 48px;
+}
+
+.fd-btn[data-full] {
+  display: flex;
+  width: 100%;
+}
+
+/* primary */
+.fd-btn[data-variant='primary'] {
+  background: var(--ts-terracotta);
+  color: var(--ts-surface);
+  box-shadow: var(--ts-shadow-flat);
+}
+
+.fd-btn[data-variant='primary']:hover,
+.fd-btn[data-variant='primary'][data-state='hover'] {
+  background: var(--ts-terracotta-hover);
+}
+
+.fd-btn[data-variant='primary']:active,
+.fd-btn[data-variant='primary'][data-state='active'] {
+  background: var(--ts-terracotta-hover);
+  box-shadow: none;
+  transform: translateY(1px);
+}
+
+/* secondary */
+.fd-btn[data-variant='secondary'] {
+  background: var(--ts-surface);
+  border-color: var(--ts-ink13);
+  color: var(--ts-ink);
+  box-shadow: var(--ts-shadow-flat);
+}
+
+.fd-btn[data-variant='secondary']:hover,
+.fd-btn[data-variant='secondary'][data-state='hover'] {
+  border-color: var(--ts-ink26);
+  background: color-mix(in srgb, var(--ts-cream) 60%, var(--ts-surface));
+}
+
+.fd-btn[data-variant='secondary']:active,
+.fd-btn[data-variant='secondary'][data-state='active'] {
+  background: var(--ts-cream);
+  border-color: var(--ts-ink26);
+  box-shadow: none;
+  transform: translateY(1px);
+}
+
+/* quiet */
+.fd-btn[data-variant='quiet'] {
+  background: transparent;
+  color: var(--ts-ink60);
+}
+
+.fd-btn[data-variant='quiet']:hover,
+.fd-btn[data-variant='quiet'][data-state='hover'] {
+  background: var(--ts-ink08);
+  color: var(--ts-ink);
+}
+
+.fd-btn[data-variant='quiet']:active,
+.fd-btn[data-variant='quiet'][data-state='active'] {
+  background: var(--ts-ink13);
+  color: var(--ts-ink);
+  transform: translateY(1px);
+}
+
+/*
+ * Destructive is terracotta wearing an outline, never brick. Shape carries the
+ * warning so the alarm register stays unspent. See the rationale on the sheet.
+ */
+.fd-btn[data-variant='destructive'] {
+  background: transparent;
+  border-color: var(--ts-terracotta);
+  color: var(--ts-terracotta-hover);
+}
+
+.fd-btn[data-variant='destructive']:hover,
+.fd-btn[data-variant='destructive'][data-state='hover'] {
+  background: var(--ts-terracotta10);
+  border-color: var(--ts-terracotta-hover);
+}
+
+.fd-btn[data-variant='destructive']:active,
+.fd-btn[data-variant='destructive'][data-state='active'] {
+  background: var(--ts-terracotta14);
+  border-color: var(--ts-terracotta-hover);
+  transform: translateY(1px);
+}
+
+/* the same secondary button, sitting on navy */
+.fd-btn[data-variant='on-navy'] {
+  background: var(--ts-cream14);
+  border-color: color-mix(in srgb, var(--ts-cream) 32%, transparent);
+  color: var(--ts-cream);
+}
+
+.fd-btn[data-variant='on-navy']:hover,
+.fd-btn[data-variant='on-navy'][data-state='hover'] {
+  background: color-mix(in srgb, var(--ts-cream) 24%, transparent);
+}
+
+/* focus, everywhere. Ring only on keyboard focus, never after a mouse press. */
+.fd-btn:focus-visible,
+.fd-btn[data-state='focus'],
+.fd-chip[data-state='focus'],
+.fd-tag[data-state='focus'],
+.fd-link-standalone[data-state='focus'] {
+  outline: none;
+  box-shadow: var(--ts-focus);
+}
+
+/* On navy the halo has to be the card colour, or the ring floats. */
+.fd-focus-plate[data-bg='navy'] .fd-btn[data-state='focus'],
+.fd-focus-plate[data-bg='navy'] .fd-btn:focus-visible {
+  box-shadow: 0 0 0 2px var(--ts-navy), 0 0 0 4px var(--ts-terracotta);
+}
+
+.fd-focus-plate[data-bg='surface'] .fd-btn[data-state='focus'],
+.fd-focus-plate[data-bg='surface'] .fd-btn:focus-visible {
+  box-shadow: 0 0 0 2px var(--ts-surface), 0 0 0 4px var(--ts-terracotta);
+}
+
+/* disabled last, so it beats every hover rule above it */
+.fd-btn:disabled,
+.fd-btn[data-state='disabled'] {
+  background: var(--ts-ink08);
+  border-color: transparent;
+  color: var(--ts-ink26);
+  box-shadow: none;
+  transform: none;
+  cursor: not-allowed;
+}
+
+/* Loading is a disabled button that is still telling you something. */
+.fd-btn[data-loading]:disabled {
+  background: color-mix(in srgb, var(--ts-terracotta) 45%, transparent);
+  color: var(--ts-surface);
+  cursor: progress;
+}
+
+.fd-btn[data-variant='secondary'][data-loading]:disabled,
+.fd-btn[data-variant='quiet'][data-loading]:disabled {
+  background: var(--ts-ink08);
+  color: var(--ts-ink60);
+}
+
+.fd-btn[data-variant='destructive'][data-loading]:disabled {
+  background: var(--ts-terracotta10);
+  border-color: var(--ts-ink26);
+  color: var(--ts-ink60);
+}
+
+.fd-btn-matrix,
+.fd-state-grid {
+  display: grid;
+  gap: var(--ts-space-3) var(--ts-space-4);
+  align-items: center;
+  overflow-x: auto;
+}
+
+.fd-btn-matrix {
+  grid-template-columns: 96px repeat(3, minmax(140px, max-content));
+}
+
+.fd-state-grid {
+  grid-template-columns: 96px repeat(6, minmax(112px, max-content));
+}
+
+.fd-matrix-head {
+  font-family: var(--ts-font-mono);
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--ts-ink45);
+  padding-bottom: var(--ts-space-1);
+}
+
+.fd-matrix-row-label {
+  font-family: var(--ts-font-sans);
+  font-size: 12.5px;
+  font-weight: 500;
+  color: var(--ts-ink60);
+}
+
+.fd-btn-row {
+  align-items: center;
+}
+
+.fd-fullwidth-demo {
+  max-width: 360px;
+  margin-top: var(--ts-space-5);
+  display: flex;
+  flex-direction: column;
+  gap: var(--ts-space-2);
+}
+
+/* ── chips, pills, tags ─────────────────────────────────────────────────── */
+
+.fd-chip-row {
+  align-items: center;
+  gap: var(--ts-space-2);
+}
+
+.fd-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--ts-space-2);
+  height: 34px;
+  padding: 0 var(--ts-space-3);
+  background: var(--ts-surface);
+  border: 1px solid var(--ts-ink13);
+  border-radius: var(--ts-radius-chip);
+  font-family: var(--ts-font-sans);
+  font-size: 13.5px;
+  color: var(--ts-ink);
+  cursor: pointer;
+  transition: background-color var(--ts-dur-1) var(--ts-ease),
+    border-color var(--ts-dur-1) var(--ts-ease), color var(--ts-dur-1) var(--ts-ease);
+}
+
+.fd-chip:hover:not(:disabled) {
+  border-color: var(--ts-ink26);
+}
+
+/*
+ * Selection is navy, not terracotta: terracotta means "this does something", and
+ * a filter chip has already done it.
+ */
+.fd-chip[aria-pressed='true'] {
+  background: var(--ts-navy);
+  border-color: var(--ts-navy);
+  color: var(--ts-cream);
+}
+
+.fd-chip-count {
+  font-family: var(--ts-font-mono);
+  font-size: 10.5px;
+  color: var(--ts-ink45);
+  font-variant-numeric: tabular-nums;
+}
+
+.fd-chip[aria-pressed='true'] .fd-chip-count {
+  color: var(--ts-cream-muted);
+}
+
+/* A zero-result filter is disabled rather than hidden, so the count stays honest. */
+.fd-chip:disabled {
+  background: transparent;
+  border-color: var(--ts-ink08);
+  color: var(--ts-ink26);
+  cursor: not-allowed;
+}
+
+.fd-chip:disabled .fd-chip-count {
+  color: var(--ts-ink26);
+}
+
+.fd-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 3px var(--ts-space-2) 3px 6px;
+  border-radius: var(--ts-radius-chip);
+  font-family: var(--ts-font-sans);
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 1.5;
+}
+
+.fd-pill[data-tone='sage'] {
+  background: var(--ts-sage14);
+  color: var(--ts-sage);
+}
+
+.fd-pill[data-tone='gold'] {
+  background: var(--ts-gold14);
+  color: var(--ts-gold-text);
+}
+
+.fd-pill[data-tone='live'] {
+  background: var(--ts-terracotta14);
+  color: var(--ts-terracotta-hover);
+}
+
+.fd-pill[data-tone='quiet'] {
+  background: var(--ts-ink08);
+  color: var(--ts-ink60);
+}
+
+.fd-pill[data-tone='pending'] {
+  background: var(--ts-stone);
+  color: var(--ts-ink60);
+}
+
+/* The alarm. Filled, because an emergency does not whisper. */
+.fd-pill[data-tone='brick'] {
+  background: var(--ts-brick);
+  color: var(--ts-cream);
+}
+
+.fd-live-dot {
+  width: 7px;
+  height: 7px;
+  margin: 0 2px;
+  border-radius: var(--ts-radius-full);
+  background: var(--ts-terracotta);
+  animation: fd-pulse 2s var(--ts-ease) infinite;
+}
+
+@keyframes fd-pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.35;
+  }
+}
+
+.fd-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  height: 30px;
+  padding: 0 4px 0 var(--ts-space-3);
+  background: var(--ts-navy10);
+  border-radius: var(--ts-radius-chip);
+  font-family: var(--ts-font-sans);
+  font-size: 13px;
+  color: var(--ts-navy);
+}
+
+.fd-tag[data-state='hover'],
+.fd-tag:hover {
+  background: color-mix(in srgb, var(--ts-navy) 16%, transparent);
+}
+
+/* The X is its own 22px target inside a 30px tag, and it says what it removes. */
+.fd-tag-x {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  padding: 0;
+  border: 0;
+  border-radius: var(--ts-radius-full);
+  background: transparent;
+  color: var(--ts-navy60);
+  cursor: pointer;
+}
+
+.fd-tag-x:hover {
+  background: var(--ts-navy10);
+  color: var(--ts-navy);
+}
+
+.fd-tag-x:focus-visible {
+  outline: none;
+  box-shadow: var(--ts-focus);
+}
+
+/* The one mark a creation can never draw for itself. */
+.fd-appchip {
+  display: inline-flex;
+  align-items: center;
+  height: 20px;
+  padding: 0 7px;
+  border-radius: 5px;
+  background: var(--ts-ink);
+  color: var(--ts-cream);
+  font-family: var(--ts-font-mono);
+  font-size: 9.5px;
+  font-weight: 500;
+  letter-spacing: 0.16em;
+}
+
+.fd-appchip[data-inverse] {
+  background: var(--ts-cream14);
+  color: var(--ts-ink);
+  border: 1px solid var(--ts-ink26);
+}
+
+/* ── form controls ──────────────────────────────────────────────────────── */
+
+.fd-field-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: var(--ts-space-5);
+}
+
+.fd-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 0;
+}
+
+.fd-field-wide {
+  flex: 1 1 380px;
+}
+
+.fd-label {
+  font-family: var(--ts-font-sans);
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--ts-ink);
+}
+
+.fd-input,
+.fd-textarea,
+.fd-select {
+  width: 100%;
+  font-family: var(--ts-font-sans);
+  font-size: var(--ts-text-label);
+  color: var(--ts-ink);
+  background: var(--ts-surface);
+  border: 1px solid var(--ts-ink13);
+  border-radius: var(--ts-radius-input);
+  transition: border-color var(--ts-dur-1) var(--ts-ease),
+    box-shadow var(--ts-dur-2) var(--ts-ease);
+}
+
+.fd-input {
+  height: 44px;
+  padding: 0 var(--ts-space-3);
+}
+
+.fd-textarea {
+  padding: var(--ts-space-3);
+  line-height: 1.5;
+  resize: vertical;
+}
+
+.fd-input::placeholder,
+.fd-textarea::placeholder {
+  color: var(--ts-ink26);
+}
+
+.fd-input:hover:not(:disabled),
+.fd-textarea:hover:not(:disabled) {
+  border-color: var(--ts-ink26);
+}
+
+.fd-input:focus,
+.fd-input[data-state='focus'],
+.fd-textarea:focus,
+.fd-select:focus {
+  outline: none;
+  border-color: var(--ts-terracotta);
+  box-shadow: 0 0 0 3px var(--ts-terracotta14);
+}
+
+/*
+ * The invalid border is terracotta, and it never travels alone: `aria-invalid`
+ * plus a described-by message plus an icon. Colour has never told anyone what
+ * they typed wrong.
+ */
+.fd-input[data-invalid],
+.fd-textarea[data-invalid] {
+  border-color: var(--ts-terracotta);
+  background: var(--ts-terracotta-tint);
+}
+
+.fd-input:disabled,
+.fd-textarea:disabled,
+.fd-select:disabled {
+  background: var(--ts-ink08);
+  border-color: transparent;
+  color: var(--ts-ink45);
+  cursor: not-allowed;
+}
+
+.fd-help {
+  margin: 0;
+  font-family: var(--ts-font-sans);
+  font-size: 12.5px;
+  line-height: 1.45;
+  color: var(--ts-ink60);
+}
+
+.fd-error {
+  display: flex;
+  align-items: flex-start;
+  gap: 6px;
+  margin: 0;
+  font-family: var(--ts-font-sans);
+  font-size: 12.5px;
+  line-height: 1.45;
+  color: var(--ts-terracotta-hover);
+}
+
+.fd-error svg {
+  margin-top: 1px;
+}
+
+.fd-form-row {
+  align-items: flex-start;
+}
+
+.fd-textarea-wrap {
+  position: relative;
+}
+
+.fd-counter {
+  position: absolute;
+  right: var(--ts-space-2);
+  bottom: 6px;
+  padding: 1px 5px;
+  border-radius: 4px;
+  background: var(--ts-surface);
+  font-family: var(--ts-font-mono);
+  font-size: 10.5px;
+  font-variant-numeric: tabular-nums;
+  color: var(--ts-ink45);
+}
+
+/* Silent until it matters, then warm. A counter that shouts at character 12 is noise. */
+.fd-counter[data-near] {
+  color: var(--ts-terracotta-hover);
+}
+
+.fd-select-wrap {
+  position: relative;
+}
+
+.fd-select {
+  height: 44px;
+  padding: 0 var(--ts-space-8) 0 var(--ts-space-3);
+  appearance: none;
+  cursor: pointer;
+}
+
+.fd-select-arrow {
+  position: absolute;
+  right: var(--ts-space-3);
+  top: 50%;
+  transform: translateY(-50%);
+  pointer-events: none;
+  color: var(--ts-ink45);
+}
+
+.fd-search {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.fd-search-icon {
+  position: absolute;
+  left: var(--ts-space-3);
+  color: var(--ts-ink45);
+  pointer-events: none;
+}
+
+.fd-search-input {
+  padding-left: var(--ts-space-10);
+  padding-right: var(--ts-space-10);
+}
+
+.fd-search-input::-webkit-search-cancel-button {
+  display: none;
+}
+
+/* Clear is a real 32px button, not a decorative glyph the finger keeps missing. */
+.fd-search-clear {
+  position: absolute;
+  right: 6px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  border: 0;
+  border-radius: var(--ts-radius-full);
+  background: var(--ts-ink08);
+  color: var(--ts-ink60);
+  cursor: pointer;
+}
+
+.fd-search-clear:hover {
+  background: var(--ts-ink13);
+  color: var(--ts-ink);
+}
+
+.fd-search-clear:focus-visible {
+  outline: none;
+  box-shadow: var(--ts-focus);
+}
+
+/* ── choice controls ────────────────────────────────────────────────────── */
+
+.fd-choice-row {
+  align-items: stretch;
+}
+
+.fd-choice-plate {
+  flex: 1 1 260px;
+  display: flex;
+  flex-direction: column;
+  gap: var(--ts-space-3);
+  background: var(--ts-surface);
+}
+
+.fd-choice-title {
+  font-family: var(--ts-font-mono);
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ts-ink45);
+}
+
+.fd-check,
+.fd-radio,
+.fd-switch {
+  display: flex;
+  align-items: center;
+  gap: var(--ts-space-3);
+  min-height: 32px;
+  font-family: var(--ts-font-sans);
+  font-size: 14.5px;
+  color: var(--ts-ink);
+  cursor: pointer;
+}
+
+.fd-check input,
+.fd-radio input,
+.fd-switch input {
+  position: absolute;
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.fd-check-box {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: none;
+  width: 20px;
+  height: 20px;
+  border: 1.5px solid var(--ts-ink26);
+  border-radius: 6px;
+  background: var(--ts-surface);
+  color: transparent;
+  transition: background-color var(--ts-dur-1) var(--ts-ease),
+    border-color var(--ts-dur-1) var(--ts-ease);
+}
+
+.fd-check input:checked + .fd-check-box {
+  background: var(--ts-terracotta);
+  border-color: var(--ts-terracotta);
+  color: var(--ts-surface);
+}
+
+.fd-check input:focus-visible + .fd-check-box,
+.fd-radio input:focus-visible + .fd-radio-dot,
+.fd-switch input:focus-visible + .fd-switch-track {
+  outline: none;
+  box-shadow: var(--ts-focus);
+}
+
+.fd-radio-dot {
+  position: relative;
+  flex: none;
+  width: 20px;
+  height: 20px;
+  border: 1.5px solid var(--ts-ink26);
+  border-radius: var(--ts-radius-full);
+  background: var(--ts-surface);
+  transition: border-color var(--ts-dur-1) var(--ts-ease);
+}
+
+.fd-radio input:checked + .fd-radio-dot {
+  border-color: var(--ts-terracotta);
+  border-width: 6px;
+}
+
+.fd-check input:disabled + .fd-check-box,
+.fd-radio input:disabled + .fd-radio-dot,
+.fd-switch input:disabled + .fd-switch-track {
+  background: var(--ts-ink08);
+  border-color: var(--ts-ink13);
+  opacity: 0.7;
+}
+
+.fd-check input:disabled ~ span,
+.fd-radio input:disabled ~ span,
+.fd-switch input:disabled ~ span {
+  color: var(--ts-ink45);
+}
+
+.fd-switch-track {
+  position: relative;
+  flex: none;
+  width: 42px;
+  height: 24px;
+  border-radius: var(--ts-radius-full);
+  background: var(--ts-ink26);
+  transition: background-color var(--ts-dur-2) var(--ts-ease);
+}
+
+.fd-switch-knob {
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 20px;
+  height: 20px;
+  border-radius: var(--ts-radius-full);
+  background: var(--ts-surface);
+  box-shadow: var(--ts-shadow-flat);
+  transition: transform var(--ts-dur-2) var(--ts-ease-out);
+}
+
+/*
+ * Sage, not terracotta. A switch that is already on is a state, not an action,
+ * and sage is the colour this system uses for "alive and confirmed".
+ */
+.fd-switch input:checked + .fd-switch-track {
+  background: var(--ts-sage);
+}
+
+.fd-switch input:checked + .fd-switch-track .fd-switch-knob {
+  transform: translateX(18px);
+}
+
+/* ── segmented control and stepper ──────────────────────────────────────── */
+
+.fd-seg-row {
+  align-items: center;
+}
+
+.fd-seg {
+  display: inline-flex;
+  padding: 3px;
+  background: var(--ts-ink08);
+  border-radius: var(--ts-radius-input);
+}
+
+.fd-seg-btn {
+  height: 34px;
+  padding: 0 var(--ts-space-4);
+  border: 0;
+  border-radius: 7px;
+  background: transparent;
+  font-family: var(--ts-font-sans);
+  font-size: 13.5px;
+  font-weight: 500;
+  color: var(--ts-ink60);
+  cursor: pointer;
+  transition: background-color var(--ts-dur-1) var(--ts-ease), color var(--ts-dur-1) var(--ts-ease);
+}
+
+.fd-seg-btn:hover[aria-selected='false'] {
+  color: var(--ts-ink);
+}
+
+.fd-seg-btn[aria-selected='true'] {
+  background: var(--ts-surface);
+  color: var(--ts-ink);
+  box-shadow: var(--ts-shadow-flat);
+}
+
+.fd-seg-btn:focus-visible {
+  outline: none;
+  box-shadow: var(--ts-focus);
+}
+
+.fd-stepper {
+  display: inline-flex;
+  align-items: center;
+  background: var(--ts-surface);
+  border: 1px solid var(--ts-ink13);
+  border-radius: var(--ts-radius-input);
+  overflow: hidden;
+}
+
+.fd-step-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  border: 0;
+  background: transparent;
+  color: var(--ts-ink);
+  cursor: pointer;
+}
+
+.fd-step-btn:hover:not(:disabled) {
+  background: var(--ts-ink08);
+}
+
+.fd-step-btn:disabled {
+  color: var(--ts-ink26);
+  cursor: not-allowed;
+}
+
+.fd-step-btn:focus-visible {
+  outline: none;
+  box-shadow: var(--ts-focus);
+}
+
+/* Tabular figures so the box does not twitch between 9 and 10. */
+.fd-step-val {
+  min-width: 44px;
+  text-align: center;
+  font-family: var(--ts-font-sans);
+  font-size: var(--ts-text-label);
+  font-variant-numeric: tabular-nums;
+  border-left: 1px solid var(--ts-ink13);
+  border-right: 1px solid var(--ts-ink13);
+  line-height: 44px;
+}
+
+/* ── avatars and identity ───────────────────────────────────────────────── */
+
+.fd-avatar-row {
+  align-items: flex-start;
+  gap: var(--ts-space-8);
+}
+
+.fd-av-demo {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--ts-space-2);
+  max-width: 190px;
+}
+
+.fd-av {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: none;
+  border-radius: var(--ts-radius-full);
+  background: var(--fd-c);
+  color: var(--ts-cream);
+  font-family: var(--ts-font-sans);
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  user-select: none;
+}
+
+.fd-av[data-size='24'] {
+  width: 24px;
+  height: 24px;
+  font-size: 9.5px;
+}
+
+.fd-av[data-size='34'] {
+  width: 34px;
+  height: 34px;
+  font-size: 12.5px;
+}
+
+.fd-av[data-size='48'] {
+  width: 48px;
+  height: 48px;
+  font-size: var(--ts-text-label);
+}
+
+/*
+ * The ring IS the badge. A separate tick would be a mark a creation could draw
+ * for itself, and it would read as "official" in a town where verification only
+ * ever means neighbours vouched. A ring is a property of the person, not a stamp.
+ */
+.fd-av[data-verified] {
+  box-shadow: 0 0 0 2px var(--ts-cream), 0 0 0 4px var(--ts-sage);
+}
+
+.fd-av-stack {
+  display: flex;
+  padding-left: 0;
+}
+
+.fd-av-stack .fd-av + .fd-av {
+  margin-left: -10px;
+}
+
+.fd-av-stack .fd-av {
+  box-shadow: 0 0 0 2px var(--ts-cream);
+}
+
+.fd-av[data-overflow] {
+  background: var(--ts-stone);
+  color: var(--ts-ink60);
+  font-family: var(--ts-font-mono);
+  font-size: 11px;
+}
+
+/* A creation's tile degrades to initials rather than a broken-image glyph. */
+.fd-tile {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  border-radius: var(--ts-radius-input);
+  background: var(--ts-terracotta14);
+  color: var(--ts-terracotta-hover);
+  font-family: var(--ts-font-mono);
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: 0.06em;
+}
+
+.fd-tile[data-fallback] {
+  background: var(--ts-stone);
+  color: var(--ts-ink60);
+}
+
+/* ── links and dividers ─────────────────────────────────────────────────── */
+
+.fd-links {
+  max-width: 620px;
+  background: var(--ts-surface);
+}
+
+/* Underlined, always. Colour alone in a serif paragraph reads as a typo. */
+.fd-link {
+  color: var(--ts-ink);
+  text-decoration: underline;
+  text-decoration-color: var(--ts-terracotta);
+  text-underline-offset: 3px;
+  text-decoration-thickness: 1.5px;
+}
+
+.fd-link:hover {
+  color: var(--ts-terracotta-hover);
+  text-decoration-color: var(--ts-terracotta-hover);
+}
+
+.fd-link:focus-visible {
+  outline: none;
+  border-radius: 3px;
+  box-shadow: var(--ts-focus);
+}
+
+.fd-link-standalone {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  min-height: 44px;
+  font-family: var(--ts-font-sans);
+  font-size: 14.5px;
+  font-weight: 500;
+  color: var(--ts-terracotta-hover);
+  text-decoration: none;
+  border-radius: 6px;
+}
+
+.fd-link-standalone svg {
+  transition: transform var(--ts-dur-1) var(--ts-ease);
+}
+
+.fd-link-standalone:hover svg {
+  transform: translateX(2px);
+}
+
+.fd-divider {
+  height: 1px;
+  background: var(--ts-ink13);
+  margin: var(--ts-space-4) 0;
+}
+
+.fd-divider[data-labelled] {
+  display: flex;
+  align-items: center;
+  gap: var(--ts-space-3);
+  height: auto;
+  background: transparent;
+}
+
+.fd-divider[data-labelled]::before,
+.fd-divider[data-labelled]::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--ts-ink13);
+}
+
+.fd-divider[data-labelled] span {
+  font-family: var(--ts-font-mono);
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ts-ink45);
+}
+
+/* ── focus ring proof ───────────────────────────────────────────────────── */
+
+.fd-focus-row {
+  align-items: stretch;
+}
+
+.fd-focus-plate {
+  flex: 1 1 240px;
+  display: flex;
+  flex-direction: column;
+  gap: var(--ts-space-4);
+  padding: var(--ts-space-6);
+  border-radius: var(--ts-radius-card);
+  border: 1px solid var(--ts-hairline);
+}
+
+.fd-focus-plate[data-bg='cream'] {
+  background: var(--ts-cream);
+}
+
+.fd-focus-plate[data-bg='surface'] {
+  background: var(--ts-surface);
+}
+
+.fd-focus-plate[data-bg='navy'] {
+  background: var(--ts-navy);
+  border-color: transparent;
+}
+
+.fd-focus-tag {
+  font-family: var(--ts-font-mono);
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ts-ink45);
+}
+
+.fd-focus-plate[data-bg='navy'] .fd-focus-tag {
+  color: var(--ts-cream-muted);
+}
+
+/* ── loading atoms ──────────────────────────────────────────────────────── */
+
+.fd-load-row {
+  align-items: stretch;
+}
+
+.fd-load-plate {
+  flex: 1 1 260px;
+  display: flex;
+  flex-direction: column;
+  gap: var(--ts-space-3);
+  background: var(--ts-surface);
+}
+
+.fd-spin-row {
+  display: flex;
+  align-items: center;
+  gap: var(--ts-space-4);
+  color: var(--ts-terracotta);
+}
+
+.fd-spin {
+  animation: fd-rotate 900ms linear infinite;
+}
+
+@keyframes fd-rotate {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.fd-skel-card {
+  display: flex;
+  align-items: center;
+  gap: var(--ts-space-3);
+}
+
+.fd-skel-lines {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  flex: 1;
+}
+
+/*
+ * The shimmer travels over a stone base rather than fading opacity, because a
+ * pulsing block reads as broken and a travelling one reads as working.
+ */
+.fd-skel {
+  position: relative;
+  display: block;
+  overflow: hidden;
+  background: var(--ts-stone);
+  border-radius: 5px;
+}
+
+.fd-skel::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    color-mix(in srgb, var(--ts-surface) 72%, transparent),
+    transparent
+  );
+  transform: translateX(-100%);
+  animation: fd-shimmer 1600ms var(--ts-ease) infinite;
+}
+
+@keyframes fd-shimmer {
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+.fd-skel[data-shape='line'] {
+  height: 11px;
+  width: var(--fd-w, 100%);
+}
+
+.fd-skel[data-shape='circle'] {
+  width: 34px;
+  height: 34px;
+  flex: none;
+  border-radius: var(--ts-radius-full);
+}
+
+.fd-skel[data-shape='block'] {
+  height: 76px;
+  border-radius: var(--ts-radius-input);
+}
+
+.fd-progress {
+  height: 6px;
+  border-radius: var(--ts-radius-full);
+  background: var(--ts-ink08);
+  overflow: hidden;
+}
+
+.fd-progress-fill {
+  display: block;
+  height: 100%;
+  width: var(--fd-w, 100%);
+  border-radius: var(--ts-radius-full);
+  background: var(--ts-terracotta);
+  transition: width var(--ts-dur-4) var(--ts-ease-out);
+}
+
+.fd-progress[data-indeterminate] .fd-progress-fill {
+  width: 38%;
+  animation: fd-slide 1400ms var(--ts-ease) infinite;
+}
+
+@keyframes fd-slide {
+  0% {
+    transform: translateX(-110%);
+  }
+  100% {
+    transform: translateX(300%);
+  }
+}
+
+/* Under reduced motion, nothing here should be moving at all. */
+@media (prefers-reduced-motion: reduce) {
+  .fd-skel::after,
+  .fd-live-dot,
+  .fd-spin,
+  .fd-progress[data-indeterminate] .fd-progress-fill {
+    animation: none;
+  }
+  .fd-skel::after {
+    transform: none;
+    opacity: 0.5;
+  }
+}
+

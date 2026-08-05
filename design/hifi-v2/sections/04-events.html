@@ -1,0 +1,1289 @@
+<section class="sheet-section" id="events">
+  <svg style="display:none" aria-hidden="true">
+    <symbol id="i-ev-repeat" viewBox="0 0 24 24">
+      <path d="M17 2l3 3-3 3"/>
+      <path d="M20 5H8a4 4 0 0 0-4 4v1"/>
+      <path d="M7 22l-3-3 3-3"/>
+      <path d="M4 19h12a4 4 0 0 0 4-4v-1"/>
+    </symbol>
+    <symbol id="i-ev-moved" viewBox="0 0 24 24">
+      <path d="M5 20c0-4 2-7 6-7h6"/>
+      <path d="M14 10l3 3-3 3"/>
+      <circle cx="5" cy="7" r="3"/>
+    </symbol>
+  </svg>
+
+  <div class="sec-head"><span class="sec-num">04</span><h2>Events, the calendar, and what&rsquo;s on this weekend</h2></div>
+  <p class="sec-note">Everything here is scraped from the city, Arkansas Tech, the Pope County Library, half a dozen churches, the Center for the Arts and the parks department. The data is messy by nature: missing end times, a postal address where a venue name should be, things that recur, things that get cancelled at four in the afternoon. These components are designed against that reality rather than against a clean seed dataset.</p>
+
+  <p class="why"><b>The four category tints already ship</b> and they are tokens, not shades picked to look nice beside the last one: civic is gold, music is sage, sport is terracotta, community is navy. Everything below extends that vocabulary rather than adding to it. The fifth state is the honest one, an event the categoriser would not confidently place, and it gets no colour at all.</p>
+
+  <!-- ─────────────────────────────────────────────────────────── 1. rows -->
+  <div class="spec">
+    <div class="spec-label">Agenda row, every shape a scraped event actually arrives in <em>the time column is fixed width so titles start on the same vertical line no matter what the source published</em></div>
+    <div class="spec-row">
+      <ul class="ev-list" style="width:420px">
+        <li>
+          <a class="ev-row" href="#events">
+            <div class="ev-time"><span class="ev-clock">5:30</span><span class="ev-meridiem">pm</span></div>
+            <span class="ev-icon" data-category="civic"><svg class="i-sm"><use href="#i-gavel"/></svg></span>
+            <span class="ev-text">
+              <span class="ev-title">City council, regular session</span>
+              <span class="ev-detail">Council chambers, 203 S Commerce Ave</span>
+            </span>
+          </a>
+        </li>
+        <li>
+          <a class="ev-row" href="#events">
+            <div class="ev-time"><span class="ev-clock">7:00</span><span class="ev-meridiem">pm</span><span class="ev-end">to 9:30</span></div>
+            <span class="ev-icon" data-category="music"><svg class="i-sm"><use href="#i-music"/></svg></span>
+            <span class="ev-text">
+              <span class="ev-title">Front Porch Concert: The Hollers</span>
+              <span class="ev-detail">The Center for the Arts</span>
+            </span>
+          </a>
+        </li>
+        <li>
+          <a class="ev-row" href="#events">
+            <div class="ev-time"><span class="ev-clock">6:00</span><span class="ev-meridiem">pm</span><span class="ev-open" title="No end time published" aria-hidden="true"></span></div>
+            <span class="ev-icon" data-category="community"><svg class="i-sm"><use href="#i-users"/></svg></span>
+            <span class="ev-text">
+              <span class="ev-title">Trivia night at Old Bank Sports Grill</span>
+              <span class="ev-detail">No end time posted</span>
+            </span>
+          </a>
+        </li>
+        <li>
+          <a class="ev-row" href="#events">
+            <div class="ev-time ev-time--allday"><span class="ev-allday">all<br>day</span></div>
+            <span class="ev-icon" data-category="community"><svg class="i-sm"><use href="#i-users"/></svg></span>
+            <span class="ev-text">
+              <span class="ev-title">Arkansas Tech residence halls open</span>
+              <span class="ev-detail">Campus wide</span>
+            </span>
+          </a>
+        </li>
+        <li>
+          <a class="ev-row" href="#events">
+            <div class="ev-time"><span class="ev-clock">2:45</span><span class="ev-meridiem">pm</span></div>
+            <span class="ev-icon" data-category="sport"><svg class="i-sm"><use href="#i-sport"/></svg></span>
+            <span class="ev-text">
+              <span class="ev-title">Tech volleyball vs. Henderson State <span class="ev-chip ev-chip--soon">in 40 min</span></span>
+              <span class="ev-detail">Tucker Coliseum</span>
+            </span>
+          </a>
+        </li>
+        <li>
+          <a class="ev-row ev-row--started" href="#events">
+            <div class="ev-time"><span class="ev-clock">1:00</span><span class="ev-meridiem">pm</span></div>
+            <span class="ev-icon" data-category="community"><svg class="i-sm"><use href="#i-users"/></svg></span>
+            <span class="ev-text">
+              <span class="ev-title">Summer reading wrap party <span class="ev-chip ev-chip--now">on now</span></span>
+              <span class="ev-detail">Pope County Library, started 25 minutes ago</span>
+            </span>
+          </a>
+        </li>
+        <li>
+          <a class="ev-row ev-row--off" href="#events">
+            <div class="ev-time ev-time--void"><span class="ev-clock">4:00</span><span class="ev-meridiem">pm</span></div>
+            <span class="ev-icon" data-category="off"><svg class="i-sm"><use href="#i-x-circle"/></svg></span>
+            <span class="ev-text">
+              <span class="ev-title">Farmers market, Wednesday stand</span>
+              <span class="ev-detail ev-detail--off"><b>Cancelled.</b> Posted by the market at 11:40am, heat advisory.</span>
+            </span>
+          </a>
+        </li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- ──────────────────────────────────────────────────── 2. cancelled -->
+  <div class="spec">
+    <div class="spec-label">Cancelled, argued <em>strike what is no longer true, keep what still is; the title is still the thing you were looking for</em></div>
+    <div class="spec-row">
+      <div class="ev-compare">
+        <div class="ev-compare-tag ev-compare-tag--no">What we did not do</div>
+        <ul class="ev-list">
+          <li>
+            <a class="ev-row ev-row--lazy" href="#events">
+              <div class="ev-time"><span class="ev-clock">4:00</span><span class="ev-meridiem">pm</span></div>
+              <span class="ev-icon" data-category="community"><svg class="i-sm"><use href="#i-users"/></svg></span>
+              <span class="ev-text">
+                <span class="ev-title">Farmers market, Wednesday stand</span>
+                <span class="ev-detail">Courthouse square, 100 W Main St</span>
+              </span>
+            </a>
+          </li>
+        </ul>
+        <p class="ev-compare-note">Struck through and greyed out. The title is the hardest thing on the row to read, which is backwards: it is the one part still true. And at a glance in a list of nine rows, a slightly paler row reads as visited, not cancelled.</p>
+      </div>
+
+      <div class="ev-compare">
+        <div class="ev-compare-tag ev-compare-tag--yes">What we do</div>
+        <ul class="ev-list">
+          <li>
+            <a class="ev-row ev-row--off" href="#events">
+              <div class="ev-time ev-time--void"><span class="ev-clock">4:00</span><span class="ev-meridiem">pm</span></div>
+              <span class="ev-icon" data-category="off"><svg class="i-sm"><use href="#i-x-circle"/></svg></span>
+              <span class="ev-text">
+                <span class="ev-title">Farmers market, Wednesday stand</span>
+                <span class="ev-detail ev-detail--off"><b>Cancelled.</b> Posted by the market at 11:40am, heat advisory.</span>
+              </span>
+            </a>
+          </li>
+        </ul>
+        <p class="ev-compare-note">Three things carry it, and none of them is colour alone. The clock is hatched over, because the clock is the promise that broke. The category tint is <b>withdrawn</b> to inert stone, because a tint is a claim that something is happening. The venue line is replaced by who cancelled it and when. The title stays full weight and full black.</p>
+      </div>
+    </div>
+    <p class="why">Cancellation is the most common correction in the feed, so it cannot use <b>brick</b>. Brick is the one alarm register and spending it on a rained-out market is how it stops meaning anything at 6am when the river is up. Withdrawal reads as loudly as alarm here and costs nothing.</p>
+  </div>
+
+  <!-- ─────────────────────────────────────────────────── 3. day agenda -->
+  <div class="spec">
+    <div class="spec-label">The day agenda <em>a now line, an honest gap treatment, and the roll over into tomorrow rather than a dead end at midnight</em></div>
+    <div class="spec-row">
+      <div class="phone">
+        <div class="phone-cap">Calendar &middot; today</div>
+        <div class="phone-screen">
+          <div class="ev-screen">
+            <div class="ev-screen-head">
+              <div class="ev-eyebrow">Wednesday 5 August</div>
+              <h3 class="ev-h1">Today in Russellville</h3>
+              <p class="ev-sub">Fourteen things on. Three have already finished.</p>
+            </div>
+
+            <div class="ev-week" role="tablist" aria-label="Pick a day">
+              <button class="ev-day ev-past" role="tab" aria-selected="false" aria-label="Sunday 2 August, 1 event"><span class="ev-day-name">Sun</span><span class="ev-day-num">2</span><span class="ev-dots"><i></i></span></button>
+              <button class="ev-day ev-past" role="tab" aria-selected="false" aria-label="Monday 3 August, 2 events"><span class="ev-day-name">Mon</span><span class="ev-day-num">3</span><span class="ev-dots"><i></i><i></i></span></button>
+              <button class="ev-day ev-past ev-empty" role="tab" aria-selected="false" aria-label="Tuesday 4 August, nothing on"><span class="ev-day-name">Tue</span><span class="ev-day-num">4</span><span class="ev-dots"><em>&ndash;</em></span></button>
+              <button class="ev-day ev-today ev-selected" role="tab" aria-selected="true" aria-label="Wednesday 5 August, today, 14 events"><span class="ev-day-name">Wed</span><span class="ev-day-num">5</span><span class="ev-dots"><i></i><i></i><i></i><b></b></span></button>
+              <button class="ev-day" role="tab" aria-selected="false" aria-label="Thursday 6 August, 3 events"><span class="ev-day-name">Thu</span><span class="ev-day-num">6</span><span class="ev-dots"><i></i><i></i><i></i></span></button>
+              <button class="ev-day" role="tab" aria-selected="false" aria-label="Friday 7 August, 5 events"><span class="ev-day-name">Fri</span><span class="ev-day-num">7</span><span class="ev-dots"><i></i><i></i><i></i><b></b></span></button>
+              <button class="ev-day" role="tab" aria-selected="false" aria-label="Saturday 8 August, 11 events"><span class="ev-day-name">Sat</span><span class="ev-day-num">8</span><span class="ev-dots"><i></i><i></i><i></i><b></b></span></button>
+            </div>
+
+            <button class="ev-earlier"><svg class="i-sm"><use href="#i-chevron-down"/></svg> 3 earlier today</button>
+
+            <ul class="ev-list ev-list--flush">
+              <li>
+                <a class="ev-row ev-row--started" href="#events">
+                  <div class="ev-time"><span class="ev-clock">1:00</span><span class="ev-meridiem">pm</span></div>
+                  <span class="ev-icon" data-category="community"><svg class="i-sm"><use href="#i-users"/></svg></span>
+                  <span class="ev-text">
+                    <span class="ev-title">Summer reading wrap party <span class="ev-chip ev-chip--now">on now</span></span>
+                    <span class="ev-detail">Pope County Library, until 3:00</span>
+                  </span>
+                </a>
+              </li>
+              <li class="ev-nowline"><span class="ev-nowline-label">now, 2:14 pm</span></li>
+              <li>
+                <a class="ev-row" href="#events">
+                  <div class="ev-time"><span class="ev-clock">2:45</span><span class="ev-meridiem">pm</span></div>
+                  <span class="ev-icon" data-category="sport"><svg class="i-sm"><use href="#i-sport"/></svg></span>
+                  <span class="ev-text">
+                    <span class="ev-title">Tech volleyball vs. Henderson <span class="ev-chip ev-chip--soon">in 31 min</span></span>
+                    <span class="ev-detail">Tucker Coliseum</span>
+                  </span>
+                </a>
+              </li>
+              <li>
+                <a class="ev-row ev-row--off" href="#events">
+                  <div class="ev-time ev-time--void"><span class="ev-clock">4:00</span><span class="ev-meridiem">pm</span></div>
+                  <span class="ev-icon" data-category="off"><svg class="i-sm"><use href="#i-x-circle"/></svg></span>
+                  <span class="ev-text">
+                    <span class="ev-title">Farmers market, Wednesday stand</span>
+                    <span class="ev-detail ev-detail--off"><b>Cancelled.</b> Heat advisory, posted 11:40am.</span>
+                  </span>
+                </a>
+              </li>
+            </ul>
+
+            <div class="ev-gap">
+              <p>A quiet stretch, then it picks back up at half five.</p>
+              <span class="ev-gap-len">1 hr 30 min</span>
+            </div>
+
+            <ul class="ev-list ev-list--flush">
+              <li>
+                <a class="ev-row" href="#events">
+                  <div class="ev-time"><span class="ev-clock">5:30</span><span class="ev-meridiem">pm</span></div>
+                  <span class="ev-icon" data-category="civic"><svg class="i-sm"><use href="#i-gavel"/></svg></span>
+                  <span class="ev-text">
+                    <span class="ev-title">City council, regular session</span>
+                    <span class="ev-detail">Council chambers, 203 S Commerce Ave</span>
+                  </span>
+                </a>
+              </li>
+              <li>
+                <a class="ev-row" href="#events">
+                  <div class="ev-time"><span class="ev-clock">6:00</span><span class="ev-meridiem">pm</span><span class="ev-open" aria-hidden="true"></span></div>
+                  <span class="ev-icon" data-category="community"><svg class="i-sm"><use href="#i-users"/></svg></span>
+                  <span class="ev-text">
+                    <span class="ev-title">Trivia night at Old Bank</span>
+                    <span class="ev-detail">No end time posted</span>
+                  </span>
+                </a>
+              </li>
+              <li>
+                <a class="ev-row" href="#events">
+                  <div class="ev-time"><span class="ev-clock">7:00</span><span class="ev-meridiem">pm</span><span class="ev-end">to 9:30</span></div>
+                  <span class="ev-icon" data-category="music"><svg class="i-sm"><use href="#i-music"/></svg></span>
+                  <span class="ev-text">
+                    <span class="ev-title">Front Porch Concert: The Hollers</span>
+                    <span class="ev-detail">The Center for the Arts, $12</span>
+                  </span>
+                </a>
+              </li>
+            </ul>
+
+            <div class="ev-dayline"><span>Tomorrow, Thursday 6 August</span></div>
+
+            <ul class="ev-list ev-list--flush ev-list--next">
+              <li>
+                <a class="ev-row" href="#events">
+                  <div class="ev-time"><span class="ev-clock">7:30</span><span class="ev-meridiem">am</span></div>
+                  <span class="ev-icon" data-category="community"><svg class="i-sm"><use href="#i-users"/></svg></span>
+                  <span class="ev-text">
+                    <span class="ev-title">Chamber coffee, first Thursday</span>
+                    <span class="ev-detail">708 W Main St</span>
+                  </span>
+                </a>
+              </li>
+              <li>
+                <a class="ev-row" href="#events">
+                  <div class="ev-time"><span class="ev-clock">10:00</span><span class="ev-meridiem">am</span></div>
+                  <span class="ev-icon" data-category="community"><svg class="i-sm"><use href="#i-users"/></svg></span>
+                  <span class="ev-text">
+                    <span class="ev-title">Toddler story time</span>
+                    <span class="ev-detail">Pope County Library</span>
+                  </span>
+                </a>
+              </li>
+            </ul>
+
+            <p class="ev-tail">The calendar runs six weeks out. <a href="#events">See the whole month</a></p>
+          </div>
+        </div>
+      </div>
+
+      <div class="ev-annot">
+        <h4>Why it resolves this way</h4>
+        <p><b>The now line is a list item, not an overlay.</b> It sits between two rows in document order, so it is announced in reading order and never lands on top of a title. It carries a real clock time because &ldquo;now&rdquo; on a screen someone left open for an hour is a lie.</p>
+        <p><b>The gap is written, not drawn.</b> Four hours of nothing on a civic calendar is normal and should feel normal. A dotted line with &ldquo;3 hr&rdquo; on it reads as an error; a sentence reads as a town.</p>
+        <p><b>Earlier today collapses, it does not disappear.</b> Three events that already happened are still the answer to &ldquo;did I miss it&rdquo;, which is a question people ask this screen constantly.</p>
+        <p><b>Tomorrow is on the same scroll.</b> At nine in the evening, today is over and the honest answer to &ldquo;what&rsquo;s on&rdquo; is tomorrow morning. A day view that dead ends at midnight makes the user navigate to learn nothing.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ──────────────────────────────────────────────────── 4. week strip -->
+  <div class="spec">
+    <div class="spec-label">The week strip <em>density as dots, because a number in a 44px cell is a number nobody reads</em></div>
+    <div class="plate">
+      <div class="ev-week ev-week--wide" role="tablist" aria-label="Pick a day">
+        <button class="ev-day ev-past" role="tab" aria-selected="false" aria-label="Sunday 2 August, 1 event"><span class="ev-day-name">Sun</span><span class="ev-day-num">2</span><span class="ev-dots"><i></i></span></button>
+        <button class="ev-day ev-past" role="tab" aria-selected="false" aria-label="Monday 3 August, 2 events"><span class="ev-day-name">Mon</span><span class="ev-day-num">3</span><span class="ev-dots"><i></i><i></i></span></button>
+        <button class="ev-day ev-past ev-empty" role="tab" aria-selected="false" aria-label="Tuesday 4 August, nothing on"><span class="ev-day-name">Tue</span><span class="ev-day-num">4</span><span class="ev-dots"><em>&ndash;</em></span></button>
+        <button class="ev-day ev-today ev-selected" role="tab" aria-selected="true" aria-label="Wednesday 5 August, today, 14 events"><span class="ev-day-name">Wed</span><span class="ev-day-num">5</span><span class="ev-dots"><i></i><i></i><i></i><b></b></span></button>
+        <button class="ev-day" role="tab" aria-selected="false" aria-label="Thursday 6 August, 3 events"><span class="ev-day-name">Thu</span><span class="ev-day-num">6</span><span class="ev-dots"><i></i><i></i><i></i></span></button>
+        <button class="ev-day ev-empty" role="tab" aria-selected="false" aria-label="Friday 7 August, nothing on"><span class="ev-day-name">Fri</span><span class="ev-day-num">7</span><span class="ev-dots"><em>&ndash;</em></span></button>
+        <button class="ev-day" role="tab" aria-selected="false" aria-label="Saturday 8 August, 11 events"><span class="ev-day-name">Sat</span><span class="ev-day-num">8</span><span class="ev-dots"><i></i><i></i><i></i><b></b></span></button>
+      </div>
+      <div class="ev-legend-line">
+        <span><span class="ev-dots ev-dots--key"><i></i></span> one</span>
+        <span><span class="ev-dots ev-dots--key"><i></i><i></i><i></i></span> a few</span>
+        <span><span class="ev-dots ev-dots--key"><i></i><i></i><i></i><b></b></span> a lot, the bar means four or more</span>
+        <span><span class="ev-dots ev-dots--key"><em>&ndash;</em></span> nothing on</span>
+      </div>
+    </div>
+    <p class="why">Every cell is <b>a button, 52px wide and 68 tall</b>, comfortably past the 44px floor, and every one carries an <code>aria-label</code> with the real count because dots are a glance affordance and not an accessible one. Today is a terracotta ring; selected is a navy fill. Both at once is the common case, so they have to compose: the ring survives inside the fill. A day with nothing on gets an en dash rather than an empty space, because empty space reads as &ldquo;not loaded yet&rdquo;.</p>
+  </div>
+
+  <!-- ─────────────────────────────────────────────────── 5. month grid -->
+  <div class="spec">
+    <div class="spec-label">The month grid, desktop and tablet <em>three chips is the cap, the load bar carries everything past it, so a 3 event day and an 11 event day are both readable</em></div>
+    <div class="plate">
+      <div class="ev-month-layout">
+        <div class="ev-month">
+          <div class="ev-month-head">
+            <button class="ev-month-nav" aria-label="Previous month"><svg class="i-sm"><use href="#i-chevron-left"/></svg></button>
+            <h3>August 2026</h3>
+            <button class="ev-month-nav" aria-label="Next month"><svg class="i-sm"><use href="#i-chevron-right"/></svg></button>
+            <span class="ev-month-count">126 events</span>
+          </div>
+          <div class="ev-month-dow"><span>Sun</span><span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span></div>
+          <div class="ev-month-grid">
+            <div class="ev-mday ev-out"><span class="ev-mday-num">26</span></div>
+            <div class="ev-mday ev-out"><span class="ev-mday-num">27</span></div>
+            <div class="ev-mday ev-out"><span class="ev-mday-num">28</span></div>
+            <div class="ev-mday ev-out"><span class="ev-mday-num">29</span></div>
+            <div class="ev-mday ev-out"><span class="ev-mday-num">30</span></div>
+            <div class="ev-mday ev-out"><span class="ev-mday-num">31</span></div>
+            <div class="ev-mday">
+              <span class="ev-mday-num">1</span>
+              <span class="ev-mchip" data-category="community">Farmers market</span>
+              <span class="ev-mchip" data-category="music">Porch pickin&rsquo;</span>
+              <span class="ev-mchip" data-category="sport">Dardanelle 5K</span>
+              <span class="ev-mload"><i style="width:27%"></i></span>
+            </div>
+
+            <div class="ev-mday">
+              <span class="ev-mday-num">2</span>
+              <span class="ev-mchip" data-category="community">Vespers on the lawn</span>
+              <span class="ev-mload"><i style="width:9%"></i></span>
+            </div>
+            <div class="ev-mday">
+              <span class="ev-mday-num">3</span>
+              <span class="ev-mchip" data-category="civic">Planning commission</span>
+              <span class="ev-mchip" data-category="community">Story time</span>
+              <span class="ev-mload"><i style="width:18%"></i></span>
+            </div>
+            <div class="ev-mday ev-quiet"><span class="ev-mday-num">4</span><span class="ev-mnone">nothing on</span></div>
+            <div class="ev-mday ev-today">
+              <span class="ev-mday-num">5</span>
+              <span class="ev-mchip" data-category="civic">City council</span>
+              <span class="ev-mchip" data-category="music">The Hollers</span>
+              <span class="ev-mchip" data-category="sport">Volleyball vs. HSU</span>
+              <span class="ev-mmore">+11 more</span>
+              <span class="ev-mload"><i style="width:100%"></i></span>
+            </div>
+            <div class="ev-mday">
+              <span class="ev-mday-num">6</span>
+              <span class="ev-mchip" data-category="community">Chamber coffee</span>
+              <span class="ev-mchip" data-category="community">Story time</span>
+              <span class="ev-mchip" data-category="off">Bike night, cancelled</span>
+              <span class="ev-mload"><i style="width:22%"></i></span>
+            </div>
+            <div class="ev-mday">
+              <span class="ev-mday-num">7</span>
+              <span class="ev-mchip" data-category="music">First Friday</span>
+              <span class="ev-mchip" data-category="none">Tech move in</span>
+              <span class="ev-mchip" data-category="community">Food truck night</span>
+              <span class="ev-mmore">+2 more</span>
+              <span class="ev-mload"><i style="width:45%"></i></span>
+            </div>
+            <div class="ev-mday ev-selected" aria-current="date">
+              <span class="ev-mday-num">8</span>
+              <span class="ev-mchip" data-category="community">Farmers market</span>
+              <span class="ev-mchip" data-category="sport">Dam to Dam ride</span>
+              <span class="ev-mchip" data-category="music">Concert in the park</span>
+              <span class="ev-mmore">+8 more</span>
+              <span class="ev-mload"><i style="width:82%"></i></span>
+            </div>
+
+            <div class="ev-mday">
+              <span class="ev-mday-num">9</span>
+              <span class="ev-mchip" data-category="community">Blessing of the backpacks</span>
+              <span class="ev-mchip" data-category="community">Lake cleanup</span>
+              <span class="ev-mload"><i style="width:18%"></i></span>
+            </div>
+            <div class="ev-mday">
+              <span class="ev-mday-num">10</span>
+              <span class="ev-mchip" data-category="civic">Quorum court</span>
+              <span class="ev-mchip" data-category="community">Story time</span>
+              <span class="ev-mchip" data-category="sport">Youth soccer signups</span>
+              <span class="ev-mload"><i style="width:27%"></i></span>
+            </div>
+            <div class="ev-mday ev-quiet"><span class="ev-mday-num">11</span><span class="ev-mnone">nothing on</span></div>
+            <div class="ev-mday">
+              <span class="ev-mday-num">12</span>
+              <span class="ev-mchip" data-category="community">Knit night</span>
+              <span class="ev-mchip" data-category="civic">Water board</span>
+              <span class="ev-mload"><i style="width:18%"></i></span>
+            </div>
+            <div class="ev-mday">
+              <span class="ev-mday-num">13</span>
+              <span class="ev-mchip" data-category="music">Open mic</span>
+              <span class="ev-mload"><i style="width:9%"></i></span>
+            </div>
+            <div class="ev-mday">
+              <span class="ev-mday-num">14</span>
+              <span class="ev-mchip" data-category="sport">Tech football scrimmage</span>
+              <span class="ev-mchip" data-category="music">Rock House show</span>
+              <span class="ev-mchip" data-category="community">Movie on the square</span>
+              <span class="ev-mmore">+1 more</span>
+              <span class="ev-mload"><i style="width:36%"></i></span>
+            </div>
+            <div class="ev-mday">
+              <span class="ev-mday-num">15</span>
+              <span class="ev-mchip" data-category="community">Farmers market</span>
+              <span class="ev-mchip" data-category="sport">Dardanelle regatta</span>
+              <span class="ev-mchip" data-category="music">Symphony on the river</span>
+              <span class="ev-mmore">+5 more</span>
+              <span class="ev-mload"><i style="width:64%"></i></span>
+            </div>
+
+            <div class="ev-mday">
+              <span class="ev-mday-num">16</span>
+              <span class="ev-mchip" data-category="community">Back to school fair</span>
+              <span class="ev-mload"><i style="width:9%"></i></span>
+            </div>
+            <div class="ev-mday">
+              <span class="ev-mday-num">17</span>
+              <span class="ev-mchip" data-category="civic">City council</span>
+              <span class="ev-mchip" data-category="community">Story time</span>
+              <span class="ev-mload"><i style="width:18%"></i></span>
+            </div>
+            <div class="ev-mday">
+              <span class="ev-mday-num">18</span>
+              <span class="ev-mchip" data-category="none">Tech classes begin</span>
+              <span class="ev-mload"><i style="width:9%"></i></span>
+            </div>
+            <div class="ev-mday">
+              <span class="ev-mday-num">19</span>
+              <span class="ev-mchip" data-category="community">Knit night</span>
+              <span class="ev-mchip" data-category="sport">Rec league opener</span>
+              <span class="ev-mload"><i style="width:18%"></i></span>
+            </div>
+            <div class="ev-mday ev-quiet"><span class="ev-mday-num">20</span><span class="ev-mnone">nothing on</span></div>
+            <div class="ev-mday">
+              <span class="ev-mday-num">21</span>
+              <span class="ev-mchip" data-category="music">Front porch concert</span>
+              <span class="ev-mchip" data-category="community">Food truck night</span>
+              <span class="ev-mload"><i style="width:18%"></i></span>
+            </div>
+            <div class="ev-mday">
+              <span class="ev-mday-num">22</span>
+              <span class="ev-mchip" data-category="community">Farmers market</span>
+              <span class="ev-mchip" data-category="sport">Tech football, home</span>
+              <span class="ev-mchip" data-category="community">Lake Dardanelle hike</span>
+              <span class="ev-mmore">+4 more</span>
+              <span class="ev-mload"><i style="width:55%"></i></span>
+            </div>
+
+            <div class="ev-mday">
+              <span class="ev-mday-num">23</span>
+              <span class="ev-mchip" data-category="community">Church picnic</span>
+              <span class="ev-mload"><i style="width:9%"></i></span>
+            </div>
+            <div class="ev-mday">
+              <span class="ev-mday-num">24</span>
+              <span class="ev-mchip" data-category="civic">Board of adjustment</span>
+              <span class="ev-mchip" data-category="community">Story time</span>
+              <span class="ev-mload"><i style="width:18%"></i></span>
+            </div>
+            <div class="ev-mday ev-quiet"><span class="ev-mday-num">25</span><span class="ev-mnone">nothing on</span></div>
+            <div class="ev-mday">
+              <span class="ev-mday-num">26</span>
+              <span class="ev-mchip" data-category="community">Knit night</span>
+              <span class="ev-mload"><i style="width:9%"></i></span>
+            </div>
+            <div class="ev-mday">
+              <span class="ev-mday-num">27</span>
+              <span class="ev-mchip" data-category="music">Open mic</span>
+              <span class="ev-mchip" data-category="civic">Airport commission</span>
+              <span class="ev-mload"><i style="width:18%"></i></span>
+            </div>
+            <div class="ev-mday">
+              <span class="ev-mday-num">28</span>
+              <span class="ev-mchip" data-category="music">Center for the Arts season open</span>
+              <span class="ev-mchip" data-category="community">Food truck night</span>
+              <span class="ev-mchip" data-category="sport">Cross country invite</span>
+              <span class="ev-mload"><i style="width:27%"></i></span>
+            </div>
+            <div class="ev-mday">
+              <span class="ev-mday-num">29</span>
+              <span class="ev-mchip" data-category="community">Farmers market</span>
+              <span class="ev-mchip" data-category="sport">Tech football, home</span>
+              <span class="ev-mchip" data-category="community">Riverfront fireworks</span>
+              <span class="ev-mmore">+6 more</span>
+              <span class="ev-mload"><i style="width:73%"></i></span>
+            </div>
+
+            <div class="ev-mday">
+              <span class="ev-mday-num">30</span>
+              <span class="ev-mchip" data-category="community">Lake day</span>
+              <span class="ev-mload"><i style="width:9%"></i></span>
+            </div>
+            <div class="ev-mday">
+              <span class="ev-mday-num">31</span>
+              <span class="ev-mchip" data-category="civic">City council</span>
+              <span class="ev-mchip" data-category="community">Story time</span>
+              <span class="ev-mload"><i style="width:18%"></i></span>
+            </div>
+            <div class="ev-mday ev-out"><span class="ev-mday-num">1</span></div>
+            <div class="ev-mday ev-out"><span class="ev-mday-num">2</span></div>
+            <div class="ev-mday ev-out"><span class="ev-mday-num">3</span></div>
+            <div class="ev-mday ev-out"><span class="ev-mday-num">4</span></div>
+            <div class="ev-mday ev-out"><span class="ev-mday-num">5</span></div>
+          </div>
+        </div>
+
+        <aside class="ev-daypanel" aria-label="Saturday 8 August">
+          <div class="ev-eyebrow">Saturday</div>
+          <h3 class="ev-daypanel-date">8 August</h3>
+          <p class="ev-daypanel-sub">Eleven things on, which for a Saturday in August is about right.</p>
+          <ul class="ev-list ev-list--flush">
+            <li>
+              <a class="ev-row" href="#events">
+                <div class="ev-time"><span class="ev-clock">7:00</span><span class="ev-meridiem">am</span><span class="ev-end">to 12</span></div>
+                <span class="ev-icon" data-category="community"><svg class="i-sm"><use href="#i-users"/></svg></span>
+                <span class="ev-text">
+                  <span class="ev-title">Farmers market</span>
+                  <span class="ev-detail">Courthouse square</span>
+                </span>
+              </a>
+            </li>
+            <li>
+              <a class="ev-row" href="#events">
+                <div class="ev-time"><span class="ev-clock">7:30</span><span class="ev-meridiem">am</span></div>
+                <span class="ev-icon" data-category="sport"><svg class="i-sm"><use href="#i-sport"/></svg></span>
+                <span class="ev-text">
+                  <span class="ev-title">Dam to Dam ride</span>
+                  <span class="ev-detail">Old Post Road trailhead</span>
+                </span>
+              </a>
+            </li>
+            <li>
+              <a class="ev-row" href="#events">
+                <div class="ev-time ev-time--allday"><span class="ev-allday">all<br>day</span></div>
+                <span class="ev-icon" data-category="none"><svg class="i-sm"><use href="#i-calendar"/></svg></span>
+                <span class="ev-text">
+                  <span class="ev-title">Arkansas Tech move in weekend</span>
+                  <span class="ev-detail">Campus wide, expect traffic on El Paso</span>
+                </span>
+              </a>
+            </li>
+            <li>
+              <a class="ev-row" href="#events">
+                <div class="ev-time"><span class="ev-clock">7:00</span><span class="ev-meridiem">pm</span></div>
+                <span class="ev-icon" data-category="music"><svg class="i-sm"><use href="#i-music"/></svg></span>
+                <span class="ev-text">
+                  <span class="ev-title">Concert in the park</span>
+                  <span class="ev-detail">Pleasant View Park bandshell</span>
+                </span>
+              </a>
+            </li>
+          </ul>
+          <button class="ev-btn ev-btn--ghost ev-daypanel-all">See all eleven <svg class="i-sm"><use href="#i-chevron-right"/></svg></button>
+        </aside>
+      </div>
+    </div>
+    <p class="why" id="ev-month-why">Density is the whole problem with a month grid, and the usual answers both fail: showing everything turns August into a wall of 4pt text, and showing a bare count turns it into a spreadsheet. So the cell shows <b>up to three real titles</b>, which is enough to recognise the thing you half remember, then hands the rest to a <b>load bar scaled against the busiest day in the month</b>. Eleven events and three events look genuinely different from six feet away, and both are still readable up close. The bar is ink, not category colour, because it is measuring volume and not kind.</p>
+  </div>
+
+  <!-- ────────────────────────────────────────────────── 6. cards, photo -->
+  <div class="spec">
+    <div class="spec-label">Event cards, three sizes, with a photo <em>the category chip sits on the card and not on the image, because a scraped photo can be any colour at all</em></div>
+    <div class="spec-row">
+      <article class="ev-card ev-card--feature">
+        <div class="ev-photo ev-photo--music" aria-hidden="true"></div>
+        <div class="ev-card-body">
+          <div class="ev-card-top">
+            <span class="ev-cat" data-category="music"><svg class="i-sm"><use href="#i-music"/></svg>Music</span>
+            <span class="ev-card-when">Saturday, 7:00 pm</span>
+          </div>
+          <h3 class="ev-card-title">Concert in the park: Bonnie Montgomery</h3>
+          <p class="ev-card-venue"><svg class="i-sm"><use href="#i-map-pin"/></svg>Pleasant View Park bandshell</p>
+          <p class="ev-card-blurb">Bring a chair. The parks department runs a shuttle from the Tech lot after six, which is worth knowing on a move in weekend.</p>
+          <p class="ev-card-foot">Free &middot; From russellvillearkansas.gov</p>
+        </div>
+      </article>
+
+      <article class="ev-card">
+        <div class="ev-photo ev-photo--sport" aria-hidden="true"></div>
+        <div class="ev-card-body">
+          <div class="ev-card-top">
+            <span class="ev-cat" data-category="sport"><svg class="i-sm"><use href="#i-sport"/></svg>Sport</span>
+            <span class="ev-card-when">Sat, 7:30 am</span>
+          </div>
+          <h3 class="ev-card-title">Dam to Dam ride</h3>
+          <p class="ev-card-venue"><svg class="i-sm"><use href="#i-map-pin"/></svg>Old Post Road trailhead</p>
+          <p class="ev-card-foot">$25 &middot; Bike Russellville</p>
+        </div>
+      </article>
+
+      <div class="ev-rail" aria-label="More this weekend">
+        <article class="ev-card ev-card--rail">
+          <div class="ev-photo ev-photo--community" aria-hidden="true"></div>
+          <div class="ev-card-body">
+            <span class="ev-card-when">Sat, 7 am</span>
+            <h3 class="ev-card-title">Farmers market</h3>
+            <p class="ev-card-venue">Courthouse square</p>
+          </div>
+        </article>
+        <article class="ev-card ev-card--rail">
+          <div class="ev-photo ev-photo--civic" aria-hidden="true"></div>
+          <div class="ev-card-body">
+            <span class="ev-card-when">Mon, 5:30 pm</span>
+            <h3 class="ev-card-title">City council, regular session</h3>
+            <p class="ev-card-venue">203 S Commerce Ave</p>
+          </div>
+        </article>
+      </div>
+    </div>
+  </div>
+
+  <!-- ─────────────────────────────────────────────── 7. cards, no photo -->
+  <div class="spec">
+    <div class="spec-label">The same cards with no photograph <em>most scraped events have no image, so the no photo card is the default case and has to be the better looking one</em></div>
+    <div class="spec-row">
+      <article class="ev-card ev-card--feature ev-card--bare">
+        <div class="ev-datestamp" data-category="civic" aria-hidden="true">
+          <span class="ev-datestamp-dow">Mon</span>
+          <span class="ev-datestamp-num">10</span>
+          <span class="ev-datestamp-mon">August</span>
+        </div>
+        <div class="ev-card-body">
+          <div class="ev-card-top">
+            <span class="ev-cat" data-category="civic"><svg class="i-sm"><use href="#i-gavel"/></svg>Civic</span>
+            <span class="ev-card-when">5:30 pm to 7:00</span>
+          </div>
+          <h3 class="ev-card-title">Quorum court, August meeting</h3>
+          <p class="ev-card-venue"><svg class="i-sm"><use href="#i-map-pin"/></svg>Pope County Courthouse, 100 W Main St</p>
+          <p class="ev-card-blurb">The millage rate for 2027 is on the agenda, along with the jail expansion bid. Agenda packet posted the Friday before.</p>
+          <p class="ev-card-foot">Open to the public &middot; From popecountyar.gov</p>
+        </div>
+      </article>
+
+      <article class="ev-card ev-card--bare">
+        <div class="ev-datestamp" data-category="community" aria-hidden="true">
+          <span class="ev-datestamp-dow">Thu</span>
+          <span class="ev-datestamp-num">6</span>
+          <span class="ev-datestamp-mon">August</span>
+        </div>
+        <div class="ev-card-body">
+          <div class="ev-card-top">
+            <span class="ev-cat" data-category="community"><svg class="i-sm"><use href="#i-users"/></svg>Community</span>
+            <span class="ev-card-when">10:00 am</span>
+          </div>
+          <h3 class="ev-card-title">Toddler story time</h3>
+          <p class="ev-card-venue"><svg class="i-sm"><use href="#i-map-pin"/></svg>Pope County Library</p>
+          <p class="ev-card-foot">Free &middot; Every Thursday</p>
+        </div>
+      </article>
+
+      <div class="ev-rail">
+        <article class="ev-card ev-card--rail ev-card--bare">
+          <div class="ev-datestamp" data-category="none" aria-hidden="true">
+            <span class="ev-datestamp-dow">Fri</span>
+            <span class="ev-datestamp-num">7</span>
+            <span class="ev-datestamp-mon">Aug</span>
+          </div>
+          <div class="ev-card-body">
+            <span class="ev-card-when">All day</span>
+            <h3 class="ev-card-title">Arkansas Tech move in</h3>
+            <p class="ev-card-venue">Campus wide</p>
+          </div>
+        </article>
+        <article class="ev-card ev-card--rail ev-card--bare">
+          <div class="ev-datestamp" data-category="music" aria-hidden="true">
+            <span class="ev-datestamp-dow">Thu</span>
+            <span class="ev-datestamp-num">13</span>
+            <span class="ev-datestamp-mon">Aug</span>
+          </div>
+          <div class="ev-card-body">
+            <span class="ev-card-when">8:00 pm</span>
+            <h3 class="ev-card-title">Open mic at the Rock House</h3>
+            <p class="ev-card-venue">220 W B St</p>
+          </div>
+        </article>
+      </div>
+    </div>
+    <p class="why">Perhaps one scraped event in eight arrives with a usable image, so a card system that <b>needs</b> a photograph would spend most of its life looking broken. The no photo variant promotes the date into the picture slot, set in Newsreader at 40px on the category tint, which gives the card a shape and a colour without pretending we have something we do not. The photo variant is the exception, not the template.</p>
+  </div>
+
+  <!-- ────────────────────────────────────────────────── 8. this weekend -->
+  <div class="spec">
+    <div class="spec-label">This weekend, a digest <em>a written intro line, because the difference between a feed and a paper is that somebody looked at it first</em></div>
+    <div class="spec-row">
+      <div class="phone">
+        <div class="phone-cap">This weekend</div>
+        <div class="phone-screen">
+          <div class="ev-screen">
+            <div class="ev-screen-head">
+              <div class="ev-eyebrow">Friday 7 to Sunday 9 August</div>
+              <h3 class="ev-h1">This weekend</h3>
+              <p class="ev-lede">Move in weekend at Tech, so the whole town is busier than it wants to be. The market is back on the square Saturday morning, and there is finally something on at the bandshell after the heat broke.</p>
+            </div>
+
+            <div class="ev-daygroup">
+              <div class="ev-daygroup-head"><span class="ev-daygroup-name">Friday</span><span class="ev-daygroup-count">5 things on</span></div>
+              <ul class="ev-list ev-list--flush">
+                <li>
+                  <a class="ev-row" href="#events">
+                    <div class="ev-time ev-time--allday"><span class="ev-allday">all<br>day</span></div>
+                    <span class="ev-icon" data-category="none"><svg class="i-sm"><use href="#i-calendar"/></svg></span>
+                    <span class="ev-text">
+                      <span class="ev-title">Arkansas Tech move in</span>
+                      <span class="ev-detail">Campus wide, expect traffic on El Paso</span>
+                    </span>
+                  </a>
+                </li>
+                <li>
+                  <a class="ev-row" href="#events">
+                    <div class="ev-time"><span class="ev-clock">5:00</span><span class="ev-meridiem">pm</span><span class="ev-end">to 8:00</span></div>
+                    <span class="ev-icon" data-category="music"><svg class="i-sm"><use href="#i-music"/></svg></span>
+                    <span class="ev-text">
+                      <span class="ev-title">First Friday on Main</span>
+                      <span class="ev-detail">Downtown Russellville</span>
+                    </span>
+                  </a>
+                </li>
+                <li>
+                  <a class="ev-row" href="#events">
+                    <div class="ev-time"><span class="ev-clock">6:30</span><span class="ev-meridiem">pm</span><span class="ev-open" aria-hidden="true"></span></div>
+                    <span class="ev-icon" data-category="community"><svg class="i-sm"><use href="#i-users"/></svg></span>
+                    <span class="ev-text">
+                      <span class="ev-title">Food truck night at Depot Park</span>
+                      <span class="ev-detail">320 W Main St</span>
+                    </span>
+                  </a>
+                </li>
+              </ul>
+            </div>
+
+            <div class="ev-daygroup">
+              <div class="ev-daygroup-head"><span class="ev-daygroup-name">Saturday</span><span class="ev-daygroup-count">11 things on</span></div>
+              <article class="ev-card ev-card--wide">
+                <div class="ev-photo ev-photo--music" aria-hidden="true"></div>
+                <div class="ev-card-body">
+                  <div class="ev-card-top">
+                    <span class="ev-cat" data-category="music"><svg class="i-sm"><use href="#i-music"/></svg>Music</span>
+                    <span class="ev-card-when">7:00 pm</span>
+                  </div>
+                  <h3 class="ev-card-title">Concert in the park: Bonnie Montgomery</h3>
+                  <p class="ev-card-venue"><svg class="i-sm"><use href="#i-map-pin"/></svg>Pleasant View Park bandshell</p>
+                </div>
+              </article>
+              <ul class="ev-list ev-list--flush">
+                <li>
+                  <a class="ev-row" href="#events">
+                    <div class="ev-time"><span class="ev-clock">7:00</span><span class="ev-meridiem">am</span><span class="ev-end">to 12</span></div>
+                    <span class="ev-icon" data-category="community"><svg class="i-sm"><use href="#i-users"/></svg></span>
+                    <span class="ev-text">
+                      <span class="ev-title">Farmers market</span>
+                      <span class="ev-detail">Courthouse square, 100 W Main St</span>
+                    </span>
+                  </a>
+                </li>
+                <li>
+                  <a class="ev-row" href="#events">
+                    <div class="ev-time"><span class="ev-clock">7:30</span><span class="ev-meridiem">am</span></div>
+                    <span class="ev-icon" data-category="sport"><svg class="i-sm"><use href="#i-sport"/></svg></span>
+                    <span class="ev-text">
+                      <span class="ev-title">Dam to Dam ride</span>
+                      <span class="ev-detail">Old Post Road trailhead</span>
+                    </span>
+                  </a>
+                </li>
+                <li>
+                  <a class="ev-row" href="#events">
+                    <div class="ev-time"><span class="ev-clock">9:00</span><span class="ev-meridiem">am</span></div>
+                    <span class="ev-icon" data-category="community"><svg class="i-sm"><use href="#i-users"/></svg></span>
+                    <span class="ev-text">
+                      <span class="ev-title">Lake Dardanelle shoreline cleanup</span>
+                      <span class="ev-detail">State park visitor centre</span>
+                    </span>
+                  </a>
+                </li>
+              </ul>
+              <button class="ev-more">8 more on Saturday <svg class="i-sm"><use href="#i-chevron-down"/></svg></button>
+            </div>
+
+            <div class="ev-daygroup">
+              <div class="ev-daygroup-head"><span class="ev-daygroup-name">Sunday</span><span class="ev-daygroup-count">2 things on</span></div>
+              <ul class="ev-list ev-list--flush">
+                <li>
+                  <a class="ev-row" href="#events">
+                    <div class="ev-time"><span class="ev-clock">6:00</span><span class="ev-meridiem">pm</span></div>
+                    <span class="ev-icon" data-category="community"><svg class="i-sm"><use href="#i-users"/></svg></span>
+                    <span class="ev-text">
+                      <span class="ev-title">Blessing of the backpacks</span>
+                      <span class="ev-detail">First United Methodist, 200 W Main St</span>
+                    </span>
+                  </a>
+                </li>
+                <li>
+                  <a class="ev-row" href="#events">
+                    <div class="ev-time"><span class="ev-clock">7:00</span><span class="ev-meridiem">pm</span></div>
+                    <span class="ev-icon" data-category="music"><svg class="i-sm"><use href="#i-music"/></svg></span>
+                    <span class="ev-text">
+                      <span class="ev-title">Vespers on the lawn</span>
+                      <span class="ev-detail">Arkansas Tech, Doc Bryan lawn</span>
+                    </span>
+                  </a>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="ev-annot">
+        <h4>The one written line</h4>
+        <p>The lede is set in <b>Newsreader at 15.5px</b>, the only editorial voice on the screen, and it is the single element on this whole surface that a person writes. Everything below it is scraped.</p>
+        <p>It is worth the effort because it is the difference between a digest and a dump. &ldquo;Move in weekend at Tech, so the whole town is busier than it wants to be&rdquo; is a thing a neighbour says. No aggregator generates that, and a resident can tell within one sentence which one they are reading.</p>
+        <p><b>Saturday gets a card, Friday and Sunday get rows.</b> The weekend has one obvious marquee thing and ten ordinary ones, and flattening that into eleven identical cards throws away the only editorial judgement in the product.</p>
+        <p><b>Counts are on the day heading</b>, so a light Sunday is stated rather than implied by a short list, which could equally mean the scrape failed.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ───────────────────────────────────────────────── 9. event detail -->
+  <div class="spec">
+    <div class="spec-label">Event detail <em>plain words first, exact times second; both notices sit above the fold because they change whether you go</em></div>
+    <div class="spec-row">
+      <div class="phone">
+        <div class="phone-cap">Event detail</div>
+        <div class="phone-screen">
+          <div class="ev-detailscreen">
+            <div class="ev-hero ev-photo--community">
+              <button class="ev-hero-back" aria-label="Back to the calendar"><svg class="i"><use href="#i-chevron-left"/></svg></button>
+              <button class="ev-hero-share" aria-label="Share this event"><svg class="i"><use href="#i-share"/></svg></button>
+            </div>
+
+            <div class="ev-detailbody">
+              <div class="ev-card-top">
+                <span class="ev-cat" data-category="community"><svg class="i-sm"><use href="#i-users"/></svg>Community</span>
+                <span class="ev-cat ev-cat--recur"><svg class="i-sm"><use href="#i-ev-repeat"/></svg>Recurring</span>
+              </div>
+              <h3 class="ev-detailtitle">Russellville Farmers Market</h3>
+
+              <div class="ev-notice ev-notice--moved">
+                <svg class="i"><use href="#i-ev-moved"/></svg>
+                <div>
+                  <b>This one moved.</b>
+                  <p>It was at Depot Park through July. From 2 August it is back on the courthouse square. Updated Friday from the market&rsquo;s own page.</p>
+                </div>
+              </div>
+
+              <div class="ev-when">
+                <p class="ev-when-plain">Saturday morning, this weekend</p>
+                <p class="ev-when-exact"><svg class="i-sm"><use href="#i-clock"/></svg>Sat 8 August, 7:00 am to 12:00 noon</p>
+                <p class="ev-when-recur"><svg class="i-sm"><use href="#i-ev-repeat"/></svg>Every Saturday through 25 October</p>
+              </div>
+
+              <div class="ev-actions">
+                <button class="ev-btn ev-btn--primary"><svg class="i-sm"><use href="#i-calendar"/></svg>Add to calendar</button>
+                <button class="ev-btn ev-btn--ghost"><svg class="i-sm"><use href="#i-bell"/></svg>Remind me</button>
+              </div>
+
+              <div class="ev-block">
+                <div class="ev-blocklabel">Where</div>
+                <div class="ev-map" aria-hidden="true">
+                  <span class="ev-map-road ev-map-road--h1"></span>
+                  <span class="ev-map-road ev-map-road--h2"></span>
+                  <span class="ev-map-road ev-map-road--v1"></span>
+                  <span class="ev-map-road ev-map-road--v2"></span>
+                  <span class="ev-map-block"></span>
+                  <span class="ev-map-pin"><svg class="i-sm"><use href="#i-map-pin"/></svg></span>
+                </div>
+                <div class="ev-where">
+                  <div>
+                    <b>Pope County Courthouse square</b>
+                    <span>100 W Main St, Russellville AR 72801</span>
+                  </div>
+                  <a class="ev-btn ev-btn--ghost ev-btn--sm" href="#events"><svg class="i-sm"><use href="#i-directions"/></svg>Directions</a>
+                </div>
+              </div>
+
+              <div class="ev-block">
+                <div class="ev-blocklabel">Who is running it</div>
+                <div class="ev-org">
+                  <span class="ev-avatar">RF</span>
+                  <div>
+                    <b>River Valley Farmers Association</b>
+                    <span>Market manager, Dana Wooldridge</span>
+                  </div>
+                </div>
+              </div>
+
+              <div class="ev-block ev-block--cost">
+                <div class="ev-blocklabel">Cost</div>
+                <p class="ev-cost">Free to walk in. Vendor stalls are $20 a week, booked through the association.</p>
+              </div>
+
+              <div class="ev-block">
+                <div class="ev-blocklabel">About</div>
+                <p class="ev-prose">Around forty growers most Saturdays through the summer, fewer once school starts. Produce, eggs, honey, cut flowers and a coffee cart at the Denver Street corner. The association asks that dogs stay on the sidewalk side.</p>
+                <p class="ev-prose">Parking is free in the courthouse lot and along Main. The El Paso Avenue side fills first.</p>
+              </div>
+
+              <div class="ev-source">
+                <div>
+                  <b>From rivervalleyfarmers.org</b>
+                  <span>Checked this morning at 6:12 am</span>
+                </div>
+                <a href="#events"><svg class="i-sm"><use href="#i-arrow-out"/></svg>Open the original</a>
+              </div>
+              <button class="ev-report"><svg class="i-sm"><use href="#i-flag"/></svg>Something wrong with this listing?</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="ev-annot">
+        <h4>Why it resolves this way</h4>
+        <p><b>Plain words first.</b> &ldquo;Saturday morning, this weekend&rdquo; is the answer to the question actually being asked. The exact stamp sits directly under it for the person who is putting it in a calendar, and neither has to be hunted for.</p>
+        <p><b>The moved notice is above the when, not below it.</b> It is gold, the civic and notices register, and it says what changed and where it changed from. A resident who drove to Depot Park last August needs the old location named, not a corrected address with no history.</p>
+        <p><b>Recurrence is stated twice on purpose:</b> once as a chip beside the category, once as a date bounded sentence. &ldquo;Every Saturday&rdquo; with no end date is how a calendar quietly fills with things that stopped happening in October.</p>
+        <p><b>The source line is not a footnote.</b> Everything on this screen came from somebody else&rsquo;s website, and saying so, with the time we last looked, is the whole basis for trusting the rest of it.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ────────────────────────────────────────────── 10. the categories -->
+  <div class="spec">
+    <div class="spec-label">The category system, and the fifth state <em>four tints and an honest blank; a wrong category is worse than no category</em></div>
+    <div class="plate">
+      <div class="ev-legend">
+        <div class="ev-legend-item">
+          <span class="ev-icon" data-category="civic"><svg class="i-sm"><use href="#i-gavel"/></svg></span>
+          <div>
+            <b>Civic</b>
+            <span>Gold. Council, commissions, quorum court, public hearings, elections.</span>
+            <code>city council &middot; commission &middot; public hearing &middot; quorum court</code>
+          </div>
+        </div>
+        <div class="ev-legend-item">
+          <span class="ev-icon" data-category="music"><svg class="i-sm"><use href="#i-music"/></svg></span>
+          <div>
+            <b>Music</b>
+            <span>Sage. Concerts, the Center for the Arts season, open mic, choir.</span>
+            <code>concert &middot; live music &middot; open mic &middot; recital &middot; choir</code>
+          </div>
+        </div>
+        <div class="ev-legend-item">
+          <span class="ev-icon" data-category="sport"><svg class="i-sm"><use href="#i-sport"/></svg></span>
+          <div>
+            <b>Sport</b>
+            <span>Terracotta. Tech home games, rec league, 5Ks, the river rides.</span>
+            <code>vs. &middot; tournament &middot; 5k &middot; scrimmage &middot; playoff</code>
+          </div>
+        </div>
+        <div class="ev-legend-item">
+          <span class="ev-icon" data-category="community"><svg class="i-sm"><use href="#i-users"/></svg></span>
+          <div>
+            <b>Community</b>
+            <span>Navy. The honest default. Market, story time, church suppers, everything else that is plainly a gathering.</span>
+            <code>the fallback when nothing else matched</code>
+          </div>
+        </div>
+        <div class="ev-legend-item ev-legend-item--none">
+          <span class="ev-icon" data-category="none"><svg class="i-sm"><use href="#i-calendar"/></svg></span>
+          <div>
+            <b>Not categorised</b>
+            <span>No tint. A ring instead of a fill. The categoriser had a title it could not place and we did not guess.</span>
+            <code>&ldquo;July/August summer session ends&rdquo;</code>
+          </div>
+        </div>
+      </div>
+
+      <div class="ev-legend-demo">
+        <div class="ev-eyebrow">In a list</div>
+        <ul class="ev-list">
+          <li>
+            <a class="ev-row" href="#events">
+              <div class="ev-time"><span class="ev-clock">5:30</span><span class="ev-meridiem">pm</span></div>
+              <span class="ev-icon" data-category="civic"><svg class="i-sm"><use href="#i-gavel"/></svg></span>
+              <span class="ev-text"><span class="ev-title">City council, regular session</span><span class="ev-detail">Matched on &ldquo;city council&rdquo;</span></span>
+            </a>
+          </li>
+          <li>
+            <a class="ev-row" href="#events">
+              <div class="ev-time ev-time--allday"><span class="ev-allday">all<br>day</span></div>
+              <span class="ev-icon" data-category="none"><svg class="i-sm"><use href="#i-calendar"/></svg></span>
+              <span class="ev-text"><span class="ev-title">July/August summer session ends</span><span class="ev-detail">Nothing matched. Left uncategorised on purpose.</span></span>
+            </a>
+          </li>
+        </ul>
+      </div>
+    </div>
+    <p class="why">An early build of the categoriser matched a bare <code>session</code>, which tinted &ldquo;July/August summer session ends&rdquo; gold as a council meeting. <b>A category that is wrong is worse than no category:</b> the tint exists so a resident can skip what they do not care about, and one that misfires teaches them to stop trusting all four. So the API stays deliberately narrow and the interface has to have somewhere honest to put the leftovers. That is the ring: same 34px tile, same position, no fill, no colour claimed. It reads as <b>unlabelled</b> rather than as <b>other</b>, which is the truth. Colour is never the only carrier either, every tile has its own icon and every list row has words.</p>
+  </div>
+
+  <!-- ───────────────────────────────────────────── 11. submit an event -->
+  <div class="spec">
+    <div class="spec-label">Submit an event <em>four fields, one of them optional; a resident adding a yard sale should not feel like they are filing for a permit</em></div>
+    <div class="spec-row">
+      <div class="phone">
+        <div class="phone-cap">Add an event</div>
+        <div class="phone-screen">
+          <div class="ev-screen">
+            <div class="ev-screen-head">
+              <div class="ev-eyebrow">Add to the calendar</div>
+              <h3 class="ev-h1">What&rsquo;s going on?</h3>
+              <p class="ev-lede">If it is open to the town, it belongs here. Four boxes, and you can be rough with the date, we will work it out.</p>
+            </div>
+
+            <form class="ev-form" onsubmit="return false">
+              <div class="ev-field">
+                <label class="ev-label" for="ev-f-what">What is it</label>
+                <input class="ev-input" id="ev-f-what" type="text" value="Boat Club fish fry">
+              </div>
+
+              <div class="ev-field">
+                <label class="ev-label" for="ev-f-when">When</label>
+                <input class="ev-input" id="ev-f-when" type="text" value="next fri 6ish">
+                <p class="ev-hint">Type it however you say it. &ldquo;Saturday morning&rdquo; and &ldquo;8/22 at 7&rdquo; both work.</p>
+              </div>
+
+              <div class="ev-field">
+                <label class="ev-label" for="ev-f-where">Where</label>
+                <input class="ev-input" id="ev-f-where" type="text" value="Lake Dardanelle State Park, pavilion 2">
+              </div>
+
+              <div class="ev-field">
+                <label class="ev-label" for="ev-f-link">A link <span class="ev-optional">optional</span></label>
+                <input class="ev-input" id="ev-f-link" type="url" placeholder="A Facebook event, a flyer, anything">
+              </div>
+
+              <div class="ev-review">
+                <svg class="i"><use href="#i-eye"/></svg>
+                <div>
+                  <b>A neighbour reads this before it goes up</b>
+                  <p>Usually within a day. We check it is real and it is open to everyone, we do not edit what you wrote. You will get a note either way.</p>
+                </div>
+              </div>
+
+              <button class="ev-btn ev-btn--primary ev-btn--block" type="submit">Send it in</button>
+              <p class="ev-formfoot">Posting as <b>@dardanelle_dave</b>, verified. Your handle shows on the listing, nothing else does.</p>
+            </form>
+          </div>
+        </div>
+      </div>
+
+      <div class="ev-annot">
+        <h4>Why it resolves this way</h4>
+        <p><b>Four fields and one of them is optional.</b> Every field past this point is a field that stops somebody submitting a fish fry. Category, cost, end time and description are all things we can infer, ask later, or live without.</p>
+        <p><b>The date field takes prose.</b> A structured date picker is the single most abandoned control in a form like this on a phone. Parsing &ldquo;next fri 6ish&rdquo; and then showing our work is strictly better than making a resident operate a calendar widget.</p>
+        <p><b>The review notice is a promise, not a warning.</b> It says who reads it, roughly when, and explicitly that we will not rewrite their words. Moderation that is not described in advance reads as censorship when it happens.</p>
+        <p><b>Identity stays pseudonymous.</b> Verified means neighbours vouched for them, not that the town knows where they live. The listing shows the handle and the badge, and nothing else exists to show.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ──────────────────────────────────── 12. parsing and submitted -->
+  <div class="spec">
+    <div class="spec-label">We cleaned this up for you, and the submitted state <em>show the parse and let them reject it; a silent correction is a bug the resident finds on the night</em></div>
+    <div class="spec-row">
+      <div class="ev-panel">
+        <div class="ev-eyebrow">Confirm the parse</div>
+        <div class="ev-parsed">
+          <div class="ev-parsed-raw">
+            <span class="ev-parsed-tag">You typed</span>
+            <p>next fri 6ish</p>
+          </div>
+          <svg class="i ev-parsed-arrow"><use href="#i-arrow-down"/></svg>
+          <div class="ev-parsed-out">
+            <span class="ev-parsed-tag">We read that as</span>
+            <p><b>Friday 14 August, 6:00 pm</b></p>
+            <span class="ev-parsed-note">No end time, which is fine. We will show it as running on.</span>
+          </div>
+          <div class="ev-parsed-actions">
+            <button class="ev-btn ev-btn--primary ev-btn--sm">That&rsquo;s right</button>
+            <button class="ev-btn ev-btn--ghost ev-btn--sm">Let me fix it</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="ev-panel">
+        <div class="ev-eyebrow">Sent</div>
+        <div class="ev-sent">
+          <span class="ev-sent-mark"><svg class="i-lg"><use href="#i-check"/></svg></span>
+          <h4>It&rsquo;s in the queue</h4>
+          <p>Boat Club fish fry, Friday 14 August at 6:00 pm, Lake Dardanelle State Park.</p>
+          <p class="ev-sent-when">Someone usually gets to these inside a day. We will let you know when it goes up.</p>
+          <div class="ev-sent-actions">
+            <button class="ev-btn ev-btn--ghost ev-btn--sm">Add another</button>
+            <button class="ev-btn ev-btn--ghost ev-btn--sm">See what you sent</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="ev-panel">
+        <div class="ev-eyebrow">Ambiguous parse</div>
+        <div class="ev-parsed ev-parsed--unsure">
+          <div class="ev-parsed-raw">
+            <span class="ev-parsed-tag">You typed</span>
+            <p>the 12th, evening</p>
+          </div>
+          <svg class="i ev-parsed-arrow"><use href="#i-arrow-down"/></svg>
+          <div class="ev-parsed-out">
+            <span class="ev-parsed-tag">Two ways to read this</span>
+            <div class="ev-parsed-pick">
+              <button class="ev-pick">Wed 12 August<span>this month</span></button>
+              <button class="ev-pick">Sat 12 September<span>next month</span></button>
+            </div>
+            <span class="ev-parsed-note">And roughly what time in the evening? <button class="ev-inline">6:00</button> <button class="ev-inline">7:00</button> <button class="ev-inline">8:00</button></span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <p class="why">The parser will be right most of the time and catastrophically wrong occasionally, and the failure mode is a family showing up to a pavilion on the wrong Friday. So it <b>never applies a correction silently</b>. It shows the words the resident typed, immediately above what it made of them, and gives an equally weighted way to reject it. When it is genuinely ambiguous, it does not pick a winner and hope, it asks, which takes one tap and removes the entire class of problem.</p>
+  </div>
+
+  <!-- ──────────────────────────────────────────── 13. RSVP and interest -->
+  <div class="spec">
+    <div class="spec-label">RSVP, and the honest version when it is not ours <em>we do not run somebody else&rsquo;s door list, so we do not draw a control that implies we do</em></div>
+    <div class="spec-row">
+      <div class="ev-panel">
+        <div class="ev-eyebrow">Ours to take</div>
+        <div class="ev-rsvp">
+          <div class="ev-rsvp-q">Are you going?</div>
+          <div class="ev-rsvp-seg" role="group" aria-label="Your answer">
+            <button class="ev-seg ev-seg-on" aria-pressed="true"><svg class="i-sm"><use href="#i-check"/></svg>Going</button>
+            <button class="ev-seg" aria-pressed="false"><svg class="i-sm"><use href="#i-star"/></svg>Interested</button>
+            <button class="ev-seg" aria-pressed="false">Can&rsquo;t</button>
+          </div>
+          <p class="ev-rsvp-count"><b>18</b> going, <b>34</b> interested. Four of them are people you have vouched for.</p>
+        </div>
+      </div>
+
+      <div class="ev-panel">
+        <div class="ev-eyebrow">Not ours to take</div>
+        <div class="ev-rsvp ev-rsvp--out">
+          <svg class="i-lg"><use href="#i-arrow-out"/></svg>
+          <div>
+            <b>Arkansas Tech runs the list for this one</b>
+            <p>We would only be writing your name down where nobody will read it. Their page takes the actual registration.</p>
+          </div>
+          <a class="ev-btn ev-btn--ghost ev-btn--block" href="#events">Register on atu.edu <svg class="i-sm"><use href="#i-arrow-out"/></svg></a>
+          <button class="ev-softline"><svg class="i-sm"><use href="#i-star"/></svg>Still mark it as interesting, just for you</button>
+        </div>
+      </div>
+
+      <div class="ev-panel">
+        <div class="ev-eyebrow">Nobody is counting</div>
+        <div class="ev-rsvp ev-rsvp--none">
+          <div class="ev-rsvp-q">Going to this?</div>
+          <div class="ev-rsvp-seg" role="group" aria-label="Your answer">
+            <button class="ev-seg"><svg class="i-sm"><use href="#i-check"/></svg>Going</button>
+            <button class="ev-seg"><svg class="i-sm"><use href="#i-star"/></svg>Interested</button>
+            <button class="ev-seg">Can&rsquo;t</button>
+          </div>
+          <p class="ev-rsvp-count ev-rsvp-count--zero">Nobody has answered yet. It only went up this morning.</p>
+        </div>
+      </div>
+    </div>
+    <p class="why">A scraped event is somebody else&rsquo;s event. Drawing a Going button on the library&rsquo;s book sale, collecting taps, and sending them nowhere is <b>a fake capability</b>, and it costs exactly one disappointed resident at a door to burn the trust the whole product runs on. So the link out state has no segmented control at all, it explains in a sentence why, and it offers the one thing we <b>can</b> honestly do, which is remember it for you. The zero state names its own age too: &ldquo;nobody has answered yet&rdquo; beside a listing posted three weeks ago says something quite different.</p>
+  </div>
+
+  <!-- ─────────────────────────────────────────────────── 14. reminders -->
+  <div class="spec">
+    <div class="spec-label">Reminders, with the thing it will actually send <em>showing the notification at the moment of choosing is the only way to know if you want it</em></div>
+    <div class="spec-row">
+      <div class="ev-panel">
+        <div class="ev-remind">
+          <div class="ev-remind-row">
+            <span class="ev-icon" data-category="community"><svg class="i-sm"><use href="#i-bell"/></svg></span>
+            <div class="ev-remind-text">
+              <b>Remind me</b>
+              <span>One notification. We will not send a second one.</span>
+            </div>
+            <button class="ev-switch ev-switch-on" role="switch" aria-checked="true" aria-label="Remind me about this event"><i></i></button>
+          </div>
+          <div class="ev-remind-when">
+            <button class="ev-inline">The morning of</button>
+            <button class="ev-inline ev-inline-on" aria-pressed="true">An hour before</button>
+            <button class="ev-inline">Fifteen minutes before</button>
+          </div>
+          <p class="ev-remind-foot">Set for <b>Saturday 8 August at 6:00 am</b>.</p>
+        </div>
+
+        <div class="ev-remind ev-remind--off">
+          <div class="ev-remind-row">
+            <span class="ev-icon" data-category="off"><svg class="i-sm"><use href="#i-bell-off"/></svg></span>
+            <div class="ev-remind-text">
+              <b>Remind me</b>
+              <span>Off. Nothing will be sent.</span>
+            </div>
+            <button class="ev-switch" role="switch" aria-checked="false" aria-label="Remind me about this event"><i></i></button>
+          </div>
+        </div>
+      </div>
+
+      <div class="ev-panel ev-panel--dark">
+        <div class="ev-eyebrow ev-eyebrow--dark">What lands on the lock screen</div>
+        <div class="ev-notif">
+          <div class="ev-notif-head">
+            <span class="ev-notif-mark">TS</span>
+            <span class="ev-notif-app">Town Square</span>
+            <span class="ev-notif-time">6:00 am</span>
+          </div>
+          <b>Farmers market, in an hour</b>
+          <p>7:00 to noon on the courthouse square. It is 71 degrees and clear.</p>
+        </div>
+        <div class="ev-notif">
+          <div class="ev-notif-head">
+            <span class="ev-notif-mark">TS</span>
+            <span class="ev-notif-app">Town Square</span>
+            <span class="ev-notif-time">11:41 am</span>
+          </div>
+          <b>Cancelled: farmers market, Wednesday stand</b>
+          <p>The market called it off for the heat advisory. Saturday is still on.</p>
+        </div>
+        <p class="ev-notif-note">The second one is the only notification we send without being asked, and only to people who set a reminder for the thing that got cancelled.</p>
+      </div>
+    </div>
+    <p class="why">A reminder toggle with no preview is a request to imagine a notification, and people imagine the annoying version and leave it off. Drawing it here also forces the copy to be <b>worth an interruption</b>: the time, the place, and one fact that changes whether you get in the car. The weather line is in there because at seven in the morning in August in the river valley it genuinely is the deciding factor.</p>
+  </div>
+
+  <!-- ──────────────────────────────────────────────────── 15. the states -->
+  <div class="spec">
+    <div class="spec-label">Nothing on, the scrape failed, and loading <em>a quiet day and a broken feed must never look the same, which is the entire reason the empty state has words in it</em></div>
+    <div class="spec-row">
+      <div class="ev-panel ev-panel--screen">
+        <div class="ev-eyebrow">A day with nothing on</div>
+        <div class="ev-blank">
+          <span class="ev-blank-mark"><svg class="i-xl"><use href="#i-sun"/></svg></span>
+          <h4>Nothing on for Tuesday</h4>
+          <p>A quiet Tuesday in August, which is most Tuesdays in August. Nobody scheduled anything and nothing is broken.</p>
+          <p class="ev-blank-alt">The library is open until eight, the splash pad at Pleasant View runs to seven, and there are fourteen things on Saturday.</p>
+          <div class="ev-blank-actions">
+            <button class="ev-btn ev-btn--ghost ev-btn--sm">Jump to Saturday</button>
+            <button class="ev-btn ev-btn--ghost ev-btn--sm"><svg class="i-sm"><use href="#i-plus"/></svg>Add something</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="ev-panel ev-panel--screen">
+        <div class="ev-eyebrow">A source did not answer</div>
+        <div class="ev-fail">
+          <svg class="i-lg"><use href="#i-alert-circle"/></svg>
+          <div>
+            <b>We could not reach the city calendar this morning</b>
+            <p>Council and commission times below were last checked <b>Sunday at 6:10 am</b>, so treat them as a maybe and ring 479 968 2098 if it matters. Tech, the library and the parks department all came through fine.</p>
+            <button class="ev-btn ev-btn--ghost ev-btn--sm"><svg class="i-sm"><use href="#i-refresh"/></svg>Try again</button>
+          </div>
+        </div>
+        <ul class="ev-list">
+          <li>
+            <a class="ev-row" href="#events">
+              <div class="ev-time"><span class="ev-clock">5:30</span><span class="ev-meridiem">pm</span></div>
+              <span class="ev-icon" data-category="civic"><svg class="i-sm"><use href="#i-gavel"/></svg></span>
+              <span class="ev-text"><span class="ev-title">City council, regular session</span><span class="ev-detail ev-detail--stale"><svg class="i-sm"><use href="#i-history"/></svg>As of Sunday</span></span>
+            </a>
+          </li>
+          <li>
+            <a class="ev-row" href="#events">
+              <div class="ev-time"><span class="ev-clock">10:00</span><span class="ev-meridiem">am</span></div>
+              <span class="ev-icon" data-category="community"><svg class="i-sm"><use href="#i-users"/></svg></span>
+              <span class="ev-text"><span class="ev-title">Toddler story time</span><span class="ev-detail">Pope County Library, checked 6:12 am</span></span>
+            </a>
+          </li>
+        </ul>
+      </div>
+
+      <div class="ev-panel ev-panel--screen">
+        <div class="ev-eyebrow">Loading</div>
+        <div class="ev-week ev-week--wide" aria-hidden="true">
+          <span class="ev-day ev-skel-day"></span>
+          <span class="ev-day ev-skel-day"></span>
+          <span class="ev-day ev-skel-day"></span>
+          <span class="ev-day ev-skel-day"></span>
+          <span class="ev-day ev-skel-day"></span>
+        </div>
+        <ul class="ev-list" aria-hidden="true">
+          <li><div class="ev-row"><div class="ev-time"><span class="ev-skel ev-skel-time"></span></div><span class="ev-skel ev-skel-icon"></span><span class="ev-text"><span class="ev-skel ev-skel-line" style="width:76%"></span><span class="ev-skel ev-skel-line ev-skel-line--sub" style="width:48%"></span></span></div></li>
+          <li><div class="ev-row"><div class="ev-time"><span class="ev-skel ev-skel-time"></span></div><span class="ev-skel ev-skel-icon"></span><span class="ev-text"><span class="ev-skel ev-skel-line" style="width:62%"></span><span class="ev-skel ev-skel-line ev-skel-line--sub" style="width:56%"></span></span></div></li>
+          <li><div class="ev-row"><div class="ev-time"><span class="ev-skel ev-skel-time"></span></div><span class="ev-skel ev-skel-icon"></span><span class="ev-text"><span class="ev-skel ev-skel-line" style="width:84%"></span><span class="ev-skel ev-skel-line ev-skel-line--sub" style="width:40%"></span></span></div></li>
+        </ul>
+        <p class="ev-skel-note">The skeleton is the agenda row&rsquo;s own geometry: 46px gutter, 34px tile, two lines. Nothing reflows when the data lands.</p>
+      </div>
+    </div>
+    <p class="why">These three are the same screen with no events on it, and the resident has to be able to tell them apart <b>in under a second</b>. Quiet is warm and names something else to do. Broken says which source failed, when we last had good data, what to do instead, and leaves the stale rows visible and marked rather than hiding them. Loading holds the exact shape of what is coming. The failure state gets <b>gold and not brick</b>: a city calendar timing out is a notice, not an emergency, and brick has to still mean something at 6am when the river is up.</p>
+  </div>
+
+</section>

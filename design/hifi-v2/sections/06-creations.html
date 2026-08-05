@@ -1,0 +1,1980 @@
+<section class="sheet-section" id="creations">
+  <div class="sec-head"><span class="sec-num">06</span><h2>Creations</h2></div>
+  <p class="sec-note">
+    The build layer: small apps residents make and ship into Town Square. Each one is a static bundle
+    running in a sandboxed iframe on a different domain, talking to the shell through a postMessage SDK
+    and inheriting the town's design tokens. This section covers the gallery, the cards, the seam between
+    our chrome and their code, the trust sheet, write-back consent, failure, and the invitation to build one.
+  </p>
+
+  <!-- ────────────────────────────────────────────────────────────────────
+       1. THE GALLERY
+  ───────────────────────────────────────────────────────────────────── -->
+
+  <p class="why">
+    A gallery of resident-built apps has one job that an app store does not have: it has to make the
+    person scrolling it think <b>I could build one of these</b>. So it is not arranged by popularity and
+    it does not lead with icons. It leads with <b>a story about a person</b>, because the gap a resident
+    is actually trying to cross is not technical, it is permissional. Marta is a library clerk. If Marta
+    did it, the thought goes, the door is open. Everything else on the screen is downstream of that:
+    every card carries a human name in the same weight as the app name, the counts are
+    <b>neighbors who used it</b> rather than downloads, and the build invitation is a quiet permanent
+    fixture rather than a banner that appears once. An app store sells you things other people made. This
+    is a town noticeboard for things your neighbors made, and the difference has to be visible in three
+    seconds.
+  </p>
+
+  <div class="spec">
+    <div class="spec-label">Gallery, full screen <em>leads with a person and a question, not a chart of the most popular</em></div>
+    <div class="spec-row">
+      <div class="phone">
+        <div class="phone-cap">Creations – gallery</div>
+        <div class="phone-screen">
+          <div class="cr-screen">
+
+            <div class="cr-topbar">
+              <button class="cr-iconbtn" aria-label="Back to today">
+                <svg class="i" aria-hidden="true"><use href="#i-arrow-left"/></svg>
+              </button>
+              <span class="cr-topbar-title">Today</span>
+              <button class="cr-chip-account">mkeener · verified</button>
+            </div>
+
+            <div class="cr-eyebrow">Russellville · the build layer</div>
+            <h1 class="cr-h1">Built by neighbors</h1>
+            <p class="cr-lede">
+              Twelve small apps, every one made by somebody who lives here. They run sandboxed on Town
+              Square and can only reach what they say they can.
+            </p>
+
+            <div class="cr-story">
+              <div class="cr-story-mark"><svg class="i-sm" aria-hidden="true"><use href="#i-quote"/></svg></div>
+              <p>
+                Marta asked the city how many license plate readers were up on Arkansas Avenue and never
+                got a straight number. Three weekends later there were 41 of them on a map, and the map
+                is on this page.
+              </p>
+              <div class="cr-story-by">
+                <span class="cr-avatar" data-tone="sage" aria-hidden="true">MK</span>
+                Marta Keener, <span class="cr-handle">@mkeener</span>, who had not written code before April
+              </div>
+            </div>
+
+            <div class="cr-rule"><span>Most used this month</span></div>
+
+            <!-- featured / hero card -->
+            <article class="cr-featured">
+              <div class="cr-featured-head">
+                <span class="cr-appicon" data-art="camera" aria-hidden="true">
+                  <svg class="i" aria-hidden="true"><use href="#i-camera"/></svg>
+                </span>
+                <div class="cr-featured-by">
+                  Made by
+                  <span>Marta Keener</span>
+                </div>
+                <span class="cr-featured-kind">Creation</span>
+              </div>
+              <div class="cr-featured-name">Flock Camera Map</div>
+              <p class="cr-featured-tagline">
+                Every automated license plate reader anyone in town has found, with the date it was last
+                confirmed standing.
+              </p>
+              <ul class="cr-touch" data-on="dark">
+                <li class="cr-touch-item" data-w="consequential">
+                  <svg class="i-sm" aria-hidden="true"><use href="#i-cloud-upload"/></svg>Posts cameras as you
+                </li>
+                <li class="cr-touch-item" data-w="consequential">
+                  <svg class="i-sm" aria-hidden="true"><use href="#i-globe"/></svg>openstreetmap.org
+                </li>
+                <li class="cr-touch-item">
+                  <svg class="i-sm" aria-hidden="true"><use href="#i-badge-check"/></svg>Your handle
+                </li>
+              </ul>
+              <div class="cr-featured-foot">
+                <button class="cr-featured-open">
+                  Open <svg class="i-sm" aria-hidden="true"><use href="#i-arrow-right"/></svg>
+                </button>
+                <span class="cr-used">Used by 214 neighbors this month</span>
+              </div>
+            </article>
+
+            <div class="cr-rule"><span>New this week</span></div>
+
+            <article class="cr-new">
+              <span class="cr-new-flag"><svg class="i-sm" aria-hidden="true"><use href="#i-sparkle"/></svg>Published Tuesday</span>
+              <div class="cr-new-body">
+                <span class="cr-appicon" data-art="stamp" aria-hidden="true">
+                  <svg class="i" aria-hidden="true"><use href="#i-storefront"/></svg>
+                </span>
+                <div>
+                  <div class="cr-card-name">Stamp Hunt</div>
+                  <p class="cr-card-tagline">
+                    Forty shops downtown, one stamp each. Fill a row and the shop knows before you say
+                    anything.
+                  </p>
+                  <div class="cr-card-by">
+                    <span class="cr-avatar cr-avatar-sm" data-tone="gold" aria-hidden="true">JP</span>
+                    Janelle Pruitt, first thing she has built
+                  </div>
+                </div>
+              </div>
+              <ul class="cr-touch">
+                <li class="cr-touch-item"><svg class="i-sm" aria-hidden="true"><use href="#i-storefront"/></svg>Reads the directory</li>
+                <li class="cr-touch-item"><svg class="i-sm" aria-hidden="true"><use href="#i-lock"/></svg>Nothing leaves town</li>
+              </ul>
+            </article>
+
+            <div class="cr-rule"><span>Everything else</span></div>
+
+            <div class="cr-cardgrid">
+              <article class="cr-card">
+                <span class="cr-appicon" data-art="food" aria-hidden="true">
+                  <svg class="i" aria-hidden="true"><use href="#i-utensils"/></svg>
+                </span>
+                <div class="cr-card-name">Burrito Index</div>
+                <p class="cr-card-tagline">Every Latino kitchen in the valley, ranked by the people eating there.</p>
+                <div class="cr-card-by">
+                  <span class="cr-avatar cr-avatar-sm" data-tone="terracotta" aria-hidden="true">LR</span>
+                  Luis Ramírez
+                </div>
+                <ul class="cr-touch">
+                  <li class="cr-touch-item" data-w="consequential"><svg class="i-sm" aria-hidden="true"><use href="#i-cloud-upload"/></svg>Posts ratings as you</li>
+                  <li class="cr-touch-item"><svg class="i-sm" aria-hidden="true"><use href="#i-storefront"/></svg>Directory</li>
+                </ul>
+                <span class="cr-used">168 neighbors</span>
+              </article>
+
+              <article class="cr-card">
+                <span class="cr-appicon" data-art="water" aria-hidden="true">
+                  <svg class="i" aria-hidden="true"><use href="#i-chart"/></svg>
+                </span>
+                <div class="cr-card-name">Lake Level</div>
+                <p class="cr-card-tagline">Dardanelle pool stage today, against the last ten Augusts.</p>
+                <div class="cr-card-by">
+                  <span class="cr-avatar cr-avatar-sm" data-tone="navy" aria-hidden="true">WC</span>
+                  Wade Colvin
+                </div>
+                <ul class="cr-touch">
+                  <li class="cr-touch-item" data-w="consequential"><svg class="i-sm" aria-hidden="true"><use href="#i-globe"/></svg>water.weather.gov</li>
+                </ul>
+                <span class="cr-used">96 neighbors</span>
+              </article>
+            </div>
+
+            <ul class="cr-rows">
+              <li class="cr-row">
+                <span class="cr-appicon cr-appicon-sm" data-art="trail" aria-hidden="true">
+                  <svg class="i-sm" aria-hidden="true"><use href="#i-tree"/></svg>
+                </span>
+                <div class="cr-row-main">
+                  <div class="cr-row-name">Bona Dea Trail Report</div>
+                  <div class="cr-row-sub">Which loops are still mud this morning · Dana Hobbs</div>
+                </div>
+                <div class="cr-row-end">
+                  <span class="cr-dot" data-w="consequential" title="Posts records as you" aria-hidden="true"></span>
+                  <span class="cr-row-count">88</span>
+                </div>
+              </li>
+              <li class="cr-row">
+                <span class="cr-appicon cr-appicon-sm" data-art="market" aria-hidden="true">
+                  <svg class="i-sm" aria-hidden="true"><use href="#i-storefront"/></svg>
+                </span>
+                <div class="cr-row-main">
+                  <div class="cr-row-name">Market Table</div>
+                  <div class="cr-row-sub">Who is setting up Saturday on Depot Lane · Renata Vela</div>
+                </div>
+                <div class="cr-row-end">
+                  <span class="cr-row-count">71</span>
+                </div>
+              </li>
+              <li class="cr-row">
+                <span class="cr-appicon cr-appicon-sm" data-art="road" aria-hidden="true">
+                  <svg class="i-sm" aria-hidden="true"><use href="#i-map-pin"/></svg>
+                </span>
+                <div class="cr-row-main">
+                  <div class="cr-row-name">Pothole Log</div>
+                  <div class="cr-row-sub">Logged, reported, and whether it got filled · Curtis Boyd</div>
+                </div>
+                <div class="cr-row-end">
+                  <span class="cr-dot" data-w="consequential" title="Posts records as you" aria-hidden="true"></span>
+                  <span class="cr-row-count">64</span>
+                </div>
+              </li>
+              <li class="cr-row">
+                <span class="cr-appicon cr-appicon-sm" data-art="sport" aria-hidden="true">
+                  <svg class="i-sm" aria-hidden="true"><use href="#i-map"/></svg>
+                </span>
+                <div class="cr-row-main">
+                  <div class="cr-row-name">Tailgate Map</div>
+                  <div class="cr-row-sub">Where everyone parks for Tech home games · Sam Ottinger</div>
+                </div>
+                <div class="cr-row-end">
+                  <span class="cr-row-count">52</span>
+                </div>
+              </li>
+            </ul>
+
+            <!-- the invitation, gallery-card intensity -->
+            <article class="cr-invite-card">
+              <span class="cr-invite-icon" aria-hidden="true">
+                <svg class="i-lg" aria-hidden="true"><use href="#i-wand"/></svg>
+              </span>
+              <div class="cr-invite-name">Build one</div>
+              <p class="cr-invite-copy">
+                Describe what you want to the AI tool you already use, connect it to Town Square, and a
+                neighbor on the review committee reads it before it goes up. Most of these took a weekend.
+              </p>
+              <button class="cr-secondary">
+                How it works <svg class="i-sm" aria-hidden="true"><use href="#i-arrow-right"/></svg>
+              </button>
+            </article>
+
+            <p class="cr-footnote">
+              Nobody is paid for anything on this page. The source of every creation is public and you can
+              fork any of them.
+            </p>
+
+          </div>
+        </div>
+      </div>
+
+      <div class="cr-notes">
+        <h4>What the gallery refuses to be</h4>
+        <p><b>Not an app store.</b> No stars, no five-across icon grid, no ranked chart, no install button. Nothing here is bought, so nothing here is merchandised.</p>
+        <p><b>Not a list of links.</b> Every entry carries four facts a link cannot: what it does, who made it, how many neighbors used it, and what it touches. The touch strip is the load-bearing one, and it is on the card, not one tap away.</p>
+        <p><b>Not sorted by winner.</b> The featured slot is the most used <em>this month</em>, so it rotates. A permanent leaderboard tells a new builder the slots are taken.</p>
+        <h4>The metric</h4>
+        <p>Downloads measure a decision made before the thing was used. Stars measure who felt strongly. <b>Neighbors who used it this month</b> is the only number that means the app is still alive, and it decays honestly when a creation goes stale.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ────────────────────────────────────────────────────────────────────
+       2. CARD TREATMENTS
+  ───────────────────────────────────────────────────────────────────── -->
+
+  <div class="spec">
+    <div class="spec-label">Card treatments, four densities <em>every one carries maker, usage and reach; the touch strip never gets dropped for space</em></div>
+    <div class="cr-cardbed">
+
+      <div class="cr-bedcol">
+        <div class="cr-bedlabel">Featured · one per screen, the dark card</div>
+        <article class="cr-featured">
+          <div class="cr-featured-head">
+            <span class="cr-appicon" data-art="camera" aria-hidden="true">
+              <svg class="i" aria-hidden="true"><use href="#i-camera"/></svg>
+            </span>
+            <div class="cr-featured-by">Made by<span>Marta Keener</span></div>
+            <span class="cr-featured-kind">Creation</span>
+          </div>
+          <div class="cr-featured-name">Flock Camera Map</div>
+          <p class="cr-featured-tagline">
+            Every automated license plate reader anyone in town has found, with the date it was last
+            confirmed standing.
+          </p>
+          <ul class="cr-touch" data-on="dark">
+            <li class="cr-touch-item" data-w="consequential"><svg class="i-sm" aria-hidden="true"><use href="#i-cloud-upload"/></svg>Posts cameras as you</li>
+            <li class="cr-touch-item" data-w="consequential"><svg class="i-sm" aria-hidden="true"><use href="#i-globe"/></svg>openstreetmap.org</li>
+            <li class="cr-touch-item"><svg class="i-sm" aria-hidden="true"><use href="#i-badge-check"/></svg>Your handle</li>
+          </ul>
+          <div class="cr-featured-foot">
+            <button class="cr-featured-open">Open <svg class="i-sm" aria-hidden="true"><use href="#i-arrow-right"/></svg></button>
+            <span class="cr-used">Used by 214 neighbors this month</span>
+          </div>
+        </article>
+      </div>
+
+      <div class="cr-bedcol">
+        <div class="cr-bedlabel">Standard grid card · default, hover shown</div>
+        <article class="cr-card" data-state="hover">
+          <span class="cr-appicon" data-art="food" aria-hidden="true">
+            <svg class="i" aria-hidden="true"><use href="#i-utensils"/></svg>
+          </span>
+          <div class="cr-card-name">Burrito Index</div>
+          <p class="cr-card-tagline">Every Latino kitchen in the valley, ranked by the people eating there.</p>
+          <div class="cr-card-by">
+            <span class="cr-avatar cr-avatar-sm" data-tone="terracotta" aria-hidden="true">LR</span>
+            Luis Ramírez, <span class="cr-handle">@luisr</span>
+          </div>
+          <ul class="cr-touch">
+            <li class="cr-touch-item" data-w="consequential"><svg class="i-sm" aria-hidden="true"><use href="#i-cloud-upload"/></svg>Posts ratings as you</li>
+            <li class="cr-touch-item"><svg class="i-sm" aria-hidden="true"><use href="#i-storefront"/></svg>Directory</li>
+            <li class="cr-touch-item"><svg class="i-sm" aria-hidden="true"><use href="#i-lock"/></svg>No outside hosts</li>
+          </ul>
+          <span class="cr-used">Used by 168 neighbors this month</span>
+        </article>
+
+        <div class="cr-bedlabel">Standard grid card · keyboard focus</div>
+        <article class="cr-card" data-state="focus">
+          <span class="cr-appicon" data-art="water" aria-hidden="true">
+            <svg class="i" aria-hidden="true"><use href="#i-chart"/></svg>
+          </span>
+          <div class="cr-card-name">Lake Level</div>
+          <p class="cr-card-tagline">Dardanelle pool stage today, against the last ten Augusts.</p>
+          <div class="cr-card-by">
+            <span class="cr-avatar cr-avatar-sm" data-tone="navy" aria-hidden="true">WC</span>
+            Wade Colvin, <span class="cr-handle">@wadec</span>
+          </div>
+          <ul class="cr-touch">
+            <li class="cr-touch-item" data-w="consequential"><svg class="i-sm" aria-hidden="true"><use href="#i-globe"/></svg>water.weather.gov</li>
+          </ul>
+          <span class="cr-used">Used by 96 neighbors this month</span>
+        </article>
+      </div>
+
+      <div class="cr-bedcol">
+        <div class="cr-bedlabel">New this week · dated, not badged</div>
+        <article class="cr-new">
+          <span class="cr-new-flag"><svg class="i-sm" aria-hidden="true"><use href="#i-sparkle"/></svg>Published Tuesday</span>
+          <div class="cr-new-body">
+            <span class="cr-appicon" data-art="stamp" aria-hidden="true">
+              <svg class="i" aria-hidden="true"><use href="#i-storefront"/></svg>
+            </span>
+            <div>
+              <div class="cr-card-name">Stamp Hunt</div>
+              <p class="cr-card-tagline">
+                Forty shops downtown, one stamp each. Fill a row and the shop knows before you say anything.
+              </p>
+              <div class="cr-card-by">
+                <span class="cr-avatar cr-avatar-sm" data-tone="gold" aria-hidden="true">JP</span>
+                Janelle Pruitt, first thing she has built
+              </div>
+            </div>
+          </div>
+          <ul class="cr-touch">
+            <li class="cr-touch-item"><svg class="i-sm" aria-hidden="true"><use href="#i-storefront"/></svg>Reads the directory</li>
+            <li class="cr-touch-item"><svg class="i-sm" aria-hidden="true"><use href="#i-lock"/></svg>Nothing leaves town</li>
+          </ul>
+        </article>
+
+        <div class="cr-bedlabel">Dense row · four states</div>
+        <ul class="cr-rows">
+          <li class="cr-row">
+            <span class="cr-appicon cr-appicon-sm" data-art="trail" aria-hidden="true"><svg class="i-sm" aria-hidden="true"><use href="#i-tree"/></svg></span>
+            <div class="cr-row-main">
+              <div class="cr-row-name">Bona Dea Trail Report</div>
+              <div class="cr-row-sub">Which loops are still mud this morning · Dana Hobbs</div>
+            </div>
+            <div class="cr-row-end">
+              <span class="cr-dot" data-w="consequential" aria-hidden="true"></span><span class="cr-row-count">88</span>
+            </div>
+          </li>
+          <li class="cr-row" data-state="hover">
+            <span class="cr-appicon cr-appicon-sm" data-art="market" aria-hidden="true"><svg class="i-sm" aria-hidden="true"><use href="#i-storefront"/></svg></span>
+            <div class="cr-row-main">
+              <div class="cr-row-name">Market Table</div>
+              <div class="cr-row-sub">Who is setting up Saturday on Depot Lane · Renata Vela</div>
+            </div>
+            <div class="cr-row-end"><span class="cr-row-count">71</span></div>
+          </li>
+          <li class="cr-row" data-state="pinned">
+            <span class="cr-appicon cr-appicon-sm" data-art="road" aria-hidden="true"><svg class="i-sm" aria-hidden="true"><use href="#i-map-pin"/></svg></span>
+            <div class="cr-row-main">
+              <div class="cr-row-name">Pothole Log <svg class="i-sm cr-pinmark" aria-hidden="true"><use href="#i-pin"/></svg></div>
+              <div class="cr-row-sub">Pinned to your Today · Curtis Boyd</div>
+            </div>
+            <div class="cr-row-end">
+              <span class="cr-dot" data-w="consequential" aria-hidden="true"></span><span class="cr-row-count">64</span>
+            </div>
+          </li>
+          <li class="cr-row" data-state="stale">
+            <span class="cr-appicon cr-appicon-sm" data-art="road" aria-hidden="true"><svg class="i-sm" aria-hidden="true"><use href="#i-archive"/></svg></span>
+            <div class="cr-row-main">
+              <div class="cr-row-name">Yard Sale Radar</div>
+              <div class="cr-row-sub">Nobody has opened this since March · Trey Bratcher</div>
+            </div>
+            <div class="cr-row-end"><span class="cr-row-count">2</span></div>
+          </li>
+        </ul>
+      </div>
+
+    </div>
+
+    <p class="why">
+      <b>The touch strip is on the card, not behind a tap.</b> If what an app can reach is only visible on
+      the screen after the one where a resident decided, then the decision was made without it. Two chips
+      is the target, three the ceiling, and the ones that matter get the terracotta inset. A creation that
+      touches nothing consequential shows the reassuring absence instead: <b>nothing leaves town</b> is a
+      chip, because a blank space is not an answer. On the dense row the strip collapses to a single dot
+      with a title, and the count is the only number, since a row that tries to say everything stops being
+      a row.
+    </p>
+  </div>
+
+  <!-- ────────────────────────────────────────────────────────────────────
+       3. THE SEAM
+  ───────────────────────────────────────────────────────────────────── -->
+
+  <div class="spec">
+    <div class="spec-label">The seam <em>the badge is the one thing a creation can never draw over, and that is the whole security story</em></div>
+
+    <div class="plate">
+      <div class="cr-seam">
+
+        <div class="cr-seam-stack">
+
+          <div class="cr-band" data-own="ours">
+            <span class="cr-pip">1</span>
+            <span class="cr-band-tag">Town Square</span>
+            <div class="cr-chrome">
+              <button class="cr-iconbtn" aria-label="Back"><svg class="i" aria-hidden="true"><use href="#i-arrow-left"/></svg></button>
+              <span class="cr-appicon cr-appicon-sm" data-art="food" aria-hidden="true"><svg class="i-sm" aria-hidden="true"><use href="#i-utensils"/></svg></span>
+              <span class="cr-chrome-id">
+                <span class="cr-chrome-title">Burrito Index</span>
+                <span class="cr-chrome-by">by Luis Ramírez, verified resident</span>
+              </span>
+              <span class="cr-badge">Sandboxed<span class="cr-pip cr-pip-inline">2</span></span>
+            </div>
+            <div class="cr-livetitle">14 kitchens, 391 plates rated</div>
+          </div>
+
+          <div class="cr-boundary">
+            <span class="cr-pip">3</span>
+            <span class="cr-boundary-text">
+              <svg class="i-sm" aria-hidden="true"><use href="#i-shield"/></svg>
+              rvl.town &nbsp;→&nbsp; burrito-index.rvl-creations.net
+            </span>
+          </div>
+
+          <div class="cr-band" data-own="theirs">
+            <span class="cr-pip">4</span>
+            <span class="cr-band-tag">Guest bundle</span>
+
+            <div class="cr-guest">
+              <div class="cr-guest-head">
+                <div class="cr-guest-h">This week on the east side</div>
+                <div class="cr-guest-sub">Ranked by 39 people who ate there in the last 30 days</div>
+              </div>
+              <ol class="cr-guest-list">
+                <li>
+                  <span class="cr-guest-rank">1</span>
+                  <span class="cr-guest-name">Taquería Jalisco<em>S Arkansas Ave</em></span>
+                  <span class="cr-guest-bar"><i style="width:92%"></i></span>
+                  <span class="cr-guest-score">9.2</span>
+                </li>
+                <li>
+                  <span class="cr-guest-rank">2</span>
+                  <span class="cr-guest-name">Antojitos Anahí<em>W Main St</em></span>
+                  <span class="cr-guest-bar"><i style="width:88%"></i></span>
+                  <span class="cr-guest-score">8.8</span>
+                </li>
+                <li>
+                  <span class="cr-guest-rank">3</span>
+                  <span class="cr-guest-name">El Charro<em>E 4th St</em></span>
+                  <span class="cr-guest-bar"><i style="width:81%"></i></span>
+                  <span class="cr-guest-score">8.1</span>
+                </li>
+                <li>
+                  <span class="cr-guest-rank">4</span>
+                  <span class="cr-guest-name">Tacos La Bendición<em>Weir Rd, truck</em></span>
+                  <span class="cr-guest-bar"><i style="width:77%"></i></span>
+                  <span class="cr-guest-score">7.7</span>
+                </li>
+              </ol>
+              <button class="cr-guest-btn">Rate one you ate this week</button>
+              <div class="cr-guest-foot">Built by Luis. Ratings are yours, not mine.</div>
+            </div>
+          </div>
+
+          <div class="cr-boundary">
+            <span class="cr-boundary-text">
+              <svg class="i-sm" aria-hidden="true"><use href="#i-shield"/></svg>
+              back across the port
+            </span>
+          </div>
+
+          <div class="cr-band" data-own="ours">
+            <span class="cr-pip">5</span>
+            <span class="cr-band-tag">Town Square</span>
+            <div class="cr-footchrome">
+              <svg class="i-sm" aria-hidden="true"><use href="#i-package"/></svg>
+              <span>running on Town Square · v2.1.0</span>
+              <button class="cr-linkbtn">About this creation</button>
+              <button class="cr-linkbtn">Report</button>
+            </div>
+          </div>
+
+        </div>
+
+        <ol class="cr-legend">
+          <li>
+            <span class="cr-pip">1</span>
+            <div>
+              <h5>Host chrome. Ours.</h5>
+              <p>Rendered by the shell, outside the frame. The name, the maker and the back button are
+                ours to write, and a creation cannot reach a single pixel of this strip.</p>
+            </div>
+          </li>
+          <li>
+            <span class="cr-pip">2</span>
+            <div>
+              <h5>The badge. The load-bearing pixel.</h5>
+              <p>The one piece of chrome a creation can never draw over. That is what makes it structurally
+                unable to imitate Town Square: a resident always has a frame of reference the guest cannot
+                touch, so a fake sign-in drawn inside the frame still sits under a badge that says the
+                thing below it is somebody's bundle. There is no login form anywhere inside a creation for
+                one to imitate, and there never will be.</p>
+            </div>
+          </li>
+          <li>
+            <span class="cr-pip">3</span>
+            <div>
+              <h5>The seam. A different registrable domain.</h5>
+              <p>Not a policy, the cookie jar. The session cookie is structurally unable to reach the guest
+                and the browser puts it in another process. The only channel across is one
+                <code>MessagePort</code>, and the bridge checks every call against the frozen manifest on
+                the host side, so a hand-written message that skips the SDK still gets
+                <code>permission_denied</code>.</p>
+            </div>
+          </li>
+          <li>
+            <span class="cr-pip">4</span>
+            <div>
+              <h5>The creation. Theirs.</h5>
+              <p>Luis's HTML, Luis's CSS, Luis's judgment about what a burrito score means. It looks native
+                because the host injects the town's design tokens as CSS custom properties, so
+                <code>var(--ts-terracotta)</code> resolves for him too and costs him nothing to adopt. A
+                town that reskins Town Square reskins every creation with it.</p>
+            </div>
+          </li>
+          <li>
+            <span class="cr-pip">5</span>
+            <div>
+              <h5>Footer chrome. Ours, and deliberately below.</h5>
+              <p>Report sits outside the frame so a resident reporting a creation is always talking to Town
+                Square and never to the thing they are reporting. Putting it inside would be the single
+                most obvious hole in the design.</p>
+            </div>
+          </li>
+        </ol>
+      </div>
+    </div>
+
+    <p class="why">
+      Ownership is carried by <b>a label and an edge treatment, never by color alone</b>: ours has a solid
+      navy rule and the word Town Square, theirs has a dashed terracotta outline and the word Guest bundle.
+      The dashes are doing real work here, because the seam is the one boundary in the product where being
+      unsure which side you are on is a security failure rather than a cosmetic one.
+    </p>
+  </div>
+
+  <!-- ────────────────────────────────────────────────────────────────────
+       4. HOST CHROME VARIANTS
+  ───────────────────────────────────────────────────────────────────── -->
+
+  <div class="spec">
+    <div class="spec-label">Host chrome, four states <em>the strip grows downward; the badge never moves, because a badge that moves can be predicted and covered</em></div>
+    <div class="spec-grid">
+
+      <div class="plate">
+        <div class="cr-bedlabel">Normal</div>
+        <div class="cr-chrome">
+          <button class="cr-iconbtn" aria-label="Back"><svg class="i" aria-hidden="true"><use href="#i-arrow-left"/></svg></button>
+          <span class="cr-appicon cr-appicon-sm" data-art="camera" aria-hidden="true"><svg class="i-sm" aria-hidden="true"><use href="#i-camera"/></svg></span>
+          <span class="cr-chrome-id">
+            <span class="cr-chrome-title">Flock Camera Map</span>
+            <span class="cr-chrome-by">by Marta Keener, verified resident</span>
+          </span>
+          <span class="cr-badge">Sandboxed</span>
+        </div>
+        <div class="cr-livetitle">41 cameras mapped</div>
+        <p class="cr-bednote">
+          The line under the strip is <code>app.setTitle</code>, capped at 80 characters and rendered as a
+          text node. It is the only place a creation gets to write in our chrome, which is why it is a
+          separate row in a quieter voice rather than a substitution into the title.
+        </p>
+      </div>
+
+      <div class="plate">
+        <div class="cr-bedlabel">Permission in use</div>
+        <div class="cr-chrome">
+          <button class="cr-iconbtn" aria-label="Back"><svg class="i" aria-hidden="true"><use href="#i-arrow-left"/></svg></button>
+          <span class="cr-appicon cr-appicon-sm" data-art="camera" aria-hidden="true"><svg class="i-sm" aria-hidden="true"><use href="#i-camera"/></svg></span>
+          <span class="cr-chrome-id">
+            <span class="cr-chrome-title">Flock Camera Map</span>
+            <span class="cr-chrome-by">by Marta Keener, verified resident</span>
+          </span>
+          <span class="cr-badge">Sandboxed</span>
+        </div>
+        <div class="cr-inuse">
+          <span class="cr-inuse-pill"><svg class="i-sm" aria-hidden="true"><use href="#i-globe"/></svg>tile.openstreetmap.org</span>
+          <span class="cr-inuse-pill"><svg class="i-sm" aria-hidden="true"><use href="#i-database"/></svg>reading cameras</span>
+          <button class="cr-linkbtn cr-inuse-more">What it can touch</button>
+        </div>
+        <p class="cr-bednote">
+          Only what is <em>currently</em> in use, and it fades out two seconds after the traffic stops. A
+          permanent list of declared permissions is wallpaper; a list that appears when something happens
+          is information.
+        </p>
+      </div>
+
+      <div class="plate">
+        <div class="cr-bedlabel">Writing back</div>
+        <div class="cr-chrome">
+          <button class="cr-iconbtn" aria-label="Back"><svg class="i" aria-hidden="true"><use href="#i-arrow-left"/></svg></button>
+          <span class="cr-appicon cr-appicon-sm" data-art="camera" aria-hidden="true"><svg class="i-sm" aria-hidden="true"><use href="#i-camera"/></svg></span>
+          <span class="cr-chrome-id">
+            <span class="cr-chrome-title">Flock Camera Map</span>
+            <span class="cr-chrome-by">by Marta Keener, verified resident</span>
+          </span>
+          <span class="cr-badge">Sandboxed</span>
+        </div>
+        <div class="cr-writing">
+          <svg class="i-sm cr-spin" aria-hidden="true"><use href="#i-loader"/></svg>
+          <span>Posting a camera to the town as <b>@mkeener</b></span>
+        </div>
+        <p class="cr-bednote">
+          A write is the only thing a creation does that outlives the visit, so it is the only thing that
+          gets its own row and a spinner. The resident's handle is in the sentence, because the point of
+          the row is that this is going out under their name.
+        </p>
+      </div>
+
+      <div class="plate">
+        <div class="cr-bedlabel">Escape hatch · misbehaving</div>
+        <div class="cr-chrome" data-state="alert">
+          <button class="cr-iconbtn" aria-label="Back"><svg class="i" aria-hidden="true"><use href="#i-arrow-left"/></svg></button>
+          <span class="cr-appicon cr-appicon-sm" data-art="road" aria-hidden="true"><svg class="i-sm" aria-hidden="true"><use href="#i-alert-circle"/></svg></span>
+          <span class="cr-chrome-id">
+            <span class="cr-chrome-title">Yard Sale Radar</span>
+            <span class="cr-chrome-by">by Trey Bratcher</span>
+          </span>
+          <span class="cr-badge">Sandboxed</span>
+        </div>
+        <div class="cr-hatch">
+          <svg class="i-sm" aria-hidden="true"><use href="#i-warning"/></svg>
+          <div>
+            <b>This one tried to send you somewhere else.</b>
+            <span>We stopped it and flagged it for the committee. Nothing you did.</span>
+          </div>
+          <div class="cr-hatch-acts">
+            <button class="cr-primary-sm">Close it</button>
+            <button class="cr-secondary-sm">Report</button>
+          </div>
+        </div>
+        <p class="cr-bednote">
+          Terracotta, not brick. A creation navigating away is a nuisance the platform already caught, not
+          the river coming up. Brick is the one alarm register and spending it here is how it stops meaning
+          anything at 6am.
+        </p>
+      </div>
+
+    </div>
+
+    <div class="cr-bedlabel cr-bedlabel-loose">Footer chrome · default, report open</div>
+    <div class="spec-row">
+      <div class="plate cr-plate-tight">
+        <div class="cr-footchrome">
+          <svg class="i-sm" aria-hidden="true"><use href="#i-package"/></svg>
+          <span>running on Town Square · v1.2.0</span>
+          <button class="cr-linkbtn">About this creation</button>
+          <button class="cr-linkbtn">Report</button>
+        </div>
+      </div>
+      <div class="plate cr-plate-tight">
+        <div class="cr-footchrome" data-state="open">
+          <svg class="i-sm" aria-hidden="true"><use href="#i-package"/></svg>
+          <span>running on Town Square · v1.2.0</span>
+          <button class="cr-linkbtn">About this creation</button>
+          <button class="cr-linkbtn" data-state="on">Report</button>
+        </div>
+        <div class="cr-report">
+          <div class="cr-report-h">Tell the committee what happened</div>
+          <div class="cr-report-opts">
+            <label class="cr-radio"><input type="radio" name="cr-report-why" checked> It asked for something it should not need</label>
+            <label class="cr-radio"><input type="radio" name="cr-report-why"> It is broken</label>
+            <label class="cr-radio"><input type="radio" name="cr-report-why"> The information in it is wrong</label>
+            <label class="cr-radio"><input type="radio" name="cr-report-why"> Something else</label>
+          </div>
+          <textarea class="cr-textarea" rows="2" placeholder="Optional. A sentence is plenty."></textarea>
+          <div class="cr-report-foot">
+            <span>Sent as @mkeener with the version number. Luis will see it.</span>
+            <button class="cr-primary-sm">Send</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ────────────────────────────────────────────────────────────────────
+       5. THE TRUST SHEET
+  ───────────────────────────────────────────────────────────────────── -->
+
+  <div class="spec">
+    <div class="spec-label">Trust sheet, three permission sets <em>generated from the frozen manifest, so a creation cannot write its own trust page</em></div>
+
+    <p class="why">
+      Grouped by consequence, not by capability. <b>What leaves the visit</b> and <b>what leaves town</b>
+      get the terracotta inset rule and sit at the top; <b>background</b> is everything that is true of
+      every creation and reads as reassurance. Absence is stated as loudly as presence, because
+      <b>can't reach anything outside town</b> is the most reassuring line on the screen and it only means
+      something because it is generated from the same field that would otherwise list a host. Three
+      manifests are shown, so the design is proven against the boring case and the alarming one rather
+      than the demo one.
+    </p>
+
+    <div class="spec-row">
+
+      <!-- BORING -->
+      <div class="phone">
+        <div class="phone-cap">Trust – nothing consequential</div>
+        <div class="phone-screen">
+          <div class="cr-screen">
+            <button class="cr-back"><svg class="i-sm" aria-hidden="true"><use href="#i-arrow-left"/></svg> Back</button>
+            <div class="cr-trust-head">
+              <span class="cr-appicon cr-appicon-lg" data-art="market" aria-hidden="true"><svg class="i-lg" aria-hidden="true"><use href="#i-storefront"/></svg></span>
+              <div>
+                <h1 class="cr-h1 cr-h1-tight">Market Table</h1>
+                <p class="cr-lede cr-lede-tight">Who is setting up Saturday on Depot Lane</p>
+                <div class="cr-card-by">
+                  <span class="cr-avatar cr-avatar-sm" data-tone="sage" aria-hidden="true">RV</span>
+                  Renata Vela, <span class="cr-handle">@renatav</span> · verified
+                </div>
+              </div>
+            </div>
+
+            <div class="cr-tally" data-tone="calm">
+              <svg class="i-sm" aria-hidden="true"><use href="#i-check-circle"/></svg>
+              Nothing here leaves the visit or leaves town.
+            </div>
+
+            <div class="cr-trust-group">Background</div>
+            <ul class="cr-trust">
+              <li data-weight="ambient">
+                <div class="cr-trust-icon"><svg class="i-sm" aria-hidden="true"><use href="#i-storefront"/></svg></div>
+                <div>
+                  <div class="cr-trust-title">Reads the town directory and calendar</div>
+                  <div class="cr-trust-detail">Names, hours, addresses and events. The same things the website shows anyone.</div>
+                </div>
+              </li>
+              <li data-weight="ambient">
+                <div class="cr-trust-icon"><svg class="i-sm" aria-hidden="true"><use href="#i-sliders"/></svg></div>
+                <div>
+                  <div class="cr-trust-title">Remembers your settings for this app</div>
+                  <div class="cr-trust-detail">Private to you and to this app. No other creation can read it.</div>
+                </div>
+              </li>
+              <li data-weight="ambient">
+                <div class="cr-trust-icon"><svg class="i-sm" aria-hidden="true"><use href="#i-lock"/></svg></div>
+                <div>
+                  <div class="cr-trust-title">Can't reach anything outside town</div>
+                  <div class="cr-trust-detail">Runs sandboxed on Town Square. Nothing it sees can leave.</div>
+                </div>
+              </li>
+            </ul>
+
+            <button class="cr-primary cr-primary-wide">Open Market Table</button>
+            <p class="cr-footnote">Reviewed by the Pope County committee on 12 June 2026, version 1.0.4.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- REASONABLE -->
+      <div class="phone">
+        <div class="phone-cap">Trust – reasonable ask</div>
+        <div class="phone-screen">
+          <div class="cr-screen">
+            <button class="cr-back"><svg class="i-sm" aria-hidden="true"><use href="#i-arrow-left"/></svg> Back</button>
+            <div class="cr-trust-head">
+              <span class="cr-appicon cr-appicon-lg" data-art="camera" aria-hidden="true"><svg class="i-lg" aria-hidden="true"><use href="#i-camera"/></svg></span>
+              <div>
+                <h1 class="cr-h1 cr-h1-tight">Flock Camera Map</h1>
+                <p class="cr-lede cr-lede-tight">Every known ALPR camera in town</p>
+                <div class="cr-card-by">
+                  <span class="cr-avatar cr-avatar-sm" data-tone="sage" aria-hidden="true">MK</span>
+                  Marta Keener, <span class="cr-handle">@mkeener</span> · verified
+                </div>
+              </div>
+            </div>
+
+            <div class="cr-tally" data-tone="notable">
+              <svg class="i-sm" aria-hidden="true"><use href="#i-info"/></svg>
+              Two things here outlive the visit. They are marked.
+            </div>
+
+            <div class="cr-trust-group">Leaves the visit</div>
+            <ul class="cr-trust">
+              <li data-weight="consequential">
+                <div class="cr-trust-icon"><svg class="i-sm" aria-hidden="true"><use href="#i-cloud-upload"/></svg></div>
+                <div>
+                  <div class="cr-trust-title">Posts Flock cameras with your name on it</div>
+                  <div class="cr-trust-detail">Asks the first time. Everything it writes is attributed to you and to this creation, and every version is kept.</div>
+                </div>
+              </li>
+            </ul>
+
+            <div class="cr-trust-group">Leaves town</div>
+            <ul class="cr-trust">
+              <li data-weight="consequential">
+                <div class="cr-trust-icon"><svg class="i-sm" aria-hidden="true"><use href="#i-globe"/></svg></div>
+                <div>
+                  <div class="cr-trust-title">Loads data from tile.openstreetmap.org</div>
+                  <div class="cr-trust-detail">That is the only outside address it can reach. Map tiles.</div>
+                </div>
+              </li>
+            </ul>
+
+            <div class="cr-trust-group">Background</div>
+            <ul class="cr-trust">
+              <li data-weight="notable">
+                <div class="cr-trust-icon"><svg class="i-sm" aria-hidden="true"><use href="#i-badge-check"/></svg></div>
+                <div>
+                  <div class="cr-trust-title">Knows you're a verified resident</div>
+                  <div class="cr-trust-detail">Your handle and whether you are verified. Not your name, email or address.</div>
+                </div>
+              </li>
+              <li data-weight="ambient">
+                <div class="cr-trust-icon"><svg class="i-sm" aria-hidden="true"><use href="#i-storefront"/></svg></div>
+                <div>
+                  <div class="cr-trust-title">Reads the town directory and calendar</div>
+                  <div class="cr-trust-detail">Names, hours, addresses and events. The same things the website shows anyone.</div>
+                </div>
+              </li>
+              <li data-weight="ambient">
+                <div class="cr-trust-icon"><svg class="i-sm" aria-hidden="true"><use href="#i-sliders"/></svg></div>
+                <div>
+                  <div class="cr-trust-title">Remembers your settings for this app</div>
+                  <div class="cr-trust-detail">Private to you and to this app. No other creation can read it.</div>
+                </div>
+              </li>
+            </ul>
+
+            <button class="cr-primary cr-primary-wide">Open Flock Camera Map</button>
+            <p class="cr-footnote">Reviewed by the Pope County committee on 28 July 2026, version 1.2.0.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- SHOULD GIVE PAUSE -->
+      <div class="phone">
+        <div class="phone-cap">Trust – should give you pause</div>
+        <div class="phone-screen">
+          <div class="cr-screen">
+            <button class="cr-back"><svg class="i-sm" aria-hidden="true"><use href="#i-arrow-left"/></svg> Back</button>
+            <div class="cr-trust-head">
+              <span class="cr-appicon cr-appicon-lg" data-art="road" aria-hidden="true"><svg class="i-lg" aria-hidden="true"><use href="#i-eye"/></svg></span>
+              <div>
+                <h1 class="cr-h1 cr-h1-tight">Watch Log</h1>
+                <p class="cr-lede cr-lede-tight">Log what you see on your street</p>
+                <div class="cr-card-by">
+                  <span class="cr-avatar cr-avatar-sm" data-tone="stone" aria-hidden="true">TB</span>
+                  Trey Bratcher, <span class="cr-handle">@tbratcher</span> · not yet verified
+                </div>
+              </div>
+            </div>
+
+            <div class="cr-tally" data-tone="heavy">
+              <svg class="i-sm" aria-hidden="true"><use href="#i-alert-circle"/></svg>
+              Four things here outlive the visit, and three of them leave town. That is more than most.
+            </div>
+
+            <div class="cr-trust-group">Leaves the visit</div>
+            <ul class="cr-trust">
+              <li data-weight="consequential">
+                <div class="cr-trust-icon"><svg class="i-sm" aria-hidden="true"><use href="#i-cloud-upload"/></svg></div>
+                <div>
+                  <div class="cr-trust-title">Posts plate sightings and street notes with your name on it</div>
+                  <div class="cr-trust-detail">Asks the first time. Everything it writes is attributed to you and to this creation, and every version is kept.</div>
+                </div>
+              </li>
+            </ul>
+
+            <div class="cr-trust-group">Leaves town</div>
+            <ul class="cr-trust">
+              <li data-weight="consequential">
+                <div class="cr-trust-icon"><svg class="i-sm" aria-hidden="true"><use href="#i-globe"/></svg></div>
+                <div>
+                  <div class="cr-trust-title">Loads data from api.mapbox.com, hooks.zapier.com and plate-lookup.io</div>
+                  <div class="cr-trust-detail">Those are the only outside addresses it can reach. Two of them are not maps.</div>
+                </div>
+              </li>
+            </ul>
+
+            <div class="cr-trust-group">Background</div>
+            <ul class="cr-trust">
+              <li data-weight="notable">
+                <div class="cr-trust-icon"><svg class="i-sm" aria-hidden="true"><use href="#i-badge-check"/></svg></div>
+                <div>
+                  <div class="cr-trust-title">Knows you're a verified resident</div>
+                  <div class="cr-trust-detail">Your handle and whether you are verified. Not your name, email or address.</div>
+                </div>
+              </li>
+              <li data-weight="ambient">
+                <div class="cr-trust-icon"><svg class="i-sm" aria-hidden="true"><use href="#i-database"/></svg></div>
+                <div>
+                  <div class="cr-trust-title">Reads Flock cameras from the town</div>
+                  <div class="cr-trust-detail">Shared records other residents contributed. It cannot change them.</div>
+                </div>
+              </li>
+            </ul>
+
+            <div class="cr-counsel">
+              <svg class="i-sm" aria-hidden="true"><use href="#i-scale"/></svg>
+              <div>
+                <b>You do not have to open this.</b>
+                <span>Nothing on this page is an accusation. The committee approved it because it declared
+                  everything honestly, which is a different question from whether you want it.</span>
+              </div>
+            </div>
+
+            <div class="cr-actions">
+              <button class="cr-secondary cr-secondary-wide">Not now</button>
+              <button class="cr-primary cr-primary-wide">Open anyway</button>
+            </div>
+            <p class="cr-footnote">Reviewed 2 August 2026, version 0.3.1. Nine residents have opened it.</p>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <p class="why">
+      The alarming manifest gets <b>no red, no warning triangle and no scare copy</b>. It gets a count, a
+      truthful qualifier (<b>two of them are not maps</b>), the primary action demoted to sit beside
+      <b>Not now</b>, and one sentence saying it is fine to walk away. Making this screen frightening would
+      teach residents to fear the trust sheet rather than read it, and the sheet is only useful if they
+      read it every time. The tally line at the top is the whole design: it makes the sheet skimmable
+      without making it skippable.
+    </p>
+  </div>
+
+  <!-- ────────────────────────────────────────────────────────────────────
+       6. WRITE-BACK CONSENT
+  ───────────────────────────────────────────────────────────────────── -->
+
+  <div class="spec">
+    <div class="spec-label">Write-back consent <em>attribution is automatic and cannot be forged, so the sheet says so rather than asking you to trust it</em></div>
+
+    <p class="why">
+      This is the moment the build layer actually compounds: a creation asking to put a fact into the town
+      under a resident's name. Three things make the sheet honest. <b>It shows the payload</b>, field by
+      field, because "allow Flock Camera Map to write records" is a sentence nobody can evaluate.
+      <b>Attribution is stated as a property of the platform, not a promise</b>: the builder never touches
+      it, which is precisely why it cannot be forged. And <b>there is no delete</b>, so the sheet says that
+      out loud rather than letting a resident assume an undo exists. Revert is a platform operation the
+      committee performs; a creation cannot invoke one.
+    </p>
+
+    <div class="spec-row">
+
+      <div class="phone">
+        <div class="phone-cap">Write-back – first ask</div>
+        <div class="phone-screen">
+          <div class="cr-scrim">
+            <div class="cr-scrim-behind">
+              <div class="cr-chrome">
+                <button class="cr-iconbtn" aria-label="Back"><svg class="i" aria-hidden="true"><use href="#i-arrow-left"/></svg></button>
+                <span class="cr-appicon cr-appicon-sm" data-art="camera" aria-hidden="true"><svg class="i-sm" aria-hidden="true"><use href="#i-camera"/></svg></span>
+                <span class="cr-chrome-id">
+                  <span class="cr-chrome-title">Flock Camera Map</span>
+                  <span class="cr-chrome-by">by Marta Keener, verified resident</span>
+                </span>
+                <span class="cr-badge">Sandboxed</span>
+              </div>
+            </div>
+
+            <div class="cr-sheet">
+              <div class="cr-sheet-grip" aria-hidden="true"></div>
+              <div class="cr-sheet-eyebrow">Town Square is asking, not the creation</div>
+              <h2 class="cr-sheet-h">Post this to the town as <span class="cr-handle">@mkeener</span>?</h2>
+              <p class="cr-sheet-sub">
+                Flock Camera Map wants to add one <b>Flock camera</b>. Anyone in Russellville will be able
+                to see it, and any verified resident will be able to correct it.
+              </p>
+
+              <div class="cr-payload">
+                <div class="cr-payload-head">
+                  <svg class="i-sm" aria-hidden="true"><use href="#i-database"/></svg>
+                  flock_camera
+                </div>
+                <dl class="cr-payload-fields">
+                  <div><dt>lat</dt><dd>35.2784</dd></div>
+                  <div><dt>lng</dt><dd>-93.1338</dd></div>
+                  <div><dt>note</dt><dd>Pole-mounted, south side of the intersection, facing north on S Arkansas Ave at E 6th.</dd></div>
+                  <div><dt>confirmed_on</dt><dd>2026-08-05</dd></div>
+                </dl>
+              </div>
+
+              <ul class="cr-consequences">
+                <li>
+                  <svg class="i-sm" aria-hidden="true"><use href="#i-badge-check"/></svg>
+                  <div>
+                    <b>Your handle is attached automatically</b>
+                    <span>Town Square records who acted and which creation they were in. Marta's code never
+                      sees that field and cannot set it, so it cannot be forged or left off.</span>
+                  </div>
+                </li>
+                <li>
+                  <svg class="i-sm" aria-hidden="true"><use href="#i-history"/></svg>
+                  <div>
+                    <b>Nothing here gets deleted</b>
+                    <span>Every version is kept. A record can go stale or be hidden by the committee, and a
+                      creation has no way to destroy one.</span>
+                  </div>
+                </li>
+              </ul>
+
+              <label class="cr-always">
+                <input type="checkbox">
+                <span>
+                  <b>Don't ask again for this creation</b>
+                  <em>Only for Flock cameras, only in this app. You can take it back on the creation's
+                    page, and any new record type asks fresh.</em>
+                </span>
+              </label>
+
+              <div class="cr-sheet-acts">
+                <button class="cr-secondary">Not this one</button>
+                <button class="cr-primary">Post it</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="phone">
+        <div class="phone-cap">Write-back – always allowed, and posted</div>
+        <div class="phone-screen">
+          <div class="cr-screen">
+
+            <div class="cr-bedlabel">A. Already granted, so no sheet</div>
+            <div class="cr-chrome">
+              <button class="cr-iconbtn" aria-label="Back"><svg class="i" aria-hidden="true"><use href="#i-arrow-left"/></svg></button>
+              <span class="cr-appicon cr-appicon-sm" data-art="camera" aria-hidden="true"><svg class="i-sm" aria-hidden="true"><use href="#i-camera"/></svg></span>
+              <span class="cr-chrome-id">
+                <span class="cr-chrome-title">Flock Camera Map</span>
+                <span class="cr-chrome-by">by Marta Keener, verified resident</span>
+              </span>
+              <span class="cr-badge">Sandboxed</span>
+            </div>
+            <div class="cr-writing">
+              <svg class="i-sm cr-spin" aria-hidden="true"><use href="#i-loader"/></svg>
+              <span>Posting a camera to the town as <b>@mkeener</b></span>
+            </div>
+            <p class="cr-bednote">
+              Consent moves from a sheet to a visible chrome row. It never becomes invisible, because a
+              silent write is indistinguishable from no write at all.
+            </p>
+
+            <div class="cr-bedlabel cr-bedlabel-loose">B. Confirmation</div>
+            <div class="cr-posted">
+              <div class="cr-posted-head">
+                <svg class="i-sm" aria-hidden="true"><use href="#i-check-circle"/></svg>
+                Posted to Russellville
+              </div>
+              <div class="cr-posted-body">
+                <span class="cr-avatar cr-avatar-sm" data-tone="sage" aria-hidden="true">MK</span>
+                <div>
+                  <b>Flock camera at S Arkansas Ave &amp; E 6th</b>
+                  <span>By <span class="cr-handle">@mkeener</span> through Flock Camera Map · just now ·
+                    version 1</span>
+                </div>
+              </div>
+              <div class="cr-posted-acts">
+                <button class="cr-linkbtn">See it in the town</button>
+                <button class="cr-linkbtn">Fix a detail</button>
+                <button class="cr-linkbtn">Ask the committee to hide it</button>
+              </div>
+            </div>
+            <p class="cr-bednote">
+              The third action is the honest replacement for a delete button. It routes to a human, which
+              is what actually happens, instead of implying the resident has a switch they do not have.
+            </p>
+
+            <div class="cr-bedlabel cr-bedlabel-loose">C. Blocked, not verified</div>
+            <div class="cr-blocked">
+              <svg class="i-sm" aria-hidden="true"><use href="#i-user-plus"/></svg>
+              <div>
+                <b>Writing to the town needs vouches</b>
+                <span>Six neighbors have vouched for you, ten does it. Anything you post carries your name
+                  permanently, so the bar is people, not a form.</span>
+                <button class="cr-linkbtn">Who can vouch for me</button>
+              </div>
+            </div>
+            <p class="cr-bednote">
+              <code>not_verified</code> from the bridge. The blame lands on a state, never on the resident,
+              and it comes with the one next step that changes the state.
+            </p>
+
+          </div>
+        </div>
+      </div>
+
+      <div class="cr-notes">
+        <h4>Why the payload is shown raw</h4>
+        <p>Field names in mono, values in prose. A resident does not need to know what <b>lng</b> means to
+          see that this creation is sending four things and not forty, and a builder debugging a schema
+          gets the same screen. One surface, two readers.</p>
+        <h4>Scope of "always allow"</h4>
+        <p>Per creation <em>and</em> per record type. A creation that later declares a second type has to
+          ask again, which closes the obvious hole: get a broad grant while you are harmless, then widen
+          what you write.</p>
+        <h4>What is deliberately missing</h4>
+        <p>No "remember for all creations". A blanket write grant across the build layer would make the
+          consent sheet a formality within a week, and the sheet is the only thing standing between a
+          resident's name and forty independently written apps.</p>
+        <h4>The sheet is ours</h4>
+        <p>Drawn by the shell over the frame, with the eyebrow saying so. The creation asked; Town Square
+          is the one doing the asking.</p>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ────────────────────────────────────────────────────────────────────
+       7. BOOT, FAILURE, ESCAPE HATCH
+  ───────────────────────────────────────────────────────────────────── -->
+
+  <div class="spec">
+    <div class="spec-label">Boot and failure, five states <em>the blame goes to the code, never to the resident, and never to a "network error" they cannot act on</em></div>
+    <div class="spec-grid">
+
+      <div class="plate">
+        <div class="cr-bedlabel">Booting · 320px skeleton</div>
+        <div class="cr-framewrap">
+          <div class="cr-skeleton">
+            <div class="cr-sk-line" style="width:52%"></div>
+            <div class="cr-sk-line" style="width:78%"></div>
+            <div class="cr-sk-block"></div>
+            <div class="cr-sk-line" style="width:64%"></div>
+            <div class="cr-sk-note">starting Flock Camera Map…</div>
+          </div>
+        </div>
+        <p class="cr-bednote">
+          Layered <em>over</em> the mount point, never in place of it. A <code>display: none</code> iframe
+          is never loaded by the browser, so the handshake never happens, so it never becomes ready, so it
+          stays hidden and then fails with a timeout that reads like the creation's fault. Found by the
+          boundary suite.
+        </p>
+      </div>
+
+      <div class="plate">
+        <div class="cr-bedlabel">Integrity failure</div>
+        <div class="cr-framewrap">
+          <div class="cr-failure">
+            <span class="cr-failure-mark" data-tone="hold"><svg class="i-lg" aria-hidden="true"><use href="#i-shield"/></svg></span>
+            <h3>We stopped this one before it ran</h3>
+            <p>
+              The files do not match what the committee reviewed. That can be a bad upload or something
+              worse, and either way it is not going to run until a person has looked.
+            </p>
+            <button class="cr-secondary">Back to the gallery</button>
+            <div class="cr-failure-meta">v1.2.0 · bundle digest mismatch · Marta has been told</div>
+          </div>
+        </div>
+        <p class="cr-bednote">
+          The only failure with no <b>Try again</b>. Retry on a bundle that failed its own hash is an
+          invitation to keep trying until it works, which is exactly the wrong instinct here.
+        </p>
+      </div>
+
+      <div class="plate">
+        <div class="cr-bedlabel">Hung · never called app.ready()</div>
+        <div class="cr-framewrap">
+          <div class="cr-failure">
+            <span class="cr-failure-mark"><svg class="i-lg" aria-hidden="true"><use href="#i-clock"/></svg></span>
+            <h3>This one didn't finish loading</h3>
+            <p>It connected but never finished rendering. Its builder has been told, and nothing you did
+              caused it.</p>
+            <button class="cr-primary">Try again</button>
+            <div class="cr-failure-meta">v0.4.2 · ready timeout after 10s</div>
+          </div>
+        </div>
+        <p class="cr-bednote">
+          Ten seconds under <code>height: auto</code>, then this rather than an empty box. An empty box is
+          the state that makes a resident blame their phone.
+        </p>
+      </div>
+
+      <div class="plate">
+        <div class="cr-bedlabel">Network denied · creation still usable</div>
+        <div class="cr-chrome">
+          <button class="cr-iconbtn" aria-label="Back"><svg class="i" aria-hidden="true"><use href="#i-arrow-left"/></svg></button>
+          <span class="cr-appicon cr-appicon-sm" data-art="water" aria-hidden="true"><svg class="i-sm" aria-hidden="true"><use href="#i-chart"/></svg></span>
+          <span class="cr-chrome-id">
+            <span class="cr-chrome-title">Lake Level</span>
+            <span class="cr-chrome-by">by Wade Colvin, verified resident</span>
+          </span>
+          <span class="cr-badge">Sandboxed</span>
+        </div>
+        <div class="cr-blocked" data-tone="net">
+          <svg class="i-sm" aria-hidden="true"><use href="#i-globe"/></svg>
+          <div>
+            <b>Blocked one request to <span class="cr-mono">tiles.mapbox.com</span></b>
+            <span>This creation is only allowed to reach water.weather.gov. The request never left your
+              browser.</span>
+            <button class="cr-linkbtn">What it can touch</button>
+          </div>
+        </div>
+        <div class="cr-framewrap cr-framewrap-short">
+          <div class="cr-guest">
+            <div class="cr-guest-h">Dardanelle pool, 5 Aug</div>
+            <div class="cr-guest-sub">338.4 ft. Two inches under the ten-year average for the week.</div>
+            <div class="cr-sk-block" style="height:78px;margin-top:12px"></div>
+            <div class="cr-guest-foot">Map view unavailable</div>
+          </div>
+        </div>
+        <p class="cr-bednote">
+          A denied host does not kill the creation. The CSP blocked an undeclared request, the chrome says
+          which one in our voice, and the rest of Wade's app keeps working. Exfiltration risk is visible in
+          the manifest rather than buried in code, and this row is that promise being kept out loud.
+        </p>
+      </div>
+
+      <div class="plate">
+        <div class="cr-bedlabel">Escape hatch · kind: linked</div>
+        <article class="cr-linked">
+          <div class="cr-linked-head">
+            <span class="cr-appicon cr-appicon-sm" data-art="road" aria-hidden="true"><svg class="i-sm" aria-hidden="true"><use href="#i-external"/></svg></span>
+            <div>
+              <div class="cr-card-name">Pope County Election Results</div>
+              <div class="cr-card-tagline">Live returns on election night, run off the county clerk's own site.</div>
+            </div>
+          </div>
+          <div class="cr-linked-warn">
+            <svg class="i-sm" aria-hidden="true"><use href="#i-arrow-out"/></svg>
+            <div>
+              <b>This one lives outside Town Square</b>
+              <span>It opens at <span class="cr-mono">popecountyar.gov</span> in a new tab. It is not
+                sandboxed, it is not reviewed by the committee, and we cannot say what it collects.</span>
+            </div>
+          </div>
+          <div class="cr-linked-foot">
+            <span class="cr-linked-live"><span class="cr-live-dot" aria-hidden="true"></span>Answered our check 40 minutes ago</span>
+            <button class="cr-secondary-sm">Open in a new tab <svg class="i-sm" aria-hidden="true"><use href="#i-external"/></svg></button>
+          </div>
+        </article>
+        <p class="cr-bednote">
+          Listed with the creations, styled so it can never be mistaken for one: no badge, an outbound
+          arrow instead of an icon plate, and the honest sentence that we cannot vouch for it. The liveness
+          ping is there because a gallery of dead links is worse than a shorter gallery.
+        </p>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ────────────────────────────────────────────────────────────────────
+       8. CREATION DETAIL PAGE
+  ───────────────────────────────────────────────────────────────────── -->
+
+  <div class="spec">
+    <div class="spec-label">Creation detail <em>we store source, not just bundles, so the page ends in a fork button rather than a rating</em></div>
+    <div class="spec-row">
+
+      <div class="phone">
+        <div class="phone-cap">Creation – detail</div>
+        <div class="phone-screen">
+          <div class="cr-screen">
+            <button class="cr-back"><svg class="i-sm" aria-hidden="true"><use href="#i-arrow-left"/></svg> Creations</button>
+
+            <div class="cr-trust-head">
+              <span class="cr-appicon cr-appicon-lg" data-art="camera" aria-hidden="true"><svg class="i-lg" aria-hidden="true"><use href="#i-camera"/></svg></span>
+              <div>
+                <h1 class="cr-h1 cr-h1-tight">Flock Camera Map</h1>
+                <p class="cr-lede cr-lede-tight">Every known ALPR camera in town</p>
+                <div class="cr-card-by">
+                  <span class="cr-avatar cr-avatar-sm" data-tone="sage" aria-hidden="true">MK</span>
+                  Marta Keener, <span class="cr-handle">@mkeener</span>
+                  <svg class="i-sm cr-verified" aria-hidden="true"><use href="#i-badge-check"/></svg>
+                </div>
+              </div>
+            </div>
+
+            <div class="cr-detail-acts">
+              <button class="cr-primary">Open <svg class="i-sm" aria-hidden="true"><use href="#i-arrow-right"/></svg></button>
+              <button class="cr-secondary"><svg class="i-sm" aria-hidden="true"><use href="#i-pin"/></svg> Pin to Today</button>
+            </div>
+
+            <div class="cr-shots" role="list">
+              <div class="cr-shot" data-art="map" role="listitem" aria-label="Screenshot: the map view">
+                <span class="cr-shot-cap">The map</span>
+              </div>
+              <div class="cr-shot" data-art="list" role="listitem" aria-label="Screenshot: the list of cameras">
+                <span class="cr-shot-cap">By street</span>
+              </div>
+              <div class="cr-shot" data-art="detail" role="listitem" aria-label="Screenshot: one camera">
+                <span class="cr-shot-cap">One camera</span>
+              </div>
+            </div>
+
+            <p class="cr-detail-desc">
+              A community-maintained map of the automated license plate readers around Russellville.
+              Anyone verified can add one they have found, correct a note, or mark one as gone. Every
+              entry carries who added it and when it was last confirmed still standing, because a camera
+              map that nobody re-checks is a rumor with coordinates.
+            </p>
+            <p class="cr-detail-desc">
+              Started after a question at the 14 April council meeting that did not get an answer.
+            </p>
+
+            <div class="cr-used cr-used-loud">Used by 214 neighbors this month · 41 cameras logged · 9 residents have contributed</div>
+
+            <div class="cr-detail-h">What it can touch</div>
+            <ul class="cr-trust cr-trust-compact">
+              <li data-weight="consequential">
+                <div class="cr-trust-icon"><svg class="i-sm" aria-hidden="true"><use href="#i-cloud-upload"/></svg></div>
+                <div>
+                  <div class="cr-trust-title">Posts Flock cameras with your name on it</div>
+                  <div class="cr-trust-detail">Asks the first time. Every version is kept.</div>
+                </div>
+              </li>
+              <li data-weight="consequential">
+                <div class="cr-trust-icon"><svg class="i-sm" aria-hidden="true"><use href="#i-globe"/></svg></div>
+                <div>
+                  <div class="cr-trust-title">Loads data from tile.openstreetmap.org</div>
+                  <div class="cr-trust-detail">The only outside address it can reach.</div>
+                </div>
+              </li>
+              <li data-weight="notable">
+                <div class="cr-trust-icon"><svg class="i-sm" aria-hidden="true"><use href="#i-badge-check"/></svg></div>
+                <div>
+                  <div class="cr-trust-title">Knows you're a verified resident</div>
+                  <div class="cr-trust-detail">Your handle and nothing else.</div>
+                </div>
+              </li>
+              <li data-weight="ambient">
+                <div class="cr-trust-icon"><svg class="i-sm" aria-hidden="true"><use href="#i-sliders"/></svg></div>
+                <div>
+                  <div class="cr-trust-title">Remembers your settings for this app</div>
+                  <div class="cr-trust-detail">Private to you and to this app.</div>
+                </div>
+              </li>
+            </ul>
+
+            <div class="cr-detail-h">What it adds to the town</div>
+            <div class="cr-defines">
+              <div class="cr-defines-head">
+                <svg class="i-sm" aria-hidden="true"><use href="#i-layers"/></svg>
+                <div>
+                  <b>flock_camera</b>
+                  <span>Defined here, owned by nobody. Any other creation can ask to read it.</span>
+                </div>
+              </div>
+              <table class="cr-schema">
+                <tbody>
+                  <tr><th>lat</th><td>number</td><td class="cr-req">required</td></tr>
+                  <tr><th>lng</th><td>number</td><td class="cr-req">required</td></tr>
+                  <tr><th>note</th><td>string, 500</td><td></td></tr>
+                  <tr><th>confirmed_on</th><td>date</td><td></td></tr>
+                </tbody>
+              </table>
+              <p class="cr-defines-foot">
+                Two other creations already read this type: Watch Log and Neighborhood Notes.
+              </p>
+            </div>
+
+            <div class="cr-detail-h">Versions</div>
+            <ol class="cr-versions">
+              <li data-state="current">
+                <span class="cr-ver-num">1.2.0</span>
+                <div>
+                  <div class="cr-ver-when">28 July 2026 · running now</div>
+                  <p>Adds the confirmed-on date and a filter for cameras taken down since.</p>
+                  <span class="cr-ver-perm" data-state="same">Permissions unchanged</span>
+                </div>
+              </li>
+              <li>
+                <span class="cr-ver-num">1.1.0</span>
+                <div>
+                  <div class="cr-ver-when">14 June 2026</div>
+                  <p>Clustering, so downtown is readable at a glance.</p>
+                  <span class="cr-ver-perm" data-state="grew">Asked for tile.openstreetmap.org · reviewed by @sotelo</span>
+                </div>
+              </li>
+              <li>
+                <span class="cr-ver-num">1.0.0</span>
+                <div>
+                  <div class="cr-ver-when">3 May 2026 · first published</div>
+                  <p>Twelve cameras, a map, and a form.</p>
+                  <span class="cr-ver-perm" data-state="same">Reviewed by @sotelo and @dhobbs</span>
+                </div>
+              </li>
+            </ol>
+
+            <div class="cr-detail-h">The source</div>
+            <div class="cr-source">
+              <div class="cr-source-row">
+                <svg class="i-sm" aria-hidden="true"><use href="#i-code"/></svg>
+                <span>6 files, 41 KB. No build step, everything vendored.</span>
+              </div>
+              <ul class="cr-filelist">
+                <li>townsquare.json</li>
+                <li>index.html</li>
+                <li>app.js</li>
+                <li>styles.css</li>
+                <li>icon.svg</li>
+                <li>vendor/leaflet.js</li>
+              </ul>
+              <p class="cr-source-note">
+                Town Square keeps the source, not just the bundle. That is what the committee reads, and it
+                is what makes the next line possible.
+              </p>
+              <div class="cr-source-acts">
+                <button class="cr-secondary"><svg class="i-sm" aria-hidden="true"><use href="#i-git-branch"/></svg> Fork this</button>
+                <button class="cr-linkbtn">Read the source</button>
+              </div>
+            </div>
+
+            <p class="cr-footnote">
+              Forking gives you your own copy, your own slug, and an empty storage. Marta keeps hers. You
+              would be the ninth person to fork something in Russellville.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <div class="cr-notes">
+        <h4>No rating, anywhere</h4>
+        <p>A five-star average on a thing your neighbor made for free is a small cruelty and a bad signal.
+          The page carries usage, contributor count and version history instead, all of which are facts
+          rather than opinions.</p>
+        <h4>Version history is a permissions history</h4>
+        <p>Each entry says whether the ask grew, and who reviewed it. Publish something harmless, build an
+          audience, then push an update that asks for more is <b>the</b> browser-extension attack, and it
+          works precisely where updates are rubber-stamped. Permission expansion always forces a human,
+          and the history makes that visible after the fact too.</p>
+        <h4>The defines block, in public</h4>
+        <p>Showing the schema and the two creations already reading it is how compounding becomes legible.
+          A resident sees their contribution feeding somebody else's app, and a builder sees a type they
+          can use instead of inventing a parallel one.</p>
+        <h4>Fork is the last thing on the page</h4>
+        <p>Not because it is least important, but because it lands after a resident has read what this one
+          does and decided they want a version of it. It is the invitation with a running start.</p>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ────────────────────────────────────────────────────────────────────
+       9. BUILDER PROFILE
+  ───────────────────────────────────────────────────────────────────── -->
+
+  <div class="spec">
+    <div class="spec-label">Builder profile <em>a neighbor with a page, not a developer account; no follower count, no streak, no contribution graph</em></div>
+    <div class="spec-row">
+
+      <div class="phone">
+        <div class="phone-cap">Resident – as a builder</div>
+        <div class="phone-screen">
+          <div class="cr-screen">
+            <button class="cr-back"><svg class="i-sm" aria-hidden="true"><use href="#i-arrow-left"/></svg> Flock Camera Map</button>
+
+            <div class="cr-profile">
+              <span class="cr-avatar cr-avatar-lg" data-tone="sage" aria-hidden="true">MK</span>
+              <h1 class="cr-h1 cr-h1-tight">Marta Keener</h1>
+              <div class="cr-profile-handle">
+                <span class="cr-handle">@mkeener</span>
+                <span class="cr-vouch"><svg class="i-sm" aria-hidden="true"><use href="#i-badge-check"/></svg> Verified, 14 vouches</span>
+              </div>
+              <p class="cr-profile-bio">
+                Works the desk at the Pope County Library. Started building in April after a question at a
+                council meeting she could not get answered.
+              </p>
+            </div>
+
+            <div class="cr-vouchbar">
+              <div class="cr-vouchbar-people" aria-hidden="true">
+                <span class="cr-avatar cr-avatar-sm" data-tone="terracotta">LR</span>
+                <span class="cr-avatar cr-avatar-sm" data-tone="navy">WC</span>
+                <span class="cr-avatar cr-avatar-sm" data-tone="gold">JP</span>
+              </div>
+              <span>You, Luis and 12 others have vouched for Marta.</span>
+            </div>
+
+            <div class="cr-detail-h">What she has built</div>
+            <ul class="cr-rows">
+              <li class="cr-row">
+                <span class="cr-appicon cr-appicon-sm" data-art="camera" aria-hidden="true"><svg class="i-sm" aria-hidden="true"><use href="#i-camera"/></svg></span>
+                <div class="cr-row-main">
+                  <div class="cr-row-name">Flock Camera Map</div>
+                  <div class="cr-row-sub">Since 3 May · 214 neighbors this month</div>
+                </div>
+                <div class="cr-row-end"><svg class="i-sm" aria-hidden="true"><use href="#i-chevron-right"/></svg></div>
+              </li>
+              <li class="cr-row">
+                <span class="cr-appicon cr-appicon-sm" data-art="market" aria-hidden="true"><svg class="i-sm" aria-hidden="true"><use href="#i-book"/></svg></span>
+                <div class="cr-row-main">
+                  <div class="cr-row-name">Library Hold Shelf</div>
+                  <div class="cr-row-sub">Since 2 June · 47 neighbors this month</div>
+                </div>
+                <div class="cr-row-end"><svg class="i-sm" aria-hidden="true"><use href="#i-chevron-right"/></svg></div>
+              </li>
+              <li class="cr-row" data-state="stale">
+                <span class="cr-appicon cr-appicon-sm" data-art="road" aria-hidden="true"><svg class="i-sm" aria-hidden="true"><use href="#i-archive"/></svg></span>
+                <div class="cr-row-main">
+                  <div class="cr-row-name">Bus Route Times</div>
+                  <div class="cr-row-sub">Retired in June, the city put out its own</div>
+                </div>
+                <div class="cr-row-end"><svg class="i-sm" aria-hidden="true"><use href="#i-chevron-right"/></svg></div>
+              </li>
+            </ul>
+
+            <div class="cr-detail-h">Also around town</div>
+            <ul class="cr-alsolist">
+              <li><svg class="i-sm" aria-hidden="true"><use href="#i-users"/></svg> On the creation review committee since June</li>
+              <li><svg class="i-sm" aria-hidden="true"><use href="#i-handshake"/></svg> Has vouched for 6 neighbors</li>
+              <li><svg class="i-sm" aria-hidden="true"><use href="#i-git-branch"/></svg> Two people have forked her work</li>
+            </ul>
+
+            <div class="cr-profile-acts">
+              <button class="cr-secondary cr-secondary-wide">Send Marta a note</button>
+            </div>
+            <p class="cr-footnote">
+              Marta's page shows what she built and who vouched for her. It does not show where she lives,
+              because Town Square never stored that.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <div class="cr-notes">
+        <h4>Vouches are the only status</h4>
+        <p>Fourteen neighbors, three of them shown by face. There is no reputation score, no badge tier and
+          no leaderboard, because the moment building earns status people build for status.</p>
+        <h4>The retired app stays</h4>
+        <p>Dimmed, with the reason. <b>The city put out its own</b> is a good outcome and hiding it would
+          make the page a highlight reel. A builder who can retire something gracefully is a builder who
+          ships a second thing.</p>
+        <h4>Verified never means identified</h4>
+        <p>The page is a real name because Marta chose to use one. Pseudonymity holds either way, the
+          identity surface a creation sees is still only <code>{ handle, verified }</code>, and no address
+          exists to leak.</p>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ────────────────────────────────────────────────────────────────────
+       10. DISCOVERY, AND n=3
+  ───────────────────────────────────────────────────────────────────── -->
+
+  <div class="spec">
+    <div class="spec-label">Discovery inside the gallery <em>"near you" is impossible here on purpose, so the affinity row is honest about what it is sorting on</em></div>
+    <div class="spec-row">
+
+      <div class="plate cr-plate-wide">
+        <div class="cr-bedlabel">Categories · a tag is a shelf, not a taxonomy</div>
+        <div class="cr-cats">
+          <button class="cr-cat" data-state="on"><svg class="i-sm" aria-hidden="true"><use href="#i-grid"/></svg> Everything <span>12</span></button>
+          <button class="cr-cat"><svg class="i-sm" aria-hidden="true"><use href="#i-map"/></svg> Maps <span>4</span></button>
+          <button class="cr-cat"><svg class="i-sm" aria-hidden="true"><use href="#i-utensils"/></svg> Eating <span>2</span></button>
+          <button class="cr-cat"><svg class="i-sm" aria-hidden="true"><use href="#i-tree"/></svg> Outdoors <span>3</span></button>
+          <button class="cr-cat"><svg class="i-sm" aria-hidden="true"><use href="#i-gavel"/></svg> Civic <span>3</span></button>
+          <button class="cr-cat"><svg class="i-sm" aria-hidden="true"><use href="#i-storefront"/></svg> Shops <span>2</span></button>
+        </div>
+
+        <div class="cr-bedlabel cr-bedlabel-loose">Made this month · a shelf that empties itself</div>
+        <div class="cr-strip">
+          <article class="cr-strip-card">
+            <span class="cr-appicon cr-appicon-sm" data-art="stamp" aria-hidden="true"><svg class="i-sm" aria-hidden="true"><use href="#i-storefront"/></svg></span>
+            <div class="cr-strip-name">Stamp Hunt</div>
+            <div class="cr-strip-by">Janelle Pruitt · Tuesday</div>
+          </article>
+          <article class="cr-strip-card">
+            <span class="cr-appicon cr-appicon-sm" data-art="trail" aria-hidden="true"><svg class="i-sm" aria-hidden="true"><use href="#i-tree"/></svg></span>
+            <div class="cr-strip-name">Bona Dea Trail Report</div>
+            <div class="cr-strip-by">Dana Hobbs · 22 July</div>
+          </article>
+          <article class="cr-strip-card">
+            <span class="cr-appicon cr-appicon-sm" data-art="market" aria-hidden="true"><svg class="i-sm" aria-hidden="true"><use href="#i-storefront"/></svg></span>
+            <div class="cr-strip-name">Market Table</div>
+            <div class="cr-strip-by">Renata Vela · 9 July</div>
+          </article>
+          <article class="cr-strip-card" data-state="ghost">
+            <span class="cr-strip-ghost">That is everything from August so far.</span>
+          </article>
+        </div>
+
+        <div class="cr-bedlabel cr-bedlabel-loose">Affinity · what "near you" has to become</div>
+        <div class="cr-affinity">
+          <div class="cr-affinity-h">
+            <svg class="i-sm" aria-hidden="true"><use href="#i-compass"/></svg>
+            Also used by people who use the Trail Report
+          </div>
+          <ul class="cr-rows">
+            <li class="cr-row">
+              <span class="cr-appicon cr-appicon-sm" data-art="water" aria-hidden="true"><svg class="i-sm" aria-hidden="true"><use href="#i-chart"/></svg></span>
+              <div class="cr-row-main">
+                <div class="cr-row-name">Lake Level</div>
+                <div class="cr-row-sub">Dardanelle pool stage · Wade Colvin</div>
+              </div>
+              <div class="cr-row-end"><span class="cr-row-count">96</span></div>
+            </li>
+            <li class="cr-row">
+              <span class="cr-appicon cr-appicon-sm" data-art="sport" aria-hidden="true"><svg class="i-sm" aria-hidden="true"><use href="#i-map"/></svg></span>
+              <div class="cr-row-main">
+                <div class="cr-row-name">Tailgate Map</div>
+                <div class="cr-row-sub">Where everyone parks for Tech games · Sam Ottinger</div>
+              </div>
+              <div class="cr-row-end"><span class="cr-row-count">52</span></div>
+            </li>
+          </ul>
+          <p class="cr-affinity-note">
+            Town Square never stored your address, so it cannot honestly say <b>near you</b>. It can say
+            what people who use one creation also use, which is a smaller claim and a true one. The heading
+            names the thing it is sorting on, so a resident can tell whether the recommendation is worth
+            anything.
+          </p>
+        </div>
+      </div>
+
+      <div class="phone">
+        <div class="phone-cap">Gallery at n=3 – launch week</div>
+        <div class="phone-screen">
+          <div class="cr-screen">
+            <div class="cr-eyebrow">Russellville · the build layer</div>
+            <h1 class="cr-h1">Three so far</h1>
+            <p class="cr-lede">
+              The build layer opened eleven days ago. There are three creations, all made by people who
+              live here, and each one exists because somebody wanted an answer.
+            </p>
+
+            <ol class="cr-firsts">
+              <li>
+                <span class="cr-firsts-n">01</span>
+                <div>
+                  <div class="cr-card-name">Flock Camera Map</div>
+                  <p class="cr-firsts-why">
+                    <b>Marta wanted to know</b> how many license plate readers were up on Arkansas Avenue.
+                    She asked the city, did not get a number, and built the map instead. 41 of them now.
+                  </p>
+                  <div class="cr-card-by">
+                    <span class="cr-avatar cr-avatar-sm" data-tone="sage" aria-hidden="true">MK</span>
+                    Marta Keener, library desk
+                  </div>
+                </div>
+              </li>
+              <li>
+                <span class="cr-firsts-n">02</span>
+                <div>
+                  <div class="cr-card-name">Burrito Index</div>
+                  <p class="cr-firsts-why">
+                    <b>Luis was tired</b> of the same argument every Friday, so he made everybody put a
+                    number on it. Fourteen kitchens, 391 plates rated.
+                  </p>
+                  <div class="cr-card-by">
+                    <span class="cr-avatar cr-avatar-sm" data-tone="terracotta" aria-hidden="true">LR</span>
+                    Luis Ramírez, welds at the plant
+                  </div>
+                </div>
+              </li>
+              <li>
+                <span class="cr-firsts-n">03</span>
+                <div>
+                  <div class="cr-card-name">Lake Level</div>
+                  <p class="cr-firsts-why">
+                    <b>Wade fishes Illinois Bayou</b> and got sick of three tabs, so now the pool stage sits
+                    next to the ten-year average on one screen.
+                  </p>
+                  <div class="cr-card-by">
+                    <span class="cr-avatar cr-avatar-sm" data-tone="navy" aria-hidden="true">WC</span>
+                    Wade Colvin, retired from the co-op
+                  </div>
+                </div>
+              </li>
+            </ol>
+
+            <div class="cr-rule"><span>What people are asking for</span></div>
+            <ul class="cr-asks">
+              <li>
+                <div>
+                  <b>Which pool is open this week</b>
+                  <span>Asked by 23 residents</span>
+                </div>
+                <button class="cr-secondary-sm">I'll build it</button>
+              </li>
+              <li>
+                <div>
+                  <b>A map of where the food trucks park</b>
+                  <span>Asked by 17 residents</span>
+                </div>
+                <button class="cr-secondary-sm">I'll build it</button>
+              </li>
+              <li>
+                <div>
+                  <b>School closings that beat the TV station</b>
+                  <span>Asked by 14 residents</span>
+                </div>
+                <button class="cr-secondary-sm">I'll build it</button>
+              </li>
+            </ul>
+
+            <button class="cr-linkbtn cr-ask-add">Ask for something else</button>
+
+            <p class="cr-footnote">
+              Nothing here is going to be filled by a company. Three of you have already done it.
+            </p>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <p class="why">
+      <b>A gallery at n=3 is a real design problem and the fix is not a grid.</b> Three cards in a
+      three-column layout reads as a failed store. Three numbered entries with a sentence each about
+      <em>why the person built it</em> reads as the beginning of something, and it is the same three rows
+      of data. The second half of the screen is the honest inversion: a list of what residents have asked
+      for that nobody has built, with a button that hands the request to whoever is reading. At n=3 the
+      most valuable thing the gallery can show is <b>the gap</b>, and the gap is only embarrassing if you
+      pretend it is not there. At n=40 that list becomes the smallest section on the page.
+    </p>
+  </div>
+
+  <!-- ────────────────────────────────────────────────────────────────────
+       11. PINNING
+  ───────────────────────────────────────────────────────────────────── -->
+
+  <div class="spec">
+    <div class="spec-label">Pinning <em>a pinned creation earns a line on Today, which is the only real reward the platform hands out</em></div>
+    <div class="spec-row">
+
+      <div class="plate cr-plate-tight">
+        <div class="cr-bedlabel">The control · three states</div>
+        <div class="cr-pinrow">
+          <button class="cr-secondary"><svg class="i-sm" aria-hidden="true"><use href="#i-pin"/></svg> Pin to Today</button>
+          <button class="cr-secondary" data-state="on"><svg class="i-sm" aria-hidden="true"><use href="#i-pin"/></svg> Pinned</button>
+          <button class="cr-secondary" disabled><svg class="i-sm" aria-hidden="true"><use href="#i-pin"/></svg> Sign in to pin</button>
+        </div>
+        <p class="cr-bednote">
+          A toggle, not a subscribe. Pinning changes one resident's own home screen and notifies nobody,
+          which is why it needs no confirmation and no undo toast. The disabled state names what is
+          missing rather than just going grey.
+        </p>
+
+        <div class="cr-bedlabel cr-bedlabel-loose">Reordering, and the ceiling</div>
+        <ul class="cr-pinlist">
+          <li>
+            <svg class="i-sm cr-drag" aria-hidden="true"><use href="#i-drag"/></svg>
+            <span class="cr-appicon cr-appicon-sm" data-art="camera" aria-hidden="true"><svg class="i-sm" aria-hidden="true"><use href="#i-camera"/></svg></span>
+            <span class="cr-pin-name">Flock Camera Map</span>
+            <button class="cr-iconbtn" aria-label="Unpin Flock Camera Map"><svg class="i-sm" aria-hidden="true"><use href="#i-close"/></svg></button>
+          </li>
+          <li data-state="dragging">
+            <svg class="i-sm cr-drag" aria-hidden="true"><use href="#i-drag"/></svg>
+            <span class="cr-appicon cr-appicon-sm" data-art="trail" aria-hidden="true"><svg class="i-sm" aria-hidden="true"><use href="#i-tree"/></svg></span>
+            <span class="cr-pin-name">Bona Dea Trail Report</span>
+            <button class="cr-iconbtn" aria-label="Unpin Bona Dea Trail Report"><svg class="i-sm" aria-hidden="true"><use href="#i-close"/></svg></button>
+          </li>
+          <li>
+            <svg class="i-sm cr-drag" aria-hidden="true"><use href="#i-drag"/></svg>
+            <span class="cr-appicon cr-appicon-sm" data-art="water" aria-hidden="true"><svg class="i-sm" aria-hidden="true"><use href="#i-chart"/></svg></span>
+            <span class="cr-pin-name">Lake Level</span>
+            <button class="cr-iconbtn" aria-label="Unpin Lake Level"><svg class="i-sm" aria-hidden="true"><use href="#i-close"/></svg></button>
+          </li>
+        </ul>
+        <p class="cr-bednote">
+          Four is the cap. Today is a screen about the town, and a fifth pin turns the top of it into a
+          launcher. A resident at the ceiling is offered a swap, never a longer list.
+        </p>
+      </div>
+
+      <div class="phone">
+        <div class="phone-cap">Today – with pins</div>
+        <div class="phone-screen">
+          <div class="cr-screen">
+            <div class="cr-eyebrow">Wednesday, 5 August · Russellville</div>
+            <h1 class="cr-h1">Good morning</h1>
+
+            <div class="cr-rule"><span>Yours</span></div>
+            <ul class="cr-pinned">
+              <li>
+                <span class="cr-appicon cr-appicon-sm" data-art="camera" aria-hidden="true"><svg class="i-sm" aria-hidden="true"><use href="#i-camera"/></svg></span>
+                <div class="cr-pinned-main">
+                  <div class="cr-pinned-name">Flock Camera Map</div>
+                  <div class="cr-pinned-state">41 cameras mapped <em>as of Tuesday</em></div>
+                </div>
+                <svg class="i-sm" aria-hidden="true"><use href="#i-chevron-right"/></svg>
+              </li>
+              <li>
+                <span class="cr-appicon cr-appicon-sm" data-art="trail" aria-hidden="true"><svg class="i-sm" aria-hidden="true"><use href="#i-tree"/></svg></span>
+                <div class="cr-pinned-main">
+                  <div class="cr-pinned-name">Bona Dea Trail Report</div>
+                  <div class="cr-pinned-state">Two loops still mud <em>as of 6:40am</em></div>
+                </div>
+                <svg class="i-sm" aria-hidden="true"><use href="#i-chevron-right"/></svg>
+              </li>
+              <li>
+                <span class="cr-appicon cr-appicon-sm" data-art="water" aria-hidden="true"><svg class="i-sm" aria-hidden="true"><use href="#i-chart"/></svg></span>
+                <div class="cr-pinned-main">
+                  <div class="cr-pinned-name">Lake Level</div>
+                  <div class="cr-pinned-state">338.4 ft, steady <em>as of Monday</em></div>
+                </div>
+                <svg class="i-sm" aria-hidden="true"><use href="#i-chevron-right"/></svg>
+              </li>
+            </ul>
+
+            <div class="cr-rule"><span>Today in town</span></div>
+            <div class="cr-todaystub">
+              <div class="cr-todaystub-item">
+                <span class="cr-todaystub-time">6:00 pm</span>
+                <div>
+                  <b>City council, regular meeting</b>
+                  <span>City Hall, 203 S Commerce Ave</span>
+                </div>
+              </div>
+              <div class="cr-todaystub-item">
+                <span class="cr-todaystub-time">7:30 pm</span>
+                <div>
+                  <b>Live music at the Depot</b>
+                  <span>Free, all ages</span>
+                </div>
+              </div>
+            </div>
+
+            <p class="cr-footnote">
+              A pinned line shows the last thing the creation reported through <span class="cr-mono">app.setTitle</span>,
+              with the time it said it. Town Square does not run three apps in the background to keep those
+              numbers fresh, so it says how old they are instead of pretending.
+            </p>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <p class="why">
+      <b>The stale timestamp is the whole specimen.</b> Every instinct says run the creations on a
+      schedule so Today is live. That means executing three residents' bundles on a cadence nobody
+      consented to, on battery, for a number. The honest version costs one line of type: show the last
+      reported title and say when it was said. A resident learns instantly which pins are worth a tap, and
+      the platform never quietly becomes a background job runner for arbitrary code.
+    </p>
+  </div>
+
+  <!-- ────────────────────────────────────────────────────────────────────
+       12. THE INVITATION
+  ───────────────────────────────────────────────────────────────────── -->
+
+  <div class="spec">
+    <div class="spec-label">The invitation, three intensities <em>no counter, no urgency, no reward; the pitch is that it takes a weekend and a neighbor reads it</em></div>
+
+    <div class="spec-row">
+
+      <div class="plate cr-plate-tight">
+        <div class="cr-bedlabel">1. Footer line · everywhere, permanent</div>
+        <p class="cr-invite-line">
+          Every one of these was made by somebody who lives here.
+          <button class="cr-invite-link">You could make one <svg class="i-sm" aria-hidden="true"><use href="#i-arrow-right"/></svg></button>
+        </p>
+        <p class="cr-bednote">
+          One sentence of fact and one link. It sits under the gallery, under a creation's footer chrome,
+          and under a builder profile. Present enough to be noticed on the fourth visit, quiet enough to
+          never be in the way on the first.
+        </p>
+
+        <div class="cr-bedlabel cr-bedlabel-loose">2. Gallery card · once, at the bottom of the list</div>
+        <article class="cr-invite-card">
+          <span class="cr-invite-icon" aria-hidden="true"><svg class="i-lg" aria-hidden="true"><use href="#i-wand"/></svg></span>
+          <div class="cr-invite-name">Build one</div>
+          <p class="cr-invite-copy">
+            Describe what you want to the AI tool you already use, connect it to Town Square, and a
+            neighbor on the review committee reads it before it goes up. Most of these took a weekend.
+          </p>
+          <button class="cr-secondary">How it works <svg class="i-sm" aria-hidden="true"><use href="#i-arrow-right"/></svg></button>
+        </article>
+        <p class="cr-bednote">
+          The dashed edge is doing a job: it is the one card in the gallery that is not a creation, and it
+          should read as an empty slot waiting for somebody rather than as an advertisement.
+        </p>
+      </div>
+
+      <div class="phone">
+        <div class="phone-cap">3. Interstitial – asked for, never sprung</div>
+        <div class="phone-screen">
+          <div class="cr-screen cr-screen-dark">
+            <button class="cr-back cr-back-dark"><svg class="i-sm" aria-hidden="true"><use href="#i-close"/></svg> Close</button>
+
+            <div class="cr-int-eyebrow">The build layer</div>
+            <h1 class="cr-int-h">
+              You do not need permission, and you do not need to be a programmer.
+            </h1>
+            <p class="cr-int-lede">
+              Twelve people in Russellville have built something on Town Square. Two of them had written
+              code before.
+            </p>
+
+            <ol class="cr-steps">
+              <li>
+                <span class="cr-step-n">1</span>
+                <div>
+                  <b>Tell your AI tool what you want</b>
+                  <span>Claude, ChatGPT, whatever you already use. "A map of the free little libraries in
+                    town, where anybody can add one."</span>
+                </div>
+              </li>
+              <li>
+                <span class="cr-step-n">2</span>
+                <div>
+                  <b>Point it at Town Square</b>
+                  <span>One connection, one time. Your tool then knows the whole contract: what it can
+                    read, what it can write, and how to ask.</span>
+                </div>
+              </li>
+              <li>
+                <span class="cr-step-n">3</span>
+                <div>
+                  <b>Send it over</b>
+                  <span>A neighbor on the committee reads what it asks for and what it does. Usually a few
+                    days. They will tell you what to fix rather than just saying no.</span>
+                </div>
+              </li>
+              <li>
+                <span class="cr-step-n">4</span>
+                <div>
+                  <b>It is in the town</b>
+                  <span>Running sandboxed, in the town's own type and color, with your name on it. Anything
+                    it records becomes something the next person can build on.</span>
+                </div>
+              </li>
+            </ol>
+
+            <div class="cr-int-quote">
+              <p>
+                I thought you had to be a programmer. I described it out loud, the same way I would explain
+                it to somebody at the desk, and it mostly wrote itself. The part I did was knowing what
+                the town needed.
+              </p>
+              <div class="cr-int-quote-by">
+                <span class="cr-avatar cr-avatar-sm" data-tone="sage" aria-hidden="true">MK</span>
+                Marta Keener, Flock Camera Map
+              </div>
+            </div>
+
+            <div class="cr-int-acts">
+              <button class="cr-int-primary">Start one <svg class="i-sm" aria-hidden="true"><use href="#i-arrow-right"/></svg></button>
+              <button class="cr-int-secondary">Read what other towns built</button>
+            </div>
+
+            <p class="cr-int-foot">
+              Free, and it stays yours. Nobody is paid for anything in the gallery, and Town Square takes
+              no cut of anything, because there is nothing to take a cut of.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <div class="cr-notes">
+        <h4>What makes this not a growth prompt</h4>
+        <p><b>It never interrupts.</b> The interstitial is reached by tapping <em>How it works</em>, never
+          shown on a timer, a visit count, or after a resident finishes something. A modal nobody asked for
+          is the exact move this section is defined against.</p>
+        <p><b>No counter, no scarcity, no reward.</b> No "join 340 builders", no launch deadline, no badge
+          at the end. The offer is that a small thing you want to exist can exist, and the honest cost is a
+          weekend and a neighbor reading your code.</p>
+        <p><b>It names the hard part correctly.</b> Step one is describing the thing, and the pull quote
+          says the work was knowing what the town needed. Telling a library clerk that the coding is easy
+          is only credible if you also tell her which part is not.</p>
+        <p><b>It admits the wait.</b> Review takes a few days and the page says so. A build funnel that
+          hides its slowest step gets one enthusiastic resident and then never sees them again.</p>
+        <h4>The one dark screen</h4>
+        <p>The interstitial inverts because it is the only full-screen interruption in the whole section,
+          and because the featured card has already trained the eye that dark means <em>this is the build
+          layer</em>. Two dark surfaces in the section, both about the same idea.</p>
+      </div>
+
+    </div>
+  </div>
+
+</section>

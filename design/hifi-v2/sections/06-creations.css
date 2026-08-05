@@ -1,0 +1,3023 @@
+/*
+ * 06 — Creations.
+ *
+ * The build layer: the gallery, the cards, the seam between our chrome and a
+ * resident's bundle, the trust sheet, write-back consent, failure states and
+ * the invitation to build one.
+ *
+ * Every colour is a token. The seam specimen depends on that harder than most:
+ * a creation inherits these same custom properties, so a hand-copied hex here
+ * would be a hex the guest cannot see, and the two sides would drift apart in
+ * exactly the place the design is trying to prove they do not.
+ */
+
+/* ── screen scaffolding ─────────────────────────────────────────────────── */
+
+.cr-screen {
+  padding: var(--ts-space-4) var(--ts-space-4) var(--ts-space-10);
+  font-family: var(--ts-font-sans);
+  color: var(--ts-ink);
+}
+
+.cr-topbar {
+  display: flex;
+  align-items: center;
+  gap: var(--ts-space-2);
+  margin-bottom: var(--ts-space-5);
+}
+
+.cr-topbar-title {
+  font-size: var(--ts-text-label);
+  color: var(--ts-ink60);
+  margin-right: auto;
+}
+
+.cr-iconbtn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  margin: -10px;
+  flex: none;
+  background: none;
+  border: 0;
+  border-radius: var(--ts-radius-full);
+  color: var(--ts-ink60);
+  cursor: pointer;
+  transition: background var(--ts-dur-1) var(--ts-ease);
+}
+
+.cr-iconbtn:hover {
+  background: var(--ts-ink08);
+  color: var(--ts-ink);
+}
+
+.cr-iconbtn:focus-visible {
+  outline: none;
+  box-shadow: var(--ts-focus);
+}
+
+.cr-chip-account {
+  font-family: var(--ts-font-sans);
+  font-size: 12.5px;
+  color: var(--ts-ink60);
+  background: var(--ts-surface);
+  border: 1px solid var(--ts-hairline);
+  border-radius: var(--ts-radius-chip);
+  padding: 7px var(--ts-space-3);
+  min-height: 34px;
+  cursor: pointer;
+}
+
+.cr-back {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--ts-space-1);
+  min-height: 44px;
+  margin: calc(var(--ts-space-2) * -1) 0 var(--ts-space-2) -6px;
+  padding: 0 6px;
+  background: none;
+  border: 0;
+  border-radius: var(--ts-radius-button);
+  color: var(--ts-ink60);
+  font-family: var(--ts-font-sans);
+  font-size: var(--ts-text-label);
+  cursor: pointer;
+}
+
+.cr-back:focus-visible {
+  outline: none;
+  box-shadow: var(--ts-focus);
+}
+
+.cr-eyebrow {
+  font-family: var(--ts-font-mono);
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ts-ink45);
+  margin-bottom: var(--ts-space-2);
+}
+
+.cr-h1 {
+  font-family: var(--ts-font-serif);
+  font-size: 27px;
+  font-weight: 400;
+  letter-spacing: -0.02em;
+  line-height: 1.1;
+  margin: 0 0 var(--ts-space-2);
+}
+
+.cr-h1-tight {
+  font-size: 22px;
+  margin-bottom: 2px;
+}
+
+.cr-lede {
+  font-family: var(--ts-font-serif);
+  font-size: 15.5px;
+  line-height: 1.5;
+  color: var(--ts-ink60);
+  margin: 0 0 var(--ts-space-5);
+}
+
+.cr-lede-tight {
+  font-size: 14.5px;
+  margin-bottom: var(--ts-space-2);
+}
+
+.cr-footnote {
+  font-family: var(--ts-font-serif);
+  font-size: 12.5px;
+  line-height: 1.5;
+  color: var(--ts-ink45);
+  margin: var(--ts-space-5) 0 0;
+}
+
+/* A labelled hairline between arrangements. Not a heading: the gallery is one
+   continuous page, and four <h2>s would turn it into four lists. */
+.cr-rule {
+  display: flex;
+  align-items: center;
+  gap: var(--ts-space-3);
+  margin: var(--ts-space-6) 0 var(--ts-space-3);
+  font-family: var(--ts-font-mono);
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ts-ink45);
+}
+
+.cr-rule::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--ts-ink13);
+}
+
+/* ── the recruitment story ──────────────────────────────────────────────── */
+
+/*
+ * The single most important block on the gallery. It is set in the editorial
+ * voice and given the tinted card, because the thing that recruits a builder is
+ * a person they recognise doing something they could have done, not a feature.
+ */
+.cr-story {
+  position: relative;
+  padding: var(--ts-space-4) var(--ts-space-4) var(--ts-space-4) var(--ts-space-5);
+  background: var(--ts-terracotta-tint);
+  border-radius: var(--ts-radius-card);
+  box-shadow: inset 3px 0 0 var(--ts-terracotta);
+}
+
+.cr-story p {
+  font-family: var(--ts-font-serif);
+  font-size: 15.5px;
+  line-height: 1.45;
+  margin: 0 0 var(--ts-space-3);
+}
+
+.cr-story-mark {
+  color: var(--ts-terracotta);
+  margin-bottom: var(--ts-space-1);
+}
+
+.cr-story-by {
+  display: flex;
+  align-items: center;
+  gap: var(--ts-space-2);
+  font-family: var(--ts-font-serif);
+  font-size: 12.5px;
+  line-height: 1.35;
+  color: var(--ts-ink60);
+}
+
+.cr-handle {
+  font-family: var(--ts-font-mono);
+  font-size: 0.92em;
+  color: var(--ts-ink45);
+}
+
+/* ── avatars and app icons ──────────────────────────────────────────────── */
+
+.cr-avatar {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 26px;
+  height: 26px;
+  flex: none;
+  border-radius: var(--ts-radius-full);
+  font-family: var(--ts-font-sans);
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  color: var(--ts-surface);
+  background: var(--ts-navy);
+}
+
+.cr-avatar-sm {
+  width: 20px;
+  height: 20px;
+  font-size: 8.5px;
+}
+
+.cr-avatar[data-tone='sage'] { background: var(--ts-sage); }
+.cr-avatar[data-tone='terracotta'] { background: var(--ts-terracotta); }
+.cr-avatar[data-tone='navy'] { background: var(--ts-navy); }
+.cr-avatar[data-tone='gold'] { background: var(--ts-gold-text); }
+.cr-avatar[data-tone='stone'] { background: var(--ts-ink45); }
+
+/*
+ * A creation ships its own icon.svg. Here that is a token-tinted plate with a
+ * sprite glyph, which reads as "the builder chose this" without pretending we
+ * have forty real icons.
+ */
+.cr-appicon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 38px;
+  height: 38px;
+  flex: none;
+  border-radius: 11px;
+  color: var(--ts-navy);
+  background: var(--ts-navy10);
+}
+
+.cr-appicon-sm {
+  width: 28px;
+  height: 28px;
+  border-radius: 8px;
+}
+
+.cr-appicon-lg {
+  width: 48px;
+  height: 48px;
+  border-radius: 14px;
+}
+
+.cr-appicon[data-art='camera'] { color: var(--ts-navy); background: var(--ts-navy10); }
+.cr-appicon[data-art='food'] { color: var(--ts-terracotta); background: var(--ts-terracotta14); }
+.cr-appicon[data-art='water'] { color: var(--ts-navy); background: var(--ts-navy10); }
+.cr-appicon[data-art='trail'] { color: var(--ts-sage); background: var(--ts-sage14); }
+.cr-appicon[data-art='market'] { color: var(--ts-gold-text); background: var(--ts-gold14); }
+.cr-appicon[data-art='stamp'] { color: var(--ts-gold-text); background: var(--ts-gold14); }
+.cr-appicon[data-art='road'] { color: var(--ts-terracotta); background: var(--ts-terracotta14); }
+.cr-appicon[data-art='sport'] { color: var(--ts-sage); background: var(--ts-sage14); }
+
+.cr-featured .cr-appicon {
+  color: var(--ts-cream);
+  background: var(--ts-cream14);
+}
+
+/* ── the touch strip ────────────────────────────────────────────────────── */
+
+/*
+ * What a creation can reach, on the card, before the tap. The consequential
+ * ones carry a rule and a heavier weight as well as the tint, so the meaning
+ * survives greyscale and colour blindness.
+ */
+.cr-touch {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  list-style: none;
+  margin: var(--ts-space-3) 0 0;
+  padding: 0;
+}
+
+.cr-touch-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 4px 9px 4px 7px;
+  border-radius: var(--ts-radius-chip);
+  font-size: 11.5px;
+  line-height: 1.2;
+  color: var(--ts-ink60);
+  background: var(--ts-ink08);
+}
+
+.cr-touch-item svg {
+  opacity: 0.75;
+}
+
+.cr-touch-item[data-w='consequential'] {
+  color: var(--ts-terracotta);
+  background: var(--ts-terracotta10);
+  font-weight: 500;
+  box-shadow: inset 2px 0 0 var(--ts-terracotta);
+  padding-left: 9px;
+}
+
+.cr-touch[data-on='dark'] .cr-touch-item {
+  color: var(--ts-cream-muted);
+  background: var(--ts-cream14);
+}
+
+.cr-touch[data-on='dark'] .cr-touch-item[data-w='consequential'] {
+  color: var(--ts-cream);
+  box-shadow: inset 2px 0 0 var(--ts-terracotta);
+}
+
+.cr-used {
+  display: block;
+  font-family: var(--ts-font-serif);
+  font-size: 12.5px;
+  color: var(--ts-ink45);
+  margin-top: var(--ts-space-3);
+}
+
+/* ── featured card ──────────────────────────────────────────────────────── */
+
+/*
+ * The one dark card per screen. Creations are the reason Town Square is not a
+ * newsletter, so the gallery inverts here rather than adding a fifth white box.
+ */
+.cr-featured {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ts-space-3);
+  padding: var(--ts-space-4);
+  border-radius: var(--ts-radius-sheet);
+  background: var(--ts-navy-dark);
+  color: var(--ts-cream);
+  box-shadow: var(--ts-shadow-navy);
+}
+
+.cr-featured-head {
+  display: flex;
+  align-items: center;
+  gap: var(--ts-space-3);
+}
+
+.cr-featured-by {
+  font-family: var(--ts-font-serif);
+  font-size: 12.5px;
+  line-height: 1.3;
+  color: var(--ts-cream-muted);
+}
+
+.cr-featured-by span {
+  display: block;
+  font-size: 14.5px;
+  color: var(--ts-cream);
+}
+
+.cr-featured-kind {
+  margin-left: auto;
+  align-self: flex-start;
+  font-family: var(--ts-font-mono);
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ts-cream);
+  background: var(--ts-cream14);
+  padding: 5px var(--ts-space-2);
+  border-radius: var(--ts-radius-chip);
+}
+
+.cr-featured-name {
+  font-family: var(--ts-font-serif);
+  font-size: 21px;
+  font-weight: 500;
+  line-height: 1.15;
+  letter-spacing: -0.015em;
+  margin-top: calc(var(--ts-space-1) * -1);
+}
+
+.cr-featured-tagline {
+  font-size: 13.5px;
+  line-height: 1.5;
+  color: var(--ts-cream-muted);
+  margin: 0;
+}
+
+.cr-featured .cr-touch {
+  margin-top: 0;
+}
+
+.cr-featured-foot {
+  display: flex;
+  align-items: center;
+  gap: var(--ts-space-3);
+  flex-wrap: wrap;
+}
+
+.cr-featured .cr-used {
+  margin-top: 0;
+  color: var(--ts-cream-muted);
+}
+
+.cr-featured-open {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--ts-space-1);
+  min-height: 40px;
+  background: var(--ts-cream);
+  color: var(--ts-navy-dark);
+  border: 0;
+  border-radius: var(--ts-radius-chip);
+  padding: var(--ts-space-2) var(--ts-space-4);
+  font-family: var(--ts-font-sans);
+  font-size: var(--ts-text-caption);
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.cr-featured-open:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 2px var(--ts-navy-dark), 0 0 0 4px var(--ts-terracotta);
+}
+
+/* ── standard grid card ─────────────────────────────────────────────────── */
+
+.cr-cardgrid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--ts-space-3);
+}
+
+.cr-card {
+  display: block;
+  padding: var(--ts-space-4);
+  background: var(--ts-surface);
+  border: 1px solid var(--ts-hairline);
+  border-radius: var(--ts-radius-card);
+  box-shadow: var(--ts-shadow-flat);
+  transition: box-shadow var(--ts-dur-2) var(--ts-ease),
+    transform var(--ts-dur-2) var(--ts-ease);
+}
+
+.cr-card:hover,
+.cr-card[data-state='hover'] {
+  box-shadow: var(--ts-shadow-raised);
+  transform: translateY(-1px);
+}
+
+.cr-card[data-state='focus'] {
+  box-shadow: var(--ts-focus);
+}
+
+.cr-card-name {
+  font-family: var(--ts-font-serif);
+  font-size: var(--ts-text-card-title);
+  font-weight: 600;
+  line-height: 1.2;
+  margin-top: var(--ts-space-3);
+}
+
+.cr-card-tagline {
+  font-size: 13.5px;
+  line-height: 1.45;
+  color: var(--ts-ink60);
+  margin: 4px 0 0;
+}
+
+.cr-card-by {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  margin-top: var(--ts-space-3);
+  font-family: var(--ts-font-serif);
+  font-size: 13px;
+  color: var(--ts-ink60);
+}
+
+.cr-cardgrid .cr-card-tagline {
+  font-size: 12.5px;
+}
+
+.cr-cardgrid .cr-touch-item {
+  font-size: 10.5px;
+  padding: 3px 7px;
+}
+
+/* ── new this week ──────────────────────────────────────────────────────── */
+
+.cr-new {
+  padding: var(--ts-space-4);
+  background: var(--ts-surface);
+  border: 1px solid var(--ts-hairline);
+  border-radius: var(--ts-radius-card);
+  box-shadow: var(--ts-shadow-flat);
+}
+
+/*
+ * Dated, not badged. "NEW" is a badge a product manager applies; "Published
+ * Tuesday" is a fact that expires on its own without anybody remembering to
+ * remove it.
+ */
+.cr-new-flag {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-family: var(--ts-font-mono);
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ts-sage);
+  margin-bottom: var(--ts-space-3);
+}
+
+.cr-new-body {
+  display: flex;
+  gap: var(--ts-space-3);
+  align-items: flex-start;
+}
+
+.cr-new .cr-card-name {
+  margin-top: 0;
+}
+
+/* ── dense rows ─────────────────────────────────────────────────────────── */
+
+.cr-rows {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  background: var(--ts-surface);
+  border: 1px solid var(--ts-hairline);
+  border-radius: var(--ts-radius-card);
+  overflow: hidden;
+}
+
+.cr-row {
+  display: flex;
+  align-items: center;
+  gap: var(--ts-space-3);
+  min-height: 60px;
+  padding: var(--ts-space-3) var(--ts-space-4);
+  border-bottom: 1px solid var(--ts-hairline);
+}
+
+.cr-row:last-child {
+  border-bottom: 0;
+}
+
+.cr-row:hover,
+.cr-row[data-state='hover'] {
+  background: var(--ts-cream);
+}
+
+.cr-row[data-state='pinned'] {
+  box-shadow: inset 3px 0 0 var(--ts-navy);
+}
+
+/* Stale is quieter, never struck through: it still works, nobody is using it. */
+.cr-row[data-state='stale'] {
+  opacity: 0.55;
+}
+
+.cr-row-main {
+  min-width: 0;
+  flex: 1;
+}
+
+.cr-row-name {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--ts-font-serif);
+  font-size: 15px;
+  font-weight: 600;
+  line-height: 1.25;
+}
+
+.cr-pinmark {
+  color: var(--ts-navy);
+}
+
+.cr-row-sub {
+  font-size: 12.5px;
+  color: var(--ts-ink60);
+  margin-top: 1px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.cr-row-end {
+  display: flex;
+  align-items: center;
+  gap: var(--ts-space-2);
+  flex: none;
+}
+
+.cr-row-count {
+  font-family: var(--ts-font-serif);
+  font-size: 13px;
+  color: var(--ts-ink45);
+  min-width: 22px;
+  text-align: right;
+}
+
+/* The collapsed touch strip. Carries a title attribute, so it is never the only
+   carrier of the meaning. */
+.cr-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: var(--ts-radius-full);
+  background: var(--ts-ink26);
+}
+
+.cr-dot[data-w='consequential'] {
+  background: var(--ts-terracotta);
+}
+
+/* ── invitation card ────────────────────────────────────────────────────── */
+
+.cr-invite-card {
+  margin-top: var(--ts-space-6);
+  padding: var(--ts-space-5);
+  border: 1px dashed color-mix(in srgb, var(--ts-terracotta) 45%, transparent);
+  border-radius: var(--ts-radius-card);
+  background: var(--ts-terracotta-tint);
+}
+
+.cr-invite-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  color: var(--ts-terracotta);
+  background: var(--ts-surface);
+  margin-bottom: var(--ts-space-3);
+}
+
+.cr-invite-name {
+  font-family: var(--ts-font-serif);
+  font-size: 19px;
+  font-weight: 600;
+  line-height: 1.2;
+}
+
+.cr-invite-copy {
+  font-size: 13.5px;
+  line-height: 1.5;
+  color: var(--ts-ink60);
+  margin: var(--ts-space-2) 0 var(--ts-space-4);
+}
+
+/* ── buttons ────────────────────────────────────────────────────────────── */
+
+.cr-primary,
+.cr-secondary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--ts-space-2);
+  min-height: 44px;
+  padding: var(--ts-space-3) var(--ts-space-5);
+  border-radius: var(--ts-radius-button);
+  font-family: var(--ts-font-sans);
+  font-size: var(--ts-text-label);
+  font-weight: 500;
+  cursor: pointer;
+  transition: background var(--ts-dur-1) var(--ts-ease);
+}
+
+.cr-primary {
+  background: var(--ts-terracotta);
+  color: var(--ts-surface);
+  border: 0;
+}
+
+.cr-primary:hover {
+  background: var(--ts-terracotta-hover);
+}
+
+.cr-primary:focus-visible,
+.cr-secondary:focus-visible {
+  outline: none;
+  box-shadow: var(--ts-focus);
+}
+
+.cr-secondary {
+  background: var(--ts-surface);
+  color: var(--ts-ink);
+  border: 1px solid var(--ts-hairline);
+}
+
+.cr-secondary:hover {
+  background: var(--ts-cream);
+}
+
+.cr-primary-wide,
+.cr-secondary-wide {
+  width: 100%;
+  margin-top: var(--ts-space-5);
+}
+
+.cr-actions {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.4fr);
+  gap: var(--ts-space-3);
+}
+
+.cr-actions .cr-primary-wide,
+.cr-actions .cr-secondary-wide {
+  margin-top: var(--ts-space-5);
+}
+
+.cr-primary-sm,
+.cr-secondary-sm {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 36px;
+  padding: 0 var(--ts-space-3);
+  border-radius: var(--ts-radius-button);
+  font-family: var(--ts-font-sans);
+  font-size: var(--ts-text-caption);
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.cr-primary-sm {
+  background: var(--ts-terracotta);
+  color: var(--ts-surface);
+  border: 0;
+}
+
+.cr-secondary-sm {
+  background: var(--ts-surface);
+  color: var(--ts-ink);
+  border: 1px solid var(--ts-hairline);
+}
+
+.cr-primary-sm:focus-visible,
+.cr-secondary-sm:focus-visible,
+.cr-linkbtn:focus-visible {
+  outline: none;
+  box-shadow: var(--ts-focus);
+}
+
+.cr-linkbtn {
+  background: none;
+  border: 0;
+  padding: 4px 2px;
+  color: var(--ts-ink60);
+  font-family: var(--ts-font-sans);
+  font-size: var(--ts-text-caption);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  cursor: pointer;
+}
+
+.cr-linkbtn[data-state='on'] {
+  color: var(--ts-terracotta);
+  font-weight: 500;
+}
+
+/* ── sheet-side notes column ────────────────────────────────────────────── */
+
+.cr-notes {
+  max-width: 34ch;
+  font-size: 13.5px;
+  line-height: 1.55;
+  color: var(--ts-ink60);
+}
+
+.cr-notes h4 {
+  font-family: var(--ts-font-mono);
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ts-ink45);
+  margin: var(--ts-space-5) 0 var(--ts-space-2);
+}
+
+.cr-notes h4:first-child {
+  margin-top: 0;
+}
+
+.cr-notes p {
+  margin: 0 0 var(--ts-space-3);
+}
+
+.cr-notes b {
+  color: var(--ts-ink);
+  font-weight: 500;
+}
+
+.cr-bedlabel {
+  font-family: var(--ts-font-mono);
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--ts-ink45);
+  margin-bottom: var(--ts-space-3);
+}
+
+.cr-bedlabel-loose {
+  margin-top: var(--ts-space-6);
+}
+
+.cr-bednote {
+  font-size: 12.5px;
+  line-height: 1.5;
+  color: var(--ts-ink60);
+  margin: var(--ts-space-4) 0 0;
+}
+
+.cr-bednote code,
+.cr-legend code {
+  font-family: var(--ts-font-mono);
+  font-size: 0.9em;
+  background: var(--ts-ink08);
+  border-radius: 4px;
+  padding: 1px 4px;
+}
+
+.cr-cardbed {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: var(--ts-space-6);
+  align-items: start;
+}
+
+.cr-bedcol > * + .cr-bedlabel {
+  margin-top: var(--ts-space-6);
+}
+
+.cr-plate-tight {
+  padding: var(--ts-space-4);
+  flex: 1 1 320px;
+}
+
+/* ── the seam ───────────────────────────────────────────────────────────── */
+
+.cr-seam {
+  display: grid;
+  grid-template-columns: 400px minmax(0, 1fr);
+  gap: var(--ts-space-8);
+  align-items: start;
+}
+
+@media (max-width: 1080px) {
+  .cr-seam {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+/*
+ * The 26px left gutter is the annotation margin. The stack clips to its own
+ * radius, so the numbered pips have to live inside it rather than hanging off
+ * the edge where the overflow would take their left half off.
+ */
+.cr-seam-stack {
+  padding-left: 26px;
+  background: var(--ts-cream);
+  border-radius: var(--ts-radius-card);
+  overflow: hidden;
+  box-shadow: var(--ts-shadow-raised);
+}
+
+/*
+ * Ownership is carried by an edge treatment AND a word, never by colour alone.
+ * Ours: a solid navy rule and the words Town Square. Theirs: a dashed
+ * terracotta outline and the words Guest bundle.
+ */
+.cr-band {
+  position: relative;
+  padding: var(--ts-space-4);
+}
+
+.cr-band[data-own='ours'] {
+  background: var(--ts-surface);
+  box-shadow: inset 3px 0 0 var(--ts-navy);
+}
+
+.cr-band[data-own='theirs'] {
+  margin: var(--ts-space-3);
+  padding: var(--ts-space-3);
+  border: 1px dashed color-mix(in srgb, var(--ts-terracotta) 55%, transparent);
+  border-radius: var(--ts-radius-card);
+  background:
+    repeating-linear-gradient(
+      45deg,
+      transparent 0 9px,
+      var(--ts-terracotta10) 9px 10px
+    ),
+    var(--ts-cream);
+}
+
+.cr-band-tag {
+  position: absolute;
+  top: 0;
+  right: var(--ts-space-3);
+  transform: translateY(-50%);
+  font-family: var(--ts-font-mono);
+  font-size: 9px;
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  padding: 3px 7px;
+  border-radius: 4px;
+}
+
+.cr-band[data-own='ours'] .cr-band-tag {
+  color: var(--ts-surface);
+  background: var(--ts-navy);
+}
+
+.cr-band[data-own='theirs'] .cr-band-tag {
+  color: var(--ts-surface);
+  background: var(--ts-terracotta);
+}
+
+.cr-pip {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  flex: none;
+  border-radius: var(--ts-radius-full);
+  font-family: var(--ts-font-mono);
+  font-size: 10px;
+  font-weight: 500;
+  color: var(--ts-surface);
+  background: var(--ts-ink);
+}
+
+.cr-band > .cr-pip,
+.cr-boundary > .cr-pip {
+  position: absolute;
+  left: -23px;
+  top: var(--ts-space-3);
+  box-shadow: 0 0 0 3px var(--ts-cream);
+}
+
+/* The guest band is inset by its own margin, so its pip reaches further back
+   to land in the same annotation column as the others. */
+.cr-band[data-own='theirs'] > .cr-pip {
+  left: -35px;
+}
+
+.cr-pip-inline {
+  position: static;
+  margin-left: 6px;
+  width: 16px;
+  height: 16px;
+  font-size: 9px;
+  vertical-align: -2px;
+}
+
+.cr-boundary {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  padding: var(--ts-space-2) var(--ts-space-4);
+  border-top: 1px dashed var(--ts-ink26);
+  border-bottom: 1px dashed var(--ts-ink26);
+  background: var(--ts-cream);
+}
+
+.cr-boundary-text {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--ts-font-mono);
+  font-size: 10px;
+  letter-spacing: 0.06em;
+  color: var(--ts-ink60);
+}
+
+.cr-legend {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  counter-reset: none;
+}
+
+.cr-legend li {
+  display: flex;
+  gap: var(--ts-space-3);
+  padding: var(--ts-space-3) 0;
+  border-bottom: 1px solid var(--ts-ink13);
+}
+
+.cr-legend li:last-child {
+  border-bottom: 0;
+}
+
+.cr-legend h5 {
+  font-family: var(--ts-font-serif);
+  font-size: 15px;
+  font-weight: 600;
+  margin: 0 0 3px;
+  color: var(--ts-ink);
+}
+
+.cr-legend p {
+  font-size: 13.5px;
+  line-height: 1.55;
+  color: var(--ts-ink60);
+  margin: 0;
+  max-width: 64ch;
+}
+
+/* ── host chrome ────────────────────────────────────────────────────────── */
+
+.cr-chrome {
+  display: flex;
+  align-items: center;
+  gap: var(--ts-space-3);
+  padding: var(--ts-space-2) 0 var(--ts-space-3);
+  border-bottom: 1px solid var(--ts-hairline);
+}
+
+.cr-chrome[data-state='alert'] {
+  border-bottom-color: var(--ts-terracotta);
+}
+
+.cr-chrome-id {
+  min-width: 0;
+  flex: 1;
+}
+
+.cr-chrome-title {
+  display: block;
+  font-family: var(--ts-font-serif);
+  font-size: var(--ts-text-card-title);
+  font-weight: 600;
+  line-height: 1.2;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.cr-chrome-by {
+  display: block;
+  font-family: var(--ts-font-serif);
+  font-size: var(--ts-text-caption);
+  color: var(--ts-ink60);
+}
+
+/*
+ * The one piece of chrome a creation can never draw over. Fixed to the end of
+ * the strip, never conditional, never moved by a longer title: a badge whose
+ * position depends on content is a badge whose position can be predicted, and a
+ * predictable position is a coverable one.
+ */
+.cr-badge {
+  margin-left: auto;
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  font-family: var(--ts-font-mono);
+  font-size: var(--ts-text-eyebrow);
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ts-navy);
+  background: var(--ts-sage14);
+  border-radius: var(--ts-radius-chip);
+  padding: 5px 10px;
+}
+
+.cr-livetitle {
+  font-family: var(--ts-font-serif);
+  font-size: var(--ts-text-caption);
+  color: var(--ts-ink60);
+  padding-top: var(--ts-space-2);
+}
+
+.cr-inuse {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--ts-space-2);
+  padding-top: var(--ts-space-3);
+}
+
+.cr-inuse-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 4px 9px;
+  border-radius: var(--ts-radius-chip);
+  font-family: var(--ts-font-mono);
+  font-size: 10.5px;
+  letter-spacing: 0.02em;
+  color: var(--ts-ink60);
+  background: var(--ts-ink08);
+}
+
+.cr-inuse-more {
+  margin-left: auto;
+}
+
+.cr-writing {
+  display: flex;
+  align-items: center;
+  gap: var(--ts-space-2);
+  margin-top: var(--ts-space-3);
+  padding: var(--ts-space-2) var(--ts-space-3);
+  border-radius: var(--ts-radius-button);
+  background: var(--ts-terracotta-tint);
+  box-shadow: inset 2px 0 0 var(--ts-terracotta);
+  font-size: 12.5px;
+  color: var(--ts-ink);
+}
+
+.cr-writing svg {
+  color: var(--ts-terracotta);
+}
+
+.cr-writing b {
+  font-family: var(--ts-font-mono);
+  font-size: 0.92em;
+  font-weight: 500;
+}
+
+.cr-spin {
+  animation: cr-spin 1.1s linear infinite;
+}
+
+@keyframes cr-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.cr-hatch {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--ts-space-3);
+  flex-wrap: wrap;
+  margin-top: var(--ts-space-3);
+  padding: var(--ts-space-3);
+  border-radius: var(--ts-radius-card);
+  background: var(--ts-terracotta-tint);
+  box-shadow: inset 3px 0 0 var(--ts-terracotta);
+}
+
+.cr-hatch > svg {
+  color: var(--ts-terracotta);
+  margin-top: 2px;
+}
+
+.cr-hatch b {
+  display: block;
+  font-size: 13.5px;
+  font-weight: 500;
+}
+
+.cr-hatch span {
+  display: block;
+  font-size: 12.5px;
+  line-height: 1.45;
+  color: var(--ts-ink60);
+  margin-top: 2px;
+}
+
+.cr-hatch-acts {
+  display: flex;
+  gap: var(--ts-space-2);
+  width: 100%;
+}
+
+.cr-footchrome {
+  display: flex;
+  align-items: center;
+  gap: var(--ts-space-3);
+  padding: var(--ts-space-3) 2px;
+  font-size: var(--ts-text-caption);
+  color: var(--ts-ink45);
+}
+
+.cr-footchrome > span {
+  margin-right: auto;
+}
+
+.cr-footchrome > svg {
+  color: var(--ts-ink26);
+}
+
+/* ── report panel ───────────────────────────────────────────────────────── */
+
+.cr-report {
+  padding: var(--ts-space-4);
+  border-radius: var(--ts-radius-card);
+  background: var(--ts-surface);
+  border: 1px solid var(--ts-hairline);
+  box-shadow: var(--ts-shadow-raised);
+}
+
+.cr-report-h {
+  font-family: var(--ts-font-serif);
+  font-size: 15px;
+  font-weight: 600;
+  margin-bottom: var(--ts-space-3);
+}
+
+.cr-report-opts {
+  display: grid;
+  gap: 2px;
+  margin-bottom: var(--ts-space-3);
+}
+
+.cr-radio {
+  display: flex;
+  align-items: center;
+  gap: var(--ts-space-2);
+  min-height: 36px;
+  font-size: 13.5px;
+  color: var(--ts-ink60);
+  cursor: pointer;
+}
+
+.cr-radio input {
+  accent-color: var(--ts-terracotta);
+  width: 16px;
+  height: 16px;
+  flex: none;
+}
+
+.cr-textarea {
+  width: 100%;
+  padding: var(--ts-space-3);
+  border: 1px solid var(--ts-hairline);
+  border-radius: var(--ts-radius-input);
+  background: var(--ts-cream);
+  color: var(--ts-ink);
+  font-family: var(--ts-font-sans);
+  font-size: 13.5px;
+  resize: vertical;
+}
+
+.cr-textarea:focus-visible {
+  outline: none;
+  box-shadow: var(--ts-focus);
+}
+
+.cr-report-foot {
+  display: flex;
+  align-items: center;
+  gap: var(--ts-space-3);
+  margin-top: var(--ts-space-3);
+  font-size: 12px;
+  color: var(--ts-ink45);
+}
+
+.cr-report-foot button {
+  margin-left: auto;
+  flex: none;
+}
+
+/* ── the guest bundle's own UI ──────────────────────────────────────────── */
+
+/*
+ * Luis's app. Every value here is a --ts-* custom property, which is the point:
+ * the host injects the town's tokens into the guest, so a creation looks native
+ * without importing anything and survives a town reskin untouched.
+ */
+.cr-guest {
+  padding: var(--ts-space-4);
+  border-radius: var(--ts-radius-card);
+  background: var(--ts-surface);
+}
+
+.cr-guest-head {
+  margin-bottom: var(--ts-space-3);
+}
+
+.cr-guest-h {
+  font-family: var(--ts-font-serif);
+  font-size: var(--ts-text-card-title);
+  font-weight: 600;
+  line-height: 1.2;
+}
+
+.cr-guest-sub {
+  font-size: 12.5px;
+  color: var(--ts-ink60);
+  margin-top: 2px;
+}
+
+.cr-guest-list {
+  list-style: none;
+  margin: 0 0 var(--ts-space-3);
+  padding: 0;
+}
+
+.cr-guest-list li {
+  display: flex;
+  align-items: center;
+  gap: var(--ts-space-2);
+  padding: var(--ts-space-2) 0;
+  border-bottom: 1px solid var(--ts-hairline);
+}
+
+.cr-guest-list li:last-child {
+  border-bottom: 0;
+}
+
+.cr-guest-rank {
+  font-family: var(--ts-font-mono);
+  font-size: 11px;
+  color: var(--ts-ink45);
+  width: 14px;
+  flex: none;
+}
+
+.cr-guest-name {
+  flex: 1;
+  min-width: 0;
+  font-size: 13.5px;
+  line-height: 1.25;
+}
+
+.cr-guest-name em {
+  display: block;
+  font-style: normal;
+  font-size: 11.5px;
+  color: var(--ts-ink45);
+}
+
+.cr-guest-bar {
+  width: 62px;
+  height: 5px;
+  flex: none;
+  border-radius: var(--ts-radius-full);
+  background: var(--ts-ink08);
+  overflow: hidden;
+}
+
+.cr-guest-bar i {
+  display: block;
+  height: 100%;
+  border-radius: var(--ts-radius-full);
+  background: var(--ts-terracotta);
+}
+
+.cr-guest-score {
+  font-family: var(--ts-font-serif);
+  font-size: 13px;
+  font-weight: 600;
+  width: 26px;
+  flex: none;
+  text-align: right;
+}
+
+.cr-guest-btn {
+  width: 100%;
+  min-height: 40px;
+  border: 0;
+  border-radius: var(--ts-radius-button);
+  background: var(--ts-terracotta);
+  color: var(--ts-surface);
+  font-family: var(--ts-font-sans);
+  font-size: 13.5px;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.cr-guest-foot {
+  font-family: var(--ts-font-serif);
+  font-size: 11.5px;
+  color: var(--ts-ink45);
+  margin-top: var(--ts-space-3);
+  text-align: center;
+}
+
+/* ── trust sheet ────────────────────────────────────────────────────────── */
+
+.cr-trust-head {
+  display: flex;
+  gap: var(--ts-space-3);
+  align-items: flex-start;
+  margin-bottom: var(--ts-space-4);
+}
+
+/*
+ * The tally. It makes the sheet skimmable without making it skippable: a count
+ * of the things that outlive the visit, stated before the list rather than left
+ * for the resident to add up.
+ */
+.cr-tally {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--ts-space-2);
+  padding: var(--ts-space-3);
+  border-radius: var(--ts-radius-button);
+  font-size: 13.5px;
+  line-height: 1.45;
+}
+
+.cr-tally[data-tone='calm'] {
+  color: var(--ts-ink);
+  background: var(--ts-sage14);
+}
+
+.cr-tally[data-tone='calm'] svg {
+  color: var(--ts-sage);
+}
+
+.cr-tally[data-tone='notable'] {
+  color: var(--ts-ink);
+  background: var(--ts-ink08);
+}
+
+.cr-tally[data-tone='notable'] svg {
+  color: var(--ts-ink45);
+}
+
+/* Heavier, and still not brick. A demanding manifest is a judgement call, not
+   an emergency, and frightening this screen teaches residents to skip it. */
+.cr-tally[data-tone='heavy'] {
+  color: var(--ts-ink);
+  background: var(--ts-terracotta-tint);
+  box-shadow: inset 3px 0 0 var(--ts-terracotta);
+}
+
+.cr-tally[data-tone='heavy'] svg {
+  color: var(--ts-terracotta);
+}
+
+.cr-tally svg {
+  margin-top: 2px;
+  flex: none;
+}
+
+.cr-trust-group {
+  font-family: var(--ts-font-mono);
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ts-ink45);
+  margin: var(--ts-space-5) 0 var(--ts-space-2);
+}
+
+.cr-trust {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  background: var(--ts-surface);
+  border: 1px solid var(--ts-hairline);
+  border-radius: var(--ts-radius-card);
+  overflow: hidden;
+}
+
+.cr-trust li {
+  display: flex;
+  gap: var(--ts-space-3);
+  padding: var(--ts-space-4);
+  border-bottom: 1px solid var(--ts-hairline);
+}
+
+.cr-trust li:last-child {
+  border-bottom: 0;
+}
+
+.cr-trust-icon {
+  color: var(--ts-ink45);
+  margin-top: 1px;
+}
+
+.cr-trust-title {
+  font-weight: 500;
+  font-size: var(--ts-text-label);
+  line-height: 1.3;
+}
+
+.cr-trust-detail {
+  color: var(--ts-ink60);
+  font-size: var(--ts-text-caption);
+  line-height: 1.45;
+  margin-top: 3px;
+}
+
+/* Anything that outlives the visit, or leaves town, is marked. The rest is
+   background reassurance and should read that way. */
+.cr-trust li[data-weight='consequential'] {
+  box-shadow: inset 3px 0 0 var(--ts-terracotta);
+  background: var(--ts-terracotta-tint);
+}
+
+.cr-trust li[data-weight='consequential'] .cr-trust-icon {
+  color: var(--ts-terracotta);
+}
+
+.cr-counsel {
+  display: flex;
+  gap: var(--ts-space-2);
+  align-items: flex-start;
+  margin-top: var(--ts-space-5);
+  padding: var(--ts-space-3);
+  border: 1px solid var(--ts-hairline);
+  border-radius: var(--ts-radius-card);
+  background: var(--ts-surface);
+}
+
+.cr-counsel svg {
+  color: var(--ts-ink45);
+  margin-top: 2px;
+  flex: none;
+}
+
+.cr-counsel b {
+  display: block;
+  font-size: 13.5px;
+  font-weight: 500;
+}
+
+.cr-counsel span {
+  display: block;
+  font-size: 12.5px;
+  line-height: 1.45;
+  color: var(--ts-ink60);
+  margin-top: 2px;
+}
+
+/* ── write-back consent ─────────────────────────────────────────────────── */
+
+/*
+ * The sheet is drawn by the shell over the frame, and the eyebrow says so. The
+ * creation asked; Town Square is the one doing the asking, and a resident has
+ * to be able to tell those apart without knowing what an iframe is.
+ */
+.cr-scrim {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  min-height: 100%;
+  background: var(--ts-cream);
+}
+
+.cr-scrim-behind {
+  padding: var(--ts-space-4);
+  filter: saturate(0.7);
+  opacity: 0.5;
+}
+
+.cr-scrim::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: color-mix(in srgb, var(--ts-ink) 34%, transparent);
+}
+
+.cr-sheet {
+  position: relative;
+  padding: var(--ts-space-3) var(--ts-space-4) var(--ts-space-5);
+  background: var(--ts-surface);
+  border-radius: var(--ts-radius-sheet) var(--ts-radius-sheet) 0 0;
+  box-shadow: var(--ts-shadow-overlay);
+}
+
+.cr-sheet-grip {
+  width: 36px;
+  height: 4px;
+  margin: 0 auto var(--ts-space-4);
+  border-radius: var(--ts-radius-full);
+  background: var(--ts-ink13);
+}
+
+.cr-sheet-eyebrow {
+  font-family: var(--ts-font-mono);
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--ts-terracotta);
+  margin-bottom: var(--ts-space-2);
+}
+
+.cr-sheet-h {
+  font-family: var(--ts-font-serif);
+  font-size: 20px;
+  font-weight: 500;
+  line-height: 1.25;
+  letter-spacing: -0.01em;
+  margin: 0 0 var(--ts-space-2);
+}
+
+.cr-sheet-sub {
+  font-size: 13.5px;
+  line-height: 1.5;
+  color: var(--ts-ink60);
+  margin: 0 0 var(--ts-space-4);
+}
+
+.cr-sheet-sub b {
+  color: var(--ts-ink);
+  font-weight: 500;
+}
+
+/*
+ * The payload, field by field. "Allow this creation to write records" is a
+ * sentence nobody can evaluate; four named fields is a thing a person can look
+ * at and decide about.
+ */
+.cr-payload {
+  border: 1px solid var(--ts-hairline);
+  border-radius: var(--ts-radius-card);
+  overflow: hidden;
+  background: var(--ts-cream);
+}
+
+.cr-payload-head {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: var(--ts-space-2) var(--ts-space-3);
+  border-bottom: 1px solid var(--ts-hairline);
+  font-family: var(--ts-font-mono);
+  font-size: 11px;
+  letter-spacing: 0.04em;
+  color: var(--ts-ink60);
+  background: var(--ts-surface);
+}
+
+.cr-payload-fields {
+  margin: 0;
+  padding: var(--ts-space-2) var(--ts-space-3);
+}
+
+.cr-payload-fields > div {
+  display: grid;
+  grid-template-columns: 92px minmax(0, 1fr);
+  gap: var(--ts-space-3);
+  padding: 5px 0;
+}
+
+.cr-payload-fields dt {
+  font-family: var(--ts-font-mono);
+  font-size: 11.5px;
+  color: var(--ts-ink45);
+}
+
+.cr-payload-fields dd {
+  margin: 0;
+  font-size: 12.5px;
+  line-height: 1.4;
+  color: var(--ts-ink);
+}
+
+.cr-consequences {
+  list-style: none;
+  margin: var(--ts-space-4) 0;
+  padding: 0;
+  display: grid;
+  gap: var(--ts-space-3);
+}
+
+.cr-consequences li {
+  display: flex;
+  gap: var(--ts-space-2);
+  align-items: flex-start;
+}
+
+.cr-consequences svg {
+  color: var(--ts-terracotta);
+  margin-top: 2px;
+  flex: none;
+}
+
+.cr-consequences b {
+  display: block;
+  font-size: 13.5px;
+  font-weight: 500;
+}
+
+.cr-consequences span {
+  display: block;
+  font-size: 12.5px;
+  line-height: 1.45;
+  color: var(--ts-ink60);
+  margin-top: 1px;
+}
+
+.cr-always {
+  display: flex;
+  gap: var(--ts-space-3);
+  align-items: flex-start;
+  padding: var(--ts-space-3);
+  border: 1px solid var(--ts-hairline);
+  border-radius: var(--ts-radius-card);
+  background: var(--ts-cream);
+  cursor: pointer;
+}
+
+.cr-always input {
+  width: 18px;
+  height: 18px;
+  flex: none;
+  margin-top: 1px;
+  accent-color: var(--ts-terracotta);
+}
+
+.cr-always b {
+  display: block;
+  font-size: 13.5px;
+  font-weight: 500;
+}
+
+.cr-always em {
+  display: block;
+  font-style: normal;
+  font-size: 12px;
+  line-height: 1.45;
+  color: var(--ts-ink60);
+  margin-top: 2px;
+}
+
+.cr-sheet-acts {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.2fr);
+  gap: var(--ts-space-3);
+  margin-top: var(--ts-space-4);
+}
+
+.cr-sheet-acts .cr-primary,
+.cr-sheet-acts .cr-secondary {
+  width: 100%;
+}
+
+/* ── posted confirmation ────────────────────────────────────────────────── */
+
+.cr-posted {
+  border: 1px solid var(--ts-hairline);
+  border-radius: var(--ts-radius-card);
+  background: var(--ts-surface);
+  overflow: hidden;
+}
+
+.cr-posted-head {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: var(--ts-space-2) var(--ts-space-4);
+  font-family: var(--ts-font-mono);
+  font-size: 10.5px;
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ts-sage);
+  background: var(--ts-sage14);
+}
+
+.cr-posted-body {
+  display: flex;
+  gap: var(--ts-space-3);
+  align-items: flex-start;
+  padding: var(--ts-space-4);
+}
+
+.cr-posted-body b {
+  display: block;
+  font-family: var(--ts-font-serif);
+  font-size: 15px;
+  font-weight: 600;
+  line-height: 1.25;
+}
+
+.cr-posted-body span {
+  display: block;
+  font-family: var(--ts-font-serif);
+  font-size: 12.5px;
+  color: var(--ts-ink60);
+  margin-top: 2px;
+}
+
+.cr-posted-acts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--ts-space-3);
+  padding: 0 var(--ts-space-4) var(--ts-space-3);
+}
+
+/* ── blocked notices ────────────────────────────────────────────────────── */
+
+.cr-blocked {
+  display: flex;
+  gap: var(--ts-space-2);
+  align-items: flex-start;
+  margin-top: var(--ts-space-3);
+  padding: var(--ts-space-3);
+  border-radius: var(--ts-radius-card);
+  background: var(--ts-gold14);
+  box-shadow: inset 3px 0 0 var(--ts-gold);
+}
+
+.cr-blocked[data-tone='net'] {
+  background: var(--ts-ink08);
+  box-shadow: inset 3px 0 0 var(--ts-ink26);
+}
+
+.cr-blocked > svg {
+  color: var(--ts-gold-text);
+  margin-top: 2px;
+  flex: none;
+}
+
+.cr-blocked[data-tone='net'] > svg {
+  color: var(--ts-ink45);
+}
+
+.cr-blocked b {
+  display: block;
+  font-size: 13.5px;
+  font-weight: 500;
+}
+
+.cr-blocked span {
+  display: block;
+  font-size: 12.5px;
+  line-height: 1.45;
+  color: var(--ts-ink60);
+  margin-top: 2px;
+}
+
+.cr-mono {
+  font-family: var(--ts-font-mono);
+  font-size: 0.94em;
+}
+
+/* ── boot and failure ───────────────────────────────────────────────────── */
+
+.cr-framewrap {
+  margin-top: var(--ts-space-3);
+  border: 1px solid var(--ts-hairline);
+  border-radius: var(--ts-radius-card);
+  overflow: hidden;
+  background: var(--ts-surface);
+}
+
+.cr-skeleton {
+  padding: var(--ts-space-4);
+  min-height: 200px;
+  display: flex;
+  flex-direction: column;
+  gap: var(--ts-space-3);
+}
+
+.cr-sk-line,
+.cr-sk-block {
+  border-radius: 6px;
+  background: linear-gradient(
+    100deg,
+    var(--ts-stone) 0%,
+    color-mix(in srgb, var(--ts-stone) 45%, var(--ts-surface)) 50%,
+    var(--ts-stone) 100%
+  );
+  background-size: 220% 100%;
+  animation: cr-shimmer 1.6s var(--ts-ease) infinite;
+}
+
+.cr-sk-line {
+  height: 11px;
+}
+
+.cr-sk-block {
+  height: 96px;
+  border-radius: var(--ts-radius-card);
+}
+
+@keyframes cr-shimmer {
+  from { background-position: 130% 0; }
+  to { background-position: -30% 0; }
+}
+
+.cr-sk-note {
+  margin-top: auto;
+  font-family: var(--ts-font-serif);
+  font-size: 12.5px;
+  color: var(--ts-ink45);
+}
+
+.cr-failure {
+  padding: var(--ts-space-6) var(--ts-space-4);
+  text-align: center;
+}
+
+.cr-failure-mark {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  border-radius: var(--ts-radius-full);
+  color: var(--ts-ink45);
+  background: var(--ts-ink08);
+  margin-bottom: var(--ts-space-3);
+}
+
+/* Held for review, not an emergency. Still not brick. */
+.cr-failure-mark[data-tone='hold'] {
+  color: var(--ts-terracotta);
+  background: var(--ts-terracotta14);
+}
+
+.cr-failure h3 {
+  font-family: var(--ts-font-serif);
+  font-size: var(--ts-text-h2);
+  font-weight: 500;
+  line-height: 1.2;
+  margin: 0 0 var(--ts-space-2);
+}
+
+.cr-failure p {
+  font-size: 13.5px;
+  line-height: 1.5;
+  color: var(--ts-ink60);
+  max-width: 40ch;
+  margin: 0 auto var(--ts-space-4);
+}
+
+.cr-failure-meta {
+  font-family: var(--ts-font-mono);
+  font-size: 10.5px;
+  letter-spacing: 0.06em;
+  color: var(--ts-ink45);
+  margin-top: var(--ts-space-4);
+}
+
+.cr-framewrap-short .cr-guest {
+  padding: var(--ts-space-3);
+}
+
+/* ── linked escape hatch ────────────────────────────────────────────────── */
+
+/*
+ * Listed with the creations, styled so it can never be mistaken for one: no
+ * badge, an outbound arrow instead of an icon plate, and a dashed edge that
+ * says this card does not have the guarantees the others do.
+ */
+.cr-linked {
+  padding: var(--ts-space-4);
+  border: 1px dashed var(--ts-ink26);
+  border-radius: var(--ts-radius-card);
+  background: var(--ts-cream);
+}
+
+.cr-linked-head {
+  display: flex;
+  gap: var(--ts-space-3);
+  align-items: flex-start;
+}
+
+.cr-linked-head .cr-card-name {
+  margin-top: 0;
+}
+
+.cr-linked-warn {
+  display: flex;
+  gap: var(--ts-space-2);
+  align-items: flex-start;
+  margin-top: var(--ts-space-3);
+  padding: var(--ts-space-3);
+  border-radius: var(--ts-radius-button);
+  background: var(--ts-gold14);
+}
+
+.cr-linked-warn svg {
+  color: var(--ts-gold-text);
+  margin-top: 2px;
+  flex: none;
+}
+
+.cr-linked-warn b {
+  display: block;
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.cr-linked-warn span {
+  display: block;
+  font-size: 12.5px;
+  line-height: 1.45;
+  color: var(--ts-ink60);
+  margin-top: 2px;
+}
+
+.cr-linked-foot {
+  display: flex;
+  align-items: center;
+  gap: var(--ts-space-3);
+  flex-wrap: wrap;
+  margin-top: var(--ts-space-3);
+}
+
+.cr-linked-live {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-right: auto;
+  font-family: var(--ts-font-serif);
+  font-size: 12.5px;
+  color: var(--ts-ink60);
+}
+
+.cr-live-dot {
+  width: 7px;
+  height: 7px;
+  flex: none;
+  border-radius: var(--ts-radius-full);
+  background: var(--ts-sage);
+}
+
+/* ── creation detail ────────────────────────────────────────────────────── */
+
+.cr-verified {
+  color: var(--ts-sage);
+}
+
+.cr-detail-acts {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: var(--ts-space-3);
+  margin-bottom: var(--ts-space-5);
+}
+
+.cr-detail-acts .cr-primary,
+.cr-detail-acts .cr-secondary {
+  width: 100%;
+}
+
+/*
+ * Screenshots as token gradients over stone. Deliberate rather than broken:
+ * a captioned plate reads as "a picture goes here" while a grey box reads as a
+ * failed image.
+ */
+.cr-shots {
+  display: flex;
+  gap: var(--ts-space-2);
+  overflow-x: auto;
+  padding-bottom: var(--ts-space-2);
+  margin-bottom: var(--ts-space-4);
+  scrollbar-width: none;
+}
+
+.cr-shots::-webkit-scrollbar {
+  display: none;
+}
+
+.cr-shot {
+  position: relative;
+  flex: none;
+  width: 132px;
+  height: 176px;
+  border-radius: var(--ts-radius-card);
+  border: 1px solid var(--ts-hairline);
+  background: var(--ts-stone);
+  overflow: hidden;
+}
+
+.cr-shot[data-art='map'] {
+  background:
+    radial-gradient(circle at 30% 34%, var(--ts-terracotta14) 0 10%, transparent 11%),
+    radial-gradient(circle at 62% 52%, var(--ts-terracotta14) 0 8%, transparent 9%),
+    radial-gradient(circle at 44% 72%, var(--ts-terracotta14) 0 7%, transparent 8%),
+    linear-gradient(150deg, var(--ts-sage14), var(--ts-navy10) 70%),
+    var(--ts-stone);
+}
+
+.cr-shot[data-art='list'] {
+  background:
+    repeating-linear-gradient(
+      var(--ts-surface) 0 16px,
+      transparent 16px 26px
+    ),
+    var(--ts-stone);
+}
+
+.cr-shot[data-art='detail'] {
+  background:
+    linear-gradient(var(--ts-surface) 0 62%, transparent 62%),
+    linear-gradient(200deg, var(--ts-navy10), var(--ts-gold14)),
+    var(--ts-stone);
+}
+
+.cr-shot-cap {
+  position: absolute;
+  left: var(--ts-space-2);
+  bottom: var(--ts-space-2);
+  font-family: var(--ts-font-mono);
+  font-size: 9.5px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ts-ink60);
+  background: var(--ts-surface);
+  border-radius: 4px;
+  padding: 3px 6px;
+}
+
+.cr-detail-desc {
+  font-family: var(--ts-font-serif);
+  font-size: 15px;
+  line-height: 1.55;
+  margin: 0 0 var(--ts-space-3);
+}
+
+.cr-used-loud {
+  display: block;
+  font-family: var(--ts-font-serif);
+  font-size: 13px;
+  color: var(--ts-ink60);
+  margin: var(--ts-space-4) 0 0;
+  padding-top: var(--ts-space-3);
+  border-top: 1px solid var(--ts-ink13);
+}
+
+.cr-detail-h {
+  font-family: var(--ts-font-mono);
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ts-ink45);
+  margin: var(--ts-space-6) 0 var(--ts-space-3);
+}
+
+.cr-trust-compact li {
+  padding: var(--ts-space-3);
+}
+
+/* ── defines ────────────────────────────────────────────────────────────── */
+
+/*
+ * The compounding, made legible. A resident sees their contribution feeding
+ * somebody else's app; a builder sees a type to reuse instead of inventing a
+ * parallel one with a different name for the same thing.
+ */
+.cr-defines {
+  padding: var(--ts-space-4);
+  border: 1px solid var(--ts-hairline);
+  border-radius: var(--ts-radius-card);
+  background: var(--ts-surface);
+}
+
+.cr-defines-head {
+  display: flex;
+  gap: var(--ts-space-2);
+  align-items: flex-start;
+}
+
+.cr-defines-head svg {
+  color: var(--ts-sage);
+  margin-top: 2px;
+  flex: none;
+}
+
+.cr-defines-head b {
+  display: block;
+  font-family: var(--ts-font-mono);
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.cr-defines-head span {
+  display: block;
+  font-size: 12.5px;
+  line-height: 1.45;
+  color: var(--ts-ink60);
+  margin-top: 2px;
+}
+
+.cr-schema {
+  width: 100%;
+  margin-top: var(--ts-space-3);
+  border-collapse: collapse;
+}
+
+.cr-schema th,
+.cr-schema td {
+  text-align: left;
+  padding: 5px 0;
+  border-top: 1px solid var(--ts-hairline);
+  font-weight: 400;
+  font-size: 12px;
+  vertical-align: baseline;
+}
+
+.cr-schema th {
+  font-family: var(--ts-font-mono);
+  color: var(--ts-ink);
+  width: 44%;
+}
+
+.cr-schema td {
+  font-family: var(--ts-font-mono);
+  color: var(--ts-ink45);
+}
+
+.cr-req {
+  text-align: right !important;
+  font-family: var(--ts-font-sans) !important;
+  font-size: 11px !important;
+  color: var(--ts-terracotta) !important;
+}
+
+.cr-defines-foot {
+  font-size: 12.5px;
+  line-height: 1.45;
+  color: var(--ts-ink60);
+  margin: var(--ts-space-3) 0 0;
+}
+
+/* ── version history ────────────────────────────────────────────────────── */
+
+.cr-versions {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.cr-versions li {
+  display: flex;
+  gap: var(--ts-space-3);
+  padding: var(--ts-space-3) 0;
+  border-bottom: 1px solid var(--ts-ink13);
+}
+
+.cr-versions li:last-child {
+  border-bottom: 0;
+}
+
+.cr-ver-num {
+  font-family: var(--ts-font-mono);
+  font-size: 11.5px;
+  color: var(--ts-ink45);
+  width: 44px;
+  flex: none;
+  padding-top: 2px;
+}
+
+.cr-versions li[data-state='current'] .cr-ver-num {
+  color: var(--ts-ink);
+  font-weight: 500;
+}
+
+.cr-ver-when {
+  font-family: var(--ts-font-serif);
+  font-size: 12.5px;
+  color: var(--ts-ink60);
+}
+
+.cr-versions p {
+  font-size: 13.5px;
+  line-height: 1.45;
+  margin: 2px 0 var(--ts-space-2);
+}
+
+/*
+ * Each version says whether the ask grew. Publish something harmless, build an
+ * audience, then push an update that asks for more is the browser-extension
+ * attack, and it works where updates are rubber-stamped.
+ */
+.cr-ver-perm {
+  display: inline-flex;
+  align-items: center;
+  font-size: 11.5px;
+  padding: 3px 8px;
+  border-radius: var(--ts-radius-chip);
+  color: var(--ts-ink60);
+  background: var(--ts-ink08);
+}
+
+.cr-ver-perm[data-state='grew'] {
+  color: var(--ts-terracotta);
+  background: var(--ts-terracotta10);
+  font-weight: 500;
+  box-shadow: inset 2px 0 0 var(--ts-terracotta);
+}
+
+/* ── source and fork ────────────────────────────────────────────────────── */
+
+.cr-source {
+  padding: var(--ts-space-4);
+  border: 1px solid var(--ts-hairline);
+  border-radius: var(--ts-radius-card);
+  background: var(--ts-surface);
+}
+
+.cr-source-row {
+  display: flex;
+  align-items: center;
+  gap: var(--ts-space-2);
+  font-size: 13.5px;
+  color: var(--ts-ink60);
+}
+
+.cr-source-row svg {
+  color: var(--ts-ink45);
+}
+
+.cr-filelist {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+  list-style: none;
+  margin: var(--ts-space-3) 0;
+  padding: 0;
+}
+
+.cr-filelist li {
+  font-family: var(--ts-font-mono);
+  font-size: 11px;
+  color: var(--ts-ink60);
+  background: var(--ts-cream);
+  border: 1px solid var(--ts-hairline);
+  border-radius: 5px;
+  padding: 3px 7px;
+}
+
+.cr-source-note {
+  font-size: 12.5px;
+  line-height: 1.45;
+  color: var(--ts-ink60);
+  margin: 0 0 var(--ts-space-3);
+}
+
+.cr-source-acts {
+  display: flex;
+  align-items: center;
+  gap: var(--ts-space-3);
+  flex-wrap: wrap;
+}
+
+/* ── builder profile ────────────────────────────────────────────────────── */
+
+.cr-profile {
+  padding-top: var(--ts-space-2);
+}
+
+.cr-avatar-lg {
+  width: 56px;
+  height: 56px;
+  font-size: 17px;
+  margin-bottom: var(--ts-space-3);
+}
+
+.cr-profile-handle {
+  display: flex;
+  align-items: center;
+  gap: var(--ts-space-3);
+  flex-wrap: wrap;
+  margin-bottom: var(--ts-space-3);
+}
+
+.cr-vouch {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--ts-sage);
+  background: var(--ts-sage14);
+  border-radius: var(--ts-radius-chip);
+  padding: 4px 10px;
+}
+
+.cr-profile-bio {
+  font-family: var(--ts-font-serif);
+  font-size: 15px;
+  line-height: 1.55;
+  color: var(--ts-ink);
+  margin: 0 0 var(--ts-space-4);
+}
+
+.cr-vouchbar {
+  display: flex;
+  align-items: center;
+  gap: var(--ts-space-3);
+  padding: var(--ts-space-3);
+  border-radius: var(--ts-radius-card);
+  background: var(--ts-surface);
+  border: 1px solid var(--ts-hairline);
+  font-family: var(--ts-font-serif);
+  font-size: 13px;
+  color: var(--ts-ink60);
+}
+
+.cr-vouchbar-people {
+  display: flex;
+  flex: none;
+}
+
+.cr-vouchbar-people .cr-avatar {
+  margin-right: -7px;
+  box-shadow: 0 0 0 2px var(--ts-surface);
+}
+
+.cr-alsolist {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.cr-alsolist li {
+  display: flex;
+  align-items: center;
+  gap: var(--ts-space-2);
+  padding: var(--ts-space-2) 0;
+  font-size: 13.5px;
+  color: var(--ts-ink60);
+  border-bottom: 1px solid var(--ts-ink13);
+}
+
+.cr-alsolist li:last-child {
+  border-bottom: 0;
+}
+
+.cr-alsolist svg {
+  color: var(--ts-ink45);
+}
+
+.cr-profile-acts {
+  margin-top: var(--ts-space-2);
+}
+
+/* ── discovery ──────────────────────────────────────────────────────────── */
+
+.cr-plate-wide {
+  flex: 1 1 460px;
+}
+
+.cr-cats {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--ts-space-2);
+}
+
+.cr-cat {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 40px;
+  padding: 0 var(--ts-space-3);
+  border-radius: var(--ts-radius-chip);
+  border: 1px solid var(--ts-hairline);
+  background: var(--ts-surface);
+  color: var(--ts-ink);
+  font-family: var(--ts-font-sans);
+  font-size: 13.5px;
+  cursor: pointer;
+  transition: background var(--ts-dur-1) var(--ts-ease);
+}
+
+.cr-cat span {
+  font-family: var(--ts-font-mono);
+  font-size: 10.5px;
+  color: var(--ts-ink45);
+}
+
+.cr-cat:hover {
+  background: var(--ts-cream);
+}
+
+.cr-cat[data-state='on'] {
+  background: var(--ts-navy);
+  border-color: var(--ts-navy);
+  color: var(--ts-cream);
+}
+
+.cr-cat[data-state='on'] span {
+  color: var(--ts-cream-muted);
+}
+
+.cr-cat:focus-visible {
+  outline: none;
+  box-shadow: var(--ts-focus);
+}
+
+.cr-strip {
+  display: flex;
+  gap: var(--ts-space-3);
+  overflow-x: auto;
+  padding-bottom: var(--ts-space-2);
+  scrollbar-width: none;
+}
+
+.cr-strip::-webkit-scrollbar {
+  display: none;
+}
+
+.cr-strip-card {
+  flex: none;
+  width: 168px;
+  padding: var(--ts-space-3);
+  border: 1px solid var(--ts-hairline);
+  border-radius: var(--ts-radius-card);
+  background: var(--ts-surface);
+}
+
+/* The shelf says when it is empty rather than trailing off, because a strip
+   that ends mid-scroll implies there is more. */
+.cr-strip-card[data-state='ghost'] {
+  display: flex;
+  align-items: center;
+  border-style: dashed;
+  background: none;
+}
+
+.cr-strip-ghost {
+  font-family: var(--ts-font-serif);
+  font-size: 12.5px;
+  line-height: 1.45;
+  color: var(--ts-ink45);
+}
+
+.cr-strip-name {
+  font-family: var(--ts-font-serif);
+  font-size: 15px;
+  font-weight: 600;
+  line-height: 1.2;
+  margin-top: var(--ts-space-2);
+}
+
+.cr-strip-by {
+  font-family: var(--ts-font-serif);
+  font-size: 12px;
+  color: var(--ts-ink60);
+  margin-top: 2px;
+}
+
+.cr-affinity-h {
+  display: flex;
+  align-items: center;
+  gap: var(--ts-space-2);
+  font-family: var(--ts-font-serif);
+  font-size: 15px;
+  font-weight: 600;
+  margin-bottom: var(--ts-space-3);
+}
+
+.cr-affinity-h svg {
+  color: var(--ts-ink45);
+}
+
+.cr-affinity-note {
+  font-size: 12.5px;
+  line-height: 1.5;
+  color: var(--ts-ink60);
+  margin: var(--ts-space-3) 0 0;
+}
+
+.cr-affinity-note b {
+  color: var(--ts-ink);
+  font-weight: 500;
+}
+
+/* ── the n=3 gallery ────────────────────────────────────────────────────── */
+
+/*
+ * Three cards in a grid reads as a failed store. Three numbered entries with a
+ * sentence each about why the person built it reads as the beginning of
+ * something, and it is the same three rows of data.
+ */
+.cr-firsts {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.cr-firsts li {
+  display: flex;
+  gap: var(--ts-space-3);
+  padding: var(--ts-space-4) 0;
+  border-bottom: 1px solid var(--ts-ink13);
+}
+
+.cr-firsts-n {
+  font-family: var(--ts-font-mono);
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  color: var(--ts-terracotta);
+  flex: none;
+  width: 22px;
+  padding-top: 4px;
+}
+
+.cr-firsts .cr-card-name {
+  margin-top: 0;
+}
+
+.cr-firsts-why {
+  font-family: var(--ts-font-serif);
+  font-size: 14.5px;
+  line-height: 1.5;
+  color: var(--ts-ink60);
+  margin: var(--ts-space-1) 0 var(--ts-space-3);
+}
+
+.cr-firsts-why b {
+  color: var(--ts-ink);
+  font-weight: 600;
+}
+
+.cr-asks {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  border: 1px solid var(--ts-hairline);
+  border-radius: var(--ts-radius-card);
+  background: var(--ts-surface);
+  overflow: hidden;
+}
+
+.cr-asks li {
+  display: flex;
+  align-items: center;
+  gap: var(--ts-space-3);
+  padding: var(--ts-space-3) var(--ts-space-4);
+  border-bottom: 1px solid var(--ts-hairline);
+}
+
+.cr-asks li:last-child {
+  border-bottom: 0;
+}
+
+.cr-asks div {
+  flex: 1;
+  min-width: 0;
+}
+
+.cr-asks b {
+  display: block;
+  font-family: var(--ts-font-serif);
+  font-size: 14.5px;
+  font-weight: 600;
+  line-height: 1.3;
+}
+
+.cr-asks span {
+  display: block;
+  font-size: 12px;
+  color: var(--ts-ink45);
+  margin-top: 1px;
+}
+
+.cr-ask-add {
+  margin-top: var(--ts-space-3);
+}
+
+/* ── pinning ────────────────────────────────────────────────────────────── */
+
+.cr-pinrow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--ts-space-3);
+}
+
+.cr-secondary[data-state='on'] {
+  background: var(--ts-navy);
+  border-color: var(--ts-navy);
+  color: var(--ts-cream);
+}
+
+.cr-secondary[disabled] {
+  color: var(--ts-ink45);
+  background: var(--ts-cream);
+  border-style: dashed;
+  cursor: not-allowed;
+}
+
+.cr-pinlist {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  border: 1px solid var(--ts-hairline);
+  border-radius: var(--ts-radius-card);
+  background: var(--ts-surface);
+  overflow: hidden;
+}
+
+.cr-pinlist li {
+  display: flex;
+  align-items: center;
+  gap: var(--ts-space-3);
+  padding: var(--ts-space-2) var(--ts-space-3);
+  min-height: 52px;
+  border-bottom: 1px solid var(--ts-hairline);
+  background: var(--ts-surface);
+}
+
+.cr-pinlist li:last-child {
+  border-bottom: 0;
+}
+
+.cr-pinlist li[data-state='dragging'] {
+  background: var(--ts-cream);
+  box-shadow: var(--ts-shadow-raised);
+  border-radius: var(--ts-radius-button);
+}
+
+.cr-drag {
+  color: var(--ts-ink26);
+  cursor: grab;
+}
+
+.cr-pin-name {
+  flex: 1;
+  min-width: 0;
+  font-family: var(--ts-font-serif);
+  font-size: 15px;
+  font-weight: 600;
+}
+
+.cr-pinned {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  border: 1px solid var(--ts-hairline);
+  border-radius: var(--ts-radius-card);
+  background: var(--ts-surface);
+  overflow: hidden;
+}
+
+.cr-pinned li {
+  display: flex;
+  align-items: center;
+  gap: var(--ts-space-3);
+  min-height: 60px;
+  padding: var(--ts-space-3) var(--ts-space-4);
+  border-bottom: 1px solid var(--ts-hairline);
+  color: var(--ts-ink45);
+}
+
+.cr-pinned li:last-child {
+  border-bottom: 0;
+}
+
+.cr-pinned-main {
+  flex: 1;
+  min-width: 0;
+}
+
+.cr-pinned-name {
+  font-family: var(--ts-font-serif);
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--ts-ink);
+  line-height: 1.25;
+}
+
+/*
+ * The last thing the creation reported through app.setTitle, and when it said
+ * it. The timestamp is the honest alternative to running three residents'
+ * bundles on a schedule nobody consented to just to keep a number fresh.
+ */
+.cr-pinned-state {
+  font-family: var(--ts-font-serif);
+  font-size: 12.5px;
+  color: var(--ts-ink60);
+  margin-top: 1px;
+}
+
+.cr-pinned-state em {
+  font-style: normal;
+  color: var(--ts-ink45);
+}
+
+.cr-todaystub {
+  border: 1px solid var(--ts-hairline);
+  border-radius: var(--ts-radius-card);
+  background: var(--ts-surface);
+  overflow: hidden;
+}
+
+.cr-todaystub-item {
+  display: flex;
+  gap: var(--ts-space-3);
+  padding: var(--ts-space-3) var(--ts-space-4);
+  border-bottom: 1px solid var(--ts-hairline);
+}
+
+.cr-todaystub-item:last-child {
+  border-bottom: 0;
+}
+
+.cr-todaystub-time {
+  font-family: var(--ts-font-sans);
+  font-size: 12.5px;
+  font-weight: 500;
+  color: var(--ts-ink60);
+  flex: none;
+  width: 58px;
+}
+
+.cr-todaystub-item b {
+  display: block;
+  font-family: var(--ts-font-serif);
+  font-size: 14.5px;
+  font-weight: 600;
+  line-height: 1.3;
+}
+
+.cr-todaystub-item span {
+  display: block;
+  font-size: 12.5px;
+  color: var(--ts-ink60);
+  margin-top: 1px;
+}
+
+/* ── the invitation ─────────────────────────────────────────────────────── */
+
+.cr-invite-line {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--ts-space-2);
+  margin: 0;
+  padding: var(--ts-space-3) 0;
+  border-top: 1px solid var(--ts-ink13);
+  font-family: var(--ts-font-serif);
+  font-size: 13.5px;
+  color: var(--ts-ink60);
+}
+
+.cr-invite-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  background: none;
+  border: 0;
+  padding: 6px 2px;
+  color: var(--ts-terracotta);
+  font-family: var(--ts-font-sans);
+  font-size: 13.5px;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.cr-invite-link:focus-visible {
+  outline: none;
+  box-shadow: var(--ts-focus);
+  border-radius: 6px;
+}
+
+/*
+ * The one full-screen interruption in the section, and it inverts because the
+ * featured card has already taught the eye that dark means the build layer.
+ * Reached by tapping "How it works", never sprung on a timer or a visit count.
+ */
+.cr-screen-dark {
+  min-height: 100%;
+  background: var(--ts-navy-dark);
+  color: var(--ts-cream);
+}
+
+.cr-back-dark {
+  color: var(--ts-cream-muted);
+}
+
+.cr-int-eyebrow {
+  font-family: var(--ts-font-mono);
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--ts-terracotta);
+  margin: var(--ts-space-4) 0 var(--ts-space-3);
+}
+
+.cr-int-h {
+  font-family: var(--ts-font-serif);
+  font-size: 25px;
+  font-weight: 400;
+  letter-spacing: -0.02em;
+  line-height: 1.15;
+  margin: 0 0 var(--ts-space-3);
+}
+
+.cr-int-lede {
+  font-family: var(--ts-font-serif);
+  font-size: 15px;
+  line-height: 1.5;
+  color: var(--ts-cream-muted);
+  margin: 0 0 var(--ts-space-6);
+}
+
+.cr-steps {
+  list-style: none;
+  margin: 0 0 var(--ts-space-6);
+  padding: 0;
+  display: grid;
+  gap: var(--ts-space-4);
+}
+
+.cr-steps li {
+  display: flex;
+  gap: var(--ts-space-3);
+}
+
+.cr-step-n {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  flex: none;
+  border-radius: var(--ts-radius-full);
+  font-family: var(--ts-font-mono);
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--ts-cream);
+  background: var(--ts-cream14);
+}
+
+.cr-steps b {
+  display: block;
+  font-size: 14.5px;
+  font-weight: 500;
+  line-height: 1.3;
+}
+
+.cr-steps span {
+  display: block;
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--ts-cream-muted);
+  margin-top: 3px;
+}
+
+.cr-int-quote {
+  padding: var(--ts-space-4);
+  border-radius: var(--ts-radius-card);
+  background: var(--ts-cream14);
+}
+
+.cr-int-quote p {
+  font-family: var(--ts-font-serif);
+  font-size: 15px;
+  line-height: 1.5;
+  margin: 0 0 var(--ts-space-3);
+}
+
+.cr-int-quote-by {
+  display: flex;
+  align-items: center;
+  gap: var(--ts-space-2);
+  font-family: var(--ts-font-serif);
+  font-size: 12.5px;
+  color: var(--ts-cream-muted);
+}
+
+.cr-int-acts {
+  display: grid;
+  gap: var(--ts-space-3);
+  margin: var(--ts-space-6) 0 var(--ts-space-4);
+}
+
+.cr-int-primary,
+.cr-int-secondary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--ts-space-2);
+  min-height: 46px;
+  border-radius: var(--ts-radius-button);
+  font-family: var(--ts-font-sans);
+  font-size: var(--ts-text-label);
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.cr-int-primary {
+  background: var(--ts-terracotta);
+  color: var(--ts-surface);
+  border: 0;
+}
+
+.cr-int-primary:hover {
+  background: var(--ts-terracotta-hover);
+}
+
+.cr-int-secondary {
+  background: none;
+  color: var(--ts-cream);
+  border: 1px solid var(--ts-cream14);
+}
+
+.cr-int-primary:focus-visible,
+.cr-int-secondary:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 2px var(--ts-navy-dark), 0 0 0 4px var(--ts-terracotta);
+}
+
+.cr-int-foot {
+  font-family: var(--ts-font-serif);
+  font-size: 12.5px;
+  line-height: 1.5;
+  color: var(--ts-cream-muted);
+  margin: 0;
+}

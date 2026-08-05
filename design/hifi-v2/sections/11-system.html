@@ -1,0 +1,1015 @@
+<section class="sheet-section" id="system">
+  <svg style="display:none" aria-hidden="true">
+    <symbol id="sy-i-check" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></symbol>
+    <symbol id="sy-i-close" viewBox="0 0 24 24"><path d="M18 6 6 18M6 6l12 12"/></symbol>
+    <symbol id="sy-i-warning" viewBox="0 0 24 24"><path d="M12 3.5 2.5 20h19L12 3.5Z"/><path d="M12 10v4.5"/><path d="M12 17.4v.2"/></symbol>
+    <symbol id="sy-i-alert" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7.5v5"/><path d="M12 16.4v.2"/></symbol>
+    <symbol id="sy-i-megaphone" viewBox="0 0 24 24"><path d="M4 10v4a2 2 0 0 0 2 2h2l9 4V4L8 8H6a2 2 0 0 0-2 2Z"/><path d="M8 16v4"/></symbol>
+    <symbol id="sy-i-badge" viewBox="0 0 24 24"><path d="M12 3 14.2 5.1 17.2 4.8 18 7.7l2.5 1.7L19.3 12l1.2 2.6L18 16.3l-.8 2.9-3-.3L12 21l-2.2-2.1-3 .3-.8-2.9L3.5 14.6 4.7 12 3.5 9.4 6 7.7l.8-2.9 3 .3L12 3Z"/><polyline points="9 12 11 14 15 10"/></symbol>
+    <symbol id="sy-i-chevron" viewBox="0 0 24 24"><polyline points="9 5 16 12 9 19"/></symbol>
+    <symbol id="sy-i-moon" viewBox="0 0 24 24"><path d="M20 14.5A8.5 8.5 0 0 1 9.5 4 8.5 8.5 0 1 0 20 14.5Z"/></symbol>
+    <symbol id="sy-i-sliders" viewBox="0 0 24 24"><path d="M4 7h10M18 7h2M4 17h4M12 17h8"/><circle cx="16" cy="7" r="2"/><circle cx="10" cy="17" r="2"/></symbol>
+  </svg>
+
+  <div class="sec-head"><span class="sec-num">11</span><h2>The theming seam, and the system as a system</h2></div>
+  <p class="sec-note">Every colour, space and radius in this sheet is a <code>--ts-*</code> custom property, and the same properties are injected into every sandboxed creation. That one decision means a town that reskins Town Square reskins every resident-built app inside it, without a single creation being edited or even reloaded. This section proves that, then writes down the rules that keep it true.</p>
+
+  <div class="spec">
+    <div class="spec-label">Three towns, one build <em>Identical markup in all three. The only difference is a <code>data-town</code> attribute on an ancestor.</em></div>
+    <div class="spec-row sy-proof">
+
+      <div class="phone">
+        <div class="phone-cap">River Valley &middot; default</div>
+        <div class="phone-screen">
+          <div class="sy-today">
+            <header class="sy-top">
+              <div class="sy-lockup">
+                <div class="sy-mark" aria-hidden="true"></div>
+                <div>
+                  <div class="sy-wordmark">Town Square</div>
+                  <div class="sy-place">Russellville, Arkansas</div>
+                </div>
+              </div>
+              <div class="sy-today-date">Tue 5 Aug</div>
+            </header>
+
+            <article class="sy-lead">
+              <div class="sy-photo" aria-hidden="true"></div>
+              <div class="sy-lead-body">
+                <div class="sy-eyebrow">City council</div>
+                <h3>Council sends the Marina Road repaving back for a second bid</h3>
+                <p class="sy-byline">By Dana Whitfield, 6 min read</p>
+              </div>
+            </article>
+
+            <div class="sy-notice" role="note">
+              <svg class="i i-sm" aria-hidden="true"><use href="#sy-i-megaphone"/></svg>
+              <div>
+                <div class="sy-notice-title">Boil order lifted, Prairie Creek</div>
+                <p>City water says the Prairie Creek and Weir Road lines cleared testing at 4pm Monday.</p>
+              </div>
+            </div>
+
+            <div class="sy-sec-label">This week</div>
+            <ul class="sy-events">
+              <li class="sy-event">
+                <div class="sy-when"><span class="sy-when-d">SAT</span><span class="sy-when-n">9</span></div>
+                <div class="sy-event-body">
+                  <div class="sy-event-title">Pope County farmers market</div>
+                  <div class="sy-event-meta">8:00 AM &middot; Depot pavilion</div>
+                </div>
+                <span class="sy-chip sy-chip-sage">Free</span>
+              </li>
+              <li class="sy-event">
+                <div class="sy-when"><span class="sy-when-d">SAT</span><span class="sy-when-n">9</span></div>
+                <div class="sy-event-body">
+                  <div class="sy-event-title">Tech vs. Central Arkansas watch party</div>
+                  <div class="sy-event-meta">6:00 PM &middot; Old Post Park</div>
+                </div>
+              </li>
+              <li class="sy-event">
+                <div class="sy-when"><span class="sy-when-d">WED</span><span class="sy-when-n">13</span></div>
+                <div class="sy-event-body">
+                  <div class="sy-event-title">Reading hour, Pope County Library</div>
+                  <div class="sy-event-meta">10:30 AM &middot; Children's room</div>
+                </div>
+              </li>
+            </ul>
+
+            <div class="sy-sec-label">Built by a neighbour</div>
+            <article class="sy-creation">
+              <div class="sy-creation-top">
+                <span class="sy-app">App</span>
+                <span class="sy-creation-ago">Updated 12 min ago</span>
+              </div>
+              <h4>Lake Dardanelle levels</h4>
+              <p>Pool stage, tailwater and the generation schedule, read hourly off the Corps feed.</p>
+              <div class="sy-creation-by">
+                <span class="sy-avatar" aria-hidden="true"></span>
+                <span>@hollis</span>
+                <svg class="i i-sm sy-verified" aria-hidden="true"><use href="#sy-i-badge"/></svg>
+                <span class="sy-creation-vouch">verified</span>
+                <button class="sy-open" type="button">Open<svg class="i i-sm" aria-hidden="true"><use href="#sy-i-chevron"/></svg></button>
+              </div>
+            </article>
+          </div>
+        </div>
+      </div>
+
+      <div class="phone" data-town="delta">
+        <div class="phone-cap">Delta &middot; data-town="delta"</div>
+        <div class="phone-screen">
+          <div class="sy-today">
+            <header class="sy-top">
+              <div class="sy-lockup">
+                <div class="sy-mark" aria-hidden="true"></div>
+                <div>
+                  <div class="sy-wordmark">Town Square</div>
+                  <div class="sy-place">Russellville, Arkansas</div>
+                </div>
+              </div>
+              <div class="sy-today-date">Tue 5 Aug</div>
+            </header>
+
+            <article class="sy-lead">
+              <div class="sy-photo" aria-hidden="true"></div>
+              <div class="sy-lead-body">
+                <div class="sy-eyebrow">City council</div>
+                <h3>Council sends the Marina Road repaving back for a second bid</h3>
+                <p class="sy-byline">By Dana Whitfield, 6 min read</p>
+              </div>
+            </article>
+
+            <div class="sy-notice" role="note">
+              <svg class="i i-sm" aria-hidden="true"><use href="#sy-i-megaphone"/></svg>
+              <div>
+                <div class="sy-notice-title">Boil order lifted, Prairie Creek</div>
+                <p>City water says the Prairie Creek and Weir Road lines cleared testing at 4pm Monday.</p>
+              </div>
+            </div>
+
+            <div class="sy-sec-label">This week</div>
+            <ul class="sy-events">
+              <li class="sy-event">
+                <div class="sy-when"><span class="sy-when-d">SAT</span><span class="sy-when-n">9</span></div>
+                <div class="sy-event-body">
+                  <div class="sy-event-title">Pope County farmers market</div>
+                  <div class="sy-event-meta">8:00 AM &middot; Depot pavilion</div>
+                </div>
+                <span class="sy-chip sy-chip-sage">Free</span>
+              </li>
+              <li class="sy-event">
+                <div class="sy-when"><span class="sy-when-d">SAT</span><span class="sy-when-n">9</span></div>
+                <div class="sy-event-body">
+                  <div class="sy-event-title">Tech vs. Central Arkansas watch party</div>
+                  <div class="sy-event-meta">6:00 PM &middot; Old Post Park</div>
+                </div>
+              </li>
+              <li class="sy-event">
+                <div class="sy-when"><span class="sy-when-d">WED</span><span class="sy-when-n">13</span></div>
+                <div class="sy-event-body">
+                  <div class="sy-event-title">Reading hour, Pope County Library</div>
+                  <div class="sy-event-meta">10:30 AM &middot; Children's room</div>
+                </div>
+              </li>
+            </ul>
+
+            <div class="sy-sec-label">Built by a neighbour</div>
+            <article class="sy-creation">
+              <div class="sy-creation-top">
+                <span class="sy-app">App</span>
+                <span class="sy-creation-ago">Updated 12 min ago</span>
+              </div>
+              <h4>Lake Dardanelle levels</h4>
+              <p>Pool stage, tailwater and the generation schedule, read hourly off the Corps feed.</p>
+              <div class="sy-creation-by">
+                <span class="sy-avatar" aria-hidden="true"></span>
+                <span>@hollis</span>
+                <svg class="i i-sm sy-verified" aria-hidden="true"><use href="#sy-i-badge"/></svg>
+                <span class="sy-creation-vouch">verified</span>
+                <button class="sy-open" type="button">Open<svg class="i i-sm" aria-hidden="true"><use href="#sy-i-chevron"/></svg></button>
+              </div>
+            </article>
+          </div>
+        </div>
+      </div>
+
+      <div class="phone" data-town="harbor">
+        <div class="phone-cap">Harbor &middot; data-town="harbor"</div>
+        <div class="phone-screen">
+          <div class="sy-today">
+            <header class="sy-top">
+              <div class="sy-lockup">
+                <div class="sy-mark" aria-hidden="true"></div>
+                <div>
+                  <div class="sy-wordmark">Town Square</div>
+                  <div class="sy-place">Russellville, Arkansas</div>
+                </div>
+              </div>
+              <div class="sy-today-date">Tue 5 Aug</div>
+            </header>
+
+            <article class="sy-lead">
+              <div class="sy-photo" aria-hidden="true"></div>
+              <div class="sy-lead-body">
+                <div class="sy-eyebrow">City council</div>
+                <h3>Council sends the Marina Road repaving back for a second bid</h3>
+                <p class="sy-byline">By Dana Whitfield, 6 min read</p>
+              </div>
+            </article>
+
+            <div class="sy-notice" role="note">
+              <svg class="i i-sm" aria-hidden="true"><use href="#sy-i-megaphone"/></svg>
+              <div>
+                <div class="sy-notice-title">Boil order lifted, Prairie Creek</div>
+                <p>City water says the Prairie Creek and Weir Road lines cleared testing at 4pm Monday.</p>
+              </div>
+            </div>
+
+            <div class="sy-sec-label">This week</div>
+            <ul class="sy-events">
+              <li class="sy-event">
+                <div class="sy-when"><span class="sy-when-d">SAT</span><span class="sy-when-n">9</span></div>
+                <div class="sy-event-body">
+                  <div class="sy-event-title">Pope County farmers market</div>
+                  <div class="sy-event-meta">8:00 AM &middot; Depot pavilion</div>
+                </div>
+                <span class="sy-chip sy-chip-sage">Free</span>
+              </li>
+              <li class="sy-event">
+                <div class="sy-when"><span class="sy-when-d">SAT</span><span class="sy-when-n">9</span></div>
+                <div class="sy-event-body">
+                  <div class="sy-event-title">Tech vs. Central Arkansas watch party</div>
+                  <div class="sy-event-meta">6:00 PM &middot; Old Post Park</div>
+                </div>
+              </li>
+              <li class="sy-event">
+                <div class="sy-when"><span class="sy-when-d">WED</span><span class="sy-when-n">13</span></div>
+                <div class="sy-event-body">
+                  <div class="sy-event-title">Reading hour, Pope County Library</div>
+                  <div class="sy-event-meta">10:30 AM &middot; Children's room</div>
+                </div>
+              </li>
+            </ul>
+
+            <div class="sy-sec-label">Built by a neighbour</div>
+            <article class="sy-creation">
+              <div class="sy-creation-top">
+                <span class="sy-app">App</span>
+                <span class="sy-creation-ago">Updated 12 min ago</span>
+              </div>
+              <h4>Lake Dardanelle levels</h4>
+              <p>Pool stage, tailwater and the generation schedule, read hourly off the Corps feed.</p>
+              <div class="sy-creation-by">
+                <span class="sy-avatar" aria-hidden="true"></span>
+                <span>@hollis</span>
+                <svg class="i i-sm sy-verified" aria-hidden="true"><use href="#sy-i-badge"/></svg>
+                <span class="sy-creation-vouch">verified</span>
+                <button class="sy-open" type="button">Open<svg class="i i-sm" aria-hidden="true"><use href="#sy-i-chevron"/></svg></button>
+              </div>
+            </article>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <p class="why">The three screens above are the <b>same HTML, character for character</b>, including the town name in the lockup. Nothing was copied and recoloured. Delta and Harbor each set a handful of custom properties on an ancestor and the whole surface follows, down to the shadow under the featured card, because the shadow is <code>--ts-ink08</code> and not a hand-picked grey. <b>The featured creation in each phone is the part that matters</b>: in production that card is a sandboxed iframe built by a resident who has never heard of Harbor, and it reskins anyway.</p>
+
+  <div class="spec">
+    <div class="spec-label">What moved, and what did not <em>Fifteen values in Delta, fourteen in Harbor. Zero names, zero components, zero creations.</em></div>
+    <div class="sy-diff-wrap">
+      <table class="sy-diff">
+        <caption class="sy-cap">Token values by town. The left column is the contract, and it is identical in all three.</caption>
+        <thead>
+          <tr><th scope="col">Token name</th><th scope="col">River Valley</th><th scope="col">Delta</th><th scope="col">Harbor</th></tr>
+        </thead>
+        <tbody>
+          <tr><th scope="row"><code>--ts-cream</code></th><td><span class="sy-sw" data-sw="cream"></span>#F8F6F1</td><td data-town="delta"><span class="sy-sw" data-sw="cream"></span>#F7F5EE</td><td data-town="harbor"><span class="sy-sw" data-sw="cream"></span>#F4F6F6</td></tr>
+          <tr><th scope="row"><code>--ts-navy</code></th><td><span class="sy-sw" data-sw="navy"></span>#26405B</td><td data-town="delta"><span class="sy-sw" data-sw="navy"></span>#2F4739</td><td data-town="harbor"><span class="sy-sw" data-sw="navy"></span>#1F3B57</td></tr>
+          <tr><th scope="row"><code>--ts-navy-dark</code></th><td><span class="sy-sw" data-sw="navy-dark"></span>#22384E</td><td data-town="delta"><span class="sy-sw" data-sw="navy-dark"></span>#263B2F</td><td data-town="harbor"><span class="sy-sw" data-sw="navy-dark"></span>#17304A</td></tr>
+          <tr><th scope="row"><code>--ts-navy80/60/40/10</code></th><td class="sy-derived">alpha of navy</td><td class="sy-derived" data-town="delta">re-derived</td><td class="sy-derived" data-town="harbor">re-derived</td></tr>
+          <tr><th scope="row"><code>--ts-terracotta</code></th><td><span class="sy-sw" data-sw="terracotta"></span>#C4714E</td><td data-town="delta"><span class="sy-sw" data-sw="terracotta"></span>#A8642F</td><td data-town="harbor"><span class="sy-sw" data-sw="terracotta"></span>#3D7D8C</td></tr>
+          <tr><th scope="row"><code>--ts-terracotta-hover</code></th><td><span class="sy-sw" data-sw="terracotta-hover"></span>#B15F3B</td><td data-town="delta"><span class="sy-sw" data-sw="terracotta-hover"></span>#8D5124</td><td data-town="harbor"><span class="sy-sw" data-sw="terracotta-hover"></span>#316875</td></tr>
+          <tr><th scope="row"><code>--ts-terracotta-tint</code></th><td><span class="sy-sw" data-sw="terracotta-tint"></span>#FFF3EC</td><td data-town="delta"><span class="sy-sw" data-sw="terracotta-tint"></span>#FDF1E6</td><td data-town="harbor"><span class="sy-sw" data-sw="terracotta-tint"></span>#EAF5F7</td></tr>
+          <tr><th scope="row"><code>--ts-gold</code></th><td><span class="sy-sw" data-sw="gold"></span>#E7AE2E</td><td data-town="delta"><span class="sy-sw" data-sw="gold"></span>#CF9A2C</td><td data-town="harbor"><span class="sy-sw" data-sw="gold"></span>#D9A441</td></tr>
+          <tr><th scope="row"><code>--ts-sage</code></th><td><span class="sy-sw" data-sw="sage"></span>#4C6B4B</td><td data-town="delta"><span class="sy-sw" data-sw="sage"></span>#5B7150</td><td data-town="harbor"><span class="sy-sw" data-sw="sage"></span>#46736A</td></tr>
+          <tr><th scope="row"><code>--ts-font-serif</code></th><td>Newsreader</td><td data-town="delta">Newsreader</td><td data-town="harbor">Newsreader</td></tr>
+          <tr class="sy-same"><th scope="row"><code>--ts-ink</code> and its six alphas</th><td colspan="3">unchanged in all three, because a town rebrands its accent, not its readability</td></tr>
+          <tr class="sy-same"><th scope="row"><code>--ts-brick</code></th><td colspan="3">unchanged. The alarm register is not a brand decision</td></tr>
+          <tr class="sy-same"><th scope="row"><code>--ts-space-*</code>, <code>--ts-radius-*</code>, <code>--ts-text-*</code></th><td colspan="3">unchanged. Rhythm is the product, not the skin</td></tr>
+          <tr class="sy-same"><th scope="row"><code>--ts-shadow-*</code>, <code>--ts-dur-*</code>, <code>--ts-ease*</code></th><td colspan="3">unchanged, and they follow the palette anyway because they are composed from ink alphas</td></tr>
+        </tbody>
+      </table>
+      <div class="sy-tally">
+        <div class="sy-tally-row"><span class="sy-tally-n">15</span><span>values overridden in Delta</span></div>
+        <div class="sy-tally-row"><span class="sy-tally-n">14</span><span>values overridden in Harbor</span></div>
+        <div class="sy-tally-row sy-tally-zero"><span class="sy-tally-n">0</span><span>token names changed</span></div>
+        <div class="sy-tally-row sy-tally-zero"><span class="sy-tally-n">0</span><span>components edited</span></div>
+        <div class="sy-tally-row sy-tally-zero"><span class="sy-tally-n">0</span><span>creations rebuilt, resubmitted or reviewed again</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="spec">
+    <div class="spec-label">Names are contract, values are not <em>A resident ships a creation and moves on. The contract has to hold without them.</em></div>
+    <div class="sy-rules">
+      <div class="sy-rule sy-rule-safe">
+        <div class="sy-rule-head"><svg class="i i-sm" aria-hidden="true"><use href="#sy-i-check"/></svg>Adding is always safe</div>
+        <p>A new token nobody references yet cannot break anything. Ship it, document it, let components adopt it when they need it.</p>
+        <pre class="sy-code"><code>+ --ts-action: var(--ts-terracotta);</code></pre>
+      </div>
+      <div class="sy-rule sy-rule-safe">
+        <div class="sy-rule-head"><svg class="i i-sm" aria-hidden="true"><use href="#sy-i-check"/></svg>Changing a value is routine</div>
+        <p>This is the whole point of the seam. A town moves <code>--ts-terracotta</code> from clay to slate blue and every creation that styled a button with it moves too.</p>
+        <pre class="sy-code"><code>- --ts-terracotta: #C4714E;
++ --ts-terracotta: #3D7D8C;</code></pre>
+      </div>
+      <div class="sy-rule sy-rule-break">
+        <div class="sy-rule-head"><svg class="i i-sm" aria-hidden="true"><use href="#sy-i-close"/></svg>Renaming is an SDK 1 break</div>
+        <p>Every creation using the old name silently falls back to whatever the browser default is, and the resident who built it in March is not coming back to fix it.</p>
+        <pre class="sy-code"><code>- --ts-terracotta: #C4714E;
++ --ts-accent-primary: #C4714E;</code></pre>
+      </div>
+      <div class="sy-rule sy-rule-break">
+        <div class="sy-rule-head"><svg class="i i-sm" aria-hidden="true"><use href="#sy-i-close"/></svg>Removing is the same break, quieter</div>
+        <p>Nothing throws. The creation just renders with unstyled colour and looks abandoned, which is worse than an error because nobody gets told.</p>
+        <pre class="sy-code"><code>- --ts-terracotta14: rgba(196,113,78,0.14);</code></pre>
+      </div>
+    </div>
+    <div class="sy-pinned">
+      <svg class="i i-sm" aria-hidden="true"><use href="#sy-i-alert"/></svg>
+      <div>
+        <b>The list is pinned in a test, and the pinning is the contract.</b>
+        <code>packages/tokens/src/index.test.ts</code> asserts that twenty-six named variables still resolve. It does not assert a single value. Breaking the contract therefore requires editing that list on purpose, in a diff a reviewer can see, rather than by renaming a field in an object.
+      </div>
+    </div>
+  </div>
+
+  <div class="spec">
+    <div class="spec-label">The reskin recipe <em>Seven values carry an identity. Everything else is the product, and forking it is how you lose the product.</em></div>
+    <div class="sy-recipe">
+      <div class="sy-recipe-code">
+        <div class="sy-file">towns/harbor/theme.css</div>
+        <pre class="sy-code sy-code-lg"><code>[data-town='harbor'] {
+  <span class="sy-c">/* 1. the structural colour: nav, dark cards, links */</span>
+  --ts-navy: #1F3B57;
+  --ts-navy-dark: #17304A;
+  <span class="sy-c">/* 2. the action colour, and its pressed state */</span>
+  --ts-terracotta: #3D7D8C;
+  --ts-terracotta-hover: #316875;
+  <span class="sy-c">/* 3. the tint that action colour sits on */</span>
+  --ts-terracotta-tint: #EAF5F7;
+  <span class="sy-c">/* 4. the screen. Keep it warm or keep it cool, commit either way */</span>
+  --ts-cream: #F4F6F6;
+  <span class="sy-c">/* 5. civic gold, for notices */</span>
+  --ts-gold: #D9A441;
+  <span class="sy-c">/* 6. sage, for open and verified */</span>
+  --ts-sage: #46736A;
+  <span class="sy-c">/* 7. optional: the editorial face */</span>
+  <span class="sy-c">--ts-font-serif: 'Source Serif 4', Georgia, serif;</span>
+}</code></pre>
+        <div class="sy-file sy-file-2">towns/harbor/town.json</div>
+        <pre class="sy-code sy-code-lg"><code>{
+  "name": "Town Square",
+  <span class="sy-c">/* the lockup's second line, and the only copy you must change */</span>
+  "place": "Rockland, Maine",
+  "timezone": "America/New_York"
+}</code></pre>
+      </div>
+      <div class="sy-recipe-side">
+        <div class="sy-donot">
+          <div class="sy-donot-head"><svg class="i i-sm" aria-hidden="true"><use href="#sy-i-close"/></svg>Do not touch</div>
+          <ul>
+            <li><code>--ts-ink*</code> and <code>--ts-hairline</code>. They are tuned for reading and they are why the type holds up at 4.4:1 in every town.</li>
+            <li><code>--ts-brick</code>. One alarm register, shared across every town, so an emergency looks like an emergency to someone who moved here from Delta.</li>
+            <li><code>--ts-space-*</code> and <code>--ts-radius-*</code>. Change these and creations built elsewhere stop lining up with your shell.</li>
+            <li>Component CSS. If you are editing a component to reskin, the reskin is wrong.</li>
+          </ul>
+        </div>
+        <div class="sy-ten">
+          <div class="sy-ten-head">Your town in ten minutes</div>
+          <ol>
+            <li><span class="sy-min">0:00</span> Fork the repo. Copy <code>towns/harbor/</code> to <code>towns/&lt;yours&gt;/</code>.</li>
+            <li><span class="sy-min">1:00</span> Pick two colours you already own: one structural, one action. Paste them into <code>--ts-navy</code> and <code>--ts-terracotta</code>.</li>
+            <li><span class="sy-min">3:00</span> Run <code>npm run tokens:check</code>. It derives the alphas, the hover and the tint for you and reports every contrast pair.</li>
+            <li><span class="sy-min">5:00</span> Fix whatever it flagged. Usually this is darkening the action colour by one step.</li>
+            <li><span class="sy-min">7:00</span> Set <code>place</code> in <code>town.json</code>.</li>
+            <li><span class="sy-min">8:00</span> Open the sheet with <code>?town=&lt;yours&gt;</code> and read the three screens above in your own palette.</li>
+            <li><span class="sy-min">10:00</span> Ship. No creation was touched, and no creation needs to be.</li>
+          </ol>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <p class="why">The recipe is short on purpose. <b>A theming system that takes a week is a theming system nobody uses</b>, and a town that cannot reskin in an afternoon will fork the components instead, which is the one outcome that kills the seam. The cost of that shortness is that some things are simply not themeable, and saying so plainly up front is kinder than letting a town discover it after they have already shipped.</p>
+
+  <div class="spec">
+    <div class="spec-label">Where a token is allowed to be wrong <em>The seam does not check taste. It has to check contrast, because a bad value ships to every creation too.</em></div>
+    <div class="sy-fail-wrap">
+      <div class="sy-fail-col">
+        <div class="sy-mini-cap">A town picks its brand yellow as the action colour</div>
+        <div class="plate sy-fail-plate">
+          <div class="sy-fail-town">
+            <button class="sy-btn" type="button">Submit a notice</button>
+            <div class="sy-fail-row">
+              <span class="sy-chip sy-chip-terra">Open now</span>
+              <a class="sy-link" href="#system">Read the full agenda</a>
+            </div>
+            <div class="sy-fail-note">
+              <svg class="i i-sm" aria-hidden="true"><use href="#sy-i-warning"/></svg>
+              <span>Same components. Same token names. Unreadable.</span>
+            </div>
+          </div>
+        </div>
+        <div class="sy-fail-nums">
+          <div><b>1.58:1</b> white on the button. The label is barely there.</div>
+          <div><b>1.46:1</b> the chip against the screen. The boundary vanishes.</div>
+          <div><b>1.9:1</b> the link against cream. It reads as disabled.</div>
+        </div>
+      </div>
+      <div class="sy-fail-col">
+        <div class="sy-mini-cap">The guardrail: a contrast check over the token set, at build</div>
+        <div class="sy-term">
+          <div class="sy-term-bar"><span></span><span></span><span></span>npm run tokens:check &middot; towns/riverbend</div>
+          <pre class="sy-term-body"><code><span class="sy-t-dim">checking 3 towns x 11 pairs</span>
+<span class="sy-t-ok">  ok</span>  ink on cream            15.93  AAA
+<span class="sy-t-ok">  ok</span>  ink60 on cream           4.41  AA
+<span class="sy-t-ok">  ok</span>  navy on cream            9.89  AAA
+<span class="sy-t-bad">FAIL</span>  white on terracotta      1.58  needs 4.5
+<span class="sy-t-bad">FAIL</span>  terracotta on cream      1.90  needs 3.0
+<span class="sy-t-bad">FAIL</span>  chip edge on cream       1.46  needs 3.0
+
+<span class="sy-t-bad">3 failing pairs in towns/riverbend</span>
+<span class="sy-t-dim">--ts-terracotta #EDC978 is too light to carry
+an action. Darken to at least #8A6510, or move
+your yellow to --ts-gold where it is a notice
+and never a button.</span>
+<span class="sy-t-dim">build stopped. no creation should inherit this.</span></pre>
+        </div>
+        <div class="sy-guard">
+          <b>Why this must run at build and not in review.</b> The failing value does not stay in the shell. It is injected into every sandboxed creation on the next page load, so a town can break fifty apps it did not write and never see it, because the reviewer only ever looks at the shell.
+        </div>
+      </div>
+    </div>
+    <div class="sy-limits">
+      <div class="sy-limits-head">The honest limits of the seam</div>
+      <ul>
+        <li><b>Contrast is checkable, harmony is not.</b> A town can pass every ratio and still look like a parking ticket. The tool says readable, not good.</li>
+        <li><b>A creation can hardcode.</b> Nothing stops a builder writing <code>#C4714E</code> in their own CSS, and that creation will look wrong in Harbor forever. The MCP submission lints for hex literals and warns, it does not reject, because rejecting a working app over a colour is worse.</li>
+        <li><b>Photography does not theme.</b> Every lead image in the three screens above is the same photograph. A cool-blue town running warm-golden local photos is a mismatch no token can fix.</li>
+        <li><b>Semantic drift.</b> If a town sets <code>--ts-sage</code> to a red, every verified badge in every creation turns red and still means verified. The name survives, the meaning does not.</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="spec">
+    <div class="spec-label">Semantic tokens, the layer this system is missing <em>A component that asks for terracotta when it means "primary action" is describing a colour, not a role.</em></div>
+    <div class="sy-sem">
+      <div class="sy-sem-arg">
+        <p>Today a button reaches for <code>--ts-terracotta</code> and a notice reaches for <code>--ts-gold</code>. That works while the palette and the roles line up, and it stops working the moment they do not. Harbor's action colour is a teal. It is still called terracotta in every creation in that town, and a builder reading the token list has to know the lore to understand why.</p>
+        <p>The fix is an alias layer on top of the raw palette. Raw tokens stay exactly as they are, keep their names, and keep resolving. Semantic tokens are added beside them and components migrate one at a time.</p>
+      </div>
+      <table class="sy-sem-map">
+        <caption class="sy-cap">Proposed additions. Every one is a pure alias on day one, so the visual diff is zero.</caption>
+        <thead><tr><th scope="col">Semantic</th><th scope="col">Resolves to</th><th scope="col">Means</th></tr></thead>
+        <tbody>
+          <tr><th scope="row"><code>--ts-action</code></th><td><code>var(--ts-terracotta)</code></td><td>the one thing on this screen a finger is meant to press</td></tr>
+          <tr><th scope="row"><code>--ts-action-hover</code></th><td><code>var(--ts-terracotta-hover)</code></td><td>pressed and hovered states of the above</td></tr>
+          <tr><th scope="row"><code>--ts-action-quiet</code></th><td><code>var(--ts-terracotta14)</code></td><td>the wash behind a selected chip or an active tab</td></tr>
+          <tr><th scope="row"><code>--ts-civic</code></th><td><code>var(--ts-gold)</code></td><td>the town speaking: notices, closures, official postings</td></tr>
+          <tr><th scope="row"><code>--ts-civic-text</code></th><td><code>var(--ts-gold-text)</code></td><td>civic copy that has to pass on a light wash</td></tr>
+          <tr><th scope="row"><code>--ts-verified</code></th><td><code>var(--ts-sage)</code></td><td>vouched, open, alive. Never a brand accent</td></tr>
+          <tr><th scope="row"><code>--ts-alarm</code></th><td><code>var(--ts-brick)</code></td><td>an actual emergency. Not a validation error</td></tr>
+          <tr><th scope="row"><code>--ts-quiet</code></th><td><code>var(--ts-ink60)</code></td><td>text that recedes: bylines, counts, timestamps</td></tr>
+          <tr><th scope="row"><code>--ts-structure</code></th><td><code>var(--ts-navy)</code></td><td>chrome, dark cards, the frame around the town</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="sy-sem-demo">
+      <div class="sy-sem-pair">
+        <div class="sy-mini-cap">Written against raw tokens</div>
+        <pre class="sy-code"><code>.submit {
+  background: var(--ts-terracotta);
+  color: var(--ts-surface);
+}
+.notice { border-left: 3px solid var(--ts-gold); }
+.badge  { color: var(--ts-sage); }</code></pre>
+      </div>
+      <div class="sy-sem-pair">
+        <div class="sy-mini-cap">Written against semantic tokens</div>
+        <pre class="sy-code"><code>.submit {
+  background: var(--ts-action);
+  color: var(--ts-surface);
+}
+.notice { border-left: 3px solid var(--ts-civic); }
+.badge  { color: var(--ts-verified); }</code></pre>
+      </div>
+      <div class="sy-sem-pair sy-sem-out">
+        <div class="sy-mini-cap">Both render this, in every town</div>
+        <div class="sy-sem-render">
+          <button class="sy-btn" type="button">Submit a notice</button>
+          <div class="sy-notice sy-notice-tight" role="note">
+            <svg class="i i-sm" aria-hidden="true"><use href="#sy-i-megaphone"/></svg>
+            <div><div class="sy-notice-title">Weir Road closed Thursday</div></div>
+          </div>
+          <span class="sy-vbadge"><svg class="i i-sm" aria-hidden="true"><use href="#sy-i-badge"/></svg>verified</span>
+        </div>
+      </div>
+    </div>
+    <div class="sy-cost">
+      <div class="sy-cost-head">The migration cost, stated honestly</div>
+      <div class="sy-cost-grid">
+        <div><span class="sy-cost-n">Additive</span><p>Nine new names, zero renames, zero removals. The pinned test grows by nine lines and nothing in it changes. Every existing creation keeps working because every raw token keeps existing.</p></div>
+        <div><span class="sy-cost-n">Two names for one colour</span><p>The real cost. For a while both <code>--ts-terracotta</code> and <code>--ts-action</code> are valid and a builder has to be told which to prefer. Documentation, not engineering, and it is a smaller tax than the lore tax we pay now.</p></div>
+        <div><span class="sy-cost-n">Never a rename</span><p>Raw tokens are not deprecated and are not scheduled for removal. They are the physical palette and there are legitimate uses for reaching at it directly. Semantics are the layer above, not a replacement.</p></div>
+        <div><span class="sy-cost-n">Where it pays</span><p>The day a town wants a different action colour from its structural colour, or a dark mode, or an accessible high-contrast variant. Every one of those is a role change, and roles are the thing we currently cannot express.</p></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="spec">
+    <div class="spec-label">Component anatomy <em>The three shapes everything else is built from, measured. This is how another town's designer learns the grid.</em></div>
+    <div class="sy-anat-row">
+
+      <div class="sy-anat">
+        <div class="sy-mini-cap">Card</div>
+        <div class="sy-anat-stage">
+          <div class="sy-anat-card">
+            <div class="sy-anat-photo" aria-hidden="true"></div>
+            <div class="sy-anat-cardbody">
+              <div class="sy-eyebrow">Downtown</div>
+              <h5>Old Bank Building reopens as a market hall</h5>
+              <p class="sy-byline">By Dana Whitfield</p>
+            </div>
+            <span class="sy-tick sy-tick-pad-t">--ts-space-4</span>
+            <span class="sy-tick sy-tick-pad-b">--ts-space-4</span>
+            <span class="sy-tick sy-tick-rad">--ts-radius-card 16</span>
+            <span class="sy-tick sy-tick-gap">--ts-space-2</span>
+          </div>
+        </div>
+        <ul class="sy-anat-key">
+          <li><code>--ts-radius-card</code> 16px on the outer, 12px on the image so the inner curve nests</li>
+          <li><code>--ts-space-4</code> 16px padding on all four sides, never a different left and right</li>
+          <li><code>--ts-space-2</code> 8px between eyebrow, headline and byline</li>
+          <li><code>--ts-hairline</code> border, <code>--ts-shadow-flat</code> lift, <code>--ts-surface</code> fill</li>
+        </ul>
+      </div>
+
+      <div class="sy-anat">
+        <div class="sy-mini-cap">Row</div>
+        <div class="sy-anat-stage">
+          <div class="sy-anat-rows">
+            <div class="sy-anat-row-item">
+              <div class="sy-when"><span class="sy-when-d">SAT</span><span class="sy-when-n">9</span></div>
+              <div class="sy-event-body">
+                <div class="sy-event-title">Pope County farmers market</div>
+                <div class="sy-event-meta">8:00 AM &middot; Depot pavilion</div>
+              </div>
+              <svg class="i i-sm sy-row-chev" aria-hidden="true"><use href="#sy-i-chevron"/></svg>
+              <span class="sy-tick sy-tick-row-h">44px min</span>
+              <span class="sy-tick sy-tick-row-g">--ts-space-3</span>
+            </div>
+            <div class="sy-anat-row-item">
+              <div class="sy-when"><span class="sy-when-d">WED</span><span class="sy-when-n">13</span></div>
+              <div class="sy-event-body">
+                <div class="sy-event-title">Reading hour, Pope County Library</div>
+                <div class="sy-event-meta">10:30 AM &middot; Children's room</div>
+              </div>
+              <svg class="i i-sm sy-row-chev" aria-hidden="true"><use href="#sy-i-chevron"/></svg>
+            </div>
+          </div>
+        </div>
+        <ul class="sy-anat-key">
+          <li>Vertical padding <code>--ts-space-3</code>, horizontal <code>--ts-space-4</code>, so a list reads tighter than a card</li>
+          <li>Divider is <code>--ts-ink13</code> and starts after the leading block, never edge to edge</li>
+          <li>Leading block is a fixed 44px so every title in the list starts on the same x</li>
+          <li>Minimum row height 44px even when the copy is one line</li>
+        </ul>
+      </div>
+
+      <div class="sy-anat">
+        <div class="sy-mini-cap">Chip</div>
+        <div class="sy-anat-stage">
+          <div class="sy-anat-chips">
+            <span class="sy-chip sy-chip-sage sy-chip-big">Open now</span>
+            <span class="sy-tick sy-tick-chip-x">--ts-space-3</span>
+            <span class="sy-tick sy-tick-chip-y">--ts-space-1</span>
+            <span class="sy-tick sy-tick-chip-r">--ts-radius-chip 999</span>
+          </div>
+          <div class="sy-anat-chiprow">
+            <span class="sy-chip sy-chip-sage">Open now</span>
+            <span class="sy-chip sy-chip-gold">Notice</span>
+            <span class="sy-chip sy-chip-terra">Selected</span>
+            <span class="sy-chip">Closed</span>
+          </div>
+        </div>
+        <ul class="sy-anat-key">
+          <li><code>--ts-radius-chip</code> 999px, so the shape is a pill at any height and never a rounded rectangle</li>
+          <li>Padding <code>--ts-space-1</code> by <code>--ts-space-3</code>, type at 12px sans, never serif</li>
+          <li>Fill is the 14 percent alpha, text is the full-strength hue, so it stays legible on cream and on white</li>
+          <li>A chip is a label. If it is pressable it grows to a 44px tap target with a transparent bleed</li>
+        </ul>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="spec">
+    <div class="spec-label">Density, as a token override <em>Comfortable and compact are the same component. Two variants of one row is how a design system starts to rot.</em></div>
+    <div class="sy-den-row">
+      <div class="sy-den-col">
+        <div class="sy-mini-cap"><svg class="i i-sm" aria-hidden="true"><use href="#sy-i-sliders"/></svg> Comfortable, the default</div>
+        <div class="plate sy-den-plate">
+          <ul class="sy-dir">
+            <li class="sy-dir-item"><span class="sy-dir-logo" aria-hidden="true"></span><div class="sy-dir-body"><div class="sy-dir-name">Old South Restaurant</div><div class="sy-dir-meta">Diner &middot; 1330 E Main St</div></div><span class="sy-chip sy-chip-sage">Open</span></li>
+            <li class="sy-dir-item"><span class="sy-dir-logo" aria-hidden="true"></span><div class="sy-dir-body"><div class="sy-dir-name">Dardanelle Ace Hardware</div><div class="sy-dir-meta">Hardware &middot; 210 Union St</div></div><span class="sy-chip sy-chip-sage">Open</span></li>
+            <li class="sy-dir-item"><span class="sy-dir-logo" aria-hidden="true"></span><div class="sy-dir-body"><div class="sy-dir-name">Fat Daddy's Bar-B-Que</div><div class="sy-dir-meta">Barbecue &middot; 2818 W Main St</div></div><span class="sy-chip">Closed</span></li>
+            <li class="sy-dir-item"><span class="sy-dir-logo" aria-hidden="true"></span><div class="sy-dir-body"><div class="sy-dir-name">River Valley Music</div><div class="sy-dir-meta">Instruments &middot; 118 S Arkansas Ave</div></div><span class="sy-chip sy-chip-sage">Open</span></li>
+          </ul>
+        </div>
+        <pre class="sy-code"><code><span class="sy-c">/* nothing set. the defaults are the comfortable mode */</span></code></pre>
+      </div>
+      <div class="sy-den-col">
+        <div class="sy-mini-cap"><svg class="i i-sm" aria-hidden="true"><use href="#sy-i-sliders"/></svg> Compact, for a 700 business directory</div>
+        <div class="plate sy-den-plate">
+          <ul class="sy-dir" data-density="compact">
+            <li class="sy-dir-item"><span class="sy-dir-logo" aria-hidden="true"></span><div class="sy-dir-body"><div class="sy-dir-name">Old South Restaurant</div><div class="sy-dir-meta">Diner &middot; 1330 E Main St</div></div><span class="sy-chip sy-chip-sage">Open</span></li>
+            <li class="sy-dir-item"><span class="sy-dir-logo" aria-hidden="true"></span><div class="sy-dir-body"><div class="sy-dir-name">Dardanelle Ace Hardware</div><div class="sy-dir-meta">Hardware &middot; 210 Union St</div></div><span class="sy-chip sy-chip-sage">Open</span></li>
+            <li class="sy-dir-item"><span class="sy-dir-logo" aria-hidden="true"></span><div class="sy-dir-body"><div class="sy-dir-name">Fat Daddy's Bar-B-Que</div><div class="sy-dir-meta">Barbecue &middot; 2818 W Main St</div></div><span class="sy-chip">Closed</span></li>
+            <li class="sy-dir-item"><span class="sy-dir-logo" aria-hidden="true"></span><div class="sy-dir-body"><div class="sy-dir-name">River Valley Music</div><div class="sy-dir-meta">Instruments &middot; 118 S Arkansas Ave</div></div><span class="sy-chip sy-chip-sage">Open</span></li>
+            <li class="sy-dir-item"><span class="sy-dir-logo" aria-hidden="true"></span><div class="sy-dir-body"><div class="sy-dir-name">Bost Chiropractic</div><div class="sy-dir-meta">Clinic &middot; 505 W Parkway Dr</div></div><span class="sy-chip sy-chip-sage">Open</span></li>
+            <li class="sy-dir-item"><span class="sy-dir-logo" aria-hidden="true"></span><div class="sy-dir-body"><div class="sy-dir-name">Whatta-Burger Drive In</div><div class="sy-dir-meta">Burgers &middot; 1101 E Main St</div></div><span class="sy-chip sy-chip-sage">Open</span></li>
+          </ul>
+        </div>
+        <pre class="sy-code"><code>[data-density='compact'] {
+  --ts-row-y:    var(--ts-space-2);  <span class="sy-c">/* 16 -&gt; 8 */</span>
+  --ts-row-gap:  var(--ts-space-2);  <span class="sy-c">/* 12 -&gt; 8 */</span>
+  --ts-row-lead: 32px;               <span class="sy-c">/* 44 -&gt; 32 */</span>
+  --ts-row-title: 15px;              <span class="sy-c">/* 17 -&gt; 15 */</span>
+}</code></pre>
+      </div>
+    </div>
+    <p class="sy-den-note">The row component reads <code>var(--ts-row-y, var(--ts-space-4))</code>, so it works with no density set and gets denser when a container asks. Two consequences worth naming: the tap target still floors at 44px, so compact buys vertical space and never accessibility, and a creation inside a compact container inherits the density too, which is how a resident-built list stops looking foreign next to the directory.</p>
+  </div>
+
+  <div class="spec">
+    <div class="spec-label">Dark mode, explored honestly <em>Town Square is a warm cream product. Inverting it produces a different, worse product.</em></div>
+    <div class="sy-dark-row">
+      <div class="sy-dark-col">
+        <div class="sy-mini-cap">Naive inversion, for comparison</div>
+        <div class="sy-darkroom">
+          <div class="sy-dark sy-dark-naive">
+            <div class="sy-dark-stack">
+              <article class="sy-anat-card sy-dark-card">
+                <div class="sy-anat-cardbody">
+                  <div class="sy-eyebrow">Downtown</div>
+                  <h5>Old Bank Building reopens as a market hall</h5>
+                  <p class="sy-byline">By Dana Whitfield</p>
+                </div>
+              </article>
+              <div class="sy-dark-flaw"><svg class="i i-sm" aria-hidden="true"><use href="#sy-i-warning"/></svg>Pure grey on pure black. The warmth that made it a town is gone and it reads as a developer tool.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="sy-dark-col sy-dark-col-wide">
+        <div class="sy-mini-cap"><svg class="i i-sm" aria-hidden="true"><use href="#sy-i-moon"/></svg> Warm dark, as a token override</div>
+        <div class="sy-darkroom">
+          <div class="sy-dark">
+            <div class="sy-dark-stack">
+              <article class="sy-anat-card sy-dark-card">
+                <div class="sy-anat-photo" aria-hidden="true"></div>
+                <div class="sy-anat-cardbody">
+                  <div class="sy-eyebrow">Downtown</div>
+                  <h5>Old Bank Building reopens as a market hall</h5>
+                  <p class="sy-byline">By Dana Whitfield</p>
+                </div>
+              </article>
+              <div class="sy-anat-row-item sy-dark-rowitem">
+                <div class="sy-when"><span class="sy-when-d">SAT</span><span class="sy-when-n">9</span></div>
+                <div class="sy-event-body">
+                  <div class="sy-event-title">Pope County farmers market</div>
+                  <div class="sy-event-meta">8:00 AM &middot; Depot pavilion</div>
+                </div>
+                <svg class="i i-sm sy-row-chev" aria-hidden="true"><use href="#sy-i-chevron"/></svg>
+              </div>
+              <div class="sy-dark-chips">
+                <span class="sy-chip sy-chip-sage">Open now</span>
+                <span class="sy-chip sy-chip-gold">Notice</span>
+                <span class="sy-chip sy-chip-terra">Selected</span>
+                <button class="sy-btn" type="button">Submit a notice</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <pre class="sy-code sy-code-lg"><code>[data-theme='dark'] {
+  <span class="sy-c">/* the surfaces get warmer as they get darker, not greyer */</span>
+  --ts-cream:   <span class="sy-c">/* ink, pulled 7% toward terracotta */</span>;
+  --ts-surface: <span class="sy-c">/* ink, pulled 14% toward terracotta */</span>;
+  --ts-stone:   <span class="sy-c">/* ink, pulled 26% toward terracotta */</span>;
+  <span class="sy-c">/* ink becomes light, and the muted rule inverts with it */</span>
+  --ts-ink:     <span class="sy-c">/* cream, warmed 8% toward gold */</span>;
+  --ts-ink60:   <span class="sy-c">/* cream at 62% */</span>;
+  --ts-hairline:<span class="sy-c">/* cream at 13% */</span>;
+  <span class="sy-c">/* accents lift, because the same hue at the same weight
+     loses roughly two stops of apparent contrast on dark */</span>
+  --ts-terracotta: <span class="sy-c">/* terracotta, 24% toward cream */</span>;
+  --ts-sage:       var(--ts-sage-light);
+}</code></pre>
+    <div class="sy-verdict">
+      <div class="sy-verdict-head"><svg class="i i-sm" aria-hidden="true"><use href="#sy-i-close"/></svg>Recommendation: do not ship this yet</div>
+      <ol>
+        <li><b>The one-dark-card rule collapses.</b> Restraint in this product is expressed by having exactly one dark card per screen. On a dark screen that card has nothing to be darker than, so the featured creation and the navy nav stop being emphasis and become texture. That is not a colour problem, it is a hierarchy problem, and it needs a second emphasis mechanism designed before dark mode is worth having.</li>
+        <li><b>Two of the five hues stop working.</b> Gold at 14 percent alpha on a dark surface is a smudge, and brick on dark loses the alarm quality that is the entire reason brick exists. Both need dark-specific values, which means the override is not seven lines, it is closer to thirty.</li>
+        <li><b>It doubles the reskin surface.</b> Every town now has to pass the contrast check twice, and a town that only tests light will ship a broken dark mode to every creation in it.</li>
+        <li><b>What would change the answer.</b> Real demand. Town Square is read in the morning and at lunch far more than at midnight, and there is no evidence yet that residents want it. If it does become a request, ship it as a town-level opt-in with its own contrast gate, never as a system preference we follow silently, because a town that has not tested dark should not be handed one.</li>
+      </ol>
+    </div>
+  </div>
+
+  <div class="spec">
+    <div class="spec-label">Accessibility, as a property of the token set <em>Checked once for all three towns, so a reskin that fails is visible before it ships.</em></div>
+    <table class="sy-a11y">
+      <caption class="sy-cap">Contrast ratios, computed from the shipped values. Green passes AA at its size, amber is large-text only, red fails.</caption>
+      <thead><tr><th scope="col">Pair</th><th scope="col">Needs</th><th scope="col">River Valley</th><th scope="col">Delta</th><th scope="col">Harbor</th></tr></thead>
+      <tbody>
+        <tr><th scope="row">ink on cream</th><td>4.5</td><td><span class="sy-r sy-r-aaa">15.93</span></td><td><span class="sy-r sy-r-aaa">15.77</span></td><td><span class="sy-r sy-r-aaa">15.86</span></td></tr>
+        <tr><th scope="row">ink60 on cream</th><td>4.5</td><td><span class="sy-r sy-r-aa">4.41</span></td><td><span class="sy-r sy-r-aa">4.40</span></td><td><span class="sy-r sy-r-aa">4.40</span></td></tr>
+        <tr><th scope="row">ink45 on cream</th><td>3.0 large</td><td><span class="sy-r sy-r-large">2.83</span></td><td><span class="sy-r sy-r-large">2.82</span></td><td><span class="sy-r sy-r-large">2.82</span></td></tr>
+        <tr><th scope="row">navy on cream</th><td>4.5</td><td><span class="sy-r sy-r-aaa">9.89</span></td><td><span class="sy-r sy-r-aaa">9.25</span></td><td><span class="sy-r sy-r-aaa">10.63</span></td></tr>
+        <tr><th scope="row">cream on navy</th><td>4.5</td><td><span class="sy-r sy-r-aaa">9.89</span></td><td><span class="sy-r sy-r-aaa">9.25</span></td><td><span class="sy-r sy-r-aaa">10.63</span></td></tr>
+        <tr><th scope="row">white on terracotta, button label</th><td>4.5</td><td><span class="sy-r sy-r-large">3.61</span></td><td><span class="sy-r sy-r-aa">4.64</span></td><td><span class="sy-r sy-r-aa">4.66</span></td></tr>
+        <tr><th scope="row">terracotta on cream, link</th><td>4.5</td><td><span class="sy-r sy-r-large">3.34</span></td><td><span class="sy-r sy-r-large">4.25</span></td><td><span class="sy-r sy-r-large">4.29</span></td></tr>
+        <tr><th scope="row">sage on cream, verified</th><td>4.5</td><td><span class="sy-r sy-r-aa">5.54</span></td><td><span class="sy-r sy-r-aa">4.91</span></td><td><span class="sy-r sy-r-aa">4.94</span></td></tr>
+        <tr><th scope="row">gold-text on cream, notice copy</th><td>4.5</td><td><span class="sy-r sy-r-aa">4.92</span></td><td><span class="sy-r sy-r-aa">4.87</span></td><td><span class="sy-r sy-r-aa">4.90</span></td></tr>
+        <tr><th scope="row">gold on cream, as text</th><td>4.5</td><td><span class="sy-r sy-r-fail">1.85</span></td><td><span class="sy-r sy-r-fail">2.32</span></td><td><span class="sy-r sy-r-fail">2.07</span></td></tr>
+        <tr><th scope="row">brick on cream, alarm</th><td>4.5</td><td><span class="sy-r sy-r-aaa">9.31</span></td><td><span class="sy-r sy-r-aaa">9.22</span></td><td><span class="sy-r sy-r-aaa">9.27</span></td></tr>
+      </tbody>
+    </table>
+    <div class="sy-a11y-read">
+      <div class="sy-a11y-item"><b>The two amber rows are load bearing.</b> River Valley's terracotta is 3.34 on cream and 3.61 under white. It is approved for a button label at 17px semibold and for a 15px or larger link, and it is not approved for 13px caption copy. Delta and Harbor both clear 4.5 and could take it anywhere, which is exactly the kind of thing a town gets wrong when it assumes the default palette is the strict one.</div>
+      <div class="sy-a11y-item"><b>Gold is never text.</b> 1.85 in River Valley. That is why <code>--ts-gold-text</code> exists as a separate token at 4.92, and why the notice component fills with <code>--ts-gold14</code> and sets its copy in <code>--ts-gold-text</code> rather than doing the obvious thing.</div>
+      <div class="sy-a11y-item"><b>ink45 is a boundary, not a colour.</b> 2.83 means dots, dividers, and disabled glyphs that are never the only way to read a state. Any run of ink45 that a resident has to read is a bug.</div>
+      <div class="sy-a11y-item"><b>Targets.</b> 44px minimum on every pressable thing, including in compact density where the visible row is 36px and the target bleeds past it. Chips grow a transparent hit area rather than growing visually.</div>
+    </div>
+    <div class="sy-never">
+      <div class="sy-never-head">Colour is never the only carrier of meaning</div>
+      <div class="sy-never-pair">
+        <div class="sy-never-col sy-never-bad">
+          <div class="sy-never-tag"><svg class="i i-sm" aria-hidden="true"><use href="#sy-i-close"/></svg>Colour only</div>
+          <ul class="sy-dir sy-never-list">
+            <li class="sy-dir-item"><span class="sy-dot sy-dot-open" aria-hidden="true"></span><div class="sy-dir-body"><div class="sy-dir-name">Old South Restaurant</div><div class="sy-dir-meta">Diner &middot; 1330 E Main St</div></div></li>
+            <li class="sy-dir-item"><span class="sy-dot sy-dot-closed" aria-hidden="true"></span><div class="sy-dir-body"><div class="sy-dir-name">Fat Daddy's Bar-B-Que</div><div class="sy-dir-meta">Barbecue &middot; 2818 W Main St</div></div></li>
+          </ul>
+          <p>A green dot and a grey dot. In greyscale, in bright sun on a phone, or to eight percent of the men reading this, these two rows say the same thing.</p>
+        </div>
+        <div class="sy-never-col sy-never-good">
+          <div class="sy-never-tag"><svg class="i i-sm" aria-hidden="true"><use href="#sy-i-check"/></svg>Colour plus a word plus a shape</div>
+          <ul class="sy-dir sy-never-list">
+            <li class="sy-dir-item"><span class="sy-dot sy-dot-open" aria-hidden="true"></span><div class="sy-dir-body"><div class="sy-dir-name">Old South Restaurant</div><div class="sy-dir-meta">Diner &middot; 1330 E Main St</div></div><span class="sy-chip sy-chip-sage">Open until 9</span></li>
+            <li class="sy-dir-item"><span class="sy-dot sy-dot-closed" aria-hidden="true"></span><div class="sy-dir-body"><div class="sy-dir-name">Fat Daddy's Bar-B-Que</div><div class="sy-dir-meta">Barbecue &middot; 2818 W Main St</div></div><span class="sy-chip">Opens 11 AM</span></li>
+          </ul>
+          <p>The dot is now redundant reinforcement, which is what a dot should be. The chip carries the state in words, and it survives greyscale, a reskin, and a screen reader.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="spec">
+    <div class="spec-label">Do and do not <em>Seven ways to spend the system's credibility, each drawn correctly beside itself.</em></div>
+    <div class="sy-dd">
+
+      <div class="sy-dd-pair">
+        <div class="sy-dd-cell sy-dd-bad">
+          <div class="sy-dd-tag"><svg class="i i-sm" aria-hidden="true"><use href="#sy-i-close"/></svg>Brick on a delete button</div>
+          <div class="sy-dd-stage"><button class="sy-btn sy-btn-brick" type="button">Delete this listing</button></div>
+          <p>Brick is the flood siren. Spend it on a listing nobody will miss and it means nothing at 6am when the river is up.</p>
+        </div>
+        <div class="sy-dd-cell sy-dd-good">
+          <div class="sy-dd-tag"><svg class="i i-sm" aria-hidden="true"><use href="#sy-i-check"/></svg>Destructive is a quiet outline</div>
+          <div class="sy-dd-stage"><button class="sy-btn sy-btn-ghost" type="button">Delete this listing</button></div>
+          <p>Ink outline, plain word, confirmation step behind it. Destructive is not urgent, it is just irreversible, and those are different feelings.</p>
+        </div>
+      </div>
+
+      <div class="sy-dd-pair">
+        <div class="sy-dd-cell sy-dd-bad">
+          <div class="sy-dd-tag"><svg class="i i-sm" aria-hidden="true"><use href="#sy-i-close"/></svg>Mono on a byline</div>
+          <div class="sy-dd-stage sy-dd-stage-left">
+            <h5 class="sy-dd-h">Council sends Marina Road back for a second bid</h5>
+            <p class="sy-byline sy-byline-mono">BY DANA WHITFIELD &middot; 6 MIN READ</p>
+          </div>
+          <p>Mono is for labelling the page, not for speaking on it. A byline in mono reads as terminal output and the person stops being a person.</p>
+        </div>
+        <div class="sy-dd-cell sy-dd-good">
+          <div class="sy-dd-tag"><svg class="i i-sm" aria-hidden="true"><use href="#sy-i-check"/></svg>Mono labels, serif speaks</div>
+          <div class="sy-dd-stage sy-dd-stage-left">
+            <div class="sy-eyebrow">City council</div>
+            <h5 class="sy-dd-h">Council sends Marina Road back for a second bid</h5>
+            <p class="sy-byline">By Dana Whitfield, 6 min read</p>
+          </div>
+          <p>The mono eyebrow labels the section. The serif byline is a human name. Three voices, each doing its own job.</p>
+        </div>
+      </div>
+
+      <div class="sy-dd-pair">
+        <div class="sy-dd-cell sy-dd-bad">
+          <div class="sy-dd-tag"><svg class="i i-sm" aria-hidden="true"><use href="#sy-i-close"/></svg>Two dark cards on one screen</div>
+          <div class="sy-dd-stage sy-dd-stage-col">
+            <div class="sy-mini-dark">Lake Dardanelle levels</div>
+            <div class="sy-mini-dark">Tonight at the Center</div>
+            <div class="sy-mini-light">Pope County farmers market</div>
+          </div>
+          <p>Two emphasis cards and neither is emphasised. The eye picks the top one and the second just makes the screen heavy.</p>
+        </div>
+        <div class="sy-dd-cell sy-dd-good">
+          <div class="sy-dd-tag"><svg class="i i-sm" aria-hidden="true"><use href="#sy-i-check"/></svg>One dark card, earning it</div>
+          <div class="sy-dd-stage sy-dd-stage-col">
+            <div class="sy-mini-dark">Lake Dardanelle levels</div>
+            <div class="sy-mini-light">Tonight at the Center</div>
+            <div class="sy-mini-light">Pope County farmers market</div>
+          </div>
+          <p>One dark card per screen, and it goes to the thing the screen is actually for. Everything else is surface on cream.</p>
+        </div>
+      </div>
+
+      <div class="sy-dd-pair">
+        <div class="sy-dd-cell sy-dd-bad">
+          <div class="sy-dd-tag"><svg class="i i-sm" aria-hidden="true"><use href="#sy-i-close"/></svg>A hex literal in a creation</div>
+          <div class="sy-dd-stage sy-dd-stage-left">
+            <pre class="sy-code"><code>.header {
+  background: #26405B;
+  color: #F8F6F1;
+}</code></pre>
+          </div>
+          <p>Correct in River Valley, wrong in Harbor forever, and the builder is long gone. This is the single most common way a creation ages badly.</p>
+        </div>
+        <div class="sy-dd-cell sy-dd-good">
+          <div class="sy-dd-tag"><svg class="i i-sm" aria-hidden="true"><use href="#sy-i-check"/></svg>The same thing, themed</div>
+          <div class="sy-dd-stage sy-dd-stage-left">
+            <pre class="sy-code"><code>.header {
+  background: var(--ts-navy);
+  color: var(--ts-cream);
+}</code></pre>
+          </div>
+          <p>Six more characters, and the creation follows every town it is ever hosted in without being opened again.</p>
+        </div>
+      </div>
+
+      <div class="sy-dd-pair">
+        <div class="sy-dd-cell sy-dd-bad">
+          <div class="sy-dd-tag"><svg class="i i-sm" aria-hidden="true"><use href="#sy-i-close"/></svg>Accent as decoration</div>
+          <div class="sy-dd-stage">
+            <div class="sy-deco-card sy-deco-bad">
+              <span class="sy-deco-bar" aria-hidden="true"></span>
+              <div>
+                <div class="sy-eyebrow sy-eyebrow-terra">This week</div>
+                <div class="sy-dir-name">Pope County farmers market</div>
+                <div class="sy-dir-meta sy-meta-terra">8:00 AM &middot; Depot pavilion</div>
+              </div>
+              <span class="sy-chip sy-chip-terra">Free</span>
+            </div>
+          </div>
+          <p>Four terracotta elements and not one of them is pressable. The accent now means nothing, so the real button elsewhere on the screen has to shout.</p>
+        </div>
+        <div class="sy-dd-cell sy-dd-good">
+          <div class="sy-dd-tag"><svg class="i i-sm" aria-hidden="true"><use href="#sy-i-check"/></svg>Accent reserved for the action</div>
+          <div class="sy-dd-stage">
+            <div class="sy-deco-card">
+              <div>
+                <div class="sy-eyebrow">This week</div>
+                <div class="sy-dir-name">Pope County farmers market</div>
+                <div class="sy-dir-meta">8:00 AM &middot; Depot pavilion</div>
+              </div>
+              <button class="sy-btn sy-btn-sm" type="button">Add</button>
+            </div>
+          </div>
+          <p>One terracotta element, and it is the thing a finger is for. The card is ink on surface, which is what most of the product should be.</p>
+        </div>
+      </div>
+
+      <div class="sy-dd-pair">
+        <div class="sy-dd-cell sy-dd-bad">
+          <div class="sy-dd-tag"><svg class="i i-sm" aria-hidden="true"><use href="#sy-i-close"/></svg>Three emphasis levels in one card</div>
+          <div class="sy-dd-stage">
+            <div class="sy-emph sy-emph-bad">
+              <span class="sy-chip sy-chip-terra">Featured</span>
+              <span class="sy-chip sy-chip-gold">Notice</span>
+              <h5 class="sy-dd-h sy-dd-h-terra">Old Bank Building reopens</h5>
+              <p class="sy-emph-p">Bold body copy, a coloured headline, two chips and a filled button, all competing.</p>
+              <button class="sy-btn sy-btn-sm" type="button">Read</button>
+            </div>
+          </div>
+          <p>Everything is emphasised, so nothing is. The reader's eye lands nowhere and the card takes twice as long to parse as it should.</p>
+        </div>
+        <div class="sy-dd-cell sy-dd-good">
+          <div class="sy-dd-tag"><svg class="i i-sm" aria-hidden="true"><use href="#sy-i-check"/></svg>One thing loud, the rest quiet</div>
+          <div class="sy-dd-stage">
+            <div class="sy-emph">
+              <div class="sy-eyebrow">Downtown</div>
+              <h5 class="sy-dd-h">Old Bank Building reopens</h5>
+              <p class="sy-emph-p">Twelve stalls open Saturday in the old lobby, with the vault room kept as a reading nook.</p>
+              <a class="sy-link" href="#system">Read the story</a>
+            </div>
+          </div>
+          <p>The headline is the loudest thing and everything else recedes below it. One emphasis per card, chosen deliberately.</p>
+        </div>
+      </div>
+
+      <div class="sy-dd-pair">
+        <div class="sy-dd-cell sy-dd-bad">
+          <div class="sy-dd-tag"><svg class="i i-sm" aria-hidden="true"><use href="#sy-i-close"/></svg>Hand-rolled spacing</div>
+          <div class="sy-dd-stage sy-dd-stage-left">
+            <pre class="sy-code"><code>.card  { padding: 18px 14px; }
+.title { margin-bottom: 7px; }
+.meta  { margin-top: 11px; }</code></pre>
+          </div>
+          <p>Each number was picked to look right beside the last one. Put two of these cards side by side and the rhythm is visibly off by a pixel or three.</p>
+        </div>
+        <div class="sy-dd-cell sy-dd-good">
+          <div class="sy-dd-tag"><svg class="i i-sm" aria-hidden="true"><use href="#sy-i-check"/></svg>On the 4px scale</div>
+          <div class="sy-dd-stage sy-dd-stage-left">
+            <pre class="sy-code"><code>.card  { padding: var(--ts-space-4); }
+.title { margin-bottom: var(--ts-space-2); }
+.meta  { margin-top: var(--ts-space-3); }</code></pre>
+          </div>
+          <p>Every gap is a multiple of four, so anything built by anyone lines up with anything else. This is what makes fifty creations feel like one town.</p>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="spec">
+    <div class="spec-label">The contract, on one card <em>Everything another town's engineer needs, without reading the source.</em></div>
+    <div class="sy-contract">
+      <div class="sy-contract-head">
+        <div>
+          <div class="sy-eyebrow">Town Square SDK 1</div>
+          <h4>The <code>--ts-*</code> token contract</h4>
+        </div>
+        <span class="sy-app">26 pinned</span>
+      </div>
+
+      <div class="sy-contract-grid">
+        <div class="sy-tok-group">
+          <div class="sy-tok-head">Surfaces</div>
+          <ul class="sy-tok"><li><code>--ts-cream</code><span>the screen, warm off white</span></li><li><code>--ts-surface</code><span>cards, white</span></li><li><code>--ts-stone</code><span>image placeholder, inert fill</span></li></ul>
+        </div>
+        <div class="sy-tok-group">
+          <div class="sy-tok-head">Ink</div>
+          <ul class="sy-tok"><li><code>--ts-ink</code><span>body text</span></li><li><code>--ts-ink60</code><span>muted</span></li><li><code>--ts-ink45</code><span>quieter</span></li><li><code>--ts-ink26</code><span>disabled, dots</span></li><li><code>--ts-ink13</code><span>divider</span></li><li><code>--ts-ink08</code><span>shadow</span></li><li><code>--ts-hairline</code><span>card border</span></li></ul>
+        </div>
+        <div class="sy-tok-group">
+          <div class="sy-tok-head">Navy</div>
+          <ul class="sy-tok"><li><code>--ts-navy</code></li><li><code>--ts-navy-dark</code></li><li><code>--ts-navy80</code></li><li><code>--ts-navy60</code></li><li><code>--ts-navy40</code></li><li><code>--ts-navy10</code></li></ul>
+        </div>
+        <div class="sy-tok-group">
+          <div class="sy-tok-head">On dark</div>
+          <ul class="sy-tok"><li><code>--ts-cream-muted</code></li><li><code>--ts-cream14</code></li></ul>
+        </div>
+        <div class="sy-tok-group">
+          <div class="sy-tok-head">Terracotta, the action</div>
+          <ul class="sy-tok"><li><code>--ts-terracotta</code></li><li><code>--ts-terracotta-hover</code></li><li><code>--ts-terracotta-tint</code></li><li><code>--ts-terracotta10</code></li><li><code>--ts-terracotta14</code></li></ul>
+        </div>
+        <div class="sy-tok-group">
+          <div class="sy-tok-head">Gold, civic</div>
+          <ul class="sy-tok"><li><code>--ts-gold</code><span>fills and rules, never text</span></li><li><code>--ts-gold14</code></li><li><code>--ts-gold-text</code></li></ul>
+        </div>
+        <div class="sy-tok-group">
+          <div class="sy-tok-head">Sage, alive</div>
+          <ul class="sy-tok"><li><code>--ts-sage</code></li><li><code>--ts-sage-light</code></li><li><code>--ts-sage14</code></li></ul>
+        </div>
+        <div class="sy-tok-group">
+          <div class="sy-tok-head">Alarm</div>
+          <ul class="sy-tok"><li><code>--ts-brick</code><span>an actual emergency, and nothing else</span></li></ul>
+        </div>
+        <div class="sy-tok-group">
+          <div class="sy-tok-head">Space, 4px scale</div>
+          <ul class="sy-tok sy-tok-inline"><li><code>-1</code>4</li><li><code>-2</code>8</li><li><code>-3</code>12</li><li><code>-4</code>16</li><li><code>-5</code>20</li><li><code>-6</code>24</li><li><code>-8</code>32</li><li><code>-10</code>40</li><li><code>-12</code>48</li><li><code>-16</code>64</li></ul>
+        </div>
+        <div class="sy-tok-group">
+          <div class="sy-tok-head">Radius</div>
+          <ul class="sy-tok sy-tok-inline"><li><code>input</code>10</li><li><code>button</code>10</li><li><code>card</code>16</li><li><code>sheet</code>20</li><li><code>chip</code>999</li><li><code>full</code>999</li></ul>
+        </div>
+        <div class="sy-tok-group">
+          <div class="sy-tok-head">Type</div>
+          <ul class="sy-tok"><li><code>--ts-font-serif</code><span>Newsreader, editorial</span></li><li><code>--ts-font-sans</code><span>DM Sans, utility</span></li><li><code>--ts-font-mono</code><span>DM Mono, structural labels</span></li></ul>
+          <ul class="sy-tok sy-tok-inline"><li><code>h1</code>24</li><li><code>h2</code>21</li><li><code>card-title</code>18</li><li><code>body</code>17</li><li><code>label</code>15</li><li><code>caption</code>13</li><li><code>eyebrow</code>11</li></ul>
+        </div>
+        <div class="sy-tok-group">
+          <div class="sy-tok-head">Elevation and motion</div>
+          <ul class="sy-tok sy-tok-inline"><li><code>shadow-flat</code></li><li><code>shadow-raised</code></li><li><code>shadow-lifted</code></li><li><code>shadow-overlay</code></li><li><code>shadow-navy</code></li><li><code>ease</code></li><li><code>ease-out</code></li><li><code>dur-1</code>90</li><li><code>dur-2</code>160</li><li><code>dur-3</code>260</li><li><code>dur-4</code>420</li><li><code>focus</code></li></ul>
+        </div>
+      </div>
+
+      <div class="sy-contract-rules">
+        <div class="sy-cr">
+          <div class="sy-cr-head">Naming rules</div>
+          <ul>
+            <li>Every published property starts <code>--ts-</code>. That prefix is the namespace a creation trusts, and nothing else may use it.</li>
+            <li>Kebab case, derived mechanically from the source object. <code>terracottaHover</code> becomes <code>--ts-terracotta-hover</code>.</li>
+            <li>A trailing number is an alpha percentage of the hue named before it: <code>--ts-navy60</code> is navy at 60 percent.</li>
+            <li>Names describe the palette, not the layout. There is no <code>--ts-card-padding</code>, because padding belongs to a component and the component belongs to the shell.</li>
+          </ul>
+        </div>
+        <div class="sy-cr sy-cr-break">
+          <div class="sy-cr-head"><svg class="i i-sm" aria-hidden="true"><use href="#sy-i-warning"/></svg>The three breaking changes</div>
+          <ol>
+            <li><b>Renaming a token.</b> Every creation using the old name loses its styling silently.</li>
+            <li><b>Removing a token.</b> Same failure, and no error is raised anywhere.</li>
+            <li><b>Changing what a token means.</b> The name still resolves, so nothing breaks visually, and every creation now says something false. Making <code>--ts-sage</code> a warning colour is worse than deleting it.</li>
+          </ol>
+          <p class="sy-cr-foot">Everything else, including every value in every town, is routine. If you are unsure which side of the line you are on, the test at <code>packages/tokens/src/index.test.ts</code> is the answer: if your change edits that list, it is breaking.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <p class="why">The reason to be this strict about a colour list is that <b>Town Square's value compounds with builders, not readers</b>. A resident who ships a lake-level app in March is not on call. If a rename in June breaks it, nobody fixes it, the app quietly rots, and the next resident sees a graveyard and decides not to bother. <b>The token contract is not a styling convenience, it is the promise that makes building here worth a Saturday.</b></p>
+</section>

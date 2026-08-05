@@ -1,0 +1,1670 @@
+<section class="sheet-section" id="navigation">
+  <div class="sec-head"><span class="sec-num">02</span><h2>Navigation and shell</h2></div>
+  <p class="sec-note">How a resident moves through the town, and how the shell frames everything
+  else. The bar names the place, the bottom nav names the five things you can do, and every
+  surface between them is a variation on one idea: say where you are, then get out of the way.</p>
+
+  <!-- ═══ 1. the resident bar, identity states ═══════════════════════════════ -->
+
+  <div class="spec">
+    <div class="spec-label">Resident bar, four identity states <em>The ring is the badge. A separate tick would be one more thing on a bar that already carries the mark.</em></div>
+
+    <div class="nv-stack">
+      <div class="nv-barwrap">
+        <div class="nv-barcap">Signed out</div>
+        <header class="nv-bar">
+          <div class="nv-mark" aria-hidden="true"></div>
+          <div class="nv-brand">
+            <div class="nv-wordmark">Town Square</div>
+            <div class="nv-place">Russellville, Arkansas</div>
+          </div>
+          <div class="nv-actions">
+            <button class="nv-iconbtn" type="button" aria-label="Search the town">
+              <svg class="i" aria-hidden="true"><use href="#i-search"/></svg>
+            </button>
+            <button class="nv-signin" type="button">Sign in</button>
+          </div>
+        </header>
+      </div>
+
+      <div class="nv-barwrap">
+        <div class="nv-barcap">Signed in, not yet vouched</div>
+        <header class="nv-bar">
+          <div class="nv-mark" aria-hidden="true"></div>
+          <div class="nv-brand">
+            <div class="nv-wordmark">Town Square</div>
+            <div class="nv-place">Russellville, Arkansas</div>
+          </div>
+          <div class="nv-actions">
+            <button class="nv-iconbtn" type="button" aria-label="Search the town">
+              <svg class="i" aria-hidden="true"><use href="#i-search"/></svg>
+            </button>
+            <button class="nv-iconbtn" type="button" aria-label="Notifications, none unread">
+              <svg class="i" aria-hidden="true"><use href="#i-bell"/></svg>
+            </button>
+            <button class="nv-avatarbtn" type="button" aria-label="Your account, 4 of 10 vouches">
+              <span class="nv-avatar">JB</span>
+            </button>
+          </div>
+        </header>
+        <p class="nv-barnote">Four of ten vouches. No ring, and the account sheet is where the
+        count lives. The bar does not nag.</p>
+      </div>
+
+      <div class="nv-barwrap">
+        <div class="nv-barcap">Signed in, verified</div>
+        <header class="nv-bar">
+          <div class="nv-mark" aria-hidden="true"></div>
+          <div class="nv-brand">
+            <div class="nv-wordmark">Town Square</div>
+            <div class="nv-place">Russellville, Arkansas</div>
+          </div>
+          <div class="nv-actions">
+            <button class="nv-iconbtn" type="button" aria-label="Search the town">
+              <svg class="i" aria-hidden="true"><use href="#i-search"/></svg>
+            </button>
+            <button class="nv-iconbtn" type="button" aria-label="Notifications, none unread">
+              <svg class="i" aria-hidden="true"><use href="#i-bell"/></svg>
+            </button>
+            <button class="nv-avatarbtn" type="button" aria-label="Your account, verified resident">
+              <span class="nv-avatar" data-verified>JB</span>
+            </button>
+          </div>
+        </header>
+        <p class="nv-barnote">Verified never means publicly identified. The ring says neighbours
+        vouched, and says nothing about who you are.</p>
+      </div>
+
+      <div class="nv-barwrap">
+        <div class="nv-barcap">Unread notification</div>
+        <header class="nv-bar">
+          <div class="nv-mark" aria-hidden="true"></div>
+          <div class="nv-brand">
+            <div class="nv-wordmark">Town Square</div>
+            <div class="nv-place">Russellville, Arkansas</div>
+          </div>
+          <div class="nv-actions">
+            <button class="nv-iconbtn" type="button" aria-label="Search the town">
+              <svg class="i" aria-hidden="true"><use href="#i-search"/></svg>
+            </button>
+            <button class="nv-iconbtn" type="button" data-unread aria-label="Notifications, 3 unread">
+              <svg class="i" aria-hidden="true"><use href="#i-bell"/></svg>
+              <span class="nv-dot" aria-hidden="true"></span>
+            </button>
+            <button class="nv-avatarbtn" type="button" aria-label="Your account, verified resident">
+              <span class="nv-avatar" data-verified>JB</span>
+            </button>
+          </div>
+        </header>
+        <p class="nv-barnote">A dot, not a count. Three notifications and thirty feel the same at
+        a glance, and the number is a small anxiety with no payoff.</p>
+      </div>
+    </div>
+
+    <p class="why">The bar carries four things and refuses a fifth: <b>who made this</b> (the mark),
+    <b>where you are</b> (the place line), <b>find something</b>, and <b>you</b>. Every product like
+    this eventually grows a hamburger, and the hamburger is where the five destinations go to die.
+    They are at the bottom, under a thumb, instead.</p>
+  </div>
+
+  <!-- ═══ 2. the condensed bar ═══════════════════════════════════════════════ -->
+
+  <div class="spec">
+    <div class="spec-label">Bar at rest and condensed on scroll <em>The place line is an orientation, not a label. Once you are reading you already know what town you are in.</em></div>
+
+    <div class="nv-stack">
+      <div class="nv-barwrap">
+        <div class="nv-barcap">At rest, scroll position 0</div>
+        <header class="nv-bar">
+          <div class="nv-mark" aria-hidden="true"></div>
+          <div class="nv-brand">
+            <div class="nv-wordmark">Town Square</div>
+            <div class="nv-place">Russellville, Arkansas</div>
+          </div>
+          <div class="nv-actions">
+            <button class="nv-iconbtn" type="button" aria-label="Search the town">
+              <svg class="i" aria-hidden="true"><use href="#i-search"/></svg>
+            </button>
+            <button class="nv-avatarbtn" type="button" aria-label="Your account, verified resident">
+              <span class="nv-avatar" data-verified>JB</span>
+            </button>
+          </div>
+        </header>
+      </div>
+
+      <div class="nv-barwrap">
+        <div class="nv-barcap">Condensed, scrolled past 64px</div>
+        <header class="nv-bar" data-condensed>
+          <div class="nv-mark" aria-hidden="true"></div>
+          <div class="nv-brand">
+            <div class="nv-wordmark">Town Square</div>
+            <div class="nv-place">Russellville, Arkansas</div>
+          </div>
+          <div class="nv-actions">
+            <button class="nv-iconbtn" type="button" aria-label="Search the town">
+              <svg class="i" aria-hidden="true"><use href="#i-search"/></svg>
+            </button>
+            <button class="nv-avatarbtn" type="button" aria-label="Your account, verified resident">
+              <span class="nv-avatar" data-verified>JB</span>
+            </button>
+          </div>
+        </header>
+        <p class="nv-barnote">Height goes 60 to 48. The place line collapses, the avatar drops to
+        28px, and a hairline becomes a shadow so the bar sits above the read.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ 3. the town switcher ═══════════════════════════════════════════════ -->
+
+  <div class="spec">
+    <div class="spec-label">Town switcher <em>Town Square is constant, the location line swaps. That sentence is the whole product architecture.</em></div>
+
+    <div class="spec-row">
+      <div class="phone">
+        <div class="phone-cap">Today &mdash; switcher open</div>
+        <div class="phone-screen">
+          <div class="nv-screen" id="nv-townscreen">
+            <header class="nv-bar">
+              <div class="nv-mark" aria-hidden="true"></div>
+              <button class="nv-townbtn" type="button"
+                      id="nv-town-trigger" aria-expanded="false" aria-controls="nv-town-menu">
+                <span class="nv-brand">
+                  <span class="nv-wordmark">Town Square</span>
+                  <span class="nv-place" id="nv-town-place">Russellville, Arkansas
+                    <svg class="i-sm i" aria-hidden="true"><use href="#i-chevron-down"/></svg>
+                  </span>
+                </span>
+              </button>
+              <div class="nv-actions">
+                <button class="nv-iconbtn" type="button" aria-label="Search the town">
+                  <svg class="i" aria-hidden="true"><use href="#i-search"/></svg>
+                </button>
+                <button class="nv-avatarbtn" type="button" aria-label="Your account, verified resident">
+                  <span class="nv-avatar" data-verified>JB</span>
+                </button>
+              </div>
+            </header>
+
+            <div class="nv-menuwrap">
+              <div class="nv-townmenu" id="nv-town-menu" role="menu" aria-labelledby="nv-town-trigger" hidden>
+                <div class="nv-menulabel">Towns you can read</div>
+                <button class="nv-townopt" type="button" role="menuitemradio" aria-checked="true" data-town-pick="river">
+                  <span class="nv-townopt-txt">
+                    <span class="nv-townopt-name">River Valley</span>
+                    <span class="nv-townopt-sub">Russellville, Arkansas &middot; you are verified here</span>
+                  </span>
+                  <svg class="i nv-townopt-check" aria-hidden="true"><use href="#i-check"/></svg>
+                </button>
+                <button class="nv-townopt" type="button" role="menuitemradio" aria-checked="false" data-town-pick="delta">
+                  <span class="nv-townopt-txt">
+                    <span class="nv-townopt-name">Delta</span>
+                    <span class="nv-townopt-sub">Helena-West Helena, Arkansas &middot; reading only</span>
+                  </span>
+                  <svg class="i nv-townopt-check" aria-hidden="true"><use href="#i-check"/></svg>
+                </button>
+                <button class="nv-townopt" type="button" role="menuitemradio" aria-checked="false" data-town-pick="harbor">
+                  <span class="nv-townopt-txt">
+                    <span class="nv-townopt-name">Harbor</span>
+                    <span class="nv-townopt-sub">Bay St. Louis, Mississippi &middot; reading only</span>
+                  </span>
+                  <svg class="i nv-townopt-check" aria-hidden="true"><use href="#i-check"/></svg>
+                </button>
+                <div class="nv-menufoot">
+                  <svg class="i-sm i" aria-hidden="true"><use href="#i-shield"/></svg>
+                  Vouches do not travel. You are a stranger in a town until its neighbours say otherwise.
+                </div>
+              </div>
+            </div>
+
+            <div class="nv-screenbody">
+              <div class="nv-eyebrow">Tuesday, August 5</div>
+              <h3 class="nv-screentitle">Good morning.</h3>
+              <p class="nv-screenlede">Eleven things happening today, four of them free.</p>
+              <div class="nv-storyrow">
+                <div class="nv-thumb" aria-hidden="true"></div>
+                <div>
+                  <div class="nv-story-t">Dardanelle lock reopens after two weeks of repairs</div>
+                  <div class="nv-story-b">The Courier &middot; 6:02 am</div>
+                </div>
+              </div>
+              <div class="nv-storyrow">
+                <div class="nv-thumb" aria-hidden="true"></div>
+                <div>
+                  <div class="nv-story-t">Tech trustees approve the West Q Street parking plan</div>
+                  <div class="nv-story-b">Arkansas Tech News &middot; yesterday</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="nv-minis">
+        <div class="nv-minicap">Same markup, three towns</div>
+
+        <div class="nv-mini">
+          <header class="nv-bar nv-bar-mini">
+            <div class="nv-mark" aria-hidden="true"></div>
+            <div class="nv-brand">
+              <div class="nv-wordmark">Town Square</div>
+              <div class="nv-place">Russellville, Arkansas</div>
+            </div>
+            <div class="nv-actions">
+              <span class="nv-avatar" data-verified>JB</span>
+            </div>
+          </header>
+          <div class="nv-mini-body">
+            <span class="nv-mini-chip">Riverfest</span>
+            <span class="nv-mini-btn">Going</span>
+          </div>
+          <div class="nv-mini-tag">River Valley &middot; default</div>
+        </div>
+
+        <div class="nv-mini" data-town="delta">
+          <header class="nv-bar nv-bar-mini">
+            <div class="nv-mark" aria-hidden="true"></div>
+            <div class="nv-brand">
+              <div class="nv-wordmark">Town Square</div>
+              <div class="nv-place">Helena-West Helena, Arkansas</div>
+            </div>
+            <div class="nv-actions">
+              <span class="nv-avatar" data-verified>JB</span>
+            </div>
+          </header>
+          <div class="nv-mini-body">
+            <span class="nv-mini-chip">King Biscuit</span>
+            <span class="nv-mini-btn">Going</span>
+          </div>
+          <div class="nv-mini-tag">data-town="delta"</div>
+        </div>
+
+        <div class="nv-mini" data-town="harbor">
+          <header class="nv-bar nv-bar-mini">
+            <div class="nv-mark" aria-hidden="true"></div>
+            <div class="nv-brand">
+              <div class="nv-wordmark">Town Square</div>
+              <div class="nv-place">Bay St. Louis, Mississippi</div>
+            </div>
+            <div class="nv-actions">
+              <span class="nv-avatar" data-verified>JB</span>
+            </div>
+          </header>
+          <div class="nv-mini-body">
+            <span class="nv-mini-chip">Second Saturday</span>
+            <span class="nv-mini-btn">Going</span>
+          </div>
+          <div class="nv-mini-tag">data-town="harbor"</div>
+        </div>
+      </div>
+    </div>
+
+    <p class="why">Three bars, <b>one set of class names, zero markup differences</b>. The only thing
+    that changed is a <code>data-town</code> attribute on an ancestor, which reassigns values behind
+    the same token names. That is the seam the whole platform is built on: a resident in Helena gets
+    their own town, and a creation someone shipped in Russellville styled with
+    <code>var(--ts-navy)</code> comes along intact. If any of these three needed a component change,
+    the second town would fork the first and the third would never happen.</p>
+  </div>
+
+  <!-- ═══ 4. bottom navigation ═══════════════════════════════════════════════ -->
+
+  <div class="spec">
+    <div class="spec-label">Bottom navigation, state matrix <em>Active carries a rule, a weight and aria-current. Colour is the fourth signal, never the only one.</em></div>
+
+    <div class="nv-stack">
+      <div class="nv-barwrap">
+        <div class="nv-barcap">Default, Today active</div>
+        <nav class="nv-tabbar" aria-label="Main">
+          <a class="nv-tab" href="#navigation" aria-current="page">
+            <span class="nv-tab-ind" aria-hidden="true"></span>
+            <svg class="i" aria-hidden="true"><use href="#i-home"/></svg>
+            <span class="nv-tab-label">Today</span>
+          </a>
+          <a class="nv-tab" href="#navigation">
+            <span class="nv-tab-ind" aria-hidden="true"></span>
+            <svg class="i" aria-hidden="true"><use href="#i-compass"/></svg>
+            <span class="nv-tab-label">Nearby</span>
+          </a>
+          <a class="nv-tab" href="#navigation">
+            <span class="nv-tab-ind" aria-hidden="true"></span>
+            <svg class="i" aria-hidden="true"><use href="#i-calendar"/></svg>
+            <span class="nv-tab-label">Calendar</span>
+          </a>
+          <a class="nv-tab" href="#navigation">
+            <span class="nv-tab-ind" aria-hidden="true"></span>
+            <svg class="i" aria-hidden="true"><use href="#i-puzzle"/></svg>
+            <span class="nv-tab-label">Creations</span>
+          </a>
+          <a class="nv-tab" href="#navigation">
+            <span class="nv-tab-ind" aria-hidden="true"></span>
+            <svg class="i" aria-hidden="true"><use href="#i-user"/></svg>
+            <span class="nv-tab-label">You</span>
+          </a>
+        </nav>
+      </div>
+
+      <div class="nv-barwrap">
+        <div class="nv-barcap">Creations active, Calendar badged, You disabled while signed out</div>
+        <nav class="nv-tabbar" aria-label="Main">
+          <a class="nv-tab" href="#navigation">
+            <span class="nv-tab-ind" aria-hidden="true"></span>
+            <svg class="i" aria-hidden="true"><use href="#i-home"/></svg>
+            <span class="nv-tab-label">Today</span>
+          </a>
+          <a class="nv-tab" href="#navigation">
+            <span class="nv-tab-ind" aria-hidden="true"></span>
+            <svg class="i" aria-hidden="true"><use href="#i-compass"/></svg>
+            <span class="nv-tab-label">Nearby</span>
+          </a>
+          <a class="nv-tab" href="#navigation">
+            <span class="nv-tab-ind" aria-hidden="true"></span>
+            <span class="nv-tab-icon">
+              <svg class="i" aria-hidden="true"><use href="#i-calendar"/></svg>
+              <span class="nv-tab-badge">3</span>
+            </span>
+            <span class="nv-tab-label">Calendar</span>
+            <span class="nv-sr">3 events you said you would go to start today</span>
+          </a>
+          <a class="nv-tab" href="#navigation" aria-current="page">
+            <span class="nv-tab-ind" aria-hidden="true"></span>
+            <svg class="i" aria-hidden="true"><use href="#i-puzzle"/></svg>
+            <span class="nv-tab-label">Creations</span>
+          </a>
+          <span class="nv-tab" role="link" aria-disabled="true" tabindex="0">
+            <span class="nv-tab-ind" aria-hidden="true"></span>
+            <svg class="i" aria-hidden="true"><use href="#i-user"/></svg>
+            <span class="nv-tab-label">You</span>
+          </span>
+        </nav>
+        <p class="nv-barnote">Disabled stays focusable and keeps its label. A greyed target you
+        cannot tab to is a dead end with no explanation, so tapping it opens sign in.</p>
+      </div>
+
+      <div class="nv-barwrap">
+        <div class="nv-barcap">Pressed and keyboard focus</div>
+        <nav class="nv-tabbar" aria-label="Main">
+          <a class="nv-tab" href="#navigation" aria-current="page">
+            <span class="nv-tab-ind" aria-hidden="true"></span>
+            <svg class="i" aria-hidden="true"><use href="#i-home"/></svg>
+            <span class="nv-tab-label">Today</span>
+          </a>
+          <a class="nv-tab" href="#navigation" data-pressed>
+            <span class="nv-tab-ind" aria-hidden="true"></span>
+            <svg class="i" aria-hidden="true"><use href="#i-compass"/></svg>
+            <span class="nv-tab-label">Nearby</span>
+          </a>
+          <a class="nv-tab" href="#navigation" data-focus>
+            <span class="nv-tab-ind" aria-hidden="true"></span>
+            <svg class="i" aria-hidden="true"><use href="#i-calendar"/></svg>
+            <span class="nv-tab-label">Calendar</span>
+          </a>
+          <a class="nv-tab" href="#navigation">
+            <span class="nv-tab-ind" aria-hidden="true"></span>
+            <svg class="i" aria-hidden="true"><use href="#i-puzzle"/></svg>
+            <span class="nv-tab-label">Creations</span>
+          </a>
+          <a class="nv-tab" href="#navigation">
+            <span class="nv-tab-ind" aria-hidden="true"></span>
+            <svg class="i" aria-hidden="true"><use href="#i-user"/></svg>
+            <span class="nv-tab-label">You</span>
+          </a>
+        </nav>
+      </div>
+    </div>
+
+    <p class="why">Five destinations, and the fifth is the argument. <b>Creations sits in the nav as
+    a peer</b>, not under a More menu, because the thesis is that value compounds with builders. A
+    platform that hides the thing residents made has already decided it is a news app. Everything
+    else a builder needs lives off the You tab and the command palette, so the resident path stays
+    five words wide.</p>
+  </div>
+
+  <!-- ═══ 5. safe area and target size ═══════════════════════════════════════ -->
+
+  <div class="spec">
+    <div class="spec-label">Safe area and target size <em>The home indicator is not a design element you can borrow. Padding, not margin, so the fill runs to the glass.</em></div>
+
+    <div class="spec-row nv-safe-row">
+      <div class="nv-measure">
+        <nav class="nv-tabbar" data-safearea aria-label="Main">
+          <a class="nv-tab" href="#navigation" aria-current="page">
+            <span class="nv-tab-ind" aria-hidden="true"></span>
+            <svg class="i" aria-hidden="true"><use href="#i-home"/></svg>
+            <span class="nv-tab-label">Today</span>
+          </a>
+          <a class="nv-tab" href="#navigation">
+            <span class="nv-tab-ind" aria-hidden="true"></span>
+            <svg class="i" aria-hidden="true"><use href="#i-compass"/></svg>
+            <span class="nv-tab-label">Nearby</span>
+          </a>
+          <a class="nv-tab" href="#navigation">
+            <span class="nv-tab-ind" aria-hidden="true"></span>
+            <svg class="i" aria-hidden="true"><use href="#i-calendar"/></svg>
+            <span class="nv-tab-label">Calendar</span>
+          </a>
+          <a class="nv-tab" href="#navigation">
+            <span class="nv-tab-ind" aria-hidden="true"></span>
+            <svg class="i" aria-hidden="true"><use href="#i-puzzle"/></svg>
+            <span class="nv-tab-label">Creations</span>
+          </a>
+          <a class="nv-tab" href="#navigation">
+            <span class="nv-tab-ind" aria-hidden="true"></span>
+            <svg class="i" aria-hidden="true"><use href="#i-user"/></svg>
+            <span class="nv-tab-label">You</span>
+          </a>
+          <span class="nv-inset-band" aria-hidden="true"><span>env(safe-area-inset-bottom)</span></span>
+        </nav>
+      </div>
+
+      <div class="plate nv-rules">
+        <div class="nv-rule">
+          <div class="nv-rule-k">Target</div>
+          <div class="nv-rule-v">48 &times; 56, never under 44 &times; 44. The label is inside the
+          target, so the tap area is the whole column and not the 20px glyph.</div>
+        </div>
+        <div class="nv-rule">
+          <div class="nv-rule-k">Inset</div>
+          <div class="nv-rule-v"><code>padding-bottom: calc(var(--ts-space-2) + env(safe-area-inset-bottom))</code>.
+          Padding keeps the cream fill running under the home indicator; a margin would leave a
+          stripe of page showing through.</div>
+        </div>
+        <div class="nv-rule">
+          <div class="nv-rule-k">Reach</div>
+          <div class="nv-rule-v">Bottom edge on purpose. The five things a resident does live under
+          the thumb, and the two things the app wants (search, account) are the stretch.</div>
+        </div>
+        <div class="nv-rule">
+          <div class="nv-rule-k">Keyboard</div>
+          <div class="nv-rule-v">The bar is <code>position: sticky</code>, not fixed, so an open
+          keyboard pushes it off screen instead of pinning it over the field being typed into.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ 6. desktop shell, Today ════════════════════════════════════════════ -->
+
+  <div class="spec">
+    <div class="spec-label">Desktop shell at 1200px, Today <em>A wider window is not a request for more columns. Today is a read, and a read has one column.</em></div>
+
+    <div class="nv-deskframe">
+      <div class="nv-desk">
+        <header class="nv-bar nv-desk-topbar">
+          <div class="nv-mark" aria-hidden="true"></div>
+          <div class="nv-brand">
+            <div class="nv-wordmark">Town Square</div>
+            <div class="nv-place">Russellville, Arkansas
+              <svg class="i-sm i" aria-hidden="true"><use href="#i-chevron-down"/></svg>
+            </div>
+          </div>
+          <div class="nv-desk-search">
+            <svg class="i-sm i" aria-hidden="true"><use href="#i-search"/></svg>
+            <span>Search the town</span>
+            <span class="nv-kbd">/</span>
+          </div>
+          <div class="nv-actions">
+            <button class="nv-iconbtn" type="button" data-unread aria-label="Notifications, 3 unread">
+              <svg class="i" aria-hidden="true"><use href="#i-bell"/></svg>
+              <span class="nv-dot" aria-hidden="true"></span>
+            </button>
+            <button class="nv-avatarbtn" type="button" aria-label="Your account, verified resident">
+              <span class="nv-avatar" data-verified>JB</span>
+            </button>
+          </div>
+        </header>
+
+        <div class="nv-desk-body">
+          <nav class="nv-desk-rail" aria-label="Main">
+            <a class="nv-rail-item" href="#navigation" aria-current="page">
+              <svg class="i" aria-hidden="true"><use href="#i-home"/></svg> Today
+            </a>
+            <a class="nv-rail-item" href="#navigation">
+              <svg class="i" aria-hidden="true"><use href="#i-compass"/></svg> Nearby
+            </a>
+            <a class="nv-rail-item" href="#navigation">
+              <svg class="i" aria-hidden="true"><use href="#i-calendar"/></svg> Calendar
+              <span class="nv-rail-count">3</span>
+            </a>
+            <a class="nv-rail-item" href="#navigation">
+              <svg class="i" aria-hidden="true"><use href="#i-puzzle"/></svg> Creations
+            </a>
+            <a class="nv-rail-item" href="#navigation">
+              <svg class="i" aria-hidden="true"><use href="#i-user"/></svg> You
+            </a>
+            <div class="nv-rail-note">
+              Vouched by 12 neighbours.<br>You can vouch for 2 more this month.
+            </div>
+          </nav>
+
+          <main class="nv-desk-main">
+            <div class="nv-eyebrow">Tuesday, August 5</div>
+            <h3 class="nv-desk-h1">Good morning.</h3>
+            <p class="nv-screenlede">Eleven things happening today, four of them free.</p>
+
+            <div class="nv-lead">
+              <div class="nv-lead-img" aria-hidden="true"></div>
+              <div class="nv-lead-t">Dardanelle lock reopens after two weeks of repairs</div>
+              <div class="nv-story-b">The Courier &middot; 6:02 am</div>
+            </div>
+
+            <div class="nv-storyrow">
+              <div class="nv-thumb" aria-hidden="true"></div>
+              <div>
+                <div class="nv-story-t">Tech trustees approve the West Q Street parking plan</div>
+                <div class="nv-story-b">Arkansas Tech News &middot; yesterday</div>
+              </div>
+            </div>
+            <div class="nv-storyrow">
+              <div class="nv-thumb" aria-hidden="true"></div>
+              <div>
+                <div class="nv-story-t">Brush pickup moves to the second Monday through September</div>
+                <div class="nv-story-b">City of Russellville &middot; yesterday</div>
+              </div>
+            </div>
+          </main>
+
+          <aside class="nv-desk-aside" aria-label="Around this">
+            <div class="nv-aside-card" data-tone="notice">
+              <div class="nv-aside-label">
+                <svg class="i-sm i" aria-hidden="true"><use href="#i-megaphone"/></svg> Notice
+              </div>
+              <div class="nv-aside-t">Burn ban in effect for Pope County</div>
+              <div class="nv-aside-s">Posted 8:15 am by the county judge's office</div>
+            </div>
+
+            <div class="nv-aside-block">
+              <div class="nv-aside-label">Open now</div>
+              <div class="nv-aside-row">Old South Restaurant <span>until 8 pm</span></div>
+              <div class="nv-aside-row">Sunny Side Up Cafe <span>until 2 pm</span></div>
+              <div class="nv-aside-row">Pope County Library <span>until 6 pm</span></div>
+            </div>
+
+            <div class="nv-aside-block">
+              <div class="nv-aside-label">Shipped this week</div>
+              <div class="nv-aside-row">Lake level, live <span>@hollis</span></div>
+              <div class="nv-aside-row">Trash day lookup <span>@merrittp</span></div>
+              <a class="nv-aside-link" href="#navigation">All 34 creations
+                <svg class="i-sm i" aria-hidden="true"><use href="#i-arrow-right"/></svg>
+              </a>
+            </div>
+          </aside>
+        </div>
+      </div>
+    </div>
+
+    <p class="why">Today is <b>640px of reading column and nothing else</b>, centred against a 220px
+    rail, with the peripheral things in a third column that a resident can ignore forever without
+    missing anything. The obvious move at this width is a dashboard of cards, and it is the wrong
+    one: a dashboard implies everything is equally urgent, which is exactly the Nextdoor feeling we
+    are avoiding. <b>Nearby is different and gets the wide grid</b>, because browsing 700 businesses
+    is a scan rather than a read, and a scan wants many things in the eye at once. The test is what
+    the column is <em>for</em>, not how much room the window happens to have.</p>
+  </div>
+
+  <!-- ═══ 7. desktop shell, Nearby ═══════════════════════════════════════════ -->
+
+  <div class="spec">
+    <div class="spec-label">Desktop shell at 1200px, Nearby <em>Same rail, same bar, no reading cap. Browsing wants breadth; the aside is gone because the grid is the content.</em></div>
+
+    <div class="nv-deskframe">
+      <div class="nv-desk" data-view="nearby">
+        <header class="nv-bar nv-desk-topbar">
+          <div class="nv-mark" aria-hidden="true"></div>
+          <div class="nv-brand">
+            <div class="nv-wordmark">Town Square</div>
+            <div class="nv-place">Russellville, Arkansas
+              <svg class="i-sm i" aria-hidden="true"><use href="#i-chevron-down"/></svg>
+            </div>
+          </div>
+          <div class="nv-desk-search">
+            <svg class="i-sm i" aria-hidden="true"><use href="#i-search"/></svg>
+            <span>Search the town</span>
+            <span class="nv-kbd">/</span>
+          </div>
+          <div class="nv-actions">
+            <button class="nv-iconbtn" type="button" aria-label="Notifications, none unread">
+              <svg class="i" aria-hidden="true"><use href="#i-bell"/></svg>
+            </button>
+            <button class="nv-avatarbtn" type="button" aria-label="Your account, verified resident">
+              <span class="nv-avatar" data-verified>JB</span>
+            </button>
+          </div>
+        </header>
+
+        <div class="nv-desk-body">
+          <nav class="nv-desk-rail" aria-label="Main">
+            <a class="nv-rail-item" href="#navigation">
+              <svg class="i" aria-hidden="true"><use href="#i-home"/></svg> Today
+            </a>
+            <a class="nv-rail-item" href="#navigation" aria-current="page">
+              <svg class="i" aria-hidden="true"><use href="#i-compass"/></svg> Nearby
+            </a>
+            <a class="nv-rail-item" href="#navigation">
+              <svg class="i" aria-hidden="true"><use href="#i-calendar"/></svg> Calendar
+              <span class="nv-rail-count">3</span>
+            </a>
+            <a class="nv-rail-item" href="#navigation">
+              <svg class="i" aria-hidden="true"><use href="#i-puzzle"/></svg> Creations
+            </a>
+            <a class="nv-rail-item" href="#navigation">
+              <svg class="i" aria-hidden="true"><use href="#i-user"/></svg> You
+            </a>
+            <div class="nv-rail-note">
+              714 places, 61 of them added by residents.
+            </div>
+          </nav>
+
+          <main class="nv-desk-main">
+            <nav class="nv-crumbs" aria-label="Breadcrumb">
+              <a href="#navigation">Nearby</a>
+              <svg class="i-sm i" aria-hidden="true"><use href="#i-chevron-right"/></svg>
+              <a href="#navigation">Home services</a>
+              <svg class="i-sm i" aria-hidden="true"><use href="#i-chevron-right"/></svg>
+              <span aria-current="page">Roofing</span>
+            </nav>
+            <h3 class="nv-desk-h1">Roofing</h3>
+            <p class="nv-screenlede">Nine in town, four that answer the phone on a Saturday.</p>
+
+            <div class="nv-grid">
+              <div class="nv-tile">
+                <div class="nv-tile-img" aria-hidden="true"></div>
+                <div class="nv-tile-n">Dardanelle Roofing Co.</div>
+                <div class="nv-tile-d"><span class="nv-open">Open</span> until 5 pm &middot; W Main St</div>
+              </div>
+              <div class="nv-tile">
+                <div class="nv-tile-img" aria-hidden="true"></div>
+                <div class="nv-tile-n">Valley Metal Roofing</div>
+                <div class="nv-tile-d">Closed &middot; opens 7 am &middot; Weir Rd</div>
+              </div>
+              <div class="nv-tile">
+                <div class="nv-tile-img" aria-hidden="true"></div>
+                <div class="nv-tile-n">Hutchens &amp; Sons</div>
+                <div class="nv-tile-d"><span class="nv-open">Open</span> until 4 pm &middot; S Arkansas Ave</div>
+              </div>
+              <div class="nv-tile">
+                <div class="nv-tile-img" aria-hidden="true"></div>
+                <div class="nv-tile-n">Pope County Exteriors</div>
+                <div class="nv-tile-d">By appointment &middot; E Parkway Dr</div>
+              </div>
+              <div class="nv-tile">
+                <div class="nv-tile-img" aria-hidden="true"></div>
+                <div class="nv-tile-n">Riverbend Roof &amp; Gutter</div>
+                <div class="nv-tile-d"><span class="nv-open">Open</span> until 6 pm &middot; N El Paso Ave</div>
+              </div>
+              <div class="nv-tile">
+                <div class="nv-tile-img" aria-hidden="true"></div>
+                <div class="nv-tile-n">Tucker Brothers Construction</div>
+                <div class="nv-tile-d">Closed &middot; opens Monday &middot; Bernice Ave</div>
+              </div>
+            </div>
+          </main>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ 8. page headers ════════════════════════════════════════════════════ -->
+
+  <div class="spec">
+    <div class="spec-label">Page headers, three registers <em>Editorial says what this is, utility says where you came from, host says this is not us.</em></div>
+
+    <div class="spec-grid">
+      <div class="plate">
+        <div class="nv-barcap">Editorial, no subtitle</div>
+        <header class="nv-pagehead" data-register="editorial">
+          <div class="nv-eyebrow">Tuesday, August 5</div>
+          <h3 class="nv-ph-title">Good morning.</h3>
+        </header>
+      </div>
+
+      <div class="plate">
+        <div class="nv-barcap">Editorial, with subtitle</div>
+        <header class="nv-pagehead" data-register="editorial">
+          <div class="nv-eyebrow">This weekend</div>
+          <h3 class="nv-ph-title">Riverfest takes the levee back</h3>
+          <p class="nv-ph-sub">Three days on Front Street, and the shuttle from Tech runs until
+          eleven.</p>
+        </header>
+      </div>
+
+      <div class="plate">
+        <div class="nv-barcap">Utility, no subtitle</div>
+        <header class="nv-pagehead" data-register="utility">
+          <button class="nv-ph-back" type="button" aria-label="Back to You">
+            <svg class="i" aria-hidden="true"><use href="#i-chevron-left"/></svg>
+          </button>
+          <h3 class="nv-ph-title">Notifications</h3>
+          <button class="nv-ph-action" type="button">Save</button>
+        </header>
+      </div>
+
+      <div class="plate">
+        <div class="nv-barcap">Utility, with subtitle</div>
+        <header class="nv-pagehead" data-register="utility">
+          <button class="nv-ph-back" type="button" aria-label="Back to You">
+            <svg class="i" aria-hidden="true"><use href="#i-chevron-left"/></svg>
+          </button>
+          <div class="nv-ph-stack">
+            <h3 class="nv-ph-title">Notifications</h3>
+            <p class="nv-ph-sub">This device only</p>
+          </div>
+          <button class="nv-ph-action" type="button">Save</button>
+        </header>
+      </div>
+
+      <div class="plate">
+        <div class="nv-barcap">Host, no subtitle</div>
+        <header class="nv-pagehead" data-register="host">
+          <button class="nv-ph-back" type="button" aria-label="Close this creation">
+            <svg class="i" aria-hidden="true"><use href="#i-close"/></svg>
+          </button>
+          <div class="nv-ph-stack">
+            <div class="nv-ph-chip">App</div>
+            <h3 class="nv-ph-title">Lake level, live</h3>
+          </div>
+          <button class="nv-ph-action" type="button" aria-label="About this creation">
+            <svg class="i" aria-hidden="true"><use href="#i-info"/></svg>
+          </button>
+        </header>
+      </div>
+
+      <div class="plate">
+        <div class="nv-barcap">Host, with subtitle</div>
+        <header class="nv-pagehead" data-register="host">
+          <button class="nv-ph-back" type="button" aria-label="Close this creation">
+            <svg class="i" aria-hidden="true"><use href="#i-close"/></svg>
+          </button>
+          <div class="nv-ph-stack">
+            <div class="nv-ph-chip">App</div>
+            <h3 class="nv-ph-title">Lake level, live</h3>
+            <p class="nv-ph-sub">by @hollis &middot; sandboxed, reads nothing about you</p>
+          </div>
+          <button class="nv-ph-action" type="button" aria-label="About this creation">
+            <svg class="i" aria-hidden="true"><use href="#i-info"/></svg>
+          </button>
+        </header>
+      </div>
+    </div>
+
+    <p class="why">The host header is the seam a resident can feel. It is the one header set on navy,
+    it names the neighbour who built the thing, and it says out loud what the sandbox can see. A
+    creation that looked exactly like the rest of the app would be more elegant and much worse:
+    <b>the whole trust model depends on a resident knowing when they have stepped into something a
+    neighbour wrote</b>. The close control is a cross, not a chevron, because you are leaving rather
+    than going back.</p>
+  </div>
+
+  <!-- ═══ 9. tabs, segments, chips ═══════════════════════════════════════════ -->
+
+  <div class="spec">
+    <div class="spec-label">Tabs, segmented control, chip rail <em>Three shapes for three jobs: peer views, one view filtered, and a list too long to fit.</em></div>
+
+    <div class="nv-stack nv-stack-wide">
+      <div class="nv-barwrap">
+        <div class="nv-barcap">Underline tabs &mdash; peer views, each a different set of things</div>
+        <div class="nv-tabs" role="tablist" aria-label="Nearby views" id="nv-tabs">
+          <button class="nv-tabs-item" role="tab" type="button" aria-selected="true">Businesses <span class="nv-tabs-n">714</span></button>
+          <button class="nv-tabs-item" role="tab" type="button" aria-selected="false">Articles <span class="nv-tabs-n">128</span></button>
+          <button class="nv-tabs-item" role="tab" type="button" aria-selected="false">Podcasts <span class="nv-tabs-n">9</span></button>
+          <button class="nv-tabs-item" role="tab" type="button" aria-selected="false" disabled>Trails</button>
+        </div>
+        <p class="nv-barnote">Underline plus <code>aria-selected</code> plus a weight change. Counts
+        sit in the tab because "128 articles" is a reason to press it.</p>
+      </div>
+
+      <div class="nv-barwrap">
+        <div class="nv-barcap">Segmented control &mdash; one view, filtered</div>
+        <div class="nv-seg" role="group" aria-label="Filter places" id="nv-seg">
+          <button class="nv-seg-item" type="button" aria-pressed="true">All</button>
+          <button class="nv-seg-item" type="button" aria-pressed="false">Open now</button>
+          <button class="nv-seg-item" type="button" aria-pressed="false">Kid friendly</button>
+        </div>
+        <p class="nv-barnote">A pill, never an underline. Underline means "you are somewhere else
+        now"; a pill means "the same list, fewer of them".</p>
+      </div>
+
+      <div class="nv-barwrap">
+        <div class="nv-barcap">Chip rail &mdash; the long category list, scrollable</div>
+        <div class="nv-chips-wrap">
+          <div class="nv-chips" role="group" aria-label="Categories" tabindex="0">
+            <button class="nv-chip" type="button" aria-pressed="true">All</button>
+            <button class="nv-chip" type="button" aria-pressed="false">Restaurants</button>
+            <button class="nv-chip" type="button" aria-pressed="false">Coffee</button>
+            <button class="nv-chip" type="button" aria-pressed="false">Auto</button>
+            <button class="nv-chip" type="button" aria-pressed="false">Home services</button>
+            <button class="nv-chip" type="button" aria-pressed="false">Health</button>
+            <button class="nv-chip" type="button" aria-pressed="false">Churches</button>
+            <button class="nv-chip" type="button" aria-pressed="false">Outdoors</button>
+            <button class="nv-chip" type="button" aria-pressed="false">Groceries</button>
+            <button class="nv-chip" type="button" aria-pressed="false">Salons</button>
+            <button class="nv-chip" type="button" aria-pressed="false">Farm and ranch</button>
+          </div>
+        </div>
+        <p class="nv-barnote">The rail bleeds to the right edge and a fade sits over the last 32px,
+        which is the only honest way to say "there is more". A chip that ends flush with the margin
+        reads as the end of the list.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ 10. search ═════════════════════════════════════════════════════════ -->
+
+  <div class="spec">
+    <div class="spec-label">Search, resting and expanded <em>One field over five kinds of thing. A resident looking for Riverfest does not know whether it is a story or an event.</em></div>
+
+    <div class="spec-row">
+      <div class="phone">
+        <div class="phone-cap">Search &mdash; press to expand</div>
+        <div class="phone-screen">
+          <div class="nv-screen">
+            <header class="nv-bar">
+              <div class="nv-mark" aria-hidden="true"></div>
+              <div class="nv-brand">
+                <div class="nv-wordmark">Town Square</div>
+                <div class="nv-place">Russellville, Arkansas</div>
+              </div>
+              <div class="nv-actions">
+                <button class="nv-iconbtn" type="button" id="nv-search-open" aria-label="Search the town" aria-expanded="false" aria-controls="nv-omni">
+                  <svg class="i" aria-hidden="true"><use href="#i-search"/></svg>
+                </button>
+                <button class="nv-avatarbtn" type="button" aria-label="Your account, verified resident">
+                  <span class="nv-avatar" data-verified>JB</span>
+                </button>
+              </div>
+            </header>
+
+            <div class="nv-screenbody">
+              <div class="nv-eyebrow">Tuesday, August 5</div>
+              <h3 class="nv-screentitle">Good morning.</h3>
+              <p class="nv-screenlede">Eleven things happening today, four of them free.</p>
+              <div class="nv-storyrow">
+                <div class="nv-thumb" aria-hidden="true"></div>
+                <div>
+                  <div class="nv-story-t">Dardanelle lock reopens after two weeks of repairs</div>
+                  <div class="nv-story-b">The Courier &middot; 6:02 am</div>
+                </div>
+              </div>
+              <div class="nv-storyrow">
+                <div class="nv-thumb" aria-hidden="true"></div>
+                <div>
+                  <div class="nv-story-t">Brush pickup moves to the second Monday</div>
+                  <div class="nv-story-b">City of Russellville &middot; yesterday</div>
+                </div>
+              </div>
+            </div>
+
+            <div class="nv-omni" id="nv-omni" hidden>
+              <div class="nv-omni-head">
+                <div class="nv-omni-field">
+                  <svg class="i" aria-hidden="true"><use href="#i-search"/></svg>
+                  <span class="nv-omni-q">river</span>
+                  <span class="nv-caret" aria-hidden="true"></span>
+                </div>
+                <button class="nv-omni-cancel" type="button" id="nv-search-close">Cancel</button>
+              </div>
+              <div class="nv-omni-body">
+                <div class="nv-omni-group">
+                  <div class="nv-omni-glabel">Stories</div>
+                  <a class="nv-omni-row" href="#navigation">
+                    <svg class="i nv-omni-ico" aria-hidden="true"><use href="#i-newspaper"/></svg>
+                    <span class="nv-omni-txt">
+                      <span class="nv-omni-t">Dardanelle lock reopens after two weeks of repairs</span>
+                      <span class="nv-omni-s">The Courier &middot; 6:02 am</span>
+                    </span>
+                  </a>
+                  <a class="nv-omni-row" href="#navigation">
+                    <svg class="i nv-omni-ico" aria-hidden="true"><use href="#i-newspaper"/></svg>
+                    <span class="nv-omni-txt">
+                      <span class="nv-omni-t">River level holds steady ahead of the weekend</span>
+                      <span class="nv-omni-s">The Courier &middot; Sunday</span>
+                    </span>
+                  </a>
+                  <a class="nv-omni-more" href="#navigation">All 14 stories
+                    <svg class="i-sm i" aria-hidden="true"><use href="#i-chevron-right"/></svg>
+                  </a>
+                </div>
+
+                <div class="nv-omni-group">
+                  <div class="nv-omni-glabel">Events</div>
+                  <a class="nv-omni-row" href="#navigation">
+                    <svg class="i nv-omni-ico" aria-hidden="true"><use href="#i-ticket"/></svg>
+                    <span class="nv-omni-txt">
+                      <span class="nv-omni-t">Riverfest kickoff</span>
+                      <span class="nv-omni-s">Friday 6:00 pm &middot; Depot Park</span>
+                    </span>
+                  </a>
+                  <a class="nv-omni-row" href="#navigation">
+                    <svg class="i nv-omni-ico" aria-hidden="true"><use href="#i-ticket"/></svg>
+                    <span class="nv-omni-txt">
+                      <span class="nv-omni-t">River cleanup, Old Post Park</span>
+                      <span class="nv-omni-s">Saturday 8:00 am &middot; gloves provided</span>
+                    </span>
+                  </a>
+                  <a class="nv-omni-more" href="#navigation">All 6 events
+                    <svg class="i-sm i" aria-hidden="true"><use href="#i-chevron-right"/></svg>
+                  </a>
+                </div>
+
+                <div class="nv-omni-group">
+                  <div class="nv-omni-glabel">Places</div>
+                  <a class="nv-omni-row" href="#navigation">
+                    <svg class="i nv-omni-ico" aria-hidden="true"><use href="#i-storefront"/></svg>
+                    <span class="nv-omni-txt">
+                      <span class="nv-omni-t">River Valley Cycling</span>
+                      <span class="nv-omni-s"><span class="nv-open">Open</span> until 6 pm &middot; 300 W Main St</span>
+                    </span>
+                  </a>
+                  <a class="nv-omni-more" href="#navigation">All 9 places
+                    <svg class="i-sm i" aria-hidden="true"><use href="#i-chevron-right"/></svg>
+                  </a>
+                </div>
+
+                <div class="nv-omni-group">
+                  <div class="nv-omni-glabel">Creations</div>
+                  <a class="nv-omni-row" href="#navigation">
+                    <svg class="i nv-omni-ico" aria-hidden="true"><use href="#i-puzzle"/></svg>
+                    <span class="nv-omni-txt">
+                      <span class="nv-omni-t">Lake level, live</span>
+                      <span class="nv-omni-s">by @hollis &middot; updated 12 minutes ago</span>
+                    </span>
+                  </a>
+                </div>
+
+                <div class="nv-omni-group">
+                  <div class="nv-omni-glabel">People</div>
+                  <a class="nv-omni-row" href="#navigation">
+                    <svg class="i nv-omni-ico" aria-hidden="true"><use href="#i-user"/></svg>
+                    <span class="nv-omni-txt">
+                      <span class="nv-omni-t">@riverrat_kev</span>
+                      <span class="nv-omni-s">Verified &middot; built 3 creations</span>
+                    </span>
+                  </a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="plate nv-rules">
+        <div class="nv-rule">
+          <div class="nv-rule-k">Grouped</div>
+          <div class="nv-rule-v">Five groups, each with its own leading icon, because the icon is
+          what lets a resident skip four groups without reading them. A single ranked list mixes a
+          business with a neighbour and makes both harder to find.</div>
+        </div>
+        <div class="nv-rule">
+          <div class="nv-rule-k">Capped</div>
+          <div class="nv-rule-v">Two rows per group and a see-all row. The overlay is for
+          recognising the thing you already had in mind, not for exhausting the index.</div>
+        </div>
+        <div class="nv-rule">
+          <div class="nv-rule-k">Order</div>
+          <div class="nv-rule-v">Groups sort by best match, not by a fixed hierarchy. Search
+          "Riverfest" in July and Events comes first; search it in November and Stories does.</div>
+        </div>
+        <div class="nv-rule">
+          <div class="nv-rule-k">Privacy</div>
+          <div class="nv-rule-v">People match on handle only. There is no address to search on and
+          there never will be, so the field cannot become a lookup tool for finding a neighbour.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ 11. search, the three thin states ══════════════════════════════════ -->
+
+  <div class="spec">
+    <div class="spec-label">Search with nothing to show <em>An empty field is a chance to teach the index. A dead end should hand you the next thing to try.</em></div>
+
+    <div class="spec-row">
+      <div class="phone">
+        <div class="phone-cap">Empty &mdash; first time, no history</div>
+        <div class="phone-screen">
+          <div class="nv-screen">
+            <div class="nv-omni" data-static>
+              <div class="nv-omni-head">
+                <div class="nv-omni-field">
+                  <svg class="i" aria-hidden="true"><use href="#i-search"/></svg>
+                  <span class="nv-omni-ph">Search Russellville</span>
+                  <span class="nv-caret" aria-hidden="true"></span>
+                </div>
+                <button class="nv-omni-cancel" type="button">Cancel</button>
+              </div>
+              <div class="nv-omni-body">
+                <p class="nv-omni-lede">Stories, events, places, creations and people, all at
+                once.</p>
+                <div class="nv-omni-group">
+                  <div class="nv-omni-glabel">Try</div>
+                  <a class="nv-omni-row" href="#navigation">
+                    <svg class="i nv-omni-ico" aria-hidden="true"><use href="#i-clock"/></svg>
+                    <span class="nv-omni-txt"><span class="nv-omni-t">What is open right now</span></span>
+                  </a>
+                  <a class="nv-omni-row" href="#navigation">
+                    <svg class="i nv-omni-ico" aria-hidden="true"><use href="#i-ticket"/></svg>
+                    <span class="nv-omni-txt"><span class="nv-omni-t">Riverfest schedule</span></span>
+                  </a>
+                  <a class="nv-omni-row" href="#navigation">
+                    <svg class="i nv-omni-ico" aria-hidden="true"><use href="#i-map-pin"/></svg>
+                    <span class="nv-omni-txt"><span class="nv-omni-t">Brush pickup day</span></span>
+                  </a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="phone">
+        <div class="phone-cap">Recent searches</div>
+        <div class="phone-screen">
+          <div class="nv-screen">
+            <div class="nv-omni" data-static>
+              <div class="nv-omni-head">
+                <div class="nv-omni-field">
+                  <svg class="i" aria-hidden="true"><use href="#i-search"/></svg>
+                  <span class="nv-omni-ph">Search Russellville</span>
+                  <span class="nv-caret" aria-hidden="true"></span>
+                </div>
+                <button class="nv-omni-cancel" type="button">Cancel</button>
+              </div>
+              <div class="nv-omni-body">
+                <div class="nv-omni-group">
+                  <div class="nv-omni-glabel">Recent
+                    <button class="nv-omni-clear" type="button">Clear</button>
+                  </div>
+                  <a class="nv-omni-row" href="#navigation">
+                    <svg class="i nv-omni-ico" aria-hidden="true"><use href="#i-history"/></svg>
+                    <span class="nv-omni-txt"><span class="nv-omni-t">riverfest parking</span></span>
+                    <svg class="i-sm i nv-omni-fill" aria-hidden="true"><use href="#i-arrow-up"/></svg>
+                  </a>
+                  <a class="nv-omni-row" href="#navigation">
+                    <svg class="i nv-omni-ico" aria-hidden="true"><use href="#i-history"/></svg>
+                    <span class="nv-omni-txt"><span class="nv-omni-t">old south hours</span></span>
+                    <svg class="i-sm i nv-omni-fill" aria-hidden="true"><use href="#i-arrow-up"/></svg>
+                  </a>
+                  <a class="nv-omni-row" href="#navigation">
+                    <svg class="i nv-omni-ico" aria-hidden="true"><use href="#i-history"/></svg>
+                    <span class="nv-omni-txt"><span class="nv-omni-t">brush pickup</span></span>
+                    <svg class="i-sm i nv-omni-fill" aria-hidden="true"><use href="#i-arrow-up"/></svg>
+                  </a>
+                </div>
+                <p class="nv-omni-foot">
+                  <svg class="i-sm i" aria-hidden="true"><use href="#i-lock"/></svg>
+                  Kept on this device. Never sent anywhere, never used to rank anything.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="phone">
+        <div class="phone-cap">No results</div>
+        <div class="phone-screen">
+          <div class="nv-screen">
+            <div class="nv-omni" data-static>
+              <div class="nv-omni-head">
+                <div class="nv-omni-field">
+                  <svg class="i" aria-hidden="true"><use href="#i-search"/></svg>
+                  <span class="nv-omni-q">kayak rental</span>
+                  <span class="nv-caret" aria-hidden="true"></span>
+                </div>
+                <button class="nv-omni-cancel" type="button">Cancel</button>
+              </div>
+              <div class="nv-omni-body">
+                <p class="nv-omni-lede">Nothing in the directory is filed under kayak rental
+                yet.</p>
+                <div class="nv-omni-group">
+                  <div class="nv-omni-glabel">Closest things in town</div>
+                  <a class="nv-omni-row" href="#navigation">
+                    <svg class="i nv-omni-ico" aria-hidden="true"><use href="#i-map-pin"/></svg>
+                    <span class="nv-omni-txt">
+                      <span class="nv-omni-t">Lake Dardanelle State Park</span>
+                      <span class="nv-omni-s">Marina rents canoes and paddle boats &middot; 8 am to 5 pm</span>
+                    </span>
+                  </a>
+                  <a class="nv-omni-row" href="#navigation">
+                    <svg class="i nv-omni-ico" aria-hidden="true"><use href="#i-storefront"/></svg>
+                    <span class="nv-omni-txt">
+                      <span class="nv-omni-t">River Valley Cycling</span>
+                      <span class="nv-omni-s">Bikes and racks, no boats &middot; 300 W Main St</span>
+                    </span>
+                  </a>
+                </div>
+                <div class="nv-omni-offer">
+                  <div class="nv-offer-t">Know a place that rents kayaks?</div>
+                  <div class="nv-offer-s">Add it and it is in the directory for everyone, tonight.</div>
+                  <button class="nv-offer-btn" type="button">
+                    <svg class="i-sm i" aria-hidden="true"><use href="#i-plus"/></svg>
+                    Add a place
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <p class="why">The no-results screen is the one that decides whether a directory grows. "No
+    results found" is a full stop; <b>two near misses and an add button is an invitation</b>, and the
+    person who just searched for the missing thing is the single best-qualified person in town to
+    fill the gap. The 700 businesses we start with came from a scrape. The ones that make it worth
+    opening in year two come from this screen.</p>
+  </div>
+
+  <!-- ═══ 12. bottom sheet ═══════════════════════════════════════════════════ -->
+
+  <div class="spec">
+    <div class="spec-label">Bottom sheet at three heights <em>The handle promises a drag. If the sheet cannot be dragged, it does not get a handle.</em></div>
+
+    <div class="spec-row">
+      <div class="phone">
+        <div class="phone-cap">Sheet &mdash; press to change height</div>
+        <div class="phone-screen">
+          <div class="nv-screen" id="nv-sheetscreen" data-height="half">
+            <header class="nv-bar">
+              <div class="nv-mark" aria-hidden="true"></div>
+              <div class="nv-brand">
+                <div class="nv-wordmark">Town Square</div>
+                <div class="nv-place">Russellville, Arkansas</div>
+              </div>
+              <div class="nv-actions">
+                <button class="nv-avatarbtn" type="button" aria-label="Your account, verified resident">
+                  <span class="nv-avatar" data-verified>JB</span>
+                </button>
+              </div>
+            </header>
+            <div class="nv-screenbody">
+              <div class="nv-eyebrow">This weekend</div>
+              <h3 class="nv-screentitle">Riverfest takes the levee back</h3>
+              <p class="nv-screenlede">Three days on Front Street, and the shuttle from Tech runs
+              until eleven.</p>
+            </div>
+
+            <div class="nv-scrim" data-sheet-close></div>
+            <div class="nv-modal" role="dialog" aria-modal="true" aria-label="Going to Riverfest">
+              <button class="nv-grab" type="button" aria-label="Drag to resize, or press to close" data-sheet-close></button>
+              <div class="nv-modal-body">
+                <div class="nv-modal-t">Going to Riverfest kickoff</div>
+                <p class="nv-modal-s">Friday 6:00 pm at Depot Park. 41 neighbours are going.</p>
+                <div class="nv-modal-rows">
+                  <div class="nv-modal-row">
+                    <svg class="i" aria-hidden="true"><use href="#i-calendar"/></svg>
+                    Add to your calendar
+                    <svg class="i-sm i nv-modal-go" aria-hidden="true"><use href="#i-chevron-right"/></svg>
+                  </div>
+                  <div class="nv-modal-row">
+                    <svg class="i" aria-hidden="true"><use href="#i-directions"/></svg>
+                    Parking and the shuttle route
+                    <svg class="i-sm i nv-modal-go" aria-hidden="true"><use href="#i-chevron-right"/></svg>
+                  </div>
+                  <div class="nv-modal-row">
+                    <svg class="i" aria-hidden="true"><use href="#i-share"/></svg>
+                    Send to someone
+                    <svg class="i-sm i nv-modal-go" aria-hidden="true"><use href="#i-chevron-right"/></svg>
+                  </div>
+                  <div class="nv-modal-row">
+                    <svg class="i" aria-hidden="true"><use href="#i-bell"/></svg>
+                    Remind me an hour before
+                    <svg class="i-sm i nv-modal-go" aria-hidden="true"><use href="#i-chevron-right"/></svg>
+                  </div>
+                  <div class="nv-modal-row">
+                    <svg class="i" aria-hidden="true"><use href="#i-flag"/></svg>
+                    Something is wrong with this listing
+                    <svg class="i-sm i nv-modal-go" aria-hidden="true"><use href="#i-chevron-right"/></svg>
+                  </div>
+                </div>
+                <p class="nv-modal-note">Saying you are going shows your handle to other people
+                going. It does not show where you live, because we do not know.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="nv-sheetctl" role="group" aria-label="Sheet height">
+          <button class="nv-seg-item" type="button" data-sheet-h="peek" aria-pressed="false">Peek</button>
+          <button class="nv-seg-item" type="button" data-sheet-h="half" aria-pressed="true">Half</button>
+          <button class="nv-seg-item" type="button" data-sheet-h="full" aria-pressed="false">Full</button>
+        </div>
+      </div>
+
+      <div class="plate nv-rules">
+        <div class="nv-rule">
+          <div class="nv-rule-k">Peek</div>
+          <div class="nv-rule-v">180px. One decision and a way out. The scrim stays light because
+          the page behind is still the thing you are looking at.</div>
+        </div>
+        <div class="nv-rule">
+          <div class="nv-rule-k">Half</div>
+          <div class="nv-rule-v">56%. The default. Enough for a list of actions with the context
+          still visible above it, which is what keeps a sheet from feeling like a new page.</div>
+        </div>
+        <div class="nv-rule">
+          <div class="nv-rule-k">Full</div>
+          <div class="nv-rule-v">Screen minus 56px. The strip of page left at the top is deliberate:
+          it is the only thing telling a resident this is a layer and not a navigation.</div>
+        </div>
+        <div class="nv-rule">
+          <div class="nv-rule-k">Scrim</div>
+          <div class="nv-rule-v">Ink at 44%, deepening with height. Tapping it closes, the page
+          behind stops scrolling, and focus is trapped inside until it does.</div>
+        </div>
+      </div>
+
+      <div class="nv-drawerdemo">
+        <div class="nv-barcap">Desktop equivalent, the side drawer</div>
+        <div class="nv-drawerframe">
+          <div class="nv-drawer-page">
+            <div class="nv-drawer-line"></div>
+            <div class="nv-drawer-line" data-short></div>
+            <div class="nv-drawer-line"></div>
+            <div class="nv-drawer-line" data-short></div>
+          </div>
+          <div class="nv-scrim" data-static></div>
+          <aside class="nv-drawer" role="dialog" aria-modal="true" aria-label="Going to Riverfest">
+            <header class="nv-drawer-head">
+              <div class="nv-modal-t">Going to Riverfest kickoff</div>
+              <button class="nv-iconbtn" type="button" aria-label="Close">
+                <svg class="i" aria-hidden="true"><use href="#i-close"/></svg>
+              </button>
+            </header>
+            <div class="nv-modal-rows">
+              <div class="nv-modal-row">
+                <svg class="i" aria-hidden="true"><use href="#i-calendar"/></svg> Add to your calendar
+              </div>
+              <div class="nv-modal-row">
+                <svg class="i" aria-hidden="true"><use href="#i-directions"/></svg> Parking and the shuttle
+              </div>
+              <div class="nv-modal-row">
+                <svg class="i" aria-hidden="true"><use href="#i-share"/></svg> Send to someone
+              </div>
+            </div>
+          </aside>
+        </div>
+        <p class="nv-barnote">Same content, same order, right edge instead of bottom, and no grab
+        handle because there is nothing to drag with a mouse.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ 13. back and breadcrumb ════════════════════════════════════════════ -->
+
+  <div class="spec">
+    <div class="spec-label">Back, and where a breadcrumb earns its place <em>Back is a history. A breadcrumb is a claim about structure, and most screens do not have one.</em></div>
+
+    <div class="nv-stack nv-stack-wide">
+      <div class="nv-barwrap">
+        <div class="nv-barcap">A story &mdash; back only</div>
+        <div class="plate">
+          <button class="nv-back" type="button">
+            <svg class="i" aria-hidden="true"><use href="#i-chevron-left"/></svg>
+            Today
+          </button>
+          <p class="nv-barnote">The label names where you will land, not the word "Back". A resident
+          who arrived from a shared link gets "Today" here too, because that is where the control
+          actually goes.</p>
+        </div>
+      </div>
+
+      <div class="nv-barwrap">
+        <div class="nv-barcap">A directory category, three levels deep &mdash; breadcrumb</div>
+        <div class="plate">
+          <nav class="nv-crumbs" aria-label="Breadcrumb">
+            <a href="#navigation">Nearby</a>
+            <svg class="i-sm i" aria-hidden="true"><use href="#i-chevron-right"/></svg>
+            <a href="#navigation">Home services</a>
+            <svg class="i-sm i" aria-hidden="true"><use href="#i-chevron-right"/></svg>
+            <span aria-current="page">Roofing</span>
+          </nav>
+          <p class="nv-barnote">Nine roofers is a leaf on a tree with 700 leaves. The crumb is how a
+          resident gets back up one level to the other home services rather than out to Nearby and
+          in again.</p>
+        </div>
+      </div>
+
+      <div class="nv-barwrap">
+        <div class="nv-barcap">Collapsed on a narrow screen</div>
+        <div class="plate">
+          <nav class="nv-crumbs" aria-label="Breadcrumb">
+            <a href="#navigation">Nearby</a>
+            <svg class="i-sm i" aria-hidden="true"><use href="#i-chevron-right"/></svg>
+            <button class="nv-crumb-more" type="button" aria-label="Show 2 skipped levels">
+              <svg class="i-sm i" aria-hidden="true"><use href="#i-more-horizontal"/></svg>
+            </button>
+            <svg class="i-sm i" aria-hidden="true"><use href="#i-chevron-right"/></svg>
+            <span aria-current="page">Roofing</span>
+          </nav>
+          <p class="nv-barnote">First and last survive, the middle collapses to a control that
+          expands. Truncating the last crumb would hide the one thing the resident is looking at.</p>
+        </div>
+      </div>
+    </div>
+
+    <p class="why">Today, Calendar, Creations and You get <b>no breadcrumb at all</b>. They are flat,
+    and a crumb reading "Today &rsaquo; Dardanelle lock reopens" invents a hierarchy to describe a
+    tap. The directory is the only genuinely nested thing in the product, so it is the only place
+    that earns one.</p>
+  </div>
+
+  <!-- ═══ 14. command palette ════════════════════════════════════════════════ -->
+
+  <div class="spec">
+    <div class="spec-label">Command palette, builder path only <em>Deliberately unlike resident search. If the two ever look alike, the builder tooling has started leaking.</em></div>
+
+    <div class="spec-row">
+      <div class="nv-palwrap">
+        <div class="nv-palette" role="dialog" aria-modal="true" aria-label="Command palette">
+          <div class="nv-pal-head">
+            <svg class="i-sm i" aria-hidden="true"><use href="#i-terminal"/></svg>
+            <span class="nv-pal-q">manifest</span>
+            <span class="nv-caret" aria-hidden="true"></span>
+            <span class="nv-kbd">esc</span>
+          </div>
+          <div class="nv-pal-body">
+            <div class="nv-pal-glabel">Your creations</div>
+            <div class="nv-pal-row" data-active>
+              <svg class="i-sm i nv-pal-ico" aria-hidden="true"><use href="#i-code"/></svg>
+              <span class="nv-pal-n">lake-level</span>
+              <span class="nv-pal-d">edit manifest &middot; live, 340 opens this week</span>
+              <span class="nv-kbd">&#9166;</span>
+            </div>
+            <div class="nv-pal-row">
+              <svg class="i-sm i nv-pal-ico" aria-hidden="true"><use href="#i-code"/></svg>
+              <span class="nv-pal-n">trash-day</span>
+              <span class="nv-pal-d">edit manifest &middot; draft, never submitted</span>
+            </div>
+
+            <div class="nv-pal-glabel">Commands</div>
+            <div class="nv-pal-row">
+              <svg class="i-sm i nv-pal-ico" aria-hidden="true"><use href="#i-check-circle"/></svg>
+              <span class="nv-pal-n">manifest validate</span>
+              <span class="nv-pal-d">check permissions against the review checklist</span>
+            </div>
+            <div class="nv-pal-row">
+              <svg class="i-sm i nv-pal-ico" aria-hidden="true"><use href="#i-send"/></svg>
+              <span class="nv-pal-n">manifest submit</span>
+              <span class="nv-pal-d">send to the review committee &middot; queue is 4 deep</span>
+            </div>
+            <div class="nv-pal-row">
+              <svg class="i-sm i nv-pal-ico" aria-hidden="true"><use href="#i-plug"/></svg>
+              <span class="nv-pal-n">mcp token rotate</span>
+              <span class="nv-pal-d">for the server your AI tool connects to</span>
+            </div>
+
+            <div class="nv-pal-glabel">Reference</div>
+            <div class="nv-pal-row">
+              <svg class="i-sm i nv-pal-ico" aria-hidden="true"><use href="#i-book"/></svg>
+              <span class="nv-pal-n">identity surface</span>
+              <span class="nv-pal-d">everything a creation can see: handle, verified</span>
+            </div>
+          </div>
+          <div class="nv-pal-foot">
+            <span><span class="nv-kbd">&uarr;</span><span class="nv-kbd">&darr;</span> move</span>
+            <span><span class="nv-kbd">&#9166;</span> run</span>
+            <span class="nv-pal-scope">builder session &middot; @hollis</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="plate nv-rules">
+        <div class="nv-rule">
+          <div class="nv-rule-k">Face</div>
+          <div class="nv-rule-v">Mono throughout, 12.5px, rows at 32px instead of 52px. Resident
+          search is serif and roomy; this is a tool and reads like one on sight.</div>
+        </div>
+        <div class="nv-rule">
+          <div class="nv-rule-k">Surface</div>
+          <div class="nv-rule-v">Navy dark, the only navy-dark overlay in the product. A resident
+          who has never built anything will never once see this colour full width.</div>
+        </div>
+        <div class="nv-rule">
+          <div class="nv-rule-k">Mount</div>
+          <div class="nv-rule-v">The key handler only binds when the session holds a builder scope.
+          Not hidden with CSS, not rendered and disabled: absent.</div>
+        </div>
+        <div class="nv-rule">
+          <div class="nv-rule-k">Entry</div>
+          <div class="nv-rule-v">Keyboard only. There is no button for it anywhere in the resident
+          shell, because a button is how a builder surface starts leaking into the town.</div>
+        </div>
+      </div>
+    </div>
+
+    <p class="why">Two audiences, one app, and this is where that promise is actually kept. A
+    resident who never writes a line of code should be able to use Town Square for a year and never
+    encounter a manifest, a review queue or an MCP token. <b>The separation is enforced by what
+    mounts, not by what is styled quietly</b>, and the visual distance is a second line of defence
+    so that a builder screenshot is never mistaken for the resident product.</p>
+  </div>
+
+  <!-- ═══ 15. footer and sign-off ════════════════════════════════════════════ -->
+
+  <div class="spec">
+    <div class="spec-label">Footer, sign-off and the timestamp <em>The timestamp is not decoration. It is the only way a resident can tell a quiet failure from a quiet day.</em></div>
+
+    <div class="nv-stack nv-stack-wide">
+      <div class="nv-barwrap">
+        <div class="nv-barcap">Healthy</div>
+        <div class="plate">
+          <footer class="nv-footer">
+            <div>
+              <p class="nv-signoff">Made in Russellville by people who live here.<br>
+              Nobody is selling your attention back to you.</p>
+              <p class="nv-updated">Screen last updated 6:12 am, Tuesday</p>
+            </div>
+            <div class="nv-foot-links">
+              <a class="nv-foot-link" href="#navigation">
+                <svg class="i-sm i" aria-hidden="true"><use href="#i-code"/></svg> Open source, AGPL-3.0
+              </a>
+              <a class="nv-foot-link" href="#navigation">
+                <svg class="i-sm i" aria-hidden="true"><use href="#i-git-branch"/></svg> Fork this town
+              </a>
+            </div>
+          </footer>
+        </div>
+      </div>
+
+      <div class="nv-barwrap">
+        <div class="nv-barcap">A source went quiet &mdash; last good screen served</div>
+        <div class="plate">
+          <footer class="nv-footer">
+            <div>
+              <p class="nv-signoff">Made in Russellville by people who live here.<br>
+              Nobody is selling your attention back to you.</p>
+              <p class="nv-updated" data-stale>
+                <svg class="i-sm i" aria-hidden="true"><use href="#i-alert-circle"/></svg>
+                Stories last updated 6:12 am. The county calendar has not answered since 7:00 am,
+                so events below may be out of date.
+              </p>
+            </div>
+            <div class="nv-foot-links">
+              <a class="nv-foot-link" href="#navigation">
+                <svg class="i-sm i" aria-hidden="true"><use href="#i-code"/></svg> Open source, AGPL-3.0
+              </a>
+              <a class="nv-foot-link" href="#navigation">
+                <svg class="i-sm i" aria-hidden="true"><use href="#i-git-branch"/></svg> Fork this town
+              </a>
+            </div>
+          </footer>
+        </div>
+      </div>
+    </div>
+
+    <p class="why">When a scrape fails, the API serves the last good screen rather than an error,
+    which is right: a resident opening this at 6am wants the town, not a stack trace. But that policy
+    quietly turns every failure into a lie unless something on the page says how old the answer is.
+    <b>The stale line is gold, not brick.</b> Brick is the one alarm register and it is reserved for
+    an actual emergency, which a late calendar scrape is not. Spending it here is how it stops
+    meaning anything the morning the river is up.</p>
+  </div>
+
+  <!-- ═══ 16. skip link and focus order ══════════════════════════════════════ -->
+
+  <div class="spec">
+    <div class="spec-label">Skip link and focus order <em>A real link, first in the DOM, invisible until focused. Tab into the specimen below to see it.</em></div>
+
+    <div class="spec-row">
+      <div class="nv-skipdemo">
+        <a class="nv-skip" href="#nv-skip-target">Skip to today's news</a>
+        <header class="nv-bar">
+          <div class="nv-mark" aria-hidden="true"></div>
+          <div class="nv-brand">
+            <div class="nv-wordmark">Town Square</div>
+            <div class="nv-place">Russellville, Arkansas</div>
+          </div>
+          <div class="nv-actions">
+            <button class="nv-iconbtn" type="button" aria-label="Search the town">
+              <svg class="i" aria-hidden="true"><use href="#i-search"/></svg>
+            </button>
+            <button class="nv-avatarbtn" type="button" aria-label="Your account, verified resident">
+              <span class="nv-avatar" data-verified>JB</span>
+            </button>
+          </div>
+        </header>
+        <div class="nv-screenbody" id="nv-skip-target" tabindex="-1">
+          <div class="nv-eyebrow">Tuesday, August 5</div>
+          <h3 class="nv-screentitle">Good morning.</h3>
+        </div>
+        <p class="nv-barnote">Shown here permanently so the specimen is legible on a printed sheet.
+        In the product it is <code>transform: translateY(-140%)</code> until <code>:focus</code>.</p>
+        <a class="nv-skip" data-shown href="#nv-skip-target">Skip to today's news</a>
+      </div>
+
+      <div class="plate nv-focusmap">
+        <div class="nv-barcap">Tab order, Today</div>
+        <ol class="nv-focuslist">
+          <li><span class="nv-focus-n">1</span> Skip to today's news</li>
+          <li><span class="nv-focus-n">2</span> Town Square, back to Today</li>
+          <li><span class="nv-focus-n">3</span> Russellville, Arkansas &mdash; town switcher</li>
+          <li><span class="nv-focus-n">4</span> Search the town</li>
+          <li><span class="nv-focus-n">5</span> Notifications, 3 unread</li>
+          <li><span class="nv-focus-n">6</span> Your account, verified resident</li>
+          <li><span class="nv-focus-n">7</span> <b>Main content</b></li>
+          <li><span class="nv-focus-n">8</span> Today, Nearby, Calendar, Creations, You</li>
+        </ol>
+        <p class="nv-barnote">The bottom nav is last in the DOM and last in the tab order even
+        though it is the most important control on the screen. A keyboard resident wants the
+        headline before the navigation; a thumb wants the opposite, and the thumb does not tab.</p>
+        <p class="nv-barnote">A sheet or the omni overlay traps focus and returns it to the control
+        that opened it. Escape closes, every time, everywhere.</p>
+      </div>
+    </div>
+  </div>
+
+  <script>
+  /* Section 02 only. Scoped to #navigation, guarded, and every specimen it
+     touches is legible with this file absent. */
+  (function () {
+    var root = document.getElementById('navigation')
+    if (!root) return
+
+    /* ── town switcher ─────────────────────────────────────────────────── */
+    var trigger = root.querySelector('#nv-town-trigger')
+    var menu = root.querySelector('#nv-town-menu')
+    var placeEl = root.querySelector('#nv-town-place')
+    var screenEl = root.querySelector('#nv-townscreen')
+    var places = {
+      river: ['Russellville, Arkansas', ''],
+      delta: ['Helena-West Helena, Arkansas', 'delta'],
+      harbor: ['Bay St. Louis, Mississippi', 'harbor']
+    }
+
+    function setMenu(open) {
+      if (!menu || !trigger) return
+      menu.hidden = !open
+      trigger.setAttribute('aria-expanded', open ? 'true' : 'false')
+    }
+
+    if (trigger && menu) {
+      trigger.addEventListener('click', function (e) {
+        e.stopPropagation()
+        setMenu(menu.hidden)
+      })
+      menu.addEventListener('click', function (e) {
+        var opt = e.target.closest('[data-town-pick]')
+        if (!opt) return
+        var key = opt.getAttribute('data-town-pick')
+        var next = places[key]
+        if (!next) return
+        menu.querySelectorAll('[data-town-pick]').forEach(function (b) {
+          b.setAttribute('aria-checked', b === opt ? 'true' : 'false')
+        })
+        if (placeEl) placeEl.firstChild.nodeValue = next[0] + ' '
+        if (screenEl) {
+          if (next[1]) screenEl.setAttribute('data-town', next[1])
+          else screenEl.removeAttribute('data-town')
+        }
+        setMenu(false)
+        trigger.focus()
+      })
+      document.addEventListener('click', function (e) {
+        if (!menu.hidden && !menu.contains(e.target) && e.target !== trigger) setMenu(false)
+      })
+      document.addEventListener('keydown', function (e) {
+        if (e.key === 'Escape' && !menu.hidden) { setMenu(false); trigger.focus() }
+      })
+    }
+
+    /* ── underline tabs ────────────────────────────────────────────────── */
+    var tabs = root.querySelector('#nv-tabs')
+    if (tabs) {
+      tabs.addEventListener('click', function (e) {
+        var t = e.target.closest('[role="tab"]')
+        if (!t || t.disabled) return
+        tabs.querySelectorAll('[role="tab"]').forEach(function (b) {
+          b.setAttribute('aria-selected', b === t ? 'true' : 'false')
+        })
+      })
+    }
+
+    /* ── segmented filters and the chip rail ───────────────────────────── */
+    root.querySelectorAll('#nv-seg, .nv-chips').forEach(function (group) {
+      group.addEventListener('click', function (e) {
+        var b = e.target.closest('[aria-pressed]')
+        if (!b) return
+        group.querySelectorAll('[aria-pressed]').forEach(function (o) {
+          o.setAttribute('aria-pressed', o === b ? 'true' : 'false')
+        })
+      })
+    })
+
+    /* ── omni search overlay ───────────────────────────────────────────── */
+    var omni = root.querySelector('#nv-omni')
+    var omniOpen = root.querySelector('#nv-search-open')
+    var omniClose = root.querySelector('#nv-search-close')
+
+    function setOmni(open) {
+      if (!omni || !omniOpen) return
+      omni.hidden = !open
+      omniOpen.setAttribute('aria-expanded', open ? 'true' : 'false')
+      if (!open) omniOpen.focus()
+    }
+
+    if (omni && omniOpen) {
+      omniOpen.addEventListener('click', function () { setOmni(omni.hidden) })
+      if (omniClose) omniClose.addEventListener('click', function () { setOmni(false) })
+      document.addEventListener('keydown', function (e) {
+        if (e.key === 'Escape' && !omni.hidden) setOmni(false)
+      })
+    }
+
+    /* ── bottom sheet heights ──────────────────────────────────────────── */
+    var sheetScreen = root.querySelector('#nv-sheetscreen')
+    if (sheetScreen) {
+      var ctl = sheetScreen.closest('.phone').querySelector('.nv-sheetctl')
+      if (ctl) {
+        ctl.addEventListener('click', function (e) {
+          var b = e.target.closest('[data-sheet-h]')
+          if (!b) return
+          sheetScreen.setAttribute('data-height', b.getAttribute('data-sheet-h'))
+          ctl.querySelectorAll('[data-sheet-h]').forEach(function (o) {
+            o.setAttribute('aria-pressed', o === b ? 'true' : 'false')
+          })
+        })
+      }
+    }
+  })()
+  </script>
+</section>

@@ -1,0 +1,2357 @@
+/* ═══════════════════════════════════════════════════════════════════════════
+ * 03 — News, the feed, and the reader.
+ *
+ * Extends the language already shipping in `apps/web/src/theme.css`: the lead
+ * with its two art modes, the byline with its tinted source mark, the row where
+ * the thumbnail is an enhancement rather than the layout. Two things drive every
+ * decision below and neither is a style choice.
+ *
+ * First, we do not host the article. Every headline is somebody else's work and
+ * the tap leaves town, so the outbound signal is part of the type, not a badge
+ * bolted on afterwards.
+ *
+ * Second, the town does not reliably ship art. Roughly half of stories carry a
+ * photo. A layout that reserves a rectangle and fills it with grey on the other
+ * half is a layout that looks broken four days a week.
+ *
+ * Same rule as the app: not one hex literal. Anything the token list does not
+ * name is derived with color-mix.
+ * ═════════════════════════════════════════════════════════════════════════ */
+
+/* ── sheet-side scaffolding ─────────────────────────────────────────────── */
+
+.nw-slab {
+  width: 336px;
+  flex: none;
+}
+
+.nw-slab-wide {
+  width: 440px;
+}
+
+.nw-slab-cap {
+  margin: var(--ts-space-3) 0 0;
+  font-size: 12.5px;
+  line-height: 1.45;
+  color: var(--ts-ink45);
+  max-width: 42ch;
+}
+
+.nw-slab-cap b {
+  color: var(--ts-ink);
+  font-weight: 500;
+}
+
+.nw-stack {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ts-space-4);
+}
+
+/* ── press art, drawn rather than loaded ────────────────────────────────────
+ *
+ * Every photograph on this sheet is a gradient. They are built as duotones over
+ * --ts-stone with a horizon and a light source, because an abstract wash reads
+ * as a deliberate placeholder and a flat grey box reads as a failed request.
+ */
+
+.nw-photo {
+  position: relative;
+  display: block;
+  overflow: hidden;
+  background-color: var(--ts-stone);
+  background-repeat: no-repeat;
+}
+
+/* A fine diagonal tooth, so the wash has a surface instead of looking printed. */
+.nw-photo::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: repeating-linear-gradient(
+    112deg,
+    color-mix(in srgb, var(--ts-cream) 9%, transparent) 0 1px,
+    transparent 1px 4px
+  );
+  pointer-events: none;
+}
+
+/* Lake Dardanelle at dusk: cool sky, a gold band on the water, dark shore. */
+.nw-photo[data-scene='river'] {
+  background-image:
+    linear-gradient(to top, color-mix(in srgb, var(--ts-ink) 62%, transparent) 0%, transparent 46%),
+    linear-gradient(
+      to bottom,
+      color-mix(in srgb, var(--ts-navy) 88%, transparent) 0%,
+      color-mix(in srgb, var(--ts-navy) 42%, transparent) 40%,
+      color-mix(in srgb, var(--ts-gold) 62%, transparent) 55%,
+      color-mix(in srgb, var(--ts-navy) 74%, transparent) 62%,
+      color-mix(in srgb, var(--ts-navy-dark) 92%, transparent) 100%
+    );
+}
+
+/* Nuclear One: two soft towers against a flat cool morning. */
+.nw-photo[data-scene='plant'] {
+  background-image:
+    radial-gradient(52% 78% at 34% 92%, color-mix(in srgb, var(--ts-cream) 66%, transparent) 0%, transparent 62%),
+    radial-gradient(38% 62% at 62% 96%, color-mix(in srgb, var(--ts-cream) 48%, transparent) 0%, transparent 60%),
+    linear-gradient(to top, color-mix(in srgb, var(--ts-sage) 58%, transparent) 0%, transparent 34%),
+    linear-gradient(to bottom, color-mix(in srgb, var(--ts-navy) 56%, transparent), color-mix(in srgb, var(--ts-navy) 14%, transparent));
+}
+
+/* Downtown brick in late light: warm face, hard shadow off to one side. */
+.nw-photo[data-scene='civic'] {
+  background-image:
+    linear-gradient(115deg, transparent 0 46%, color-mix(in srgb, var(--ts-ink) 34%, transparent) 46% 100%),
+    linear-gradient(to bottom, color-mix(in srgb, var(--ts-gold) 34%, transparent), color-mix(in srgb, var(--ts-terracotta) 58%, transparent));
+}
+
+/* Friday night at the stadium: near black with two pools of light. */
+.nw-photo[data-scene='field'] {
+  background-image:
+    radial-gradient(30% 42% at 24% 22%, color-mix(in srgb, var(--ts-gold) 80%, transparent) 0%, transparent 70%),
+    radial-gradient(30% 42% at 76% 18%, color-mix(in srgb, var(--ts-gold) 62%, transparent) 0%, transparent 70%),
+    linear-gradient(to top, color-mix(in srgb, var(--ts-sage) 46%, transparent) 0%, transparent 40%),
+    linear-gradient(to bottom, color-mix(in srgb, var(--ts-ink) 88%, transparent), color-mix(in srgb, var(--ts-navy-dark) 90%, transparent));
+}
+
+/* The Illinois Bayou up over the bridge: flat brown water, no sky to speak of. */
+.nw-photo[data-scene='flood'] {
+  background-image:
+    linear-gradient(to top, color-mix(in srgb, var(--ts-ink) 52%, transparent) 0%, transparent 58%),
+    linear-gradient(
+      to bottom,
+      color-mix(in srgb, var(--ts-ink) 30%, transparent) 0%,
+      color-mix(in srgb, var(--ts-ink) 22%, transparent) 38%,
+      color-mix(in srgb, var(--ts-terracotta) 52%, transparent) 44%,
+      color-mix(in srgb, var(--ts-terracotta) 34%, transparent) 100%
+    );
+}
+
+/* Saturday market on the Depot lot. */
+.nw-photo[data-scene='market'] {
+  background-image:
+    radial-gradient(60% 70% at 78% 12%, color-mix(in srgb, var(--ts-gold) 56%, transparent) 0%, transparent 64%),
+    linear-gradient(to top, color-mix(in srgb, var(--ts-sage) 66%, transparent) 0%, transparent 52%),
+    linear-gradient(to bottom, color-mix(in srgb, var(--ts-sage) 26%, transparent), color-mix(in srgb, var(--ts-gold) 30%, transparent));
+}
+
+/* ── the live pip ───────────────────────────────────────────────────────────
+ *
+ * A developing story is the one thing on this screen that is still moving, and
+ * the pip is the only animation in the section. It never travels alone: the
+ * word beside it carries the same meaning for anyone who cannot see it move.
+ */
+
+.nw-pip {
+  position: relative;
+  flex: none;
+  width: 7px;
+  height: 7px;
+  border-radius: var(--ts-radius-full);
+  background: var(--ts-terracotta);
+}
+
+.nw-pip::after {
+  content: '';
+  position: absolute;
+  inset: -3px;
+  border-radius: var(--ts-radius-full);
+  border: 1.5px solid var(--ts-terracotta);
+  animation: nw-breathe 2.4s var(--ts-ease-out) infinite;
+}
+
+@keyframes nw-breathe {
+  0% { opacity: 0.9; transform: scale(0.6); }
+  70% { opacity: 0; transform: scale(1.5); }
+  100% { opacity: 0; transform: scale(1.5); }
+}
+
+/* ── the lead ───────────────────────────────────────────────────────────────
+ *
+ * Four heroes rather than one with a hole in it, resolved as a ladder:
+ * developing, then photograph, then pull-quote, then typographic. The shipped
+ * app has the first two; the middle pair are what the sheet adds, and both
+ * exist for the same reason as the typographic panel already in production. The
+ * lead is the only slot on the screen with real weight and it has to keep that
+ * weight on a morning when nobody in town published a picture.
+ */
+
+.nw-lead {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ts-space-3);
+}
+
+.nw-lead-art {
+  border-radius: var(--ts-radius-sheet);
+  height: 200px;
+  box-shadow: var(--ts-shadow-lifted);
+}
+
+.nw-lead-body {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--ts-space-2);
+}
+
+.nw-lead-title {
+  margin: 0;
+  font-family: var(--ts-font-serif);
+  font-size: 20.5px;
+  font-weight: 500;
+  line-height: 1.22;
+  letter-spacing: -0.012em;
+  text-wrap: pretty;
+}
+
+.nw-lead-title a {
+  color: inherit;
+  text-decoration: none;
+}
+
+.nw-lead-title a:hover {
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 3px;
+}
+
+.nw-lead-summary {
+  margin: 0;
+  font-size: var(--ts-text-label);
+  line-height: 1.45;
+  color: var(--ts-ink60);
+  text-wrap: pretty;
+}
+
+/* The typographic panel, lifted from the app and given the sheet's spacing. */
+.nw-lead[data-art='none'] .nw-lead-body {
+  padding: var(--ts-space-5);
+  border-radius: var(--ts-radius-sheet);
+  background: linear-gradient(160deg, var(--ts-surface), var(--ts-terracotta-tint));
+  border: 1px solid var(--ts-hairline);
+  box-shadow: var(--ts-shadow-lifted);
+}
+
+.nw-lead[data-art='none'] .nw-lead-body::before {
+  content: '';
+  display: block;
+  width: 34px;
+  height: 2px;
+  background: var(--ts-terracotta);
+}
+
+.nw-lead[data-art='none'] .nw-lead-title {
+  font-size: 25px;
+  line-height: 1.16;
+}
+
+/*
+ * The pull-quote hero. Used when a story has no art but an editor marked a line
+ * worth setting large, which happens most often on the independent blogs, where
+ * the writing is the reason to click and there was never going to be a photo.
+ */
+.nw-quote-art {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ts-space-3);
+  height: auto;
+  padding: var(--ts-space-5);
+  background: var(--ts-navy);
+  color: var(--ts-cream);
+  border-radius: var(--ts-radius-sheet);
+  box-shadow: var(--ts-shadow-navy);
+}
+
+.nw-quote-glyph {
+  color: var(--ts-cream14);
+  width: 30px;
+  height: 30px;
+}
+
+.nw-quote-text {
+  margin: 0;
+  font-family: var(--ts-font-serif);
+  font-size: 19px;
+  font-weight: 400;
+  line-height: 1.32;
+  letter-spacing: -0.01em;
+  text-wrap: pretty;
+}
+
+.nw-quote-by {
+  font-size: var(--ts-text-caption);
+  line-height: 1.35;
+  color: var(--ts-cream-muted);
+}
+
+/* ── kind chip ──────────────────────────────────────────────────────────── */
+
+.nw-kind {
+  align-self: flex-start;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--ts-space-1);
+  font-family: var(--ts-font-mono);
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  color: var(--ts-ink60);
+}
+
+/* Over a photo it floats and takes the ink chip so it stays legible on a bright sky. */
+.nw-photo .nw-kind {
+  position: absolute;
+  top: var(--ts-space-3);
+  left: var(--ts-space-3);
+  z-index: 1;
+  padding: 5px var(--ts-space-2);
+  border-radius: var(--ts-radius-chip);
+  background: var(--ts-ink);
+  color: var(--ts-cream);
+}
+
+.nw-photo .nw-kind[data-live='true'] {
+  background: var(--ts-surface);
+  color: var(--ts-terracotta-hover);
+  box-shadow: var(--ts-shadow-raised);
+}
+
+/* ── the byline ─────────────────────────────────────────────────────────────
+ *
+ * Serif, per the type contract: a byline is saying something, not labelling the
+ * page. Setting it in mono would make an attribution read as terminal output.
+ */
+
+.nw-byline {
+  display: flex;
+  align-items: center;
+  gap: var(--ts-space-2);
+  flex-wrap: wrap;
+}
+
+.nw-byline-sm {
+  gap: 6px;
+  margin-top: 3px;
+}
+
+.nw-source {
+  font-size: var(--ts-text-caption);
+  color: var(--ts-ink60);
+}
+
+.nw-dot {
+  flex: none;
+  width: 3px;
+  height: 3px;
+  border-radius: var(--ts-radius-full);
+  background: var(--ts-ink26);
+}
+
+.nw-meta {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-family: var(--ts-font-serif);
+  font-size: 14.5px;
+  color: var(--ts-ink45);
+}
+
+/*
+ * Under an hour old, the timestamp goes dark and gains weight. It is the only
+ * piece of metadata that changes what a reader does next, so it is the only one
+ * allowed to compete with the headline.
+ */
+.nw-fresh {
+  color: var(--ts-ink);
+  font-weight: 500;
+}
+
+/* Leaving town. Sits on the source, which is what the reader is agreeing to visit. */
+.nw-out {
+  width: 13px;
+  height: 13px;
+  color: var(--ts-ink26);
+}
+
+/* ── source marks ───────────────────────────────────────────────────────────
+ *
+ * A tinted tile of initials, keyed to the domain so a source looks identical
+ * everywhere in the app. The ramp has five values and there are already six
+ * sources: The Courier and The Dardanelle Post share navy, on purpose. A unique
+ * colour per source does not survive a town that keeps adding them, and the
+ * name is always beside the tile doing the actual identifying, which is why the
+ * tile is aria-hidden in the markup.
+ */
+
+.nw-mark {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 17px;
+  height: 17px;
+  border-radius: 5px;
+  font-family: var(--ts-font-sans);
+  font-size: 9px;
+  font-weight: 500;
+  letter-spacing: 0.01em;
+}
+
+.nw-mark[data-size='lg'] {
+  width: 38px;
+  height: 38px;
+  border-radius: var(--ts-radius-input);
+  font-size: var(--ts-text-caption);
+}
+
+.nw-mark[data-source='courier'],
+.nw-mark[data-source='post'] {
+  background: var(--ts-navy10);
+  color: var(--ts-navy);
+}
+
+.nw-mark[data-source='tech'] {
+  background: var(--ts-sage14);
+  color: var(--ts-sage);
+}
+
+.nw-mark[data-source='city'] {
+  background: var(--ts-gold14);
+  color: var(--ts-gold-text);
+}
+
+.nw-mark[data-source='radio'] {
+  background: var(--ts-terracotta14);
+  color: var(--ts-terracotta-hover);
+}
+
+.nw-mark[data-source='notebook'] {
+  background: var(--ts-ink13);
+  color: var(--ts-ink60);
+}
+
+/* ── small tags: saved, read, paywalled ─────────────────────────────────── */
+
+.nw-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 7px;
+  border-radius: var(--ts-radius-chip);
+  font-family: var(--ts-font-sans);
+  font-size: 11px;
+  font-weight: 500;
+  line-height: 1.5;
+  letter-spacing: 0.01em;
+  white-space: nowrap;
+}
+
+.nw-tag .i-sm {
+  width: 12px;
+  height: 12px;
+}
+
+.nw-tag[data-tone='saved'] {
+  background: var(--ts-sage14);
+  color: var(--ts-sage);
+}
+
+.nw-tag[data-tone='quiet'] {
+  background: var(--ts-ink08);
+  color: var(--ts-ink45);
+}
+
+/*
+ * A paywall is a fact about the source, stated before the tap. It is deliberately
+ * not the alarm register: --ts-brick is for the river being up, not for someone
+ * running a newspaper the way newspapers are run.
+ */
+.nw-tag[data-tone='wall'] {
+  background: var(--ts-gold14);
+  color: var(--ts-gold-text);
+}
+
+/* ── story rows ─────────────────────────────────────────────────────────── */
+
+.nw-list {
+  display: flex;
+  flex-direction: column;
+}
+
+.nw-list > * + * {
+  border-top: 1px solid var(--ts-ink13);
+}
+
+.nw-row {
+  display: flex;
+  align-items: center;
+  gap: var(--ts-space-3);
+  min-height: 44px;
+  padding: var(--ts-space-3) 2px;
+  color: inherit;
+  text-decoration: none;
+  transition: background var(--ts-dur-1) var(--ts-ease);
+}
+
+.nw-row:hover {
+  background: var(--ts-ink08);
+}
+
+.nw-row-text {
+  flex: 1;
+  min-width: 0;
+}
+
+.nw-row-title {
+  display: block;
+  font-family: var(--ts-font-serif);
+  font-size: var(--ts-text-label);
+  font-weight: 500;
+  line-height: 1.28;
+  letter-spacing: -0.008em;
+  text-wrap: pretty;
+}
+
+/*
+ * Read state. Weight drops, ink drops, and the unread pip disappears: three
+ * carriers, none of them colour on its own. The row also says "Read" in the
+ * byline, because a resident scanning a long feed should not have to infer a
+ * state from a shade of grey.
+ */
+.nw-row[data-read='true'] .nw-row-title {
+  font-weight: 400;
+  color: var(--ts-ink60);
+}
+
+.nw-row-pip {
+  align-self: flex-start;
+  margin-top: 5px;
+}
+
+.nw-row-pip::after {
+  display: none;
+}
+
+.nw-row-thumb {
+  flex: none;
+  width: 68px;
+  height: 68px;
+  border-radius: var(--ts-radius-input);
+}
+
+/* Compact: the tail of the feed and every topic page. */
+.nw-row[data-density='compact'] {
+  padding: var(--ts-space-2) 2px;
+}
+
+.nw-row[data-density='compact'] .nw-row-title {
+  font-size: 13.5px;
+  line-height: 1.3;
+}
+
+.nw-row[data-density='compact'] .nw-meta,
+.nw-row[data-density='compact'] .nw-source {
+  font-size: 12.5px;
+}
+
+/* ── the cluster ────────────────────────────────────────────────────────────
+ *
+ * Three sources on one vote. The card exists so the duplication reads as
+ * coverage rather than as the feed repeating itself, and so a blogger who was
+ * in the room sits at the same size as the daily paper. Ordering is by time and
+ * nothing else; there is no ranking to be made here that we have standing for.
+ */
+
+.nw-cluster {
+  border: 1px solid var(--ts-hairline);
+  border-radius: var(--ts-radius-card);
+  background: var(--ts-surface);
+  box-shadow: var(--ts-shadow-raised);
+  overflow: hidden;
+}
+
+.nw-cluster-head {
+  padding: var(--ts-space-4) var(--ts-space-4) var(--ts-space-3);
+  border-bottom: 1px solid var(--ts-ink13);
+}
+
+.nw-cluster-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-family: var(--ts-font-mono);
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--ts-ink45);
+}
+
+.nw-cluster-eyebrow .i-sm {
+  width: 13px;
+  height: 13px;
+}
+
+.nw-cluster-title {
+  margin: var(--ts-space-2) 0 0;
+  font-family: var(--ts-font-serif);
+  font-size: 18.5px;
+  font-weight: 400;
+  line-height: 1.26;
+  letter-spacing: -0.01em;
+  text-wrap: pretty;
+}
+
+/*
+ * The one sentence at the top is ours, and it says so. A synthesised headline
+ * presented as a publisher's is the fastest way to lose the sources the whole
+ * product depends on.
+ */
+.nw-cluster-note {
+  margin: var(--ts-space-2) 0 0;
+  font-size: 12px;
+  line-height: 1.4;
+  color: var(--ts-ink45);
+}
+
+.nw-cluster[data-compact='true'] .nw-cluster-title {
+  font-size: 17px;
+}
+
+.nw-cluster-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.nw-cluster-list li + li {
+  border-top: 1px solid var(--ts-ink13);
+}
+
+.nw-cluster-row {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--ts-space-3);
+  min-height: 44px;
+  padding: var(--ts-space-3) var(--ts-space-4);
+  color: inherit;
+  text-decoration: none;
+  transition: background var(--ts-dur-1) var(--ts-ease);
+}
+
+.nw-cluster-row:hover {
+  background: var(--ts-terracotta-tint);
+}
+
+.nw-cluster-row .nw-mark {
+  margin-top: 2px;
+}
+
+.nw-cluster-row > .nw-out {
+  margin-top: 3px;
+}
+
+.nw-cluster-text {
+  flex: 1;
+  min-width: 0;
+}
+
+.nw-cluster-source {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: var(--ts-text-caption);
+  font-weight: 500;
+  color: var(--ts-ink60);
+}
+
+.nw-cluster-headline {
+  display: block;
+  margin-top: 2px;
+  font-family: var(--ts-font-serif);
+  font-size: 14.5px;
+  line-height: 1.3;
+  text-wrap: pretty;
+}
+
+/*
+ * Medium and stance, which is the whole reason to cluster: Reported, Audio,
+ * Opinion. It is the one editorial call an aggregator can make without
+ * standing on a newsroom's toes, and it lets a reader pick in about a second.
+ */
+.nw-cluster-meta {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  margin-top: 3px;
+  font-family: var(--ts-font-serif);
+  font-size: 13.5px;
+  color: var(--ts-ink45);
+}
+
+.nw-cluster-meta .i-sm {
+  width: 13px;
+  height: 13px;
+}
+
+.nw-cluster-foot {
+  display: flex;
+  align-items: center;
+  gap: var(--ts-space-3);
+  padding: var(--ts-space-3) var(--ts-space-4);
+  border-top: 1px solid var(--ts-ink13);
+  background: var(--ts-cream);
+}
+
+.nw-cluster-count {
+  margin-left: auto;
+  font-family: var(--ts-font-serif);
+  font-size: 13.5px;
+  color: var(--ts-ink45);
+}
+
+/* ── source cards ───────────────────────────────────────────────────────── */
+
+.nw-src {
+  display: flex;
+  gap: var(--ts-space-3);
+  padding: var(--ts-space-4);
+  background: var(--ts-surface);
+  border: 1px solid var(--ts-hairline);
+  border-radius: var(--ts-radius-card);
+  box-shadow: var(--ts-shadow-flat);
+}
+
+.nw-src-text {
+  min-width: 0;
+}
+
+.nw-src-name {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-family: var(--ts-font-serif);
+  font-size: var(--ts-text-card-title);
+  font-weight: 500;
+  line-height: 1.2;
+  letter-spacing: -0.01em;
+}
+
+.nw-src-what {
+  margin-top: 3px;
+  font-size: var(--ts-text-caption);
+  line-height: 1.4;
+  color: var(--ts-ink60);
+}
+
+.nw-src-meta {
+  margin-top: var(--ts-space-1);
+  font-family: var(--ts-font-mono);
+  font-size: 10px;
+  letter-spacing: 0.04em;
+  color: var(--ts-ink45);
+}
+
+.nw-src .nw-tag {
+  margin-top: var(--ts-space-2);
+}
+
+/* ── the exit action ────────────────────────────────────────────────────────
+ *
+ * The one prominent control on a reader page, named for the publisher rather
+ * than for us. It says the domain out loud so nobody taps blind, and when the
+ * free reads are spent it says that too, before the tap rather than after it.
+ */
+
+.nw-exit {
+  display: flex;
+  align-items: center;
+  gap: var(--ts-space-3);
+  min-height: 56px;
+  padding: var(--ts-space-3) var(--ts-space-4);
+  border-radius: var(--ts-radius-button);
+  background: var(--ts-terracotta);
+  color: var(--ts-cream);
+  text-decoration: none;
+  transition: background var(--ts-dur-1) var(--ts-ease);
+}
+
+.nw-exit + .nw-exit {
+  margin-top: var(--ts-space-3);
+}
+
+.nw-exit:hover {
+  background: var(--ts-terracotta-hover);
+}
+
+.nw-exit-text {
+  flex: 1;
+  min-width: 0;
+}
+
+.nw-exit-title {
+  display: block;
+  font-size: var(--ts-text-label);
+  font-weight: 500;
+}
+
+.nw-exit-sub {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  margin-top: 2px;
+  font-size: 12px;
+  color: var(--ts-cream-muted);
+}
+
+.nw-exit-sub .i-sm {
+  width: 13px;
+  height: 13px;
+}
+
+.nw-exit[data-tone='wall'] {
+  background: var(--ts-navy);
+}
+
+.nw-exit[data-tone='wall']:hover {
+  background: var(--ts-navy-dark);
+}
+
+/* ── phone chrome for the news screens ──────────────────────────────────── */
+
+.nw-screen {
+  padding-bottom: var(--ts-space-10);
+  background: var(--ts-cream);
+  min-height: 100%;
+}
+
+.nw-bar {
+  display: flex;
+  align-items: center;
+  gap: var(--ts-space-2);
+  padding: var(--ts-space-3) var(--ts-space-5);
+  border-bottom: 1px solid var(--ts-ink13);
+}
+
+.nw-bar-title {
+  font-family: var(--ts-font-serif);
+  font-size: var(--ts-text-h2);
+  font-weight: 500;
+  letter-spacing: -0.015em;
+}
+
+.nw-bar-place {
+  font-family: var(--ts-font-serif);
+  font-size: 13.5px;
+  color: var(--ts-ink45);
+}
+
+.nw-icon-btn {
+  margin-left: auto;
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  margin-right: -10px;
+  background: none;
+  border: 0;
+  border-radius: var(--ts-radius-input);
+  color: var(--ts-ink60);
+}
+
+.nw-icon-btn:hover {
+  background: var(--ts-ink08);
+  color: var(--ts-ink);
+}
+
+.nw-sec {
+  padding: var(--ts-space-6) var(--ts-space-5) 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--ts-space-3);
+}
+
+.nw-head {
+  display: flex;
+  align-items: center;
+  gap: var(--ts-space-2);
+}
+
+.nw-rule {
+  height: 1px;
+  width: 14px;
+  flex: none;
+  background: var(--ts-terracotta);
+}
+
+.nw-label {
+  font-family: var(--ts-font-mono);
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ts-ink60);
+}
+
+.nw-action {
+  margin-left: auto;
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  background: none;
+  border: 0;
+  padding: 0;
+  font-size: var(--ts-text-caption);
+  font-weight: 500;
+  color: var(--ts-terracotta-hover);
+}
+
+/* ── the topic rail ─────────────────────────────────────────────────────── */
+
+.nw-rail {
+  display: flex;
+  gap: var(--ts-space-2);
+  padding: var(--ts-space-3) var(--ts-space-5);
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.nw-rail::-webkit-scrollbar {
+  display: none;
+}
+
+.nw-chip {
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 7px var(--ts-space-3);
+  border-radius: var(--ts-radius-chip);
+  border: 1px solid var(--ts-hairline);
+  background: var(--ts-surface);
+  color: var(--ts-ink60);
+  font-size: var(--ts-text-caption);
+  font-weight: 500;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.nw-chip:hover {
+  border-color: var(--ts-ink26);
+  color: var(--ts-ink);
+}
+
+.nw-chip[data-on='true'] {
+  background: var(--ts-ink);
+  border-color: var(--ts-ink);
+  color: var(--ts-cream);
+}
+
+/* ── partial outage and the sign-off ────────────────────────────────────────
+ *
+ * One source failing is normal, not an outage, and it is never a reason to hide
+ * the other five. The row is dashed rather than filled so it reads as a gap in
+ * the feed rather than as another story, and it names the source and the time,
+ * because "something went wrong" tells a resident nothing they can act on.
+ */
+
+.nw-outage {
+  display: flex;
+  align-items: center;
+  gap: var(--ts-space-2);
+  margin: var(--ts-space-5) var(--ts-space-5) 0;
+  padding: var(--ts-space-3);
+  border: 1px dashed var(--ts-ink26);
+  border-radius: var(--ts-radius-card);
+  color: var(--ts-ink60);
+}
+
+.nw-outage .i-sm {
+  flex: none;
+  color: var(--ts-ink45);
+}
+
+.nw-outage-text {
+  flex: 1;
+  font-size: 12.5px;
+  line-height: 1.4;
+}
+
+.nw-outage-retry {
+  flex: none;
+  min-height: 32px;
+  padding: 0 var(--ts-space-3);
+  border: 0;
+  border-radius: var(--ts-radius-chip);
+  background: var(--ts-ink08);
+  color: var(--ts-ink);
+  font-family: var(--ts-font-sans);
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.nw-outage-retry:hover {
+  background: var(--ts-ink13);
+}
+
+.nw-signoff {
+  margin: var(--ts-space-6) var(--ts-space-5) 0;
+  padding-top: var(--ts-space-5);
+  border-top: 1px solid var(--ts-ink13);
+}
+
+.nw-signoff-line {
+  font-family: var(--ts-font-serif);
+  font-size: var(--ts-text-label);
+  color: var(--ts-ink60);
+}
+
+.nw-signoff-meta {
+  margin-top: var(--ts-space-1);
+  font-family: var(--ts-font-serif);
+  font-size: 13.5px;
+  color: var(--ts-ink45);
+}
+
+/* ── the first load ─────────────────────────────────────────────────────────
+ *
+ * Beat for beat the same layout as the feed: 200px of lead art because the lead
+ * art is 200px, a third row with no thumbnail because half of stories have
+ * none, and the section labels set in real type immediately, because we always
+ * know what the sections are before we know what is in them. A skeleton that
+ * does not match its own screen produces a jolt on every load, and the jolt is
+ * what teaches people the app is slow.
+ */
+
+.nw-skel {
+  display: block;
+  border-radius: 6px;
+  background-color: var(--ts-stone);
+  background-image: linear-gradient(
+    100deg,
+    transparent 20%,
+    color-mix(in srgb, var(--ts-cream) 70%, transparent) 50%,
+    transparent 80%
+  );
+  background-size: 220% 100%;
+  animation: nw-sweep 1.5s var(--ts-ease) infinite;
+}
+
+@keyframes nw-sweep {
+  from { background-position: 140% 0; }
+  to { background-position: -60% 0; }
+}
+
+.nw-skel-art {
+  height: 200px;
+  border-radius: var(--ts-radius-sheet);
+}
+
+.nw-skel-line {
+  height: 13px;
+  margin-top: var(--ts-space-2);
+}
+
+.nw-skel-byline {
+  height: 10px;
+  width: 138px;
+  margin-top: var(--ts-space-3);
+  border-radius: var(--ts-radius-full);
+}
+
+.nw-skel-chip {
+  flex: none;
+  height: 32px;
+  width: 58px;
+  border-radius: var(--ts-radius-chip);
+}
+
+.nw-skel-thumb {
+  flex: none;
+  width: 68px;
+  height: 68px;
+  border-radius: var(--ts-radius-input);
+}
+
+.nw-skel-row {
+  display: flex;
+  align-items: center;
+  gap: var(--ts-space-3);
+  padding: var(--ts-space-3) 2px;
+}
+
+.nw-skel-col {
+  flex: 1;
+  min-width: 0;
+}
+
+.nw-skel-col .nw-skel-line:first-child {
+  margin-top: 0;
+}
+
+/* The only words on the loading screen, because the wait has a nameable cause. */
+.nw-skel-note {
+  margin: var(--ts-space-6) var(--ts-space-5) 0;
+  font-family: var(--ts-font-serif);
+  font-size: 13.5px;
+  color: var(--ts-ink45);
+}
+
+/* ── focus, everywhere ──────────────────────────────────────────────────────
+ *
+ * One rule rather than a ring per component. Everything in this section that
+ * takes a tap is a link or a button, so this covers all of it.
+ */
+
+.nw-row:focus-visible,
+.nw-cluster-row:focus-visible,
+.nw-chip:focus-visible,
+.nw-exit:focus-visible,
+.nw-icon-btn:focus-visible,
+.nw-outage-retry:focus-visible,
+.nw-follow:focus-visible,
+.nw-lead-title a:focus-visible,
+.nw-lead-art:focus-visible {
+  outline: none;
+  box-shadow: var(--ts-focus);
+  border-radius: var(--ts-radius-input);
+}
+
+/* ── the follow control ─────────────────────────────────────────────────── */
+
+.nw-follow {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  min-height: 36px;
+  padding: 0 var(--ts-space-3);
+  border: 1px solid var(--ts-hairline);
+  border-radius: var(--ts-radius-chip);
+  background: var(--ts-surface);
+  color: var(--ts-ink);
+  font-family: var(--ts-font-sans);
+  font-size: var(--ts-text-caption);
+  font-weight: 500;
+}
+
+.nw-follow:hover {
+  border-color: var(--ts-ink26);
+}
+
+.nw-follow[aria-pressed='true'] {
+  background: var(--ts-sage14);
+  border-color: transparent;
+  color: var(--ts-sage);
+}
+
+/* ── the reader page ────────────────────────────────────────────────────────
+ *
+ * The landing for a story we can only summarise. Every decision here is the
+ * same trade made twice: anything that makes this a better read makes it a
+ * better substitute for the article we did not write. So the summary has a hard
+ * ceiling, the art runs small and credited, and the single prominent control on
+ * the screen is the one that hands the reader to the publisher.
+ */
+
+.nw-bar[data-mode='reader'] {
+  gap: var(--ts-space-1);
+}
+
+.nw-bar[data-mode='reader'] .nw-icon-btn-lead {
+  margin-left: -10px;
+  margin-right: 0;
+}
+
+.nw-bar-crumb {
+  flex: 1;
+  font-family: var(--ts-font-mono);
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ts-ink60);
+}
+
+.nw-bar[data-mode='reader'] .nw-icon-btn {
+  margin-left: 0;
+}
+
+.nw-reader {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--ts-space-3);
+  padding: var(--ts-space-5) var(--ts-space-5) 0;
+}
+
+.nw-reader-title {
+  margin: 0;
+  font-family: var(--ts-font-serif);
+  font-size: 25px;
+  font-weight: 500;
+  line-height: 1.16;
+  letter-spacing: -0.018em;
+  text-wrap: pretty;
+}
+
+.nw-reader-byline {
+  display: flex;
+  align-items: center;
+  gap: var(--ts-space-3);
+}
+
+.nw-reader-who {
+  display: block;
+  font-family: var(--ts-font-serif);
+  font-size: var(--ts-text-label);
+  font-weight: 500;
+}
+
+.nw-reader-when {
+  display: block;
+  margin-top: 1px;
+  font-family: var(--ts-font-serif);
+  font-size: 13.5px;
+  color: var(--ts-ink45);
+}
+
+/*
+ * Thumbnail scale, not full bleed. Running someone else's press photograph edge
+ * to edge is the point at which a summary page starts behaving like a copy of
+ * the article, and the credit line under it is not decoration.
+ */
+.nw-reader-art {
+  width: 100%;
+  height: 152px;
+  border-radius: var(--ts-radius-card);
+}
+
+.nw-reader-credit {
+  margin: 0;
+  font-size: 11.5px;
+  line-height: 1.4;
+  color: var(--ts-ink45);
+}
+
+/* ── our summary, visibly ours ─────────────────────────────────────────── */
+
+.nw-summary {
+  width: 100%;
+  margin-top: var(--ts-space-2);
+  padding: var(--ts-space-4);
+  background: var(--ts-surface);
+  border: 1px solid var(--ts-hairline);
+  border-radius: var(--ts-radius-card);
+  box-shadow: var(--ts-shadow-flat);
+}
+
+.nw-summary-head {
+  display: flex;
+  align-items: center;
+  gap: var(--ts-space-2);
+  margin-bottom: var(--ts-space-3);
+}
+
+.nw-summary-lede {
+  margin: 0;
+  font-family: var(--ts-font-serif);
+  font-size: var(--ts-text-body);
+  line-height: 1.4;
+  text-wrap: pretty;
+}
+
+.nw-summary-points {
+  margin: var(--ts-space-3) 0 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: var(--ts-space-2);
+}
+
+.nw-summary-points li {
+  position: relative;
+  padding-left: var(--ts-space-4);
+  font-size: 14.5px;
+  line-height: 1.42;
+  color: var(--ts-ink60);
+}
+
+.nw-summary-points li::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 9px;
+  width: 5px;
+  height: 1.5px;
+  background: var(--ts-terracotta);
+}
+
+/*
+ * The ceiling, written down where the reader can see it. Three sentences and
+ * three points is the whole allowance, and saying we have nothing the source
+ * does not is what keeps this page a signpost rather than a substitute.
+ */
+.nw-summary-fine {
+  margin: var(--ts-space-3) 0 0;
+  padding-top: var(--ts-space-3);
+  border-top: 1px solid var(--ts-ink13);
+  font-size: 12px;
+  line-height: 1.45;
+  color: var(--ts-ink45);
+}
+
+.nw-reader .nw-exit,
+.nw-reader .nw-src,
+.nw-reader .nw-disclose {
+  width: 100%;
+}
+
+.nw-src[data-inline='true'] {
+  align-items: center;
+  background: var(--ts-cream);
+  box-shadow: none;
+}
+
+.nw-src[data-inline='true'] .nw-src-text {
+  flex: 1;
+}
+
+.nw-src[data-inline='true'] .nw-follow {
+  flex: none;
+}
+
+/* ── why am I seeing this ───────────────────────────────────────────────────
+ *
+ * On every story rather than buried in settings, because the honest answer is
+ * three lines long and it is the answer people assume they will not get.
+ * Closed by default: it is a disclosure, not a lecture.
+ */
+
+.nw-disclose {
+  border: 1px solid var(--ts-ink13);
+  border-radius: var(--ts-radius-card);
+  background: var(--ts-cream);
+}
+
+.nw-disclose summary {
+  display: flex;
+  align-items: center;
+  gap: var(--ts-space-2);
+  min-height: 44px;
+  padding: 0 var(--ts-space-4);
+  cursor: pointer;
+  list-style: none;
+  font-size: var(--ts-text-caption);
+  font-weight: 500;
+  color: var(--ts-ink60);
+}
+
+.nw-disclose summary::-webkit-details-marker {
+  display: none;
+}
+
+.nw-disclose summary:focus-visible {
+  outline: none;
+  box-shadow: var(--ts-focus);
+  border-radius: var(--ts-radius-card);
+}
+
+.nw-disclose-caret {
+  margin-left: auto;
+  color: var(--ts-ink26);
+  transition: transform var(--ts-dur-2) var(--ts-ease);
+}
+
+.nw-disclose[open] .nw-disclose-caret {
+  transform: rotate(180deg);
+}
+
+.nw-disclose-body {
+  padding: 0 var(--ts-space-4) var(--ts-space-4);
+}
+
+.nw-disclose-body p {
+  margin: 0 0 var(--ts-space-2);
+  font-size: 13.5px;
+  line-height: 1.5;
+  color: var(--ts-ink60);
+}
+
+.nw-disclose-body b {
+  color: var(--ts-ink);
+  font-weight: 500;
+}
+
+.nw-disclose-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--ts-space-4);
+  margin: var(--ts-space-3) 0 0;
+}
+
+.nw-disclose-links a {
+  color: var(--ts-terracotta-hover);
+  font-size: var(--ts-text-caption);
+  font-weight: 500;
+  text-decoration: none;
+}
+
+.nw-disclose-links a:hover {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.nw-sec-flush {
+  width: 100%;
+  padding: var(--ts-space-4) 0 0;
+}
+
+/* ── the developing thread ──────────────────────────────────────────────────
+ *
+ * The same event over four days. Every entry is one sentence about what
+ * changed, never a headline: headlines stacked in date order are the feed again
+ * with a border round it, and the thing a resident following this needs is
+ * "the city posted the agenda, it is item 9".
+ */
+
+.nw-thread {
+  border: 1px solid var(--ts-hairline);
+  border-radius: var(--ts-radius-card);
+  background: var(--ts-surface);
+  box-shadow: var(--ts-shadow-raised);
+  overflow: hidden;
+}
+
+.nw-thread-summary {
+  display: block;
+  padding: var(--ts-space-4);
+  cursor: pointer;
+  list-style: none;
+}
+
+.nw-thread-summary::-webkit-details-marker {
+  display: none;
+}
+
+.nw-thread-summary:focus-visible {
+  outline: none;
+  box-shadow: var(--ts-focus);
+  border-radius: var(--ts-radius-card);
+}
+
+.nw-thread-head {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--ts-space-2);
+}
+
+.nw-thread .nw-kind[data-live='true'] {
+  color: var(--ts-terracotta-hover);
+}
+
+.nw-thread-title {
+  font-family: var(--ts-font-serif);
+  font-size: 18.5px;
+  font-weight: 500;
+  line-height: 1.2;
+  letter-spacing: -0.012em;
+}
+
+.nw-thread-count {
+  font-family: var(--ts-font-serif);
+  font-size: 13.5px;
+  color: var(--ts-ink45);
+}
+
+/* Collapsed, the newest entry still shows. It is what a returning reader came for. */
+.nw-thread-latest {
+  display: block;
+  margin-top: var(--ts-space-3);
+  padding-left: var(--ts-space-3);
+  border-left: 2px solid var(--ts-terracotta14);
+}
+
+.nw-thread-latest-date {
+  display: block;
+  font-family: var(--ts-font-mono);
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--ts-ink45);
+}
+
+.nw-thread-latest-text {
+  display: block;
+  margin-top: 3px;
+  font-family: var(--ts-font-serif);
+  font-size: var(--ts-text-label);
+  line-height: 1.36;
+  color: var(--ts-ink);
+  text-wrap: pretty;
+}
+
+.nw-thread[open] .nw-thread-latest {
+  display: none;
+}
+
+.nw-thread-toggle {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  margin-top: var(--ts-space-3);
+  font-family: var(--ts-font-sans);
+  font-size: var(--ts-text-caption);
+  font-weight: 500;
+  color: var(--ts-terracotta-hover);
+}
+
+.nw-thread-toggle [data-when='open'],
+.nw-thread[open] .nw-thread-toggle [data-when='closed'] {
+  display: none;
+}
+
+.nw-thread[open] .nw-thread-toggle [data-when='open'] {
+  display: inline;
+}
+
+.nw-thread-caret {
+  transition: transform var(--ts-dur-2) var(--ts-ease);
+}
+
+.nw-thread[open] .nw-thread-caret {
+  transform: rotate(180deg);
+}
+
+.nw-thread-list {
+  list-style: none;
+  margin: 0;
+  padding: 0 var(--ts-space-4) 0;
+  border-top: 1px solid var(--ts-ink13);
+}
+
+/*
+ * The date rail. A continuous hairline behind the dots is what makes four
+ * entries read as one story accreting rather than four rows that happen to be
+ * stacked.
+ */
+.nw-thread-item {
+  position: relative;
+  display: flex;
+  gap: var(--ts-space-3);
+  padding: var(--ts-space-4) 0;
+}
+
+.nw-thread-item + .nw-thread-item {
+  border-top: 1px solid var(--ts-ink08);
+}
+
+.nw-thread-item::before {
+  content: '';
+  position: absolute;
+  left: 49px;
+  top: 0;
+  bottom: 0;
+  width: 1px;
+  background: var(--ts-ink13);
+}
+
+.nw-thread-item:first-child::before {
+  top: 22px;
+}
+
+.nw-thread-item:last-child::before {
+  bottom: auto;
+  height: 22px;
+}
+
+/* The node on the rail. Ringed in the card colour so the line reads as passing behind it. */
+.nw-thread-item::after {
+  content: '';
+  position: absolute;
+  left: 46px;
+  top: 19px;
+  width: 7px;
+  height: 7px;
+  border-radius: var(--ts-radius-full);
+  background: var(--ts-ink26);
+  box-shadow: 0 0 0 3px var(--ts-surface);
+}
+
+.nw-thread-item[data-newest='true']::after {
+  background: var(--ts-terracotta);
+}
+
+.nw-thread-date {
+  flex: none;
+  width: 44px;
+  padding-top: 2px;
+  font-family: var(--ts-font-mono);
+  font-size: 9.5px;
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  line-height: 1.5;
+  color: var(--ts-ink45);
+}
+
+.nw-thread-date b {
+  display: block;
+  font-size: 11px;
+  color: var(--ts-ink60);
+}
+
+.nw-thread-item[data-newest='true'] .nw-thread-date b {
+  color: var(--ts-terracotta-hover);
+}
+
+.nw-thread-entry {
+  padding-left: var(--ts-space-3);
+}
+
+.nw-thread-entry {
+  flex: 1;
+  min-width: 0;
+  color: inherit;
+  text-decoration: none;
+}
+
+.nw-thread-entry:focus-visible {
+  outline: none;
+  box-shadow: var(--ts-focus);
+  border-radius: var(--ts-radius-input);
+}
+
+.nw-thread-text {
+  display: block;
+  font-family: var(--ts-font-serif);
+  font-size: 14.5px;
+  line-height: 1.36;
+  text-wrap: pretty;
+}
+
+.nw-thread-item:not([data-newest='true']) .nw-thread-text {
+  color: var(--ts-ink60);
+}
+
+.nw-thread-foot {
+  display: flex;
+  align-items: center;
+  gap: var(--ts-space-3);
+  padding: var(--ts-space-3) var(--ts-space-4);
+  border-top: 1px solid var(--ts-ink13);
+  background: var(--ts-cream);
+}
+
+.nw-thread-foot-note {
+  flex: 1;
+  font-size: 12px;
+  line-height: 1.4;
+  color: var(--ts-ink45);
+}
+
+/* ── editorial furniture ────────────────────────────────────────────────────
+ *
+ * The pull-quote and the stat callout both carry an attribution that is a link.
+ * A number on a card with nobody's name on it is a rumour with good typography.
+ */
+
+.nw-pull {
+  margin: 0;
+  padding: var(--ts-space-5) 0 var(--ts-space-5) var(--ts-space-5);
+  border-left: 2px solid var(--ts-terracotta);
+}
+
+.nw-pull-glyph {
+  color: var(--ts-terracotta14);
+  width: 26px;
+  height: 26px;
+}
+
+.nw-pull-text {
+  margin: var(--ts-space-2) 0 0;
+  font-family: var(--ts-font-serif);
+  font-size: var(--ts-text-h2);
+  font-weight: 400;
+  line-height: 1.3;
+  letter-spacing: -0.014em;
+  text-wrap: pretty;
+}
+
+.nw-pull-by {
+  margin-top: var(--ts-space-3);
+}
+
+.nw-pull-who {
+  display: block;
+  font-family: var(--ts-font-serif);
+  font-size: 14.5px;
+  font-weight: 500;
+}
+
+.nw-pull-role {
+  display: block;
+  font-family: var(--ts-font-serif);
+  font-size: 13.5px;
+  color: var(--ts-ink45);
+}
+
+.nw-stat {
+  padding: var(--ts-space-5);
+  border-radius: var(--ts-radius-card);
+  background: var(--ts-navy);
+  color: var(--ts-cream);
+  box-shadow: var(--ts-shadow-navy);
+}
+
+.nw-stat-figure {
+  display: flex;
+  align-items: baseline;
+  gap: var(--ts-space-2);
+  font-family: var(--ts-font-serif);
+  font-size: 52px;
+  font-weight: 400;
+  line-height: 1;
+  letter-spacing: -0.03em;
+}
+
+.nw-stat-unit {
+  font-size: var(--ts-text-h2);
+  color: var(--ts-cream-muted);
+}
+
+.nw-stat-label {
+  margin-top: var(--ts-space-3);
+  font-family: var(--ts-font-serif);
+  font-size: var(--ts-text-body);
+  line-height: 1.3;
+}
+
+.nw-stat-note {
+  margin-top: var(--ts-space-2);
+  font-size: 13.5px;
+  line-height: 1.45;
+  color: var(--ts-cream-muted);
+}
+
+.nw-stat-src {
+  display: flex;
+  align-items: center;
+  gap: var(--ts-space-2);
+  margin-top: var(--ts-space-4);
+  padding-top: var(--ts-space-3);
+  border-top: 1px solid var(--ts-cream14);
+  font-size: 12.5px;
+  color: var(--ts-cream-muted);
+  text-decoration: none;
+}
+
+.nw-stat-src:hover {
+  color: var(--ts-cream);
+}
+
+.nw-stat-src .nw-mark {
+  background: var(--ts-cream14);
+  color: var(--ts-cream);
+}
+
+.nw-stat-src .nw-out {
+  margin-left: auto;
+  color: var(--ts-cream-muted);
+}
+
+.nw-stat-src:focus-visible {
+  outline: none;
+  box-shadow: var(--ts-focus);
+  border-radius: 6px;
+}
+
+/* ── saving ─────────────────────────────────────────────────────────────────
+ *
+ * One control, one position, four states. Saving is optimistic and a phone in
+ * the river valley loses signal often enough that the failure is a normal
+ * state, not an exception: it keeps the story in a local queue and says so in
+ * words a person can act on. Terracotta rather than --ts-brick, because a save
+ * that has not landed yet is not an emergency and the alarm register only means
+ * something if it is never spent on this.
+ */
+
+.nw-save {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--ts-space-2);
+  align-self: flex-start;
+  min-height: 44px;
+  padding: 0 var(--ts-space-4);
+  border: 1px solid var(--ts-hairline);
+  border-radius: var(--ts-radius-button);
+  background: var(--ts-surface);
+  color: var(--ts-ink);
+  font-family: var(--ts-font-sans);
+  font-size: var(--ts-text-label);
+  font-weight: 500;
+  text-align: left;
+  transition: background var(--ts-dur-1) var(--ts-ease), border-color var(--ts-dur-1) var(--ts-ease);
+}
+
+.nw-save:hover {
+  border-color: var(--ts-ink26);
+}
+
+.nw-save:focus-visible {
+  outline: none;
+  box-shadow: var(--ts-focus);
+}
+
+.nw-save[data-state='saving'] {
+  color: var(--ts-ink45);
+  cursor: progress;
+}
+
+.nw-save[data-state='saved'] {
+  background: var(--ts-sage14);
+  border-color: transparent;
+  color: var(--ts-sage);
+}
+
+.nw-save[data-state='failed'] {
+  border-color: var(--ts-terracotta);
+  color: var(--ts-terracotta-hover);
+  align-items: flex-start;
+  padding-top: var(--ts-space-2);
+  padding-bottom: var(--ts-space-2);
+}
+
+.nw-save-fail {
+  max-width: 30ch;
+  font-size: var(--ts-text-caption);
+  line-height: 1.35;
+}
+
+.nw-spin {
+  animation: nw-turn 900ms linear infinite;
+}
+
+@keyframes nw-turn {
+  to { transform: rotate(360deg); }
+}
+
+/* ── the share sheet ────────────────────────────────────────────────────────
+ *
+ * The publisher's URL is preselected. A neighbour sharing a story should be
+ * sending traffic to the newsroom that earned it, and our own page is the
+ * second option rather than the only one. This is the cheapest promise an
+ * aggregator can keep and the one most of them quietly break.
+ */
+
+.nw-scrim {
+  display: flex;
+  align-items: flex-end;
+  padding-top: var(--ts-space-10);
+  border-radius: var(--ts-radius-card);
+  background: color-mix(in srgb, var(--ts-ink) 46%, transparent);
+}
+
+.nw-sheet {
+  width: 100%;
+  padding: var(--ts-space-2) var(--ts-space-4) var(--ts-space-4);
+  border-radius: var(--ts-radius-sheet) var(--ts-radius-sheet) var(--ts-radius-card) var(--ts-radius-card);
+  background: var(--ts-cream);
+  box-shadow: var(--ts-shadow-overlay);
+}
+
+.nw-sheet-grab {
+  display: block;
+  width: 36px;
+  height: 4px;
+  margin: 0 auto var(--ts-space-4);
+  border-radius: var(--ts-radius-full);
+  background: var(--ts-ink26);
+}
+
+.nw-sheet-head {
+  display: flex;
+  gap: var(--ts-space-3);
+  padding-bottom: var(--ts-space-4);
+  border-bottom: 1px solid var(--ts-ink13);
+}
+
+.nw-sheet-head-text {
+  min-width: 0;
+}
+
+.nw-sheet-title {
+  display: block;
+  font-family: var(--ts-font-serif);
+  font-size: var(--ts-text-label);
+  font-weight: 500;
+  line-height: 1.28;
+  text-wrap: pretty;
+}
+
+.nw-sheet-sub {
+  display: block;
+  margin-top: 2px;
+  font-family: var(--ts-font-serif);
+  font-size: 13.5px;
+  color: var(--ts-ink45);
+}
+
+.nw-sheet-pick {
+  margin: var(--ts-space-4) 0 0;
+  padding: 0;
+  border: 0;
+}
+
+.nw-sheet-pick legend {
+  padding: 0 0 var(--ts-space-2);
+  font-family: var(--ts-font-mono);
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ts-ink45);
+}
+
+.nw-pick {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--ts-space-3);
+  min-height: 44px;
+  padding: var(--ts-space-2) var(--ts-space-3);
+  border: 1px solid var(--ts-hairline);
+  border-radius: var(--ts-radius-input);
+  background: var(--ts-surface);
+  cursor: pointer;
+}
+
+.nw-pick + .nw-pick {
+  margin-top: var(--ts-space-2);
+}
+
+.nw-pick input {
+  margin: 3px 0 0;
+  accent-color: var(--ts-terracotta);
+}
+
+.nw-pick:has(input:checked) {
+  border-color: var(--ts-terracotta);
+  background: var(--ts-terracotta-tint);
+}
+
+.nw-pick:focus-within {
+  box-shadow: var(--ts-focus);
+}
+
+.nw-pick-title {
+  display: block;
+  font-size: 14.5px;
+  font-weight: 500;
+}
+
+.nw-pick-sub {
+  display: block;
+  margin-top: 1px;
+  font-size: 12.5px;
+  line-height: 1.35;
+  color: var(--ts-ink60);
+}
+
+.nw-sheet-actions {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: var(--ts-space-2);
+  margin-top: var(--ts-space-4);
+  padding-top: var(--ts-space-4);
+  border-top: 1px solid var(--ts-ink13);
+}
+
+.nw-share-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--ts-ink60);
+  font-family: var(--ts-font-sans);
+  font-size: 11.5px;
+  font-weight: 500;
+}
+
+.nw-share-icon {
+  display: grid;
+  place-items: center;
+  width: 48px;
+  height: 48px;
+  border-radius: var(--ts-radius-full);
+  background: var(--ts-surface);
+  border: 1px solid var(--ts-hairline);
+  color: var(--ts-ink);
+}
+
+.nw-share-btn:hover .nw-share-icon {
+  border-color: var(--ts-ink26);
+}
+
+.nw-share-btn:focus-visible {
+  outline: none;
+}
+
+.nw-share-btn:focus-visible .nw-share-icon {
+  box-shadow: var(--ts-focus);
+}
+
+/* ── the saved list ─────────────────────────────────────────────────────────
+ *
+ * The date is when you saved it, not when it was published, because that is the
+ * thing a person searches their own memory on. A source that took its page down
+ * is flagged and kept rather than silently deleted: a saved item vanishing is
+ * indistinguishable from a bug, and the reader still wants to know it existed.
+ */
+
+.nw-saved .nw-row {
+  align-items: center;
+}
+
+.nw-unsave {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border: 0;
+  border-radius: var(--ts-radius-input);
+  background: none;
+  color: var(--ts-sage);
+}
+
+.nw-unsave:hover {
+  background: var(--ts-ink08);
+}
+
+.nw-unsave:focus-visible {
+  outline: none;
+  box-shadow: var(--ts-focus);
+}
+
+/* An empty list somebody emptied on purpose is not a failure state. */
+.nw-empty {
+  padding: var(--ts-space-8) var(--ts-space-4);
+  text-align: center;
+}
+
+.nw-empty-icon {
+  display: grid;
+  place-items: center;
+  width: 52px;
+  height: 52px;
+  margin: 0 auto var(--ts-space-3);
+  border-radius: var(--ts-radius-full);
+  background: var(--ts-ink08);
+  color: var(--ts-ink45);
+}
+
+.nw-empty-line {
+  margin: 0;
+  font-family: var(--ts-font-serif);
+  font-size: var(--ts-text-card-title);
+}
+
+.nw-empty-sub {
+  max-width: 34ch;
+  margin: var(--ts-space-2) auto 0;
+  font-size: 13.5px;
+  line-height: 1.45;
+  color: var(--ts-ink60);
+}
+
+/* ── topic surfaces ─────────────────────────────────────────────────────────
+ *
+ * A topic is a standing question a resident has, so the page opens by answering
+ * what it covers rather than by branding itself. Following changes the button
+ * and adds a line about what following actually did; a control that changes
+ * state without saying what changed is a control people press twice.
+ */
+
+.nw-topic {
+  padding: var(--ts-space-5);
+  border: 1px solid var(--ts-hairline);
+  border-radius: var(--ts-radius-card);
+  background: var(--ts-surface);
+  box-shadow: var(--ts-shadow-flat);
+}
+
+.nw-topic + .nw-topic {
+  margin-top: var(--ts-space-4);
+}
+
+.nw-topic[data-followed='true'] {
+  background: linear-gradient(160deg, var(--ts-surface), var(--ts-sage14));
+}
+
+.nw-topic-eyebrow {
+  font-family: var(--ts-font-mono);
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--ts-ink45);
+}
+
+.nw-topic-name {
+  margin: var(--ts-space-2) 0 0;
+  font-family: var(--ts-font-serif);
+  font-size: var(--ts-text-h1);
+  font-weight: 500;
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+}
+
+.nw-topic-what {
+  margin: var(--ts-space-2) 0 0;
+  max-width: 46ch;
+  font-size: 14.5px;
+  line-height: 1.45;
+  color: var(--ts-ink60);
+}
+
+.nw-topic-foot {
+  display: flex;
+  align-items: center;
+  gap: var(--ts-space-3);
+  flex-wrap: wrap;
+  margin-top: var(--ts-space-4);
+}
+
+.nw-topic-meta {
+  font-family: var(--ts-font-serif);
+  font-size: 13.5px;
+  color: var(--ts-ink45);
+}
+
+.nw-topic-meta a {
+  color: var(--ts-terracotta-hover);
+}
+
+.nw-chip[data-size='sm'] {
+  padding: 4px var(--ts-space-2);
+  font-size: 12px;
+  font-weight: 400;
+  background: none;
+  border-color: var(--ts-ink13);
+}
+
+.nw-chip .i-sm {
+  width: 12px;
+  height: 12px;
+  color: var(--ts-sage);
+}
+
+.nw-action[data-static='true'] {
+  color: var(--ts-ink45);
+  font-family: var(--ts-font-serif);
+  font-size: 13.5px;
+  font-weight: 400;
+}
+
+/* ── the stale banner ───────────────────────────────────────────────────────
+ *
+ * When a scrape fails the API serves the last good screen rather than an error,
+ * which is right: yesterday's news beats a blank page. This banner is the only
+ * thing standing between that decision and stale news presented as fresh, so it
+ * leads with the timestamp in bold and never says "something went wrong".
+ */
+
+.nw-banner {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--ts-space-2);
+  padding: var(--ts-space-3);
+  border-radius: var(--ts-radius-card);
+  background: var(--ts-gold14);
+  color: var(--ts-gold-text);
+}
+
+.nw-banner > .i-sm {
+  flex: none;
+  margin-top: 2px;
+}
+
+.nw-banner-text {
+  flex: 1;
+  font-size: 12.5px;
+  line-height: 1.45;
+}
+
+.nw-banner-text b {
+  display: block;
+  font-weight: 500;
+}
+
+.nw-banner-btn {
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  min-height: 32px;
+  padding: 0 var(--ts-space-3);
+  border: 1px solid color-mix(in srgb, var(--ts-gold-text) 30%, transparent);
+  border-radius: var(--ts-radius-chip);
+  background: none;
+  color: inherit;
+  font-family: var(--ts-font-sans);
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.nw-banner-btn:hover {
+  background: var(--ts-gold14);
+}
+
+.nw-banner-btn:focus-visible,
+.nw-icon-btn:focus-visible {
+  outline: none;
+  box-shadow: var(--ts-focus);
+}
+
+/* ── the quiet day ──────────────────────────────────────────────────────────
+ *
+ * A town with nothing to report is the normal case, not the error case. This
+ * screen never apologises and never pads: it says what is true, says why that is
+ * fine, and then does the one useful thing available, which is offering
+ * yesterday to somebody who was busy.
+ */
+
+.nw-quiet {
+  padding: var(--ts-space-10) var(--ts-space-5) 0;
+  text-align: center;
+}
+
+.nw-quiet-art {
+  display: grid;
+  place-items: center;
+  width: 64px;
+  height: 64px;
+  margin: 0 auto var(--ts-space-4);
+  border-radius: var(--ts-radius-full);
+  background: linear-gradient(160deg, var(--ts-gold14), var(--ts-terracotta-tint));
+  color: var(--ts-gold-text);
+}
+
+.nw-quiet-line {
+  margin: 0;
+  font-family: var(--ts-font-serif);
+  font-size: 22px;
+  font-weight: 400;
+  letter-spacing: -0.015em;
+}
+
+.nw-quiet-sub {
+  max-width: 32ch;
+  margin: var(--ts-space-2) auto 0;
+  font-size: 14.5px;
+  line-height: 1.45;
+  color: var(--ts-ink60);
+  text-wrap: pretty;
+}
+
+.nw-quiet-sep {
+  display: flex;
+  align-items: center;
+  gap: var(--ts-space-3);
+  margin-top: var(--ts-space-8);
+  font-family: var(--ts-font-mono);
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ts-ink45);
+}
+
+.nw-quiet-sep span {
+  flex: 1;
+  height: 1px;
+  background: var(--ts-ink13);
+}
+
+/* ── the time specimen ──────────────────────────────────────────────────────
+ *
+ * Drawn as a rule set rather than a row of chips, because the interesting part
+ * is the boundary between two forms and a chip cannot show a boundary.
+ */
+
+.nw-time {
+  border: 1px solid var(--ts-hairline);
+  border-radius: var(--ts-radius-card);
+  background: var(--ts-surface);
+  overflow: hidden;
+}
+
+.nw-time-row {
+  display: grid;
+  grid-template-columns: 190px 200px minmax(0, 1fr);
+  gap: var(--ts-space-4);
+  align-items: baseline;
+  padding: var(--ts-space-3) var(--ts-space-4);
+}
+
+.nw-time-row + .nw-time-row {
+  border-top: 1px solid var(--ts-ink13);
+}
+
+.nw-time-row[data-head='true'] {
+  background: var(--ts-cream);
+  font-family: var(--ts-font-mono);
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ts-ink45);
+}
+
+/* The header row is a label, so its cells drop their own type and take the row's. */
+.nw-time-row[data-head='true'] span {
+  font: inherit;
+  letter-spacing: inherit;
+  text-transform: inherit;
+  color: inherit;
+}
+
+/* The two rows that are exceptions to the ladder, marked rather than mixed in. */
+.nw-time-row[data-special='true'] {
+  background: var(--ts-terracotta-tint);
+}
+
+.nw-time-when {
+  font-size: 13.5px;
+  font-weight: 500;
+  color: var(--ts-ink);
+}
+
+.nw-time-out .nw-meta {
+  font-size: var(--ts-text-body);
+}
+
+.nw-time-why {
+  font-size: 13px;
+  line-height: 1.45;
+  color: var(--ts-ink60);
+}
+
+.nw-time-why b {
+  color: var(--ts-ink);
+  font-weight: 500;
+}
+
+@media (max-width: 760px) {
+  .nw-time-row {
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--ts-space-1);
+  }
+}

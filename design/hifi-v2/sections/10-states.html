@@ -1,0 +1,1509 @@
+<section class="sheet-section" id="states">
+  <svg style="display:none" aria-hidden="true">
+    <symbol id="st-i-signal-off" viewBox="0 0 24 24">
+      <path d="M3.5 8.5a15 15 0 0 1 4.2-2.4M20.5 8.5a15 15 0 0 0-7.6-3.4"/>
+      <path d="M6.6 12.1a10 10 0 0 1 2.1-1.3M17.4 12.1a10 10 0 0 0-3.6-1.6"/>
+      <path d="M9.7 15.7a5 5 0 0 1 4.6 0"/>
+      <path d="M12 19h.01"/>
+      <path d="M3 3l18 18"/>
+    </symbol>
+    <symbol id="st-i-signal-on" viewBox="0 0 24 24">
+      <path d="M3.5 8.5a14 14 0 0 1 17 0"/>
+      <path d="M6.6 12.1a9.5 9.5 0 0 1 10.8 0"/>
+      <path d="M9.7 15.7a5 5 0 0 1 4.6 0"/>
+      <path d="M12 19h.01"/>
+    </symbol>
+    <symbol id="st-i-undo" viewBox="0 0 24 24">
+      <path d="M4 9h10a5 5 0 0 1 0 10h-4"/>
+      <path d="M7.5 5.5 4 9l3.5 3.5"/>
+    </symbol>
+  </svg>
+
+  <div class="sec-head"><span class="sec-num">10</span><h2>States, feedback, and motion</h2></div>
+  <p class="sec-note">
+    Town Square is assembled from a dozen scraped sources that break on their own
+    schedule, read on one bar of signal out past Lake Dardanelle, by residents who
+    did not sign up for anything. Every state below is a real Tuesday, not a
+    footnote: the empties, the ladder of errors, the offline path, the stale
+    timestamp that is the only honest signal we have, and the motion spec that
+    ties them together.
+  </p>
+
+  <p class="why">
+    <b>The colour rule for this whole section.</b> Every recoverable problem is
+    terracotta: a field that did not validate, a save that failed, a source that
+    stopped answering. <b>Brick appears nowhere in this section.</b> It is the one
+    alarm register, and if a resident learns it means "your handle is taken" then
+    it means nothing at 6am when the Illinois Bayou is over Weir Road. Sage is
+    reserved for confirmed and safe, gold for civic notice, and the empties get
+    no colour at all except one small accent mark.
+  </p>
+
+  <!-- ══ 1. empty-state anatomy ═══════════════════════════════════════════ -->
+
+  <div class="spec">
+    <div class="spec-label">Empty state anatomy <em>four slots, three of them optional, so one component covers every empty in the product</em></div>
+    <div class="spec-row">
+      <div class="plate st-anat-plate">
+        <div class="st-empty st-anat">
+          <span class="st-mark st-mark--news" aria-hidden="true"></span>
+          <p class="st-empty-line">Nothing has come in yet today.</p>
+          <p class="st-empty-sub">The Courier usually posts around seven. Yesterday's front page is still here.</p>
+          <button class="st-act" type="button">Read yesterday</button>
+        </div>
+        <ol class="st-anat-key">
+          <li><span class="st-anat-n">1</span> <b>Mark.</b> 56px, drawn, optional. Dropped in dense list slots.</li>
+          <li><span class="st-anat-n">2</span> <b>Line.</b> Newsreader 18px. States the fact. Never an apology.</li>
+          <li><span class="st-anat-n">3</span> <b>Sub-line.</b> DM Sans 15px, ink60, max 34ch. Says what happens next or what else is true.</li>
+          <li><span class="st-anat-n">4</span> <b>Action.</b> Optional, and only if there is genuinely somewhere better to be.</li>
+        </ol>
+      </div>
+      <div class="st-anat-notes">
+        <p class="why">
+          <b>Centred when it owns the screen, left aligned when it sits in a slot.</b>
+          A centred empty inside a 180px card reads as a broken card. The variant
+          is one attribute, <code class="st-code-i">data-align="start"</code>, and
+          nothing else changes.
+        </p>
+        <div class="st-empty" data-align="start">
+          <p class="st-empty-line">No events on the calendar for Tuesday.</p>
+          <p class="st-empty-sub">Thursday has four, starting with market setup at 4.</p>
+          <button class="st-act" type="button">Jump to Thursday</button>
+        </div>
+        <p class="why">
+          <b>Voice test.</b> Read it out loud to a neighbour. "No results found"
+          fails. "Oops, nothing here!" fails harder. "Nothing has come in yet
+          today" is what you would actually say, and it leaves room for the
+          possibility that something will.
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ 2. the empties, resident surfaces ════════════════════════════════ -->
+
+  <div class="spec">
+    <div class="spec-label">Empties, resident surfaces <em>each one written for its own surface; a shared string here would be a shared shrug</em></div>
+    <div class="spec-grid">
+
+      <div class="plate st-e-plate">
+        <div class="st-e-cap">Today, before the morning scrape lands</div>
+        <div class="st-empty">
+          <span class="st-mark st-mark--news" aria-hidden="true"></span>
+          <p class="st-empty-line">Nothing has come in yet today.</p>
+          <p class="st-empty-sub">The Courier usually posts around seven and the city posts agendas the night before. Yesterday's front page is still here.</p>
+          <button class="st-act" type="button">Read yesterday</button>
+        </div>
+      </div>
+
+      <div class="plate st-e-plate">
+        <div class="st-e-cap">Events, a quiet Tuesday</div>
+        <div class="st-empty">
+          <span class="st-mark st-mark--calendar" aria-hidden="true"></span>
+          <p class="st-empty-line">Nothing on the calendar for Tuesday, August 4.</p>
+          <p class="st-empty-sub">That happens most weeks. Thursday has four things, starting with farmers market setup at Depot Park at 4.</p>
+          <button class="st-act" type="button">Jump to Thursday</button>
+        </div>
+      </div>
+
+      <div class="plate st-e-plate">
+        <div class="st-e-cap">Saved, a new account</div>
+        <div class="st-empty">
+          <span class="st-mark st-mark--bookmark" aria-hidden="true"></span>
+          <p class="st-empty-line">You haven't saved anything yet.</p>
+          <p class="st-empty-sub">The bookmark on any story, event, or business keeps it here. This list is yours, nobody else can see it.</p>
+          <button class="st-act" type="button">Browse today</button>
+        </div>
+      </div>
+
+      <div class="plate st-e-plate">
+        <div class="st-e-cap">Directory, an empty category</div>
+        <div class="st-empty">
+          <span class="st-mark st-mark--shelf" aria-hidden="true"></span>
+          <p class="st-empty-line">Nothing listed under Nurseries yet.</p>
+          <p class="st-empty-sub">Sixty-one categories have listings. If you know a place on this side of the river, you can add it in about a minute.</p>
+          <button class="st-act" type="button">Add a business</button>
+        </div>
+      </div>
+
+      <div class="plate st-e-plate">
+        <div class="st-e-cap">Search, no matches</div>
+        <div class="st-empty">
+          <span class="st-mark st-mark--lens" aria-hidden="true"></span>
+          <p class="st-empty-line">Nothing matched "dardanelle boat ramp hours".</p>
+          <p class="st-empty-sub">Search reads the directory, the last ninety days of stories, and every event. Fewer words usually finds more.</p>
+          <div class="st-e-chips">
+            <button class="st-chip" type="button">boat ramp</button>
+            <button class="st-chip" type="button">lake dardanelle</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="plate st-e-plate">
+        <div class="st-e-cap">Creations, a gallery that is genuinely young</div>
+        <div class="st-empty" data-tone="young">
+          <span class="st-mark st-mark--sprout" aria-hidden="true"></span>
+          <p class="st-empty-line">Three creations so far.</p>
+          <p class="st-empty-sub">Town Square opened to builders on July 14. Everything in here was made by somebody who lives in Russellville, which is the point.</p>
+          <button class="st-act" type="button">See how building works</button>
+        </div>
+      </div>
+
+    </div>
+    <p class="why">
+      <b>The gallery is not empty, it is young, and those are different states.</b>
+      Three creations render as three cards with this note underneath them, never
+      as a void. Telling a resident "no creations yet" when there are three is a
+      lie the product does not need to tell, and the honest version reads as
+      momentum instead of failure.
+    </p>
+  </div>
+
+  <!-- ══ 3. the empties, builder and moderator ════════════════════════════ -->
+
+  <div class="spec">
+    <div class="spec-label">Empties, builder and moderator <em>one is an invitation with a next command in it, one is good news and says so</em></div>
+    <div class="spec-row">
+
+      <div class="plate st-e-plate st-e-wide">
+        <div class="st-e-cap">Builder, nothing published</div>
+        <div class="st-empty" data-align="start">
+          <span class="st-mark st-mark--grid" aria-hidden="true"></span>
+          <p class="st-empty-line">You haven't published anything yet.</p>
+          <p class="st-empty-sub">Point your AI tool at the Town Square MCP server and it can scaffold the first one with you. Most first creations are one screen and take an evening.</p>
+          <pre class="st-code">townsquare mcp add russellville
+  → connected as @kmcbride (verified)</pre>
+          <button class="st-act" type="button">Connection details</button>
+        </div>
+      </div>
+
+      <div class="plate st-e-plate st-e-wide">
+        <div class="st-e-cap">Review queue, clear</div>
+        <div class="st-empty" data-tone="good" data-align="start">
+          <span class="st-mark st-mark--tray" aria-hidden="true"></span>
+          <p class="st-empty-line">The queue is clear.</p>
+          <p class="st-empty-sub">Last review was Tuesday at 9:12 a.m. Three creations approved, one sent back with notes about the storage permission it asked for.</p>
+          <button class="st-act" type="button">Review history</button>
+        </div>
+      </div>
+
+    </div>
+    <p class="why">
+      <b>The cleared queue is the one empty that swaps the accent to sage.</b>
+      Every other mark in the system uses terracotta, because every other empty is
+      neutral or an invitation. An empty moderation queue is the only one where
+      "there is nothing here" is the outcome the committee was working toward, so
+      the accent says done rather than pending. That is the whole exception, and
+      it does not spread.
+    </p>
+  </div>
+
+  <!-- ══ 4. the illustration system ═══════════════════════════════════════ -->
+
+  <div class="spec">
+    <div class="spec-label">Marks for empties <em>CSS only, ink plus one accent, drawn with a pen not a mascot</em></div>
+    <div class="plate">
+      <div class="st-mark-row">
+        <figure><span class="st-mark st-mark--news" aria-hidden="true"></span><figcaption>news</figcaption></figure>
+        <figure><span class="st-mark st-mark--calendar" aria-hidden="true"></span><figcaption>calendar</figcaption></figure>
+        <figure><span class="st-mark st-mark--bookmark" aria-hidden="true"></span><figcaption>saved</figcaption></figure>
+        <figure><span class="st-mark st-mark--shelf" aria-hidden="true"></span><figcaption>category</figcaption></figure>
+        <figure><span class="st-mark st-mark--lens" aria-hidden="true"></span><figcaption>search</figcaption></figure>
+        <figure><span class="st-mark st-mark--sprout" aria-hidden="true"></span><figcaption>young</figcaption></figure>
+        <figure><span class="st-mark st-mark--grid" aria-hidden="true"></span><figcaption>build</figcaption></figure>
+        <figure><span class="st-mark st-mark--tray" aria-hidden="true"></span><figcaption>queue clear</figcaption></figure>
+      </div>
+      <div class="st-mark-row" data-scale="sm">
+        <figure><span class="st-mark st-mark--news" data-size="sm" aria-hidden="true"></span><figcaption>36px, in-slot</figcaption></figure>
+        <figure><span class="st-mark st-mark--calendar" data-size="sm" aria-hidden="true"></span><figcaption>36px</figcaption></figure>
+        <figure><span class="st-mark st-mark--lens" data-size="sm" aria-hidden="true"></span><figcaption>36px</figcaption></figure>
+      </div>
+    </div>
+    <p class="why">
+      <b>Rules that keep these from becoming an illustration library.</b> Three
+      shapes maximum per mark, since each is the element and its two pseudo
+      elements. Strokes are 1.5px, the same weight as an icon, so a mark next to a
+      chip does not look like a different product. Ink at 30 percent carries the
+      form, one terracotta stroke carries the meaning, and nothing is filled
+      except a 10 percent leaf. Each sits at a small off-axis rotation, between 2
+      and 5 degrees, which is the whole difference between "drawn" and "an image
+      that failed to load".
+    </p>
+  </div>
+
+  <!-- ══ 5. inline field errors ═══════════════════════════════════════════ -->
+
+  <div class="spec">
+    <div class="spec-label">Inline field error <em>message under the field, icon plus text, never colour alone and never a tooltip</em></div>
+    <div class="spec-row">
+      <div class="plate st-form-plate">
+        <label class="st-field">
+          <span class="st-field-label">Handle</span>
+          <input class="st-input" type="text" value="kmcbride" aria-describedby="st-h-help">
+          <span class="st-field-help" id="st-h-help">This is what neighbours see. You can change it once.</span>
+        </label>
+        <label class="st-field" data-state="error">
+          <span class="st-field-label">Handle</span>
+          <input class="st-input" type="text" value="kmcbride" aria-invalid="true" aria-describedby="st-h-err">
+          <span class="st-field-err" id="st-h-err">
+            <svg class="i i-sm" aria-hidden="true"><use href="#i-alert-circle"/></svg>
+            That handle is taken. @kmcbride signed up in March.
+          </span>
+        </label>
+        <label class="st-field" data-state="error">
+          <span class="st-field-label">Vouch code</span>
+          <input class="st-input" type="text" value="RVL-8823" aria-invalid="true" aria-describedby="st-v-err">
+          <span class="st-field-err" id="st-v-err">
+            <svg class="i i-sm" aria-hidden="true"><use href="#i-alert-circle"/></svg>
+            Codes expire after a week. Ask Dana for a fresh one.
+          </span>
+        </label>
+        <label class="st-field" data-state="ok">
+          <span class="st-field-label">Handle</span>
+          <input class="st-input" type="text" value="kmcbride22" aria-describedby="st-h-ok">
+          <span class="st-field-ok" id="st-h-ok">
+            <svg class="i i-sm" aria-hidden="true"><use href="#i-check"/></svg>
+            Available.
+          </span>
+        </label>
+      </div>
+      <p class="why">
+        <b>Validate on blur, clear on input, never validate while a finger is
+        still typing.</b> The error border is 1.5px terracotta so it is visible
+        against the 1px hairline of a resting field without a colour comparison,
+        and the message is always a sentence that names the actual cause. "Invalid
+        handle" tells a resident nothing. "@kmcbride signed up in March" tells
+        them to pick something else and why. Errors are wired with
+        <code class="st-code-i">aria-invalid</code> plus
+        <code class="st-code-i">aria-describedby</code>, so a screen reader hears
+        the cause when focus lands, not a beep.
+      </p>
+    </div>
+  </div>
+
+  <!-- ══ 6. failed action with retry ══════════════════════════════════════ -->
+
+  <div class="spec">
+    <div class="spec-label">Failed action, with retry <em>the work the resident did is still on screen; that is the promise, not the retry button</em></div>
+    <div class="spec-row">
+      <div class="plate st-fa-plate">
+        <div class="st-fa-cap">Before</div>
+        <div class="st-compose">
+          <div class="st-compose-body">Anyone know if the Prairie Creek ramp is open after the rain? Headed out Saturday.</div>
+          <div class="st-compose-foot">
+            <span class="st-meta">Posting as @kmcbride</span>
+            <button class="st-btn" type="button">Post</button>
+          </div>
+        </div>
+      </div>
+      <div class="plate st-fa-plate">
+        <div class="st-fa-cap">Sending</div>
+        <div class="st-compose" data-state="sending">
+          <div class="st-compose-body">Anyone know if the Prairie Creek ramp is open after the rain? Headed out Saturday.</div>
+          <div class="st-compose-foot">
+            <span class="st-meta">Posting as @kmcbride</span>
+            <button class="st-btn" type="button" disabled>
+              <span class="st-spinner" aria-hidden="true"></span> Posting
+            </button>
+          </div>
+        </div>
+      </div>
+      <div class="plate st-fa-plate">
+        <div class="st-fa-cap">Failed</div>
+        <div class="st-compose" data-state="failed">
+          <div class="st-compose-body">Anyone know if the Prairie Creek ramp is open after the rain? Headed out Saturday.</div>
+          <div class="st-fa-msg" role="alert">
+            <svg class="i i-sm" aria-hidden="true"><use href="#i-alert-circle"/></svg>
+            <span>That didn't send. Your post is still here, nothing was lost.</span>
+          </div>
+          <div class="st-compose-foot">
+            <button class="st-btn" type="button">
+              <svg class="i i-sm" aria-hidden="true"><use href="#i-refresh"/></svg> Try again
+            </button>
+            <button class="st-btn" data-variant="ghost" type="button">Save as draft</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <p class="why">
+      <b>A failed action never clears the input, and it never shows a toast.</b> A
+      toast is for something that happened elsewhere; this happened right here, in
+      the thing the resident is looking at, and it needs a decision from them. The
+      first sentence is the fact, the second sentence is the reassurance, and
+      "Save as draft" exists because the third try sometimes fails too and a
+      person should be able to walk away without losing eighty words.
+    </p>
+  </div>
+
+  <!-- ══ 7. a section that could not load ═════════════════════════════════ -->
+
+  <div class="spec">
+    <div class="spec-label">One section down, page fine <em>the everyday case: a dozen scrapers, one of them broken, and no reason to take the town's front page with it</em></div>
+    <div class="spec-row">
+      <div class="phone">
+        <div class="phone-cap">Today – library feed down</div>
+        <div class="phone-screen">
+          <div class="st-today">
+            <div class="st-today-head">
+              <div class="st-eyebrow">Wednesday, August 5</div>
+              <h3 class="st-today-title">Quorum court sends the Weir Road culvert back to committee</h3>
+              <p class="st-today-dek">The vote was 8 to 5 after ninety minutes of public comment, most of it from people who live on the bayou side.</p>
+              <p class="st-today-by">The Courier · 6:41 a.m.</p>
+            </div>
+            <div class="st-photo" aria-hidden="true"></div>
+
+            <div class="st-block">
+              <div class="st-block-head"><span class="st-eyebrow">Around town</span></div>
+              <ul class="st-rows">
+                <li><span class="st-row-t">Tech moves fall move-in to August 17</span><span class="st-row-m">Arkansas Tech · 2h</span></li>
+                <li><span class="st-row-t">Main Street repaving starts at Denver Street Monday</span><span class="st-row-m">City of Russellville · 4h</span></li>
+                <li><span class="st-row-t">Lake Dardanelle level down four inches overnight</span><span class="st-row-m">Corps of Engineers · 5h</span></li>
+              </ul>
+            </div>
+
+            <div class="st-block">
+              <div class="st-block-head"><span class="st-eyebrow">Library</span></div>
+              <div class="st-sect-fail">
+                <p class="st-sect-fail-line">The library calendar isn't answering.</p>
+                <p class="st-sect-fail-sub">Everything else on this page is current. We'll keep trying in the background.</p>
+                <button class="st-act" type="button">
+                  <svg class="i i-sm" aria-hidden="true"><use href="#i-refresh"/></svg> Try now
+                </button>
+              </div>
+            </div>
+
+            <div class="st-block">
+              <div class="st-block-head"><span class="st-eyebrow">Tonight</span></div>
+              <ul class="st-rows">
+                <li><span class="st-row-t">Wonder Boys scrimmage, Thone Stadium</span><span class="st-row-m">6:00 p.m.</span></li>
+                <li><span class="st-row-t">City council work session</span><span class="st-row-m">6:30 p.m.</span></li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="st-ladder">
+        <div class="st-ladder-step">
+          <div class="st-fa-cap">First failure, quiet</div>
+          <div class="st-sect-fail">
+            <p class="st-sect-fail-line">The library calendar isn't answering.</p>
+            <p class="st-sect-fail-sub">Everything else on this page is current. We'll keep trying in the background.</p>
+            <button class="st-act" type="button"><svg class="i i-sm" aria-hidden="true"><use href="#i-refresh"/></svg> Try now</button>
+          </div>
+        </div>
+        <div class="st-ladder-step">
+          <div class="st-fa-cap">Retrying</div>
+          <div class="st-sect-fail" data-state="retry">
+            <p class="st-sect-fail-line"><span class="st-spinner" aria-hidden="true"></span> Checking the library calendar</p>
+            <p class="st-sect-fail-sub">Attempt 2 of 3.</p>
+          </div>
+        </div>
+        <div class="st-ladder-step">
+          <div class="st-fa-cap">Still down, but we have yesterday's copy</div>
+          <div class="st-sect-fail" data-state="fallback">
+            <div class="st-stale-strip">
+              <svg class="i i-sm" aria-hidden="true"><use href="#i-clock"/></svg>
+              <span>Last read yesterday at 4:15 p.m. The library may have changed this since.</span>
+            </div>
+            <ul class="st-rows">
+              <li><span class="st-row-t">Story time, ages 3 to 5</span><span class="st-row-m">10:30 a.m.</span></li>
+              <li><span class="st-row-t">Genealogy room open hours</span><span class="st-row-m">1:00 to 4:00 p.m.</span></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+    <p class="why">
+      <b>This is the state Town Square lives in, so it gets the most care.</b>
+      A failed block is bounded by a dashed hairline and holds its own height, so
+      nothing below it moves when the retry succeeds. It does not shout, because a
+      library feed being down is not news. It names the source by the name a
+      resident knows, "the library calendar", not "events service". And on the
+      third failure it stops asking and shows the last copy it has with the
+      timestamp attached, because two-day-old story times are worth more to
+      somebody with a four year old than an error is.
+    </p>
+  </div>
+
+  <!-- ══ 8. whole screen, 404, unrecoverable ══════════════════════════════ -->
+
+  <div class="spec">
+    <div class="spec-label">Whole-screen failure, 404, unrecoverable <em>three different problems, and only one of them is ours to apologise for</em></div>
+    <div class="spec-row">
+
+      <div class="plate st-screen-plate">
+        <div class="st-fa-cap">Everything is down</div>
+        <div class="st-screen-fail">
+          <span class="st-mark st-mark--news" aria-hidden="true"></span>
+          <p class="st-screen-fail-line">Town Square isn't loading right now.</p>
+          <p class="st-screen-fail-sub">This one is on us, not on your connection. It usually comes back within a few minutes.</p>
+          <button class="st-btn" type="button"><svg class="i i-sm" aria-hidden="true"><use href="#i-refresh"/></svg> Reload</button>
+          <p class="st-screen-meta">10:04 a.m. · ref 7f2c91 · status.russellville.town</p>
+        </div>
+      </div>
+
+      <div class="plate st-screen-plate">
+        <div class="st-fa-cap">A story that moved</div>
+        <div class="st-screen-fail">
+          <span class="st-mark st-mark--lens" aria-hidden="true"></span>
+          <p class="st-screen-fail-line">That story isn't at this address anymore.</p>
+          <p class="st-screen-fail-sub">The Courier reorganises its archive every so often and old links stop working. We found one with the same headline.</p>
+          <a class="st-suggest" href="#states">
+            <span class="st-suggest-t">Quorum court sends the Weir Road culvert back to committee</span>
+            <span class="st-suggest-m">The Courier · August 5</span>
+            <svg class="i i-sm" aria-hidden="true"><use href="#i-chevron-right"/></svg>
+          </a>
+          <button class="st-btn" data-variant="ghost" type="button">Back to today</button>
+        </div>
+      </div>
+
+      <div class="plate st-screen-plate">
+        <div class="st-fa-cap">Unrecoverable, with a way out</div>
+        <div class="st-screen-fail">
+          <span class="st-mark st-mark--tray" data-tone="mute" aria-hidden="true"></span>
+          <p class="st-screen-fail-line">Trail Conditions was taken down on August 2.</p>
+          <p class="st-screen-fail-sub">The review committee removed it after it started asking for location on every screen. The builder has been told and can resubmit.</p>
+          <div class="st-screen-acts">
+            <button class="st-btn" type="button">Browse creations</button>
+            <button class="st-btn" data-variant="ghost" type="button">Read the review note</button>
+          </div>
+        </div>
+      </div>
+
+    </div>
+    <p class="why">
+      <b>An unrecoverable state still owes the resident a destination.</b> A dead
+      end with a back button is a dead end. This screen names what happened, names
+      who decided it, dates it, and hands over two doors. The removal note is
+      public on purpose: a committee that can delete a neighbour's work without
+      saying why is not a committee a town will keep trusting.
+    </p>
+  </div>
+
+  <!-- ══ 9. offline and connectivity ══════════════════════════════════════ -->
+
+  <div class="spec">
+    <div class="spec-label">Offline and connectivity <em>out past the lake this is not an edge case, it is the drive home</em></div>
+    <div class="spec-row">
+      <div class="phone">
+        <div class="phone-cap">Today – offline</div>
+        <div class="phone-screen">
+          <div class="st-offline-bar" role="status">
+            <svg class="i i-sm" aria-hidden="true"><use href="#st-i-signal-off"/></svg>
+            <span>You're offline. Showing what was loaded at 8:12 a.m.</span>
+          </div>
+          <div class="st-today">
+            <div class="st-today-head">
+              <div class="st-eyebrow">Wednesday, August 5</div>
+              <h3 class="st-today-title">Quorum court sends the Weir Road culvert back to committee</h3>
+              <p class="st-today-dek">The vote was 8 to 5 after ninety minutes of public comment.</p>
+              <p class="st-today-by">The Courier · 6:41 a.m.</p>
+            </div>
+            <div class="st-photo" aria-hidden="true"></div>
+            <div class="st-block">
+              <div class="st-block-head"><span class="st-eyebrow">Around town</span></div>
+              <ul class="st-rows">
+                <li><span class="st-row-t">Tech moves fall move-in to August 17</span><span class="st-row-m">read</span></li>
+                <li><span class="st-row-t">Main Street repaving starts Monday</span><span class="st-row-m">read</span></li>
+              </ul>
+            </div>
+            <div class="st-block">
+              <div class="st-block-head"><span class="st-eyebrow">Creations</span></div>
+              <div class="st-need-net">
+                <svg class="i i-sm" aria-hidden="true"><use href="#st-i-signal-off"/></svg>
+                <div>
+                  <p class="st-need-net-t">Creations need a signal.</p>
+                  <p class="st-need-net-s">They run in their own sandbox and can't be cached. Three are waiting when you're back.</p>
+                </div>
+              </div>
+            </div>
+            <div class="st-block">
+              <div class="st-block-head"><span class="st-eyebrow">Saved</span></div>
+              <ul class="st-rows">
+                <li><span class="st-row-t">Feltner's Whatta-Burger, hours and phone</span><span class="st-row-m">offline copy</span></li>
+                <li><span class="st-row-t">Lake Dardanelle State Park ramps</span><span class="st-row-m">offline copy</span></li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="st-ladder">
+        <div class="st-ladder-step">
+          <div class="st-fa-cap">The bar itself</div>
+          <div class="st-offline-bar" role="status">
+            <svg class="i i-sm" aria-hidden="true"><use href="#st-i-signal-off"/></svg>
+            <span>You're offline. Showing what was loaded at 8:12 a.m.</span>
+          </div>
+          <div class="st-offline-bar" data-state="slow" role="status">
+            <span class="st-spinner" aria-hidden="true"></span>
+            <span>Slow connection. Photos are off until it picks up.</span>
+          </div>
+          <div class="st-offline-bar" data-state="back" role="status">
+            <svg class="i i-sm" aria-hidden="true"><use href="#st-i-signal-on"/></svg>
+            <span>Back online. Refreshing.</span>
+          </div>
+        </div>
+
+        <div class="st-ladder-step">
+          <div class="st-fa-cap">A queued action</div>
+          <div class="st-queued">
+            <div class="st-queued-row">
+              <svg class="i i-sm" aria-hidden="true"><use href="#i-clock"/></svg>
+              <div>
+                <p class="st-queued-t">Vouch for @tessmoore is queued</p>
+                <p class="st-queued-s">It'll send by itself when you have a signal. You don't have to stay on this screen.</p>
+              </div>
+              <button class="st-act" type="button">Cancel</button>
+            </div>
+            <div class="st-queued-row" data-state="sent">
+              <svg class="i i-sm" aria-hidden="true"><use href="#i-check-circle"/></svg>
+              <div>
+                <p class="st-queued-t">Vouch for @tessmoore sent</p>
+                <p class="st-queued-s">She's at 7 of 10.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="st-ladder-step">
+          <div class="st-fa-cap">Reconnection</div>
+          <div class="st-toast" data-kind="good">
+            <svg class="i i-sm" aria-hidden="true"><use href="#i-check-circle"/></svg>
+            <span class="st-toast-t">Back online. Your vouch for @tessmoore sent.</span>
+            <button class="st-toast-x" type="button" aria-label="Dismiss"><svg class="i i-sm" aria-hidden="true"><use href="#i-close"/></svg></button>
+          </div>
+          <p class="why st-tight">
+            <b>Reconnecting is a toast, going offline is a banner.</b> Losing
+            signal changes what the whole screen means and has to stay visible;
+            getting it back is one moment and then it is over.
+          </p>
+        </div>
+      </div>
+    </div>
+    <p class="why">
+      <b>What survives offline is a design decision, not a caching accident.</b>
+      Today's front page, the last two hundred stories, every saved item, and the
+      full directory including phone numbers and hours, because that is what you
+      need when you are parked outside a shop that might be closed. Creations
+      never cache: they are sandboxed third-party code and a stale copy of
+      somebody else's app is a support problem nobody in this town signed up for.
+      The bar states the time of the copy, never just the word "offline".
+    </p>
+  </div>
+
+  <!-- ══ 10. stale data ═══════════════════════════════════════════════════ -->
+
+  <div class="spec">
+    <div class="spec-label">Stale data <em>when a scrape fails the API serves the last good screen, so this timestamp is the only thing telling the truth</em></div>
+    <div class="plate">
+      <div class="st-age-row">
+        <div class="st-age">
+          <div class="st-fa-cap">Fresh, under two hours</div>
+          <p class="st-updated">Updated 6 minutes ago</p>
+          <p class="st-age-note">ink45, no dot, no colour. Present on every screen but never asking for attention.</p>
+        </div>
+        <div class="st-age">
+          <div class="st-fa-cap">A few hours</div>
+          <p class="st-updated" data-age="hours"><span class="st-age-dot" aria-hidden="true"></span>Updated at 7:12 this morning</p>
+          <p class="st-age-note">Switches from relative to clock time, because "9 hours ago" makes a person do arithmetic. Ink60 and a small dot.</p>
+        </div>
+        <div class="st-age">
+          <div class="st-fa-cap">Over a day</div>
+          <p class="st-updated" data-age="stale"><span class="st-age-dot" aria-hidden="true"></span>Updated yesterday at 6:40 p.m.</p>
+          <p class="st-age-note">Terracotta and a filled dot. The day word is doing the work; the colour is confirmation, not the message.</p>
+        </div>
+      </div>
+
+      <div class="st-stale-banner" role="status">
+        <svg class="i i-lg" aria-hidden="true"><use href="#i-clock"/></svg>
+        <div>
+          <p class="st-stale-t">Some of this is a day old.</p>
+          <p class="st-stale-s">The Courier's feed stopped answering at 6:40 p.m. yesterday. Everything below is the last thing we got from it. Events and the directory are current.</p>
+        </div>
+        <button class="st-btn" data-variant="ghost" type="button">Try again</button>
+      </div>
+
+      <div class="st-thresholds">
+        <div><span class="st-th-k">0 to 2h</span><span class="st-th-v">relative, ink45, no banner</span></div>
+        <div><span class="st-th-k">2 to 18h</span><span class="st-th-v">clock time, ink60, hollow dot, no banner</span></div>
+        <div><span class="st-th-k">18h+</span><span class="st-th-v">day plus clock, terracotta, filled dot, banner appears</span></div>
+        <div><span class="st-th-k">72h+</span><span class="st-th-v">banner names the source and links the status page</span></div>
+      </div>
+    </div>
+    <p class="why">
+      <b>The threshold is 18 hours and it is not arbitrary.</b> The Courier posts
+      in the morning; the city posts agendas in the evening. Anything under 18
+      hours means at most one publishing cycle was missed, which happens on a
+      normal Sunday and is not worth a banner. Past 18 hours a resident is looking
+      at a screen that could be wrong about a road closure, and the product has to
+      say so before they act on it. The banner appears once, at the top of the
+      affected section only, and it is scoped: it never claims the whole app is
+      stale when only one feed is.
+    </p>
+    <p class="why">
+      <b>The timestamp is never hidden and never abbreviated away.</b> This is the
+      single line standing between "the app is quietly serving you Tuesday" and a
+      resident driving to a meeting that was cancelled. Removing it to clean up a
+      layout is the one change in this system that would be a genuine failure.
+    </p>
+  </div>
+
+  <!-- ══ 11. skeletons ════════════════════════════════════════════════════ -->
+
+  <div class="spec">
+    <div class="spec-label">Skeletons, per surface <em>its only job is to hold the exact shape the real thing will take, so nothing jumps</em></div>
+    <div class="spec-row">
+      <div class="phone">
+        <div class="phone-cap">Today – loading</div>
+        <div class="phone-screen">
+          <div class="st-today">
+            <div class="st-today-head">
+              <div class="st-sk" style="width:112px;height:11px"></div>
+              <div class="st-sk" style="width:96%;height:23px;margin-top:14px"></div>
+              <div class="st-sk" style="width:74%;height:23px;margin-top:8px"></div>
+              <div class="st-sk" style="width:88%;height:15px;margin-top:14px"></div>
+              <div class="st-sk" style="width:52%;height:15px;margin-top:7px"></div>
+              <div class="st-sk" style="width:140px;height:12px;margin-top:14px"></div>
+            </div>
+            <div class="st-sk st-sk-photo"></div>
+            <div class="st-block">
+              <div class="st-sk" style="width:78px;height:10px;margin-bottom:14px"></div>
+              <div class="st-sk-row"><div class="st-sk st-sk-thumb"></div><div class="st-sk-lines"><div class="st-sk" style="width:92%;height:14px"></div><div class="st-sk" style="width:44%;height:11px;margin-top:8px"></div></div></div>
+              <div class="st-sk-row"><div class="st-sk st-sk-thumb"></div><div class="st-sk-lines"><div class="st-sk" style="width:80%;height:14px"></div><div class="st-sk" style="width:38%;height:11px;margin-top:8px"></div></div></div>
+              <div class="st-sk-row"><div class="st-sk st-sk-thumb"></div><div class="st-sk-lines"><div class="st-sk" style="width:88%;height:14px"></div><div class="st-sk" style="width:41%;height:11px;margin-top:8px"></div></div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="st-ladder">
+        <div class="st-ladder-step">
+          <div class="st-fa-cap">Story list</div>
+          <div class="plate st-sk-plate">
+            <div class="st-sk-row"><div class="st-sk st-sk-thumb"></div><div class="st-sk-lines"><div class="st-sk" style="width:94%;height:14px"></div><div class="st-sk" style="width:62%;height:14px;margin-top:6px"></div><div class="st-sk" style="width:36%;height:11px;margin-top:9px"></div></div></div>
+            <div class="st-sk-row"><div class="st-sk-lines"><div class="st-sk" style="width:88%;height:14px"></div><div class="st-sk" style="width:33%;height:11px;margin-top:9px"></div></div></div>
+            <div class="st-sk-row"><div class="st-sk st-sk-thumb"></div><div class="st-sk-lines"><div class="st-sk" style="width:76%;height:14px"></div><div class="st-sk" style="width:58%;height:14px;margin-top:6px"></div><div class="st-sk" style="width:40%;height:11px;margin-top:9px"></div></div></div>
+            <p class="st-age-note">Row two has no thumbnail, because roughly half the town's stories do not carry a photo. A skeleton that always draws a thumb teaches a layout that will not arrive.</p>
+          </div>
+        </div>
+
+        <div class="st-ladder-step">
+          <div class="st-fa-cap">Directory grid</div>
+          <div class="plate st-sk-plate">
+            <div class="st-sk-grid">
+              <div class="st-sk-card"><div class="st-sk st-sk-logo"></div><div class="st-sk" style="width:80%;height:14px"></div><div class="st-sk" style="width:52%;height:11px;margin-top:8px"></div><div class="st-sk st-sk-chip"></div></div>
+              <div class="st-sk-card"><div class="st-sk st-sk-logo"></div><div class="st-sk" style="width:66%;height:14px"></div><div class="st-sk" style="width:60%;height:11px;margin-top:8px"></div><div class="st-sk st-sk-chip"></div></div>
+              <div class="st-sk-card"><div class="st-sk st-sk-logo"></div><div class="st-sk" style="width:74%;height:14px"></div><div class="st-sk" style="width:46%;height:11px;margin-top:8px"></div><div class="st-sk st-sk-chip"></div></div>
+              <div class="st-sk-card"><div class="st-sk st-sk-logo"></div><div class="st-sk" style="width:58%;height:14px"></div><div class="st-sk" style="width:64%;height:11px;margin-top:8px"></div><div class="st-sk st-sk-chip"></div></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="st-ladder-step">
+          <div class="st-fa-cap">A creation booting</div>
+          <div class="plate st-sk-plate">
+            <div class="st-boot">
+              <div class="st-boot-head">
+                <span class="st-boot-name">Ramp Conditions</span>
+                <span class="st-boot-by">by @jhollis · reviewed July 28</span>
+              </div>
+              <div class="st-boot-body">
+                <span class="st-spinner" data-size="lg" aria-hidden="true"></span>
+                <p class="st-boot-msg">Starting the sandbox</p>
+              </div>
+              <div class="st-boot-foot">Runs isolated. It can see your handle and that you're verified, nothing else.</div>
+            </div>
+            <p class="st-age-note">We already know the name, the builder, and the review date from the manifest, so the boot state shows them. A grey box would be throwing away information we are holding.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <p class="why">
+      <b>Skeletons are measured against the real component, not drawn by eye.</b>
+      Every block here matches its live counterpart's height and rhythm, including
+      the 14px baseline of a headline line and the 64px thumbnail. If the page
+      shifts when content lands, the skeleton failed and it would have been more
+      honest to show nothing. Shimmer runs at 1400ms linear, one direction, and it
+      stops entirely under reduced motion, leaving a flat 7 percent ink fill that
+      still reads as pending.
+    </p>
+  </div>
+
+  <!-- ══ 12. toasts ═══════════════════════════════════════════════════════ -->
+
+  <div class="spec">
+    <div class="spec-label">Toasts, four semantics <em>a toast is for something that already happened somewhere you are not looking</em></div>
+    <div class="plate">
+      <div class="st-toast-set">
+        <div class="st-toast" data-kind="info">
+          <svg class="i i-sm" aria-hidden="true"><use href="#i-info"/></svg>
+          <span class="st-toast-t">Saved to your list.</span>
+          <button class="st-toast-act" type="button"><svg class="i i-sm" aria-hidden="true"><use href="#st-i-undo"/></svg> Undo</button>
+          <button class="st-toast-x" type="button" aria-label="Dismiss"><svg class="i i-sm" aria-hidden="true"><use href="#i-close"/></svg></button>
+        </div>
+        <div class="st-toast" data-kind="good">
+          <svg class="i i-sm" aria-hidden="true"><use href="#i-check-circle"/></svg>
+          <span class="st-toast-t">Ramp Conditions is live in the gallery.</span>
+          <button class="st-toast-act" type="button">View</button>
+          <button class="st-toast-x" type="button" aria-label="Dismiss"><svg class="i i-sm" aria-hidden="true"><use href="#i-close"/></svg></button>
+        </div>
+        <div class="st-toast" data-kind="warn">
+          <svg class="i i-sm" aria-hidden="true"><use href="#i-warning"/></svg>
+          <span class="st-toast-t">Two of your listing photos were over 8 MB and were skipped.</span>
+          <button class="st-toast-act" type="button">Which ones</button>
+          <button class="st-toast-x" type="button" aria-label="Dismiss"><svg class="i i-sm" aria-hidden="true"><use href="#i-close"/></svg></button>
+        </div>
+        <div class="st-toast" data-kind="problem">
+          <svg class="i i-sm" aria-hidden="true"><use href="#i-alert-circle"/></svg>
+          <span class="st-toast-t">Couldn't remove that bookmark.</span>
+          <button class="st-toast-act" type="button"><svg class="i i-sm" aria-hidden="true"><use href="#i-refresh"/></svg> Retry</button>
+          <button class="st-toast-x" type="button" aria-label="Dismiss"><svg class="i i-sm" aria-hidden="true"><use href="#i-close"/></svg></button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="spec">
+    <div class="spec-label">Toast behaviour, live <em>stacking, timing, and undo, because a toast you cannot catch is worse than no toast</em></div>
+    <div class="spec-row">
+      <div class="plate st-demo-plate" id="st-toast-demo">
+        <div class="st-demo-bar">
+          <button class="st-btn" data-variant="ghost" type="button" data-toast="info">Save a story</button>
+          <button class="st-btn" data-variant="ghost" type="button" data-toast="good">Publish</button>
+          <button class="st-btn" data-variant="ghost" type="button" data-toast="warn">Upload photos</button>
+          <button class="st-btn" data-variant="ghost" type="button" data-toast="problem">Break something</button>
+        </div>
+        <div class="st-toast-stage">
+          <div class="st-toast-stack" id="st-toast-stack" role="status" aria-live="polite" aria-atomic="false"></div>
+          <p class="st-stage-hint">Toasts land here, bottom left, above the tab bar.</p>
+        </div>
+        <noscript><p class="st-age-note">With scripting off this demo is inert. The four static toasts above are the same component.</p></noscript>
+      </div>
+
+      <div class="st-ladder">
+        <div class="st-ladder-step">
+          <div class="st-fa-cap">Timing</div>
+          <table class="st-table">
+            <thead><tr><th>Toast</th><th>Dismiss</th><th>Why</th></tr></thead>
+            <tbody>
+              <tr><td>info, no action</td><td>4s</td><td>Confirming a tap the finger already knows about.</td></tr>
+              <tr><td>info or good, with undo</td><td>8s</td><td>Long enough to read it, notice the mistake, and reach the button.</td></tr>
+              <tr><td>warn</td><td>10s</td><td>Something did not happen the way it was asked. That earns a second look.</td></tr>
+              <tr><td>problem</td><td>never</td><td>It needs a decision. It waits for dismiss or retry.</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="st-ladder-step">
+          <div class="st-fa-cap">Stacking</div>
+          <ul class="st-rules">
+            <li>Three at once, maximum. The fourth pushes the oldest out early.</li>
+            <li>Newest enters at the bottom, older ones rise. The eye is already at the bottom of a phone.</li>
+            <li>Identical toasts collapse and count up rather than repeat: "3 stories saved."</li>
+            <li>Hovering or focusing anything in the stack pauses every timer in it.</li>
+            <li>A problem toast never auto-dismisses, and never gets pushed out by a newer one.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <p class="why">
+      <b>When a banner is right and a toast is wrong.</b> A toast is an event: it
+      happened, it is over, it will leave. A banner is a condition: it is true
+      right now and it stays true whether or not you look at it. Offline is a
+      condition. Stale data is a condition. A feed being down is a condition. All
+      three are banners. Saving a bookmark, publishing a creation, and a failed
+      photo upload are events, so they are toasts. The test is simple: if the
+      statement is still true in thirty seconds, a toast is the wrong shape,
+      because in thirty seconds the toast is gone and the truth is not.
+    </p>
+  </div>
+
+  <!-- ══ 13. modals and sheets ════════════════════════════════════════════ -->
+
+  <div class="spec">
+    <div class="spec-label">Modals and sheets <em>interrupting a person is expensive, so each one has to be a question only they can answer</em></div>
+    <div class="spec-row">
+
+      <div class="plate st-modal-plate">
+        <div class="st-fa-cap">Confirm</div>
+        <div class="st-modal-demo">
+          <div class="st-scrim" aria-hidden="true"></div>
+          <div class="st-modal" role="dialog" aria-modal="true" aria-labelledby="st-m1t">
+            <h4 class="st-modal-t" id="st-m1t">Leave without posting?</h4>
+            <p class="st-modal-s">Your draft about the Prairie Creek ramp will be saved and it'll be here when you come back.</p>
+            <div class="st-modal-acts">
+              <button class="st-btn" data-variant="ghost" type="button">Keep writing</button>
+              <button class="st-btn" type="button">Save and leave</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="plate st-modal-plate">
+        <div class="st-fa-cap">Destructive confirm</div>
+        <div class="st-modal-demo">
+          <div class="st-scrim" aria-hidden="true"></div>
+          <div class="st-modal" role="alertdialog" aria-modal="true" aria-labelledby="st-m2t" aria-describedby="st-m2d">
+            <h4 class="st-modal-t" id="st-m2t">Remove the listing for River Valley Bicycles?</h4>
+            <p class="st-modal-s" id="st-m2d">This can't be undone. The hours, the phone number, and the eleven photos go with it, and adding it back means starting from an empty form.</p>
+            <div class="st-modal-acts">
+              <button class="st-btn" data-variant="ghost" type="button">Keep it</button>
+              <button class="st-btn" data-variant="danger" type="button">Remove listing</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <p class="why">
+      <b>The destructive button is a terracotta outline, not a brick fill.</b> Two
+      reasons, and both matter. First, brick is the flood register and spending it
+      on a delete button is how it stops meaning anything. Second, a filled button
+      is the easy target, and the easy target on this dialog should be "Keep it".
+      The outline makes the destructive choice deliberate to hit without hiding
+      it, and the sentence above it does the actual work: it names what is lost,
+      counts it, and says what recovery would cost. A dialog that only says "Are
+      you sure?" has asked a resident to guess.
+    </p>
+
+    <div class="spec-row">
+      <div class="plate st-demo-plate" id="st-sheet-demo">
+        <div class="st-fa-cap">Informational sheet, live</div>
+        <div class="st-demo-bar">
+          <button class="st-btn" type="button" id="st-sheet-open">What does verified mean?</button>
+        </div>
+        <div class="st-sheet-stage">
+          <div class="st-sheet-scrim" id="st-sheet-scrim" hidden></div>
+          <div class="st-sheet" id="st-sheet" role="dialog" aria-modal="true" aria-labelledby="st-sheet-t" hidden>
+            <div class="st-sheet-grab" aria-hidden="true"></div>
+            <h4 class="st-sheet-t" id="st-sheet-t">What verified means here</h4>
+            <p class="st-sheet-p">Ten neighbours have said they know you're a real person in Russellville. That's the whole mechanism.</p>
+            <p class="st-sheet-p">Town Square never stores your address, and verified is not the same as identified. A creation you open can see two things about you: your handle, and whether you're verified. Not your name, not your email, not where you are.</p>
+            <ul class="st-sheet-list">
+              <li><svg class="i i-sm" aria-hidden="true"><use href="#i-check"/></svg> Vouches are private. You can see your count, not who vouched.</li>
+              <li><svg class="i i-sm" aria-hidden="true"><use href="#i-check"/></svg> You can withdraw a vouch you gave, any time.</li>
+              <li><svg class="i i-sm" aria-hidden="true"><use href="#i-check"/></svg> Unverified residents can read everything. Verified adds posting and building.</li>
+            </ul>
+            <button class="st-btn" type="button" id="st-sheet-close">Got it</button>
+          </div>
+        </div>
+        <noscript><p class="st-age-note">With scripting off the sheet renders inline as a plain block. Nothing in it is hidden behind the animation.</p></noscript>
+      </div>
+
+      <div class="st-ladder">
+        <div class="st-ladder-step">
+          <div class="st-fa-cap">Focus and dismissal rules</div>
+          <ul class="st-rules">
+            <li>On open, focus moves to the dialog's heading, not to a button. Landing on "Remove listing" is how an accident happens.</li>
+            <li>Tab is trapped between the first and last focusable element inside. Shift+Tab from the first wraps to the last.</li>
+            <li>Escape closes a confirm, an info sheet, and any non-destructive dialog.</li>
+            <li>Escape also closes a destructive confirm. It is the cancel path, and cancel is always safe.</li>
+            <li>Tapping the scrim closes an info sheet. It does <b>not</b> close either confirm, because a stray thumb on a phone should not answer a question for you.</li>
+            <li>On close, focus returns to the control that opened it, every time.</li>
+            <li>The page behind gets <code class="st-code-i">inert</code> and stops scrolling. Background scroll under a sheet is the most common way this pattern breaks.</li>
+            <li>Sheets rise from the bottom on a phone and become a centred dialog at 640px and up. Same markup, one media query.</li>
+            <li>One layer at a time. A dialog never opens another dialog; it replaces itself.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ 14. progress ═════════════════════════════════════════════════════ -->
+
+  <div class="spec">
+    <div class="spec-label">Progress <em>determinate when we can count it, indeterminate when we cannot, and never a fake percentage</em></div>
+    <div class="spec-row">
+      <div class="plate st-prog-plate">
+        <div class="st-fa-cap">Determinate</div>
+        <div class="st-prog-item">
+          <div class="st-prog-top"><span>Uploading photos for River Valley Bicycles</span><span class="st-meta">7 of 11</span></div>
+          <div class="st-bar" role="progressbar" aria-valuenow="64" aria-valuemin="0" aria-valuemax="100" aria-label="Uploading photos">
+            <span class="st-bar-fill" style="width:64%"></span>
+          </div>
+        </div>
+        <div class="st-prog-item">
+          <div class="st-prog-top"><span>Uploading photos</span><span class="st-meta">done</span></div>
+          <div class="st-bar" data-state="done" role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100">
+            <span class="st-bar-fill" style="width:100%"></span>
+          </div>
+        </div>
+        <div class="st-prog-item">
+          <div class="st-prog-top"><span>Uploading photos</span><span class="st-meta">stopped at 7</span></div>
+          <div class="st-bar" data-state="failed" role="progressbar" aria-valuenow="64" aria-valuemin="0" aria-valuemax="100">
+            <span class="st-bar-fill" style="width:64%"></span>
+          </div>
+          <p class="st-prog-note">The connection dropped. The seven that finished are saved.</p>
+        </div>
+
+        <div class="st-fa-cap st-fa-cap-2">Indeterminate</div>
+        <div class="st-prog-item">
+          <div class="st-prog-top"><span>Sending Ramp Conditions to review</span></div>
+          <div class="st-bar" data-state="indeterminate" role="progressbar" aria-label="Sending to review"><span class="st-bar-run"></span></div>
+          <p class="st-prog-note">The committee meets Tuesdays. There is no percentage to show and inventing one would be a lie about how long this takes.</p>
+        </div>
+        <div class="st-prog-item">
+          <div class="st-prog-top"><span>Inline, in a button</span></div>
+          <button class="st-btn" type="button" disabled><span class="st-spinner" aria-hidden="true"></span> Submitting</button>
+          <span class="st-spinner" data-size="lg" aria-hidden="true"></span>
+        </div>
+      </div>
+
+      <div class="plate st-prog-plate">
+        <div class="st-fa-cap">Multi-step header</div>
+        <ol class="st-steps">
+          <li data-state="done"><span class="st-step-dot" aria-hidden="true"><svg class="i i-sm"><use href="#i-check"/></svg></span><div><span class="st-step-t">Submitted</span><span class="st-step-m">July 26, 8:04 p.m.</span></div></li>
+          <li data-state="done"><span class="st-step-dot" aria-hidden="true"><svg class="i i-sm"><use href="#i-check"/></svg></span><div><span class="st-step-t">Automated checks</span><span class="st-step-m">Passed. No network calls outside the sandbox.</span></div></li>
+          <li data-state="now"><span class="st-step-dot" aria-hidden="true"></span><div><span class="st-step-t">Committee review</span><span class="st-step-m">Three people, meeting Tuesday at 6 p.m.</span></div></li>
+          <li data-state="todo"><span class="st-step-dot" aria-hidden="true"></span><div><span class="st-step-t">Published</span><span class="st-step-m">Goes into the gallery for everyone</span></div></li>
+        </ol>
+        <p class="st-prog-note">Current step is the only one with weight and a filled dot. Done steps keep their timestamps, because "when did this actually move" is the question a builder is asking.</p>
+
+        <div class="st-fa-cap st-fa-cap-2">A step that failed</div>
+        <ol class="st-steps">
+          <li data-state="done"><span class="st-step-dot" aria-hidden="true"><svg class="i i-sm"><use href="#i-check"/></svg></span><div><span class="st-step-t">Submitted</span><span class="st-step-m">August 1, 9:15 a.m.</span></div></li>
+          <li data-state="failed"><span class="st-step-dot" aria-hidden="true"><svg class="i i-sm"><use href="#i-close"/></svg></span><div><span class="st-step-t">Automated checks</span><span class="st-step-m">Asked for location on every screen. Fix the manifest and resubmit.</span></div></li>
+          <li data-state="todo"><span class="st-step-dot" aria-hidden="true"></span><div><span class="st-step-t">Committee review</span><span class="st-step-m">Not reached</span></div></li>
+        </ol>
+      </div>
+    </div>
+
+    <div class="spec-row">
+      <div class="plate st-opt-plate">
+        <div class="st-fa-cap">Optimistic update, three outcomes</div>
+        <div class="st-opt-row">
+          <div class="st-opt">
+            <div class="st-opt-cap">Resting</div>
+            <div class="st-vouch">
+              <div><p class="st-vouch-t">@tessmoore</p><p class="st-vouch-s">6 of 10 vouches</p></div>
+              <button class="st-btn" data-variant="ghost" type="button">Vouch</button>
+            </div>
+          </div>
+          <div class="st-opt">
+            <div class="st-opt-cap">Pending, applied immediately</div>
+            <div class="st-vouch" data-state="pending">
+              <div><p class="st-vouch-t">@tessmoore</p><p class="st-vouch-s">7 of 10 vouches <span class="st-pend">sending</span></p></div>
+              <button class="st-btn" data-variant="ghost" type="button" disabled>Vouched</button>
+            </div>
+          </div>
+          <div class="st-opt">
+            <div class="st-opt-cap">Confirmed</div>
+            <div class="st-vouch" data-state="confirmed">
+              <div><p class="st-vouch-t">@tessmoore</p><p class="st-vouch-s">7 of 10 vouches</p></div>
+              <button class="st-btn" data-variant="ghost" type="button" disabled><svg class="i i-sm" aria-hidden="true"><use href="#i-check"/></svg> Vouched</button>
+            </div>
+          </div>
+          <div class="st-opt">
+            <div class="st-opt-cap">Rolled back</div>
+            <div class="st-vouch" data-state="rolled">
+              <div><p class="st-vouch-t">@tessmoore</p><p class="st-vouch-s">6 of 10 vouches</p></div>
+              <button class="st-btn" data-variant="ghost" type="button">Vouch</button>
+            </div>
+            <div class="st-toast" data-kind="problem" data-inline="true">
+              <svg class="i i-sm" aria-hidden="true"><use href="#i-alert-circle"/></svg>
+              <span class="st-toast-t">That vouch didn't go through.</span>
+              <button class="st-toast-act" type="button">Retry</button>
+            </div>
+          </div>
+        </div>
+        <p class="why st-tight">
+          <b>Optimistic, but honest about it.</b> The count moves the instant the
+          finger lifts, because waiting 800ms to see a number change makes an app
+          feel broken. The word "sending" and a soft pulse carry the pending state,
+          and both go away together. A rollback puts the number back and raises a
+          toast in the same frame, because a number quietly changing back is the
+          single most disorienting thing an interface can do. Motion alone never
+          carries this: the pulse is decoration, the word is the state.
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ 15. pagination and infinite scroll ═══════════════════════════════ -->
+
+  <div class="spec">
+    <div class="spec-label">Pagination and infinite scroll <em>the directory is a place you are looking for something; the feed is a place you are passing through</em></div>
+    <div class="spec-row">
+      <div class="plate st-page-plate">
+        <div class="st-fa-cap">Directory, load more</div>
+        <p class="st-page-count">Showing 24 of 712 businesses</p>
+        <button class="st-btn" data-variant="ghost" data-wide="true" type="button">Load 24 more</button>
+        <div class="st-page-gap"></div>
+        <p class="st-page-count">Showing 48 of 712 businesses</p>
+        <button class="st-btn" data-variant="ghost" data-wide="true" type="button" disabled><span class="st-spinner" aria-hidden="true"></span> Loading</button>
+        <div class="st-page-gap"></div>
+        <p class="st-page-count">Showing 712 of 712 businesses</p>
+        <div class="st-endcap">
+          <span class="st-endcap-rule" aria-hidden="true"></span>
+          <p class="st-endcap-t">That's every business we know about.</p>
+          <p class="st-endcap-s">Missing one? Adding it takes about a minute and a neighbour will check it.</p>
+          <button class="st-act" type="button">Add a business</button>
+        </div>
+      </div>
+
+      <div class="plate st-page-plate">
+        <div class="st-fa-cap">Feed, infinite with a floor</div>
+        <ul class="st-rows">
+          <li><span class="st-row-t">Tech moves fall move-in to August 17</span><span class="st-row-m">2h</span></li>
+          <li><span class="st-row-t">Main Street repaving starts Monday</span><span class="st-row-m">4h</span></li>
+        </ul>
+        <div class="st-loadrow" role="status" aria-live="polite">
+          <div class="st-sk-row"><div class="st-sk st-sk-thumb"></div><div class="st-sk-lines"><div class="st-sk" style="width:90%;height:14px"></div><div class="st-sk" style="width:40%;height:11px;margin-top:8px"></div></div></div>
+          <span class="st-loadrow-t">Loading more</span>
+        </div>
+        <div class="st-page-gap"></div>
+        <div class="st-endcap">
+          <span class="st-endcap-rule" aria-hidden="true"></span>
+          <p class="st-endcap-t">You're at the end of this week.</p>
+          <p class="st-endcap-s">Ninety days of stories are in search whenever you want them.</p>
+          <button class="st-act" type="button">Search the archive</button>
+        </div>
+        <div class="st-page-gap"></div>
+        <div class="st-fa-cap">Auto-load stops after five screens</div>
+        <button class="st-btn" data-variant="ghost" data-wide="true" type="button">Keep going</button>
+      </div>
+    </div>
+    <p class="why">
+      <b>Why they differ.</b> In the directory a resident is hunting: they need to
+      know how many are left, they need the footer, and they need to be able to
+      leave and come back to the same place. Infinite scroll destroys all three.
+      In the feed they are browsing, and a button between them and the next story
+      is friction with nothing on the other side of it. Infinite scroll gets a
+      floor anyway: after five screens it stops and asks, because a list with no
+      bottom on a phone means the tab bar and the footer are unreachable, and
+      because five screens is well past the point where somebody is still reading.
+      Both endings are written, never a spinner that quietly stops spinning.
+    </p>
+  </div>
+
+  <!-- ══ 16. motion spec ══════════════════════════════════════════════════ -->
+
+  <div class="spec">
+    <div class="spec-label">Motion specification <em>every motion in the product, what it costs, and the sentence it is saying</em></div>
+    <div class="st-scroll">
+      <table class="st-table" data-wide="true">
+        <thead>
+          <tr><th>Motion</th><th>Where</th><th>Duration</th><th>Easing</th><th>What it communicates</th><th>Reduced motion</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Press response</td><td>Every button, chip, card</td><td><code class="st-code-i">--ts-dur-1</code> 90ms</td><td><code class="st-code-i">--ts-ease</code></td><td>The tap registered, before the network knows anything.</td><td>Kept. Opacity only, no scale.</td></tr>
+          <tr><td>Focus ring</td><td>Every focusable</td><td>0ms</td><td>none</td><td>You are here. Instantly.</td><td>Unchanged. Focus never animates.</td></tr>
+          <tr><td>Enter, single element</td><td>Toast, banner, inline error</td><td><code class="st-code-i">--ts-dur-3</code> 260ms</td><td><code class="st-code-i">--ts-ease-out</code></td><td>Something arrived that you did not ask to see.</td><td>Fade only, 90ms, no travel.</td></tr>
+          <tr><td>Exit</td><td>Toast, banner</td><td><code class="st-code-i">--ts-dur-2</code> 160ms</td><td><code class="st-code-i">--ts-ease</code></td><td>It is leaving. Do not chase it.</td><td>Instant removal.</td></tr>
+          <tr><td>Sheet rise</td><td>Bottom sheet</td><td><code class="st-code-i">--ts-dur-4</code> 420ms</td><td><code class="st-code-i">--ts-ease-out</code></td><td>A layer came up over the page, and the page is still under it.</td><td>Fade in, 120ms. No travel.</td></tr>
+          <tr><td>Sheet dismiss</td><td>Bottom sheet</td><td><code class="st-code-i">--ts-dur-3</code> 260ms</td><td><code class="st-code-i">--ts-ease</code></td><td>You are being put back where you were.</td><td>Instant.</td></tr>
+          <tr><td>Modal enter</td><td>Centred dialog</td><td><code class="st-code-i">--ts-dur-2</code> 160ms</td><td><code class="st-code-i">--ts-ease-out</code></td><td>This interrupted you on purpose.</td><td>Fade only, no scale.</td></tr>
+          <tr><td>Scrim</td><td>Behind any overlay</td><td><code class="st-code-i">--ts-dur-3</code> 260ms</td><td><code class="st-code-i">--ts-ease</code></td><td>The page behind is not available right now.</td><td>Kept. Opacity is not vestibular.</td></tr>
+          <tr><td>List stagger</td><td>Feed, search results</td><td><code class="st-code-i">--ts-dur-3</code>, 40ms apart, capped at 6</td><td><code class="st-code-i">--ts-ease-out</code></td><td>These arrived together, and in this order.</td><td>Off. All items appear at once.</td></tr>
+          <tr><td>Page transition</td><td>Tab and route change</td><td><code class="st-code-i">--ts-dur-2</code> 160ms</td><td><code class="st-code-i">--ts-ease</code></td><td>You moved. You did not reload.</td><td>Cross-fade, 90ms.</td></tr>
+          <tr><td>Expand</td><td>Hours, story body, filters</td><td><code class="st-code-i">--ts-dur-3</code> 260ms</td><td><code class="st-code-i">--ts-ease</code></td><td>This grew out of the thing you tapped.</td><td>Snap open. Height is not animated.</td></tr>
+          <tr><td>Skeleton shimmer</td><td>Every skeleton</td><td>1400ms loop</td><td>linear</td><td>The app is working, not frozen.</td><td>Off. Flat fill holds the shape.</td></tr>
+          <tr><td>Pending pulse</td><td>Optimistic updates</td><td>1200ms loop</td><td><code class="st-code-i">--ts-ease</code></td><td>Sent, not confirmed.</td><td>Off. The word "sending" already says it.</td></tr>
+          <tr><td>Rollback</td><td>Optimistic failure</td><td><code class="st-code-i">--ts-dur-2</code> 160ms</td><td><code class="st-code-i">--ts-ease</code></td><td>That did not stick. Here is where things actually are.</td><td>Instant, with the toast.</td></tr>
+          <tr><td>Stale banner drop</td><td>Top of a section</td><td><code class="st-code-i">--ts-dur-3</code> 260ms</td><td><code class="st-code-i">--ts-ease-out</code></td><td>This was not here a second ago. Read it.</td><td>Appears without travel.</td></tr>
+          <tr><td>Progress fill</td><td>Determinate bar</td><td><code class="st-code-i">--ts-dur-4</code> 420ms</td><td><code class="st-code-i">--ts-ease</code></td><td>Measured, not guessed.</td><td>Kept. The bar is the information.</td></tr>
+          <tr><td>Indeterminate run</td><td>Unknown duration</td><td>1600ms loop</td><td><code class="st-code-i">--ts-ease</code></td><td>Still working. No idea how long.</td><td>Becomes a static striped bar plus text.</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="why">
+      <b>The rule that governs the whole table: motion is never the only carrier
+      of a state change.</b> Every row above has a non-motion partner. The pending
+      pulse is paired with the word "sending". The stale banner is paired with a
+      timestamp that changed colour and wording. The skeleton shimmer is paired
+      with a fill that is visible when it is stopped. Turn every animation in this
+      product off and nothing becomes unknowable, which is the only test that
+      matters, because for some residents it is off already.
+    </p>
+  </div>
+
+  <!-- ══ 17. motion demos ═════════════════════════════════════════════════ -->
+
+  <div class="spec">
+    <div class="spec-label">Motion, live <em>the same six motions with reduced motion on and off, side by side</em></div>
+    <div class="plate st-motion-plate" id="st-motion-demo">
+      <div class="st-motion-bar">
+        <button class="st-btn" type="button" id="st-motion-replay"><svg class="i i-sm" aria-hidden="true"><use href="#i-refresh"/></svg> Replay all</button>
+        <label class="st-switch">
+          <input type="checkbox" id="st-rm-toggle">
+          <span class="st-switch-track" aria-hidden="true"><span class="st-switch-knob"></span></span>
+          <span class="st-switch-label">Simulate prefers-reduced-motion</span>
+        </label>
+      </div>
+
+      <div class="st-motion-grid" id="st-motion-grid">
+        <figure class="st-motion-cell">
+          <div class="st-motion-stage"><span class="st-demo-chip st-anim-enter">Saved to your list</span></div>
+          <figcaption>Enter · 260ms ease-out · 8px rise plus fade</figcaption>
+        </figure>
+        <figure class="st-motion-cell">
+          <div class="st-motion-stage"><span class="st-demo-chip st-anim-exit">Dismissed</span></div>
+          <figcaption>Exit · 160ms ease · fade plus 4px fall</figcaption>
+        </figure>
+        <figure class="st-motion-cell">
+          <div class="st-motion-stage" data-frame="true"><span class="st-demo-sheet st-anim-rise">What verified means</span></div>
+          <figcaption>Sheet rise · 420ms ease-out · full travel from the edge</figcaption>
+        </figure>
+        <figure class="st-motion-cell">
+          <div class="st-motion-stage">
+            <ul class="st-demo-list">
+              <li class="st-anim-stagger">Weir Road culvert back to committee</li>
+              <li class="st-anim-stagger">Tech moves fall move-in to the 17th</li>
+              <li class="st-anim-stagger">Main Street repaving starts Monday</li>
+              <li class="st-anim-stagger">Lake down four inches overnight</li>
+            </ul>
+          </div>
+          <figcaption>Stagger · 40ms apart, capped at 6 items</figcaption>
+        </figure>
+        <figure class="st-motion-cell">
+          <div class="st-motion-stage" data-frame="true">
+            <span class="st-demo-page st-anim-page">Directory</span>
+          </div>
+          <figcaption>Page transition · 160ms · 12px slide plus fade</figcaption>
+        </figure>
+        <figure class="st-motion-cell">
+          <div class="st-motion-stage"><button class="st-btn st-press" type="button">Press me</button></div>
+          <figcaption>Press · 90ms · scale to .975, held while down</figcaption>
+        </figure>
+      </div>
+      <noscript><p class="st-age-note">With scripting off these play once on load and the reduced-motion switch is inert. The section's own reduced-motion media query still applies.</p></noscript>
+    </div>
+    <p class="why">
+      <b>Reduced motion is not "everything off".</b> Opacity and colour changes
+      stay, because they are not vestibular and turning them off removes
+      information. What goes is travel, scale, and anything looping: the sheet
+      appears rather than rises, the stagger becomes simultaneous, the shimmer and
+      the pending pulse stop. The press response survives as an opacity change,
+      because losing the feedback that a tap landed is a worse outcome than the
+      motion was.
+    </p>
+  </div>
+
+  <!-- ══ 18. focus rings ══════════════════════════════════════════════════ -->
+
+  <div class="spec">
+    <div class="spec-label">Focus on every primitive <em>one ring, two rings of offset, legible on cream, on white, and on navy</em></div>
+    <div class="spec-row">
+      <div class="plate st-focus-plate">
+        <div class="st-focus-row">
+          <button class="st-btn st-forced" type="button">Primary</button>
+          <button class="st-btn" data-variant="ghost" type="button">Ghost</button>
+          <button class="st-btn st-forced" data-variant="ghost" type="button">Ghost focused</button>
+          <button class="st-btn" data-variant="danger" type="button">Danger</button>
+          <button class="st-btn st-forced" data-variant="danger" type="button">Danger focused</button>
+        </div>
+        <div class="st-focus-row">
+          <button class="st-chip" type="button">Restaurants</button>
+          <button class="st-chip st-forced" type="button">Restaurants focused</button>
+          <input class="st-input st-forced" type="text" value="Focused field">
+        </div>
+        <div class="st-focus-row">
+          <a class="st-card-link st-forced" href="#states">
+            <span class="st-row-t">Quorum court sends the culvert back</span>
+            <span class="st-row-m">The Courier · 6:41 a.m.</span>
+          </a>
+          <label class="st-switch"><input type="checkbox" class="st-forced-cb" checked><span class="st-switch-track" aria-hidden="true"><span class="st-switch-knob"></span></span><span class="st-switch-label">Focused toggle</span></label>
+        </div>
+      </div>
+
+      <div class="plate st-focus-plate" data-dark>
+        <div class="st-focus-row">
+          <button class="st-btn" data-variant="on-dark" type="button">On navy</button>
+          <button class="st-btn st-forced" data-variant="on-dark" type="button">On navy, focused</button>
+          <a class="st-card-link st-forced" data-variant="on-dark" href="#states">
+            <span class="st-row-t">Tonight at the Center for the Arts</span>
+            <span class="st-row-m">7:30 p.m.</span>
+          </a>
+        </div>
+        <p class="st-age-note" data-on-dark="true">The ring's inner band is cream on light surfaces and navy-dark on the dark card, so there is always a gap between the control and the terracotta. Without it the ring blends into whatever it is sitting on.</p>
+      </div>
+    </div>
+    <p class="why">
+      <b>Focus is visible for everyone, not only for keyboard users.</b> These
+      specimens render the ring permanently so it can be reviewed; in the product
+      it is <code class="st-code-i">:focus-visible</code>, so a mouse click does
+      not leave a ring behind but a Tab key always does. The ring is 2px terracotta
+      with a 2px offset band, drawn as a box-shadow so it never changes layout, and
+      it is never removed, never replaced with a colour change, and never animated.
+      Hit targets are 44px minimum even where the visible control is smaller: the
+      toast dismiss is a 16px glyph in a 44px button.
+    </p>
+  </div>
+
+  <!-- ══ 19. keyboard map ═════════════════════════════════════════════════ -->
+
+  <div class="spec">
+    <div class="spec-label">Keyboard map, Today <em>tab order follows reading order, and the skip link is the first stop for a reason</em></div>
+    <div class="spec-row">
+      <div class="phone">
+        <div class="phone-cap">Today – focus order</div>
+        <div class="phone-screen">
+          <div class="st-today st-kb">
+            <a class="st-skip" href="#states">Skip to today's news</a>
+            <div class="st-kb-line" data-n="1">
+              <div class="st-topbar">
+                <button class="st-icon-btn" type="button" aria-label="Menu"><svg class="i" aria-hidden="true"><use href="#i-menu"/></svg></button>
+                <span class="st-topbar-t">Russellville</span>
+                <button class="st-icon-btn" type="button" aria-label="Search"><svg class="i" aria-hidden="true"><use href="#i-search"/></svg></button>
+              </div>
+            </div>
+            <div class="st-kb-line" data-n="2">
+              <div class="st-today-head">
+                <div class="st-eyebrow">Wednesday, August 5</div>
+                <h3 class="st-today-title">Quorum court sends the Weir Road culvert back to committee</h3>
+                <p class="st-today-by">The Courier · 6:41 a.m.</p>
+              </div>
+            </div>
+            <div class="st-kb-line" data-n="3">
+              <div class="st-block">
+                <div class="st-block-head"><span class="st-eyebrow">Around town</span></div>
+                <ul class="st-rows">
+                  <li><span class="st-row-t">Tech moves fall move-in to August 17</span><span class="st-row-m">2h</span></li>
+                  <li><span class="st-row-t">Main Street repaving starts Monday</span><span class="st-row-m">4h</span></li>
+                </ul>
+              </div>
+            </div>
+            <div class="st-kb-line" data-n="4">
+              <div class="st-block">
+                <div class="st-block-head"><span class="st-eyebrow">Tonight</span></div>
+                <ul class="st-rows">
+                  <li><span class="st-row-t">Wonder Boys scrimmage, Thone Stadium</span><span class="st-row-m">6:00 p.m.</span></li>
+                </ul>
+              </div>
+            </div>
+            <div class="st-kb-line" data-n="5">
+              <div class="st-tabbar">
+                <span class="st-tab" data-on="true"><svg class="i" aria-hidden="true"><use href="#i-home"/></svg>Today</span>
+                <span class="st-tab"><svg class="i" aria-hidden="true"><use href="#i-compass"/></svg>Directory</span>
+                <span class="st-tab"><svg class="i" aria-hidden="true"><use href="#i-grid"/></svg>Creations</span>
+                <span class="st-tab"><svg class="i" aria-hidden="true"><use href="#i-bookmark"/></svg>Saved</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="st-ladder">
+        <div class="st-ladder-step">
+          <div class="st-fa-cap">Order and keys</div>
+          <table class="st-table">
+            <thead><tr><th>Stop</th><th>What</th><th>Keys</th></tr></thead>
+            <tbody>
+              <tr><td>0</td><td>Skip link, visible only on focus</td><td>Enter jumps past the bar to the lead story</td></tr>
+              <tr><td>1</td><td>Menu, then search</td><td>Tab. Search opens with <kbd class="st-kbd">/</kbd> from anywhere</td></tr>
+              <tr><td>2</td><td>Lead story link</td><td>Enter opens. The dek and byline are not separate stops</td></tr>
+              <tr><td>3</td><td>Around town rows</td><td>Tab through, or <kbd class="st-kbd">↓</kbd> and <kbd class="st-kbd">↑</kbd> once inside</td></tr>
+              <tr><td>4</td><td>Tonight rows</td><td>Same</td></tr>
+              <tr><td>5</td><td>Tab bar</td><td>One tab stop total. <kbd class="st-kbd">←</kbd> <kbd class="st-kbd">→</kbd> move between tabs, Enter activates</td></tr>
+            </tbody>
+          </table>
+          <ul class="st-rules">
+            <li>The tab bar is a single stop, not four. Four stops at the end of every screen is how keyboard users learn to hate an app.</li>
+            <li>A story card is one stop even though it contains a headline, a source, and a time. One card, one target.</li>
+            <li><kbd class="st-kbd">Esc</kbd> from anywhere closes the top layer: sheet, then search, then menu.</li>
+            <li>Focus never enters a creation's iframe by accident. Entering is deliberate, and <kbd class="st-kbd">Esc</kbd> gets you back to the shell.</li>
+            <li>Nothing on this screen is reachable only by hover.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ 20. announcements ════════════════════════════════════════════════ -->
+
+  <div class="spec">
+    <div class="spec-label">Live regions and announcements <em>polite for nearly everything, assertive exactly once, because a region that always shouts is a region people turn off</em></div>
+    <div class="spec-row">
+      <div class="plate st-live-plate">
+        <pre class="st-code st-code-block">&lt;!-- one per app, mounted at the root, never re-rendered --&gt;
+&lt;div class="sr-only" role="status" aria-live="polite" aria-atomic="false"&gt;
+  Saved to your list.
+&lt;/div&gt;
+
+&lt;!-- the only assertive region in Town Square --&gt;
+&lt;div class="sr-only" role="alert" aria-live="assertive"&gt;
+  That didn't send. Your post is still here.
+&lt;/div&gt;
+
+&lt;!-- stale data, announced once when it crosses 18 hours --&gt;
+&lt;div class="sr-only" role="status" aria-live="polite"&gt;
+  Some of this is a day old. The Courier's feed stopped
+  answering at 6:40 p.m. yesterday.
+&lt;/div&gt;</pre>
+      </div>
+
+      <div class="st-ladder">
+        <div class="st-ladder-step">
+          <div class="st-fa-cap">What gets announced</div>
+          <table class="st-table">
+            <thead><tr><th>Event</th><th>Politeness</th><th>Announced text</th></tr></thead>
+            <tbody>
+              <tr><td>Toast, any kind</td><td>polite</td><td>The toast line, without the word "toast" and without the icon.</td></tr>
+              <tr><td>Failed submission</td><td>assertive</td><td>The failure, then the reassurance that the draft survived.</td></tr>
+              <tr><td>Crossing 18 hours stale</td><td>polite</td><td>The banner text, once. Never repeated on re-render.</td></tr>
+              <tr><td>Going offline</td><td>polite</td><td>"You're offline. Showing what was loaded at 8:12 a.m."</td></tr>
+              <tr><td>Coming back online</td><td>polite</td><td>"Back online" plus whatever queued action sent.</td></tr>
+              <tr><td>Skeleton to content</td><td>polite</td><td>"Today's news loaded, 9 stories." The skeleton itself is <code class="st-code-i">aria-hidden</code>.</td></tr>
+              <tr><td>Load more finished</td><td>polite</td><td>"24 more businesses. Showing 48 of 712."</td></tr>
+              <tr><td>Progress bar</td><td>off</td><td>The bar carries <code class="st-code-i">aria-valuenow</code>. Announcing each percent is unusable.</td></tr>
+              <tr><td>Optimistic pending</td><td>off</td><td>Only the outcome is announced. Confirmed says nothing, rolled back announces politely.</td></tr>
+            </tbody>
+          </table>
+          <ul class="st-rules">
+            <li>Skeletons are <code class="st-code-i">aria-hidden="true"</code> and the container is <code class="st-code-i">aria-busy="true"</code>. A screen reader reading forty empty boxes is a worse loading state than silence.</li>
+            <li>Live regions exist in the DOM before the text goes in them. A region created at the same moment as its message announces nothing.</li>
+            <li>Errors on a form are announced by focus moving to the first bad field, not by a live region. Two announcements for one problem is one too many.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+  (function () {
+    var root = document.getElementById('states');
+    if (!root) return;
+
+    /* ── toasts ─────────────────────────────────────────────────────── */
+    var demo = root.querySelector('#st-toast-demo');
+    var stack = root.querySelector('#st-toast-stack');
+    if (demo && stack) {
+      demo.setAttribute('data-js', 'on');
+      var COPY = {
+        info: { icon: 'i-info', text: 'Saved to your list.', act: 'Undo', ms: 8000 },
+        good: { icon: 'i-check-circle', text: 'Ramp Conditions is live in the gallery.', act: 'View', ms: 8000 },
+        warn: { icon: 'i-warning', text: 'Two photos were over 8 MB and were skipped.', act: 'Which ones', ms: 10000 },
+        problem: { icon: 'i-alert-circle', text: "Couldn't remove that bookmark.", act: 'Retry', ms: 0 }
+      };
+      var timers = new WeakMap();
+
+      function drop(el) {
+        if (!el || !el.parentNode) return;
+        clearTimeout(timers.get(el));
+        el.setAttribute('data-leaving', 'true');
+        setTimeout(function () { if (el.parentNode) el.parentNode.removeChild(el); }, 180);
+      }
+
+      function arm(el, ms) {
+        if (!ms) return;
+        clearTimeout(timers.get(el));
+        timers.set(el, setTimeout(function () { drop(el); }, ms));
+      }
+
+      function push(kind) {
+        var c = COPY[kind];
+        var existing = stack.querySelector('[data-kind="' + kind + '"]:not([data-leaving])');
+        if (existing) {
+          var n = (parseInt(existing.getAttribute('data-count') || '1', 10)) + 1;
+          existing.setAttribute('data-count', String(n));
+          existing.querySelector('.st-toast-t').textContent =
+            kind === 'info' ? n + ' stories saved.' : c.text;
+          arm(existing, c.ms);
+          return;
+        }
+        var live = stack.querySelectorAll('.st-toast:not([data-leaving])');
+        if (live.length >= 3) {
+          for (var i = 0; i < live.length; i++) {
+            if (live[i].getAttribute('data-kind') !== 'problem') { drop(live[i]); break; }
+          }
+        }
+        var el = document.createElement('div');
+        el.className = 'st-toast';
+        el.setAttribute('data-kind', kind);
+        el.innerHTML =
+          '<svg class="i i-sm" aria-hidden="true"><use href="#' + c.icon + '"/></svg>' +
+          '<span class="st-toast-t"></span>' +
+          '<button class="st-toast-act" type="button"></button>' +
+          '<button class="st-toast-x" type="button" aria-label="Dismiss">' +
+          '<svg class="i i-sm" aria-hidden="true"><use href="#i-close"/></svg></button>';
+        el.querySelector('.st-toast-t').textContent = c.text;
+        el.querySelector('.st-toast-act').textContent = c.act;
+        el.querySelector('.st-toast-x').addEventListener('click', function () { drop(el); });
+        el.querySelector('.st-toast-act').addEventListener('click', function () { drop(el); });
+        stack.appendChild(el);
+        arm(el, c.ms);
+      }
+
+      stack.addEventListener('mouseenter', function () {
+        stack.querySelectorAll('.st-toast').forEach(function (t) { clearTimeout(timers.get(t)); });
+      });
+      stack.addEventListener('focusin', function () {
+        stack.querySelectorAll('.st-toast').forEach(function (t) { clearTimeout(timers.get(t)); });
+      });
+      stack.addEventListener('mouseleave', function () {
+        stack.querySelectorAll('.st-toast').forEach(function (t) {
+          var k = t.getAttribute('data-kind');
+          arm(t, COPY[k] ? COPY[k].ms : 0);
+        });
+      });
+
+      demo.querySelectorAll('[data-toast]').forEach(function (b) {
+        b.addEventListener('click', function () { push(b.getAttribute('data-toast')); });
+      });
+    }
+
+    /* ── sheet, with a real focus trap ──────────────────────────────── */
+    var sheet = root.querySelector('#st-sheet');
+    var scrim = root.querySelector('#st-sheet-scrim');
+    var openBtn = root.querySelector('#st-sheet-open');
+    var closeBtn = root.querySelector('#st-sheet-close');
+    if (sheet && scrim && openBtn && closeBtn) {
+      var opener = null;
+      var SEL = 'a[href],button:not([disabled]),input,select,textarea,[tabindex]:not([tabindex="-1"])';
+
+      function openSheet() {
+        opener = document.activeElement;
+        scrim.hidden = false;
+        sheet.hidden = false;
+        requestAnimationFrame(function () { sheet.setAttribute('data-open', 'true'); scrim.setAttribute('data-open', 'true'); });
+        var h = sheet.querySelector('.st-sheet-t');
+        h.setAttribute('tabindex', '-1');
+        h.focus();
+      }
+      function closeSheet() {
+        sheet.removeAttribute('data-open');
+        scrim.removeAttribute('data-open');
+        setTimeout(function () { sheet.hidden = true; scrim.hidden = true; }, 200);
+        if (opener && opener.focus) opener.focus();
+      }
+      openBtn.addEventListener('click', openSheet);
+      closeBtn.addEventListener('click', closeSheet);
+      scrim.addEventListener('click', closeSheet);
+      sheet.addEventListener('keydown', function (e) {
+        if (e.key === 'Escape') { e.stopPropagation(); closeSheet(); return; }
+        if (e.key !== 'Tab') return;
+        var f = Array.prototype.filter.call(sheet.querySelectorAll(SEL), function (n) { return n.offsetParent !== null; });
+        if (!f.length) return;
+        var first = f[0], last = f[f.length - 1];
+        if (e.shiftKey && (document.activeElement === first || document.activeElement === sheet.querySelector('.st-sheet-t'))) {
+          e.preventDefault(); last.focus();
+        } else if (!e.shiftKey && document.activeElement === last) {
+          e.preventDefault(); first.focus();
+        }
+      });
+    }
+
+    /* ── motion demos ───────────────────────────────────────────────── */
+    var mdemo = root.querySelector('#st-motion-demo');
+    var grid = root.querySelector('#st-motion-grid');
+    var replay = root.querySelector('#st-motion-replay');
+    var rm = root.querySelector('#st-rm-toggle');
+    if (mdemo && grid && replay) {
+      function play() {
+        grid.setAttribute('data-off', 'true');
+        void grid.offsetWidth;
+        grid.removeAttribute('data-off');
+      }
+      replay.addEventListener('click', play);
+      if (rm) {
+        rm.addEventListener('change', function () {
+          mdemo.setAttribute('data-rm', rm.checked ? 'on' : 'off');
+          play();
+        });
+      }
+    }
+  })();
+  </script>
+</section>

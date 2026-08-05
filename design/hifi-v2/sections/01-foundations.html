@@ -1,0 +1,821 @@
+<section class="sheet-section" id="foundations">
+  <div class="sec-head"><span class="sec-num">01</span><h2>Foundations and primitives</h2></div>
+  <p class="sec-note">The atoms every other section is built from: the palette and what each colour is allowed to mean, the three voices of type, the 4px scale, and the controls a resident actually touches. Nothing here is decorative. If a token exists it is because something ships with it.</p>
+
+  <!-- ── colour ─────────────────────────────────────────────────────────── -->
+
+  <div class="spec">
+    <div class="spec-label">Surfaces <em>The background is warm cream. White is a card lifting off it, not the page.</em></div>
+    <div class="fd-swatches">
+      <div class="fd-sw">
+        <div class="fd-sw-chip" style="--fd-c:var(--ts-cream)"></div>
+        <code>--ts-cream</code>
+        <span class="fd-sw-job">The screen. Every page sits on this.</span>
+        <span class="fd-sw-val">#f8f6f1</span>
+      </div>
+      <div class="fd-sw">
+        <div class="fd-sw-chip" style="--fd-c:var(--ts-surface)"></div>
+        <code>--ts-surface</code>
+        <span class="fd-sw-job">Cards and sheets. The only pure white in the system.</span>
+        <span class="fd-sw-val">#ffffff</span>
+      </div>
+      <div class="fd-sw">
+        <div class="fd-sw-chip" style="--fd-c:var(--ts-stone)"></div>
+        <code>--ts-stone</code>
+        <span class="fd-sw-job">Image placeholder and inert fill. Never text sits on it.</span>
+        <span class="fd-sw-val">#e5e1da</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="spec">
+    <div class="spec-label">Ink and its alpha ramp <em>One warm near-black at six opacities, stacked over cream so it reads as a ramp and not six greys.</em></div>
+    <div class="fd-ramp">
+      <div class="fd-ramp-row">
+        <div class="fd-ramp-bar" style="--fd-c:var(--ts-ink)"></div>
+        <code>--ts-ink</code><span class="fd-sw-val">100%</span>
+        <span class="fd-sw-job">Body text, headlines, anything you read.</span>
+      </div>
+      <div class="fd-ramp-row">
+        <div class="fd-ramp-bar" style="--fd-c:var(--ts-ink60)"></div>
+        <code>--ts-ink60</code><span class="fd-sw-val">60%</span>
+        <span class="fd-sw-job">Secondary text: bylines, taglines, the lede.</span>
+      </div>
+      <div class="fd-ramp-row">
+        <div class="fd-ramp-bar" style="--fd-c:var(--ts-ink45)"></div>
+        <code>--ts-ink45</code><span class="fd-sw-val">45%</span>
+        <span class="fd-sw-job">Eyebrows and metadata. Large or uppercase only.</span>
+      </div>
+      <div class="fd-ramp-row">
+        <div class="fd-ramp-bar" style="--fd-c:var(--ts-ink26)"></div>
+        <code>--ts-ink26</code><span class="fd-sw-val">26%</span>
+        <span class="fd-sw-job">Disabled labels, dot separators, placeholder glyphs.</span>
+      </div>
+      <div class="fd-ramp-row">
+        <div class="fd-ramp-bar" style="--fd-c:var(--ts-ink13)"></div>
+        <code>--ts-ink13</code><span class="fd-sw-val">13%</span>
+        <span class="fd-sw-job">Dividers and rules.</span>
+      </div>
+      <div class="fd-ramp-row">
+        <div class="fd-ramp-bar" style="--fd-c:var(--ts-hairline)"></div>
+        <code>--ts-hairline</code><span class="fd-sw-val">11%</span>
+        <span class="fd-sw-job">Card borders. One notch quieter than a divider on purpose.</span>
+      </div>
+      <div class="fd-ramp-row">
+        <div class="fd-ramp-bar" style="--fd-c:var(--ts-ink08)"></div>
+        <code>--ts-ink08</code><span class="fd-sw-val">8%</span>
+        <span class="fd-sw-job">Shadow colour. Not a fill, never a border.</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="why">
+    <b>Muted text is ink at alpha, never navy at alpha.</b> Navy is a brand colour, so a 60% navy secondary line drifts blue-cool against warm cream and quietly turns every byline into a link that is not one. Ink at 60% is the same hue as the headline above it, just further away, which is what "secondary" is supposed to look like. It also means one ramp survives a town reskin: when <code>--ts-navy</code> moves to green for the Delta theme, no body copy changes temperature. The inverse holds on dark cards, where the ramp becomes cream at alpha for the same reason.
+  </div>
+
+  <div class="spec">
+    <div class="spec-label">Navy <em>Structure and the one dark card per screen. It is a surface colour first, a text colour second.</em></div>
+    <div class="fd-swatches">
+      <div class="fd-sw">
+        <div class="fd-sw-chip" style="--fd-c:var(--ts-navy)"></div>
+        <code>--ts-navy</code>
+        <span class="fd-sw-job">Dark card fill, headers, the shell's own chrome.</span>
+        <span class="fd-sw-val">#26405b</span>
+      </div>
+      <div class="fd-sw">
+        <div class="fd-sw-chip" style="--fd-c:var(--ts-navy-dark)"></div>
+        <code>--ts-navy-dark</code>
+        <span class="fd-sw-job">The deeper step, used when navy sits on navy.</span>
+        <span class="fd-sw-val">#22384e</span>
+      </div>
+      <div class="fd-sw">
+        <div class="fd-sw-chip" style="--fd-c:var(--ts-navy80)"></div>
+        <code>--ts-navy80</code>
+        <span class="fd-sw-job">Scrims and the navy shadow tint.</span>
+        <span class="fd-sw-val">80%</span>
+      </div>
+      <div class="fd-sw">
+        <div class="fd-sw-chip" style="--fd-c:var(--ts-navy60)"></div>
+        <code>--ts-navy60</code>
+        <span class="fd-sw-job">Icon strokes inside navy-tinted areas.</span>
+        <span class="fd-sw-val">60%</span>
+      </div>
+      <div class="fd-sw">
+        <div class="fd-sw-chip" style="--fd-c:var(--ts-navy40)"></div>
+        <code>--ts-navy40</code>
+        <span class="fd-sw-job">Borders on a navy tint.</span>
+        <span class="fd-sw-val">40%</span>
+      </div>
+      <div class="fd-sw">
+        <div class="fd-sw-chip" style="--fd-c:var(--ts-navy10)"></div>
+        <code>--ts-navy10</code>
+        <span class="fd-sw-job">The tint itself: selected rows, quiet chips.</span>
+        <span class="fd-sw-val">10%</span>
+      </div>
+    </div>
+    <div class="fd-ondark plate" data-dark>
+      <div class="fd-ondark-row">
+        <span class="fd-ondark-a">Cream on navy-dark</span>
+        <code class="fd-ondark-code">--ts-cream</code>
+      </div>
+      <div class="fd-ondark-row">
+        <span class="fd-ondark-b">Cream-muted, the secondary line on a dark card</span>
+        <code class="fd-ondark-code">--ts-cream-muted</code>
+      </div>
+      <div class="fd-ondark-row">
+        <span class="fd-ondark-rule"></span>
+        <code class="fd-ondark-code">--ts-cream14</code>
+      </div>
+    </div>
+  </div>
+
+  <div class="spec">
+    <div class="spec-label">Accents <em>Terracotta acts, gold announces, sage confirms, brick alarms. Four jobs, no overlap.</em></div>
+    <div class="fd-swatches">
+      <div class="fd-sw">
+        <div class="fd-sw-chip" style="--fd-c:var(--ts-terracotta)"></div>
+        <code>--ts-terracotta</code>
+        <span class="fd-sw-job">Primary action. The only colour that means "press this".</span>
+        <span class="fd-sw-val">#c4714e</span>
+      </div>
+      <div class="fd-sw">
+        <div class="fd-sw-chip" style="--fd-c:var(--ts-terracotta-hover)"></div>
+        <code>--ts-terracotta-hover</code>
+        <span class="fd-sw-job">Pressed and hovered primary. One step darker, same hue.</span>
+        <span class="fd-sw-val">#b15f3b</span>
+      </div>
+      <div class="fd-sw">
+        <div class="fd-sw-chip" style="--fd-c:var(--ts-terracotta-tint)"></div>
+        <code>--ts-terracotta-tint</code>
+        <span class="fd-sw-job">Opaque warm wash behind an active area.</span>
+        <span class="fd-sw-val">#fff3ec</span>
+      </div>
+      <div class="fd-sw">
+        <div class="fd-sw-chip" style="--fd-c:var(--ts-terracotta10)"></div>
+        <code>--ts-terracotta10</code>
+        <span class="fd-sw-job">Transparent wash that keeps whatever is under it.</span>
+        <span class="fd-sw-val">10%</span>
+      </div>
+      <div class="fd-sw">
+        <div class="fd-sw-chip" style="--fd-c:var(--ts-terracotta14)"></div>
+        <code>--ts-terracotta14</code>
+        <span class="fd-sw-job">Creation icon tiles, quiet-button hover.</span>
+        <span class="fd-sw-val">14%</span>
+      </div>
+    </div>
+    <div class="fd-swatches">
+      <div class="fd-sw">
+        <div class="fd-sw-chip" style="--fd-c:var(--ts-gold)"></div>
+        <code>--ts-gold</code>
+        <span class="fd-sw-job">Civic. City hall, notices, the thing the town posted.</span>
+        <span class="fd-sw-val">#e7ae2e</span>
+      </div>
+      <div class="fd-sw">
+        <div class="fd-sw-chip" style="--fd-c:var(--ts-gold14)"></div>
+        <code>--ts-gold14</code>
+        <span class="fd-sw-job">The notice card fill. 18% over cream.</span>
+        <span class="fd-sw-val">18%</span>
+      </div>
+      <div class="fd-sw">
+        <div class="fd-sw-chip" style="--fd-c:var(--ts-gold-text)"></div>
+        <code>--ts-gold-text</code>
+        <span class="fd-sw-job">Text on gold. Raw gold is unreadable, this is the pair.</span>
+        <span class="fd-sw-val">#8a6510</span>
+      </div>
+      <div class="fd-sw">
+        <div class="fd-sw-chip" style="--fd-c:var(--ts-sage)"></div>
+        <code>--ts-sage</code>
+        <span class="fd-sw-job">Verified, open now, alive. Only when we actually know.</span>
+        <span class="fd-sw-val">#4c6b4b</span>
+      </div>
+      <div class="fd-sw">
+        <div class="fd-sw-chip" style="--fd-c:var(--ts-sage-light)"></div>
+        <code>--ts-sage-light</code>
+        <span class="fd-sw-job">Sage that survives being placed on navy.</span>
+        <span class="fd-sw-val">#86a585</span>
+      </div>
+      <div class="fd-sw">
+        <div class="fd-sw-chip" style="--fd-c:var(--ts-sage14)"></div>
+        <code>--ts-sage14</code>
+        <span class="fd-sw-job">Verified pill fill.</span>
+        <span class="fd-sw-val">18%</span>
+      </div>
+      <div class="fd-sw fd-sw-alarm">
+        <div class="fd-sw-chip" style="--fd-c:var(--ts-brick)"></div>
+        <code>--ts-brick</code>
+        <span class="fd-sw-job">Emergency only. Boil order, river crest, evacuation.</span>
+        <span class="fd-sw-val">#7e1f0c</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="spec">
+    <div class="spec-label">Contrast, measured <em>Real WCAG ratios for the pairs that ship. Two of them fail, and pretending otherwise would be worse than the failure.</em></div>
+    <table class="fd-contrast">
+      <thead>
+        <tr>
+          <th>Pair</th><th>Sample</th><th class="fd-num">Ratio</th><th>Body 17px</th><th>Large 21px+</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><code>--ts-ink</code> on <code>--ts-cream</code></td>
+          <td><span class="fd-cs" data-p="ink-cream">Lake Dardanelle</span></td>
+          <td class="fd-num">15.93</td>
+          <td><span class="fd-verdict" data-v="aaa">AAA</span></td>
+          <td><span class="fd-verdict" data-v="aaa">AAA</span></td>
+        </tr>
+        <tr>
+          <td><code>--ts-ink60</code> on <code>--ts-cream</code></td>
+          <td><span class="fd-cs" data-p="ink60-cream">Lake Dardanelle</span></td>
+          <td class="fd-num">4.41</td>
+          <td><span class="fd-verdict" data-v="fail">fails AA</span></td>
+          <td><span class="fd-verdict" data-v="aa">AA</span></td>
+        </tr>
+        <tr>
+          <td><code>--ts-ink45</code> on <code>--ts-cream</code></td>
+          <td><span class="fd-cs" data-p="ink45-cream">Lake Dardanelle</span></td>
+          <td class="fd-num">2.83</td>
+          <td><span class="fd-verdict" data-v="fail">fails AA</span></td>
+          <td><span class="fd-verdict" data-v="fail">fails AA</span></td>
+        </tr>
+        <tr>
+          <td><code>--ts-cream</code> on <code>--ts-navy</code></td>
+          <td><span class="fd-cs" data-p="cream-navy">Lake Dardanelle</span></td>
+          <td class="fd-num">9.89</td>
+          <td><span class="fd-verdict" data-v="aaa">AAA</span></td>
+          <td><span class="fd-verdict" data-v="aaa">AAA</span></td>
+        </tr>
+        <tr>
+          <td><code>--ts-cream-muted</code> on <code>--ts-navy-dark</code></td>
+          <td><span class="fd-cs" data-p="creammuted-navydark">Lake Dardanelle</span></td>
+          <td class="fd-num">6.35</td>
+          <td><span class="fd-verdict" data-v="aa">AA</span></td>
+          <td><span class="fd-verdict" data-v="aa">AA</span></td>
+        </tr>
+        <tr>
+          <td><code>--ts-terracotta</code> on <code>--ts-cream</code></td>
+          <td><span class="fd-cs" data-p="terr-cream">Lake Dardanelle</span></td>
+          <td class="fd-num">3.34</td>
+          <td><span class="fd-verdict" data-v="fail">fails AA</span></td>
+          <td><span class="fd-verdict" data-v="aa">AA</span></td>
+        </tr>
+        <tr>
+          <td><code>--ts-terracotta</code> on <code>--ts-surface</code></td>
+          <td><span class="fd-cs" data-p="terr-surface">Lake Dardanelle</span></td>
+          <td class="fd-num">3.61</td>
+          <td><span class="fd-verdict" data-v="fail">fails AA</span></td>
+          <td><span class="fd-verdict" data-v="aa">AA</span></td>
+        </tr>
+        <tr>
+          <td><code>--ts-sage</code> on <code>--ts-cream</code></td>
+          <td><span class="fd-cs" data-p="sage-cream">Lake Dardanelle</span></td>
+          <td class="fd-num">5.54</td>
+          <td><span class="fd-verdict" data-v="aa">AA</span></td>
+          <td><span class="fd-verdict" data-v="aa">AA</span></td>
+        </tr>
+        <tr>
+          <td><code>--ts-gold-text</code> on <code>--ts-gold14</code></td>
+          <td><span class="fd-cs" data-p="goldtext-gold14">Lake Dardanelle</span></td>
+          <td class="fd-num">4.41</td>
+          <td><span class="fd-verdict" data-v="fail">fails AA</span></td>
+          <td><span class="fd-verdict" data-v="aa">AA</span></td>
+        </tr>
+        <tr>
+          <td><code>--ts-cream</code> on <code>--ts-brick</code></td>
+          <td><span class="fd-cs" data-p="cream-brick">Lake Dardanelle</span></td>
+          <td class="fd-num">9.31</td>
+          <td><span class="fd-verdict" data-v="aaa">AAA</span></td>
+          <td><span class="fd-verdict" data-v="aaa">AAA</span></td>
+        </tr>
+      </tbody>
+    </table>
+    <p class="fd-table-note">Ratios computed against the composited colour, not the token's own value: an alpha ink over cream, gold-text over 18% gold over cream. <b>The three that fail at body size have rules attached.</b> <code>--ts-ink45</code> is never allowed on body copy, only on 11px uppercase eyebrows and metadata where it is a label rather than a sentence, and it is never the only signal. <code>--ts-ink60</code> at 4.41 misses AA by a hair at 17px, so secondary lines that carry real information (a byline, an address) are set at <code>--ts-ink</code> and only truly ancillary ones use it. <code>--ts-terracotta</code> is a fill colour, not a text colour: on a primary button it carries <code>--ts-surface</code> at 3.61, which passes only at large sizes, so the button label is 15px semibold and gets the same treatment large text does. Terracotta as small body text is banned.</p>
+  </div>
+
+  <!-- ── type ───────────────────────────────────────────────────────────── -->
+
+  <div class="spec">
+    <div class="spec-label">Three voices, one job <em>The same line set three ways. Newsreader says it, DM Mono labels it, DM Sans is what a finger presses.</em></div>
+    <div class="spec-grid">
+      <div class="plate fd-voice">
+        <div class="fd-voice-tag">Editorial · Newsreader</div>
+        <div class="fd-voice-sample fd-serif">Council votes 5 to 2 on the Marina Way rezoning</div>
+        <div class="fd-voice-sample fd-serif fd-voice-small">Marissa Cordell · 6 min read · Yesterday</div>
+        <p class="fd-voice-note">Headlines, bylines, attributions, timestamps, quiet counts. Anything the page is <em>saying</em>.</p>
+      </div>
+      <div class="plate fd-voice">
+        <div class="fd-voice-tag">Structural · DM Mono</div>
+        <div class="fd-voice-sample fd-mono">COUNCIL VOTES 5 TO 2 ON THE MARINA WAY REZONING</div>
+        <div class="fd-voice-sample fd-mono fd-voice-small">MARISSA CORDELL · 6 MIN READ · YESTERDAY</div>
+        <p class="fd-voice-note">Set the byline in mono and it reads as terminal output. Mono survives only where it <em>labels</em> the page: eyebrows, dates, the APP chip.</p>
+      </div>
+      <div class="plate fd-voice">
+        <div class="fd-voice-tag">Utility · DM Sans</div>
+        <div class="fd-voice-sample fd-sans">Council votes 5 to 2 on the Marina Way rezoning</div>
+        <div class="fd-voice-sample fd-sans fd-voice-small">Marissa Cordell · 6 min read · Yesterday</div>
+        <p class="fd-voice-note">Correct and completely flat. Sans is for buttons, form labels, hours, AM/PM. It has no opinion, which is the point.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="spec">
+    <div class="spec-label">The scale <em>Seven steps, each with a job. There is no step 8 because nothing in the product needed one.</em></div>
+    <div class="fd-scale">
+      <div class="fd-scale-row">
+        <code>--ts-text-h1</code><span class="fd-scale-px">24px</span>
+        <div class="fd-scale-line fd-serif" style="--fd-s:var(--ts-text-h1)">Today in Russellville</div>
+        <span class="fd-scale-job">Page title. One per screen.</span>
+      </div>
+      <div class="fd-scale-row">
+        <code>--ts-text-h2</code><span class="fd-scale-px">21px</span>
+        <div class="fd-scale-line fd-serif" style="--fd-s:var(--ts-text-h2)">From your neighbours</div>
+        <span class="fd-scale-job">Section heading inside a screen.</span>
+      </div>
+      <div class="fd-scale-row">
+        <code>--ts-text-card-title</code><span class="fd-scale-px">18px</span>
+        <div class="fd-scale-line fd-serif" style="--fd-s:var(--ts-text-card-title)">Dardanelle Ferry Landing cleanup</div>
+        <span class="fd-scale-job">Card and creation names.</span>
+      </div>
+      <div class="fd-scale-row">
+        <code>--ts-text-body</code><span class="fd-scale-px">17px</span>
+        <div class="fd-scale-line fd-serif" style="--fd-s:var(--ts-text-body)">Volunteers meet at the boat ramp at 8am Saturday.</div>
+        <span class="fd-scale-job">Reading copy. Serif, always.</span>
+      </div>
+      <div class="fd-scale-row">
+        <code>--ts-text-label</code><span class="fd-scale-px">15px</span>
+        <div class="fd-scale-line fd-sans" style="--fd-s:var(--ts-text-label)">Add to my week</div>
+        <span class="fd-scale-job">Buttons and form labels. Sans.</span>
+      </div>
+      <div class="fd-scale-row">
+        <code>--ts-text-caption</code><span class="fd-scale-px">13px</span>
+        <div class="fd-scale-line fd-sans" style="--fd-s:var(--ts-text-caption)">Open until 6pm · 1.2 mi</div>
+        <span class="fd-scale-job">Metadata a finger might act on.</span>
+      </div>
+      <div class="fd-scale-row">
+        <code>--ts-text-eyebrow</code><span class="fd-scale-px">11px</span>
+        <div class="fd-scale-line fd-mono" style="--fd-s:var(--ts-text-eyebrow)">FROM CITY HALL</div>
+        <span class="fd-scale-job">Mono, uppercase, tracked. Labels only.</span>
+      </div>
+    </div>
+    <p class="fd-table-note">Between the steps, bare px is fine and deliberate: the shipped shell uses 13.5px for a dense list row and 14.5px for a tight card subtitle. A scale that forbids the half step just gets ignored.</p>
+  </div>
+
+  <div class="spec">
+    <div class="spec-label">Measure <em>Newsreader at 17px, 1.6 line height, capped at 66ch. Past about 75 characters the eye loses the return.</em></div>
+    <div class="fd-measure">
+      <p class="fd-prose">The Pope County Quorum Court will take up the Marina Way rezoning again on Tuesday, after a first vote in June stalled on a question nobody in the room could answer: whether the old ferry landing parcel is inside the flood easement or beside it. The county surveyor says the maps disagree with each other and have since 1978.</p>
+      <p class="fd-prose">Public comment opens at 6pm at the courthouse on West Main. If you plan to speak, you sign in at the door and you get three minutes, which is not long, so people tend to write it down first.</p>
+      <div class="fd-measure-rule"><span>66ch</span></div>
+    </div>
+  </div>
+
+  <!-- ── spacing and radius ─────────────────────────────────────────────── -->
+
+  <div class="spec">
+    <div class="spec-label">Spacing, 4px scale <em>Ten stops, not sixteen. The gaps between 24 and 32 and 48 are where layouts get decided.</em></div>
+    <div class="fd-space">
+      <div class="fd-space-row"><code>--ts-space-1</code><span class="fd-space-bar" style="--fd-w:var(--ts-space-1)"></span><span class="fd-space-px">4</span><span class="fd-sw-job">Icon to its own label.</span></div>
+      <div class="fd-space-row"><code>--ts-space-2</code><span class="fd-space-bar" style="--fd-w:var(--ts-space-2)"></span><span class="fd-space-px">8</span><span class="fd-sw-job">Inside a chip, between meta items.</span></div>
+      <div class="fd-space-row"><code>--ts-space-3</code><span class="fd-space-bar" style="--fd-w:var(--ts-space-3)"></span><span class="fd-space-px">12</span><span class="fd-sw-job">Between cards in a list.</span></div>
+      <div class="fd-space-row"><code>--ts-space-4</code><span class="fd-space-bar" style="--fd-w:var(--ts-space-4)"></span><span class="fd-space-px">16</span><span class="fd-sw-job">Card padding. The default gap.</span></div>
+      <div class="fd-space-row"><code>--ts-space-5</code><span class="fd-space-bar" style="--fd-w:var(--ts-space-5)"></span><span class="fd-space-px">20</span><span class="fd-sw-job">Screen gutter on mobile.</span></div>
+      <div class="fd-space-row"><code>--ts-space-6</code><span class="fd-space-bar" style="--fd-w:var(--ts-space-6)"></span><span class="fd-space-px">24</span><span class="fd-sw-job">Between blocks inside a section.</span></div>
+      <div class="fd-space-row"><code>--ts-space-8</code><span class="fd-space-bar" style="--fd-w:var(--ts-space-8)"></span><span class="fd-space-px">32</span><span class="fd-sw-job">Between sections.</span></div>
+      <div class="fd-space-row"><code>--ts-space-10</code><span class="fd-space-bar" style="--fd-w:var(--ts-space-10)"></span><span class="fd-space-px">40</span><span class="fd-sw-job">Above a new major heading.</span></div>
+      <div class="fd-space-row"><code>--ts-space-12</code><span class="fd-space-bar" style="--fd-w:var(--ts-space-12)"></span><span class="fd-space-px">48</span><span class="fd-sw-job">Desktop gutter.</span></div>
+      <div class="fd-space-row"><code>--ts-space-16</code><span class="fd-space-bar" style="--fd-w:var(--ts-space-16)"></span><span class="fd-space-px">64</span><span class="fd-sw-job">Top and tail of a page.</span></div>
+    </div>
+  </div>
+
+  <div class="spec">
+    <div class="spec-label">Radius, on the shapes that use it <em>Radius is proportional to the thing. A 10px corner on a 16px chip looks broken, which is why chips are round instead.</em></div>
+    <div class="spec-row fd-radii">
+      <div class="fd-radius-demo">
+        <div class="fd-radius-shape" style="--fd-r:var(--ts-radius-input)">
+          <span class="fd-sans fd-radius-inner">Search Russellville</span>
+        </div>
+        <code>--ts-radius-input</code><span class="fd-sw-val">10px</span>
+      </div>
+      <div class="fd-radius-demo">
+        <div class="fd-radius-shape fd-radius-btn" style="--fd-r:var(--ts-radius-button)">Vouch for Dana</div>
+        <code>--ts-radius-button</code><span class="fd-sw-val">10px</span>
+      </div>
+      <div class="fd-radius-demo">
+        <div class="fd-radius-shape fd-radius-chip" style="--fd-r:var(--ts-radius-chip)">Open now</div>
+        <code>--ts-radius-chip</code><span class="fd-sw-val">999px</span>
+      </div>
+      <div class="fd-radius-demo">
+        <div class="fd-radius-shape fd-radius-card" style="--fd-r:var(--ts-radius-card)">
+          <div class="fd-serif fd-radius-cardtitle">Old Post Office Museum</div>
+          <div class="fd-radius-cardmeta fd-sans">Open until 4pm · North Vancouver Ave</div>
+        </div>
+        <code>--ts-radius-card</code><span class="fd-sw-val">16px</span>
+      </div>
+      <div class="fd-radius-demo">
+        <div class="fd-radius-shape fd-radius-sheet" style="--fd-r:var(--ts-radius-sheet)">
+          <span class="fd-sheet-grab"></span>
+          <div class="fd-serif fd-radius-cardtitle">Filter the directory</div>
+        </div>
+        <code>--ts-radius-sheet</code><span class="fd-sw-val">20px</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="why">
+    <b>The button radius is 10px and not a pill.</b> Chips are pills because a pill reads as removable, filterable, transient: it is a token you can pick up and put down. A button is a commitment, and it should look like it has edges. The practical version of the argument is that Town Square puts buttons next to inputs constantly, and an input cannot be a pill without its text drifting off the optical centre at either end. Matching <code>--ts-radius-button</code> to <code>--ts-radius-input</code> at 10px means a search field and its adjacent Go button share a silhouette instead of arguing. 10px is also the point where a 44px-tall control still reads as a rectangle rather than a lozenge, which keeps the pill meaning available for chips, where we actually need it.
+  </div>
+
+  <!-- ── elevation ──────────────────────────────────────────────────────── -->
+
+  <div class="spec">
+    <div class="spec-label">Elevation <em>Five steps and each one names a distance from the page, not a mood. Shadows are ink at 8%, never black.</em></div>
+    <div class="spec-row fd-elev">
+      <div class="fd-elev-card" style="--fd-sh:var(--ts-shadow-flat)">
+        <code>--ts-shadow-flat</code>
+        <p>A card resting on the page. Directory rows, article rows, anything in a list.</p>
+      </div>
+      <div class="fd-elev-card" style="--fd-sh:var(--ts-shadow-raised)">
+        <code>--ts-shadow-raised</code>
+        <p>The hover state of a flat card, and the resting state of anything tappable that stands alone.</p>
+      </div>
+      <div class="fd-elev-card" style="--fd-sh:var(--ts-shadow-lifted)">
+        <code>--ts-shadow-lifted</code>
+        <p>A card that has been picked up: dragged, expanded, or the lead story at the top of Today.</p>
+      </div>
+      <div class="fd-elev-card" style="--fd-sh:var(--ts-shadow-overlay)">
+        <code>--ts-shadow-overlay</code>
+        <p>Sheets, dialogs, menus. Anything with a scrim behind it. The only step with a long, soft second layer.</p>
+      </div>
+      <div class="fd-elev-card fd-elev-navy" style="--fd-sh:var(--ts-shadow-navy)">
+        <code>--ts-shadow-navy</code>
+        <p>Reserved for the dark card. A neutral shadow under navy reads grey and dirty, so this one tints with the card.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── buttons ────────────────────────────────────────────────────────── -->
+
+  <div class="spec">
+    <div class="spec-label">Button variants and sizes <em>Four intents, three sizes. Every size clears 44px of touch target even when the box is 34px tall.</em></div>
+    <div class="fd-btn-matrix">
+      <div class="fd-matrix-head"></div>
+      <div class="fd-matrix-head">Small · 34px</div>
+      <div class="fd-matrix-head">Medium · 40px</div>
+      <div class="fd-matrix-head">Large · 48px</div>
+
+      <div class="fd-matrix-row-label">Primary</div>
+      <div><button class="fd-btn" data-variant="primary" data-size="sm">Vouch</button></div>
+      <div><button class="fd-btn" data-variant="primary" data-size="md">Vouch for Dana</button></div>
+      <div><button class="fd-btn" data-variant="primary" data-size="lg">Vouch for Dana</button></div>
+
+      <div class="fd-matrix-row-label">Secondary</div>
+      <div><button class="fd-btn" data-variant="secondary" data-size="sm">Details</button></div>
+      <div><button class="fd-btn" data-variant="secondary" data-size="md">See details</button></div>
+      <div><button class="fd-btn" data-variant="secondary" data-size="lg">See details</button></div>
+
+      <div class="fd-matrix-row-label">Quiet</div>
+      <div><button class="fd-btn" data-variant="quiet" data-size="sm">Skip</button></div>
+      <div><button class="fd-btn" data-variant="quiet" data-size="md">Not now</button></div>
+      <div><button class="fd-btn" data-variant="quiet" data-size="lg">Not now</button></div>
+
+      <div class="fd-matrix-row-label">Destructive</div>
+      <div><button class="fd-btn" data-variant="destructive" data-size="sm">Remove</button></div>
+      <div><button class="fd-btn" data-variant="destructive" data-size="md">Remove creation</button></div>
+      <div><button class="fd-btn" data-variant="destructive" data-size="lg">Remove creation</button></div>
+    </div>
+  </div>
+
+  <div class="why">
+    <b>Brick is never a delete button, so destructive is outlined terracotta.</b> <code>--ts-brick</code> is the single alarm register in this system. It appears when the water plant issues a boil order and when the river is forecast over the levee, and its whole value is that a resident has almost never seen it before. Spend it on "remove creation" and you have taught the town that the loudest colour in the app means a form did something, which is exactly the training you do not want at 6am in a flood. So destructive borrows terracotta but changes shape rather than hue: transparent fill, a full-weight terracotta border, terracotta label. It is unmistakably not the primary button standing beside it, it still reads as consequential, and it costs the palette nothing. Confirmation of a genuinely irreversible action is the dialog's job, not the button's colour.
+  </div>
+
+  <div class="spec">
+    <div class="spec-label">Every state, rendered at once <em>Static <code>[data-state]</code> specimens so the whole matrix is visible, and the same rules drive the live pseudo-classes. Hover one and it behaves.</em></div>
+    <div class="fd-state-grid">
+      <div class="fd-matrix-head"></div>
+      <div class="fd-matrix-head">Default</div>
+      <div class="fd-matrix-head">Hover</div>
+      <div class="fd-matrix-head">Focus</div>
+      <div class="fd-matrix-head">Active</div>
+      <div class="fd-matrix-head">Disabled</div>
+      <div class="fd-matrix-head">Loading</div>
+
+      <div class="fd-matrix-row-label">Primary</div>
+      <div><button class="fd-btn" data-variant="primary" data-size="md">Vouch</button></div>
+      <div><button class="fd-btn" data-variant="primary" data-size="md" data-state="hover">Vouch</button></div>
+      <div><button class="fd-btn" data-variant="primary" data-size="md" data-state="focus">Vouch</button></div>
+      <div><button class="fd-btn" data-variant="primary" data-size="md" data-state="active">Vouch</button></div>
+      <div><button class="fd-btn" data-variant="primary" data-size="md" disabled>Vouch</button></div>
+      <div><button class="fd-btn" data-variant="primary" data-size="md" data-loading aria-busy="true" disabled><svg class="i-sm fd-spin" aria-hidden="true"><use href="#i-loader"/></svg><span>Vouching</span></button></div>
+
+      <div class="fd-matrix-row-label">Secondary</div>
+      <div><button class="fd-btn" data-variant="secondary" data-size="md">Details</button></div>
+      <div><button class="fd-btn" data-variant="secondary" data-size="md" data-state="hover">Details</button></div>
+      <div><button class="fd-btn" data-variant="secondary" data-size="md" data-state="focus">Details</button></div>
+      <div><button class="fd-btn" data-variant="secondary" data-size="md" data-state="active">Details</button></div>
+      <div><button class="fd-btn" data-variant="secondary" data-size="md" disabled>Details</button></div>
+      <div><button class="fd-btn" data-variant="secondary" data-size="md" data-loading aria-busy="true" disabled><svg class="i-sm fd-spin" aria-hidden="true"><use href="#i-loader"/></svg><span>Loading</span></button></div>
+
+      <div class="fd-matrix-row-label">Quiet</div>
+      <div><button class="fd-btn" data-variant="quiet" data-size="md">Not now</button></div>
+      <div><button class="fd-btn" data-variant="quiet" data-size="md" data-state="hover">Not now</button></div>
+      <div><button class="fd-btn" data-variant="quiet" data-size="md" data-state="focus">Not now</button></div>
+      <div><button class="fd-btn" data-variant="quiet" data-size="md" data-state="active">Not now</button></div>
+      <div><button class="fd-btn" data-variant="quiet" data-size="md" disabled>Not now</button></div>
+      <div><button class="fd-btn" data-variant="quiet" data-size="md" data-loading aria-busy="true" disabled><svg class="i-sm fd-spin" aria-hidden="true"><use href="#i-loader"/></svg><span>Loading</span></button></div>
+
+      <div class="fd-matrix-row-label">Destructive</div>
+      <div><button class="fd-btn" data-variant="destructive" data-size="md">Remove</button></div>
+      <div><button class="fd-btn" data-variant="destructive" data-size="md" data-state="hover">Remove</button></div>
+      <div><button class="fd-btn" data-variant="destructive" data-size="md" data-state="focus">Remove</button></div>
+      <div><button class="fd-btn" data-variant="destructive" data-size="md" data-state="active">Remove</button></div>
+      <div><button class="fd-btn" data-variant="destructive" data-size="md" disabled>Remove</button></div>
+      <div><button class="fd-btn" data-variant="destructive" data-size="md" data-loading aria-busy="true" disabled><svg class="i-sm fd-spin" aria-hidden="true"><use href="#i-loader"/></svg><span>Removing</span></button></div>
+    </div>
+    <p class="fd-table-note">Loading keeps the label and swaps the leading slot for the spinner, so the button does not resize under the finger that just pressed it. It sets <code>aria-busy</code> and stays disabled, because a second press would submit a second vouch.</p>
+  </div>
+
+  <div class="spec">
+    <div class="spec-label">Icon and width variants <em>An icon-only button always carries an <code>aria-label</code>. There is no such thing as an obvious glyph.</em></div>
+    <div class="spec-row fd-btn-row">
+      <button class="fd-btn" data-variant="secondary" data-size="md"><svg class="i-sm" aria-hidden="true"><use href="#i-map-pin"/></svg><span>Directions</span></button>
+      <button class="fd-btn" data-variant="secondary" data-size="md"><span>Open site</span><svg class="i-sm" aria-hidden="true"><use href="#i-external"/></svg></button>
+      <button class="fd-btn" data-variant="quiet" data-size="md" data-icon-only aria-label="Save to my week"><svg class="i" aria-hidden="true"><use href="#i-bookmark"/></svg></button>
+      <button class="fd-btn" data-variant="secondary" data-size="md" data-icon-only aria-label="Share this story"><svg class="i" aria-hidden="true"><use href="#i-share"/></svg></button>
+      <button class="fd-btn" data-variant="primary" data-size="md" data-icon-only aria-label="Add a creation"><svg class="i" aria-hidden="true"><use href="#i-plus"/></svg></button>
+    </div>
+    <div class="fd-fullwidth-demo">
+      <button class="fd-btn" data-variant="primary" data-size="lg" data-full>Submit for committee review</button>
+      <button class="fd-btn" data-variant="quiet" data-size="lg" data-full>Save as a draft</button>
+    </div>
+  </div>
+
+  <!-- ── chips, tags, badges ────────────────────────────────────────────── -->
+
+  <div class="spec">
+    <div class="spec-label">Filter chips <em>The count is inside the chip because a filter with no results should say so before you press it.</em></div>
+    <div class="spec-row fd-chip-row">
+      <button class="fd-chip" aria-pressed="false">All<span class="fd-chip-count">712</span></button>
+      <button class="fd-chip" aria-pressed="true">Open now<span class="fd-chip-count">184</span></button>
+      <button class="fd-chip" aria-pressed="false">Eat<span class="fd-chip-count">96</span></button>
+      <button class="fd-chip" aria-pressed="false">On the river<span class="fd-chip-count">23</span></button>
+      <button class="fd-chip" aria-pressed="false" data-state="focus">Verified<span class="fd-chip-count">61</span></button>
+      <button class="fd-chip" aria-pressed="false" disabled>Open Sunday<span class="fd-chip-count">0</span></button>
+    </div>
+  </div>
+
+  <div class="spec">
+    <div class="spec-label">Status pills <em>Every pill carries a glyph as well as a colour, so the state survives being printed, dimmed, or read by someone who cannot separate sage from stone.</em></div>
+    <div class="spec-row fd-chip-row">
+      <span class="fd-pill" data-tone="sage"><svg class="i-sm" aria-hidden="true"><use href="#i-check"/></svg>Open now</span>
+      <span class="fd-pill" data-tone="sage"><svg class="i-sm" aria-hidden="true"><use href="#i-badge-check"/></svg>Verified</span>
+      <span class="fd-pill" data-tone="gold"><svg class="i-sm" aria-hidden="true"><use href="#i-building"/></svg>From city hall</span>
+      <span class="fd-pill" data-tone="live"><span class="fd-live-dot" aria-hidden="true"></span>Live now</span>
+      <span class="fd-pill" data-tone="quiet"><svg class="i-sm" aria-hidden="true"><use href="#i-edit"/></svg>Draft</span>
+      <span class="fd-pill" data-tone="pending"><svg class="i-sm" aria-hidden="true"><use href="#i-clock"/></svg>Pending review</span>
+      <span class="fd-pill" data-tone="brick"><svg class="i-sm" aria-hidden="true"><use href="#i-warning"/></svg>Emergency</span>
+    </div>
+    <p class="fd-table-note">Only the last one is brick, and in a normal week it is not rendered at all. "Pending review" is ink on stone rather than amber, because waiting for the committee is not a warning.</p>
+  </div>
+
+  <div class="spec">
+    <div class="spec-label">Removable tags and the APP chip <em>The APP chip is mono because it labels the thing rather than describing it, and it is the one mark a creation can never draw itself.</em></div>
+    <div class="spec-row fd-chip-row">
+      <span class="fd-tag">Lake Dardanelle<button class="fd-tag-x" aria-label="Remove the Lake Dardanelle filter"><svg class="i-sm" aria-hidden="true"><use href="#i-close"/></svg></button></span>
+      <span class="fd-tag">Arkansas Tech<button class="fd-tag-x" aria-label="Remove the Arkansas Tech filter"><svg class="i-sm" aria-hidden="true"><use href="#i-close"/></svg></button></span>
+      <span class="fd-tag" data-state="hover">Free<button class="fd-tag-x" aria-label="Remove the Free filter"><svg class="i-sm" aria-hidden="true"><use href="#i-close"/></svg></button></span>
+      <span class="fd-appchip">APP</span>
+      <span class="fd-appchip" data-inverse>APP</span>
+    </div>
+  </div>
+
+  <!-- ── form controls ──────────────────────────────────────────────────── -->
+
+  <div class="spec">
+    <div class="spec-label">Text input, five states <em>The error state moves the border and adds a line of text. Colour alone has never told anyone what went wrong.</em></div>
+    <div class="fd-field-grid">
+      <div class="fd-field">
+        <label class="fd-label" for="fd-in-rest">What should we call your creation</label>
+        <input class="fd-input" id="fd-in-rest" type="text" placeholder="River Valley Trash Day">
+        <p class="fd-help">Rest</p>
+      </div>
+      <div class="fd-field">
+        <label class="fd-label" for="fd-in-focus">What should we call your creation</label>
+        <input class="fd-input" id="fd-in-focus" type="text" data-state="focus" value="River Valley Trash Day">
+        <p class="fd-help">Focus</p>
+      </div>
+      <div class="fd-field">
+        <label class="fd-label" for="fd-in-filled">What should we call your creation</label>
+        <input class="fd-input" id="fd-in-filled" type="text" value="River Valley Trash Day">
+        <p class="fd-help">Filled</p>
+      </div>
+      <div class="fd-field">
+        <label class="fd-label" for="fd-in-error">What should we call your creation</label>
+        <input class="fd-input" id="fd-in-error" type="text" data-invalid aria-invalid="true" aria-describedby="fd-in-error-msg" value="Town Square Official">
+        <p class="fd-error" id="fd-in-error-msg"><svg class="i-sm" aria-hidden="true"><use href="#i-alert-circle"/></svg>A creation cannot use "Town Square" in its name. Residents need to be able to tell your work from the shell's.</p>
+      </div>
+      <div class="fd-field">
+        <label class="fd-label" for="fd-in-disabled">Handle</label>
+        <input class="fd-input" id="fd-in-disabled" type="text" value="@dana.c" disabled>
+        <p class="fd-help">Disabled. Your handle is set once, when you are vouched in.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="spec">
+    <div class="spec-label">Textarea, select, search <em>The counter goes quiet until you are close, then it goes terracotta. A red number at character 12 of 280 is noise.</em></div>
+    <div class="spec-row fd-form-row">
+      <div class="fd-field fd-field-wide">
+        <label class="fd-label" for="fd-ta">Tell your neighbours what it does</label>
+        <div class="fd-textarea-wrap">
+          <textarea class="fd-textarea" id="fd-ta" rows="4" maxlength="280">Pulls the city's brush pickup calendar and tells you which side of Marina Way is up next, because the map on the city site is a PDF from 2019.</textarea>
+          <span class="fd-counter" data-near>149 / 280</span>
+        </div>
+        <p class="fd-help">Shown under your creation's name in the gallery.</p>
+      </div>
+      <div class="fd-field">
+        <label class="fd-label" for="fd-sel">Where should it live</label>
+        <div class="fd-select-wrap">
+          <select class="fd-select" id="fd-sel">
+            <option>Town services</option>
+            <option>Getting around</option>
+            <option>Parks and the river</option>
+            <option>Schools</option>
+          </select>
+          <svg class="i-sm fd-select-arrow" aria-hidden="true"><use href="#i-chevron-down"/></svg>
+        </div>
+        <p class="fd-help">The committee can move it later.</p>
+      </div>
+      <div class="fd-field">
+        <label class="fd-label" for="fd-search">Search the directory</label>
+        <div class="fd-search">
+          <svg class="i-sm fd-search-icon" aria-hidden="true"><use href="#i-search"/></svg>
+          <input class="fd-input fd-search-input" id="fd-search" type="search" value="taco">
+          <button class="fd-search-clear" aria-label="Clear the search"><svg class="i-sm" aria-hidden="true"><use href="#i-close"/></svg></button>
+        </div>
+        <p class="fd-help">31 places match.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="spec">
+    <div class="spec-label">Choice controls <em>Checkbox for many, radio for one, switch for a setting that takes effect the instant you flip it.</em></div>
+    <div class="spec-row fd-choice-row">
+      <div class="plate fd-choice-plate">
+        <div class="fd-choice-title">Checkbox</div>
+        <label class="fd-check"><input type="checkbox" checked><span class="fd-check-box"><svg class="i-sm" aria-hidden="true"><use href="#i-check"/></svg></span><span>Open now</span></label>
+        <label class="fd-check"><input type="checkbox"><span class="fd-check-box"><svg class="i-sm" aria-hidden="true"><use href="#i-check"/></svg></span><span>Has a patio</span></label>
+        <label class="fd-check"><input type="checkbox" disabled><span class="fd-check-box"><svg class="i-sm" aria-hidden="true"><use href="#i-check"/></svg></span><span>Open Sunday</span></label>
+      </div>
+      <div class="plate fd-choice-plate">
+        <div class="fd-choice-title">Radio</div>
+        <label class="fd-radio"><input type="radio" name="fd-r" checked><span class="fd-radio-dot"></span><span>Anyone in town</span></label>
+        <label class="fd-radio"><input type="radio" name="fd-r"><span class="fd-radio-dot"></span><span>Verified residents only</span></label>
+        <label class="fd-radio"><input type="radio" name="fd-r" disabled><span class="fd-radio-dot"></span><span>Just me, for now</span></label>
+      </div>
+      <div class="plate fd-choice-plate">
+        <div class="fd-choice-title">Switch</div>
+        <label class="fd-switch"><input type="checkbox" checked><span class="fd-switch-track"><span class="fd-switch-knob"></span></span><span>Notify me about emergencies</span></label>
+        <label class="fd-switch"><input type="checkbox"><span class="fd-switch-track"><span class="fd-switch-knob"></span></span><span>Weekly digest on Fridays</span></label>
+        <label class="fd-switch"><input type="checkbox" disabled checked><span class="fd-switch-track"><span class="fd-switch-knob"></span></span><span>Boil orders, always on</span></label>
+      </div>
+    </div>
+  </div>
+
+  <div class="spec">
+    <div class="spec-label">Segmented control and stepper <em>A segment is a view of the same list. If it changes what the list is, it is a tab, not a segment.</em></div>
+    <div class="spec-row fd-seg-row">
+      <div class="fd-seg" role="tablist" aria-label="Sort the directory">
+        <button class="fd-seg-btn" role="tab" aria-selected="true">Nearest</button>
+        <button class="fd-seg-btn" role="tab" aria-selected="false">Open now</button>
+        <button class="fd-seg-btn" role="tab" aria-selected="false">A to Z</button>
+      </div>
+      <div class="fd-stepper">
+        <button class="fd-step-btn" aria-label="One fewer volunteer"><svg class="i-sm" aria-hidden="true"><use href="#i-minus"/></svg></button>
+        <span class="fd-step-val" aria-live="polite">6</span>
+        <button class="fd-step-btn" aria-label="One more volunteer"><svg class="i-sm" aria-hidden="true"><use href="#i-plus"/></svg></button>
+      </div>
+      <div class="fd-stepper">
+        <button class="fd-step-btn" aria-label="One fewer" disabled><svg class="i-sm" aria-hidden="true"><use href="#i-minus"/></svg></button>
+        <span class="fd-step-val">1</span>
+        <button class="fd-step-btn" aria-label="One more"><svg class="i-sm" aria-hidden="true"><use href="#i-plus"/></svg></button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── identity ───────────────────────────────────────────────────────── -->
+
+  <div class="spec">
+    <div class="spec-label">Avatars and the verified ring <em>The ring is the badge. A separate tick would let a creation forge one, and it would say "official" in a system where nobody is.</em></div>
+    <div class="spec-row fd-avatar-row">
+      <div class="fd-av-demo">
+        <span class="fd-av" data-size="24" style="--fd-c:var(--ts-navy)">DC</span>
+        <code>24px</code><span class="fd-sw-job">Inline, beside a comment.</span>
+      </div>
+      <div class="fd-av-demo">
+        <span class="fd-av" data-size="34" style="--fd-c:var(--ts-terracotta)">RM</span>
+        <code>34px</code><span class="fd-sw-job">List rows and bylines.</span>
+      </div>
+      <div class="fd-av-demo">
+        <span class="fd-av" data-size="48" style="--fd-c:var(--ts-sage)">JT</span>
+        <code>48px</code><span class="fd-sw-job">Profile headers.</span>
+      </div>
+      <div class="fd-av-demo">
+        <span class="fd-av" data-size="48" data-verified style="--fd-c:var(--ts-navy)">DC</span>
+        <code>verified</code><span class="fd-sw-job">Ten neighbours vouched. No address, no name.</span>
+      </div>
+      <div class="fd-av-demo">
+        <div class="fd-av-stack">
+          <span class="fd-av" data-size="34" style="--fd-c:var(--ts-navy)">DC</span>
+          <span class="fd-av" data-size="34" style="--fd-c:var(--ts-terracotta)">RM</span>
+          <span class="fd-av" data-size="34" style="--fd-c:var(--ts-sage)">JT</span>
+          <span class="fd-av" data-size="34" data-overflow>+7</span>
+        </div>
+        <code>group</code><span class="fd-sw-job">Ten vouches, three faces, one honest count.</span>
+      </div>
+    </div>
+    <div class="spec-row fd-avatar-row">
+      <div class="fd-av-demo">
+        <span class="fd-tile"><svg class="i-lg" aria-hidden="true"><use href="#i-bus"/></svg></span>
+        <code>creation tile</code><span class="fd-sw-job">A creation's icon, drawn from the sprite.</span>
+      </div>
+      <div class="fd-av-demo">
+        <span class="fd-tile" data-fallback>RV</span>
+        <code>tile fallback</code><span class="fd-sw-job">If the bundle never loads, initials, not a broken glyph.</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── links, dividers, focus ─────────────────────────────────────────── -->
+
+  <div class="spec">
+    <div class="spec-label">Links and dividers <em>Inline links are underlined, always. Colour alone in a serif paragraph is not a link, it is a typo.</em></div>
+    <div class="plate fd-links">
+      <p class="fd-prose">Brush pickup runs the first and third Monday. The route map is <a class="fd-link" href="#foundations">on the city site</a> and the schedule moved once already this year, so check it before you drag anything to the kerb.</p>
+      <div class="fd-divider"></div>
+      <a class="fd-link-standalone" href="#foundations">All 41 city notices<svg class="i-sm" aria-hidden="true"><use href="#i-chevron-right"/></svg></a>
+      <div class="fd-divider" data-labelled><span>Earlier this week</span></div>
+      <a class="fd-link-standalone" href="#foundations" data-state="focus">Read the council minutes<svg class="i-sm" aria-hidden="true"><use href="#i-chevron-right"/></svg></a>
+    </div>
+  </div>
+
+  <div class="spec">
+    <div class="spec-label">The focus ring on three backgrounds <em>A 2px halo in the page colour then 2px of terracotta, so the ring never fuses with what is behind it.</em></div>
+    <div class="spec-row fd-focus-row">
+      <div class="fd-focus-plate" data-bg="cream">
+        <span class="fd-focus-tag">on cream</span>
+        <button class="fd-btn" data-variant="secondary" data-size="md" data-state="focus">Add to my week</button>
+      </div>
+      <div class="fd-focus-plate" data-bg="surface">
+        <span class="fd-focus-tag">on surface</span>
+        <button class="fd-btn" data-variant="secondary" data-size="md" data-state="focus">Add to my week</button>
+      </div>
+      <div class="fd-focus-plate" data-bg="navy">
+        <span class="fd-focus-tag">on navy</span>
+        <button class="fd-btn" data-variant="on-navy" data-size="md" data-state="focus">Add to my week</button>
+      </div>
+    </div>
+    <p class="fd-table-note">The cream halo does its real work on navy, where it separates the terracotta ring from a dark field it would otherwise sit too close to. On white the halo is nearly invisible, which is fine: the terracotta ring is carrying it there. Focus is only ever drawn on <code>:focus-visible</code>, so a mouse press does not leave a ring behind.</p>
+  </div>
+
+  <!-- ── loading ────────────────────────────────────────────────────────── -->
+
+  <div class="spec">
+    <div class="spec-label">Loading atoms <em>Skeletons match the shape of what is coming, so nothing jumps when it arrives.</em></div>
+    <div class="spec-row fd-load-row">
+      <div class="plate fd-load-plate">
+        <div class="fd-choice-title">Spinner</div>
+        <div class="fd-spin-row">
+          <svg class="i-sm fd-spin" aria-hidden="true"><use href="#i-loader"/></svg>
+          <svg class="i fd-spin" aria-hidden="true"><use href="#i-loader"/></svg>
+          <svg class="i-lg fd-spin" aria-hidden="true"><use href="#i-loader"/></svg>
+        </div>
+        <p class="fd-help">Only inside a control. A full-screen spinner is a skeleton we did not bother to draw.</p>
+      </div>
+      <div class="plate fd-load-plate">
+        <div class="fd-choice-title">Skeleton</div>
+        <div class="fd-skel-card">
+          <span class="fd-skel" data-shape="circle"></span>
+          <div class="fd-skel-lines">
+            <span class="fd-skel" data-shape="line" style="--fd-w:70%"></span>
+            <span class="fd-skel" data-shape="line" style="--fd-w:45%"></span>
+          </div>
+        </div>
+        <span class="fd-skel" data-shape="block"></span>
+        <p class="fd-help">Shimmer sweeps once every 1.6s and stops entirely under reduced motion.</p>
+      </div>
+      <div class="plate fd-load-plate">
+        <div class="fd-choice-title">Progress</div>
+        <div class="fd-progress" role="progressbar" aria-valuenow="62" aria-valuemin="0" aria-valuemax="100" aria-label="Uploading your bundle">
+          <span class="fd-progress-fill" style="--fd-w:62%"></span>
+        </div>
+        <p class="fd-help">Uploading your bundle, 62%. Determinate only. If we cannot count it, it is a spinner.</p>
+        <div class="fd-progress" data-indeterminate role="progressbar" aria-label="Checking your bundle">
+          <span class="fd-progress-fill"></span>
+        </div>
+        <p class="fd-help">Checking with the committee queue.</p>
+      </div>
+    </div>
+  </div>
+</section>

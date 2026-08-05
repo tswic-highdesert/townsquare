@@ -1,0 +1,1354 @@
+<section class="sheet-section" id="identity">
+  <div class="sec-head"><span class="sec-num">08</span><h2>Identity, vouching, and moderation</h2></div>
+  <p class="sec-note">Signing in, being vouched for by a neighbour, and the light-touch committee that keeps the place honest. Town Square never stores an address, and being verified never means being publicly identified. A vouch is a warm gesture between two people who know each other, so it has to look like one and not like a background check.</p>
+
+  <p class="why"><b>The whole design problem of this section</b> is that verification is social, and social gates go wrong in one of two directions. Too heavy and it reads as a background check, which loses exactly the privacy-minded residents most likely to build something. Too eager and it becomes a growth loop that pressures people into asking strangers for favours. Everything below is tuned between those: <b>the ladder never shames a resident at zero</b>, the ask surface has no reminders and no counters, and the only place a chain is ever shown is an admin screen.</p>
+
+  <!-- ─────────────────────────── 1. SIGN IN ─────────────────────────── -->
+
+  <div class="spec">
+    <div class="spec-label">Sign in, magic link <em>One form, one answer. The copy must never become the oracle the API refused to be.</em></div>
+    <div class="spec-row">
+
+      <div class="phone">
+        <div class="phone-cap">Sign in – request</div>
+        <div class="phone-screen">
+          <div class="id-scr">
+            <button class="id-back" type="button"><svg class="i-sm i" aria-hidden="true"><use href="#i-arrow-left"/></svg> Back</button>
+            <h1 class="id-h1">Sign in</h1>
+            <p class="id-lede">No password. We email you a link. Reading the town square never needs an account at all, this is for building something and for being vouched for.</p>
+
+            <label class="id-field">
+              <span class="id-field-label">Email</span>
+              <input class="id-input" type="email" value="ruth@dardanelle.net" readonly>
+              <small class="id-help">Private. Used to sign in, and to reach you about a report.</small>
+            </label>
+
+            <div class="id-actions">
+              <button class="id-btn id-btn-primary" type="button"><svg class="i-sm i" aria-hidden="true"><use href="#i-mail"/></svg> Email me a link</button>
+              <button class="id-btn id-btn-quiet" type="button">I need an account</button>
+            </div>
+
+            <p class="id-fine"><svg class="i-sm i" aria-hidden="true"><use href="#i-lock"/></svg> Two fields is the whole account. No name, no address, no phone.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="phone">
+        <div class="phone-cap">Sign in – check your email</div>
+        <div class="phone-screen">
+          <div class="id-scr">
+            <button class="id-back" type="button"><svg class="i-sm i" aria-hidden="true"><use href="#i-arrow-left"/></svg> Back</button>
+            <div class="id-mark id-mark-quiet"><svg class="i-lg i" aria-hidden="true"><use href="#i-send"/></svg></div>
+            <h1 class="id-h1">Check your email</h1>
+            <p class="id-lede">If there is an account for <b>ruth@dardanelle.net</b>, a sign-in link is on its way. It works once and expires in twenty minutes.</p>
+            <p class="id-note">We do not say whether that address is registered. Anyone could type your email in here, and an answer either way would tell them something about you.</p>
+
+            <div class="id-actions">
+              <button class="id-btn id-btn-quiet" type="button" disabled><svg class="i-sm i" aria-hidden="true"><use href="#i-refresh"/></svg> Send another in 0:47</button>
+              <button class="id-btn id-btn-quiet" type="button">Wrong address</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="phone">
+        <div class="phone-cap">Sign in – expired link</div>
+        <div class="phone-screen">
+          <div class="id-scr">
+            <div class="id-mark id-mark-warn"><svg class="i-lg i" aria-hidden="true"><use href="#i-clock"/></svg></div>
+            <h1 class="id-h1">That link has expired</h1>
+            <p class="id-lede">Sign-in links last twenty minutes and work once. This one was used already or it sat too long.</p>
+
+            <label class="id-field">
+              <span class="id-field-label">Email</span>
+              <input class="id-input" type="email" value="ruth@dardanelle.net" readonly>
+            </label>
+
+            <div class="id-actions">
+              <button class="id-btn id-btn-primary" type="button">Send a new link</button>
+            </div>
+            <p class="id-fine">Nothing went wrong and nothing was lost. Your handle, your vouches and anything you built are exactly where you left them.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="phone">
+        <div class="phone-cap">Sign in – returning</div>
+        <div class="phone-screen">
+          <div class="id-scr">
+            <div class="id-avatar id-avatar-lg" data-verified aria-hidden="true">RU</div>
+            <h1 class="id-h1">Welcome back, ruth</h1>
+            <p class="id-lede">You signed in on this device in June. Same link, same twenty minutes.</p>
+
+            <div class="id-actions">
+              <button class="id-btn id-btn-primary" type="button"><svg class="i-sm i" aria-hidden="true"><use href="#i-mail"/></svg> Send the link to r•••@dardanelle.net</button>
+              <button class="id-btn id-btn-quiet" type="button">Not you? Use another email</button>
+            </div>
+            <p class="id-fine"><svg class="i-sm i" aria-hidden="true"><use href="#i-eye-off"/></svg> The handle and the masked address are the only things kept on this device. Signing out everywhere clears them.</p>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ─────────────────────── 2. CHOOSING A HANDLE ─────────────────────── -->
+
+  <div class="spec">
+    <div class="spec-label">Choosing a handle <em>Availability resolves in the field, never on submit. A rejected form after the fact reads as a refusal.</em></div>
+    <div class="spec-row">
+
+      <div class="plate id-plate">
+        <div class="id-handle-set">
+
+          <label class="id-field">
+            <span class="id-field-label">Handle</span>
+            <span class="id-affix">
+              <span class="id-affix-at">@</span>
+              <input class="id-input id-input-affix" value="" placeholder="what the town sees" readonly>
+            </span>
+            <small class="id-help">3 to 20 characters. Letters, numbers and underscores. Not case sensitive.</small>
+          </label>
+
+          <label class="id-field">
+            <span class="id-field-label">Handle <span class="id-state-tag">checking</span></span>
+            <span class="id-affix" data-state="checking">
+              <span class="id-affix-at">@</span>
+              <input class="id-input id-input-affix" value="westside_ruth" readonly>
+              <svg class="i-sm i id-affix-icon id-spin" aria-hidden="true"><use href="#i-loader"/></svg>
+            </span>
+            <small class="id-help">Looking that up</small>
+          </label>
+
+          <label class="id-field">
+            <span class="id-field-label">Handle <span class="id-state-tag" data-good>available</span></span>
+            <span class="id-affix" data-state="good">
+              <span class="id-affix-at">@</span>
+              <input class="id-input id-input-affix" value="westside_ruth" readonly>
+              <svg class="i-sm i id-affix-icon" aria-hidden="true"><use href="#i-check"/></svg>
+            </span>
+            <small class="id-help id-help-good"><svg class="i-sm i" aria-hidden="true"><use href="#i-check-circle"/></svg> @westside_ruth is yours</small>
+          </label>
+
+          <label class="id-field">
+            <span class="id-field-label">Handle <span class="id-state-tag" data-bad>taken</span></span>
+            <span class="id-affix" data-state="bad">
+              <span class="id-affix-at">@</span>
+              <input class="id-input id-input-affix" value="ruth" readonly>
+              <svg class="i-sm i id-affix-icon" aria-hidden="true"><use href="#i-x-circle"/></svg>
+            </span>
+            <small class="id-help id-help-bad">Someone has @ruth already. Try one of these:</small>
+            <span class="id-suggests">
+              <button class="id-chip" type="button">@ruth_rv</button>
+              <button class="id-chip" type="button">@westside_ruth</button>
+              <button class="id-chip" type="button">@ruth_on_weir</button>
+            </span>
+          </label>
+
+          <label class="id-field">
+            <span class="id-field-label">Handle <span class="id-state-tag" data-bad>not allowed</span></span>
+            <span class="id-affix" data-state="bad">
+              <span class="id-affix-at">@</span>
+              <input class="id-input id-input-affix" value="Ruth Calloway" readonly>
+              <svg class="i-sm i id-affix-icon" aria-hidden="true"><use href="#i-alert-circle"/></svg>
+            </span>
+            <small class="id-help id-help-bad">Spaces are not allowed. Try <b>ruth_calloway</b>.</small>
+          </label>
+
+        </div>
+      </div>
+
+      <div class="plate id-plate id-plate-narrow">
+        <div class="id-eyebrow">What a handle is for</div>
+        <p class="id-body">A handle is what the town sees. It is the only name Town Square has for you, and your real one is never asked for, never stored and never inferred.</p>
+        <ul class="id-list">
+          <li><svg class="i-sm i" aria-hidden="true"><use href="#i-check"/></svg> Use your name if you want to. Plenty of people do.</li>
+          <li><svg class="i-sm i" aria-hidden="true"><use href="#i-check"/></svg> Use anything else if you would rather. Being verified does not require being identified.</li>
+          <li><svg class="i-sm i" aria-hidden="true"><use href="#i-clock"/></svg> Changeable once every 30 days. Old handles are retired, never reissued.</li>
+        </ul>
+        <div class="id-quiet-note"><svg class="i-sm i" aria-hidden="true"><use href="#i-shield"/></svg> A neighbour vouching for you knows who you are already. That is the point. The rest of the town does not need to.</div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ────────────────── 3. THE VERIFICATION LADDER ────────────────── -->
+
+  <div class="spec">
+    <div class="spec-label">The verification ladder, five states <em>At zero the meter is deliberately secondary. Plenty of good residents sit there for weeks and the screen must not treat that as a failure.</em></div>
+    <div class="spec-grid">
+
+      <div class="id-ladder" data-stage="none">
+        <div class="id-ladder-head">
+          <div class="id-ladder-title">You are set up</div>
+          <span class="id-ladder-tag">Not verified</span>
+        </div>
+        <p class="id-ladder-say">You can read everything, save things, and build, validate and preview a creation right now. Nothing here is waiting on you.</p>
+        <div class="id-ladder-meter">
+          <div class="id-meter-label">Vouches</div>
+          <div class="id-pips">
+            <span class="id-pip"></span><span class="id-pip"></span><span class="id-pip"></span><span class="id-pip"></span><span class="id-pip"></span>
+            <span class="id-pip"></span><span class="id-pip"></span><span class="id-pip"></span><span class="id-pip"></span><span class="id-pip"></span>
+          </div>
+          <div class="id-meter-count">Not started</div>
+        </div>
+        <p class="id-ladder-fine">Publishing code that runs in a neighbour's browser, reporting something, and correcting town data all need ten neighbours to say they know you. There is no hurry.</p>
+        <button class="id-btn id-btn-quiet id-btn-wide" type="button"><svg class="i-sm i" aria-hidden="true"><use href="#i-help"/></svg> How vouching works</button>
+      </div>
+
+      <div class="id-ladder" data-stage="going">
+        <div class="id-ladder-head">
+          <div class="id-ladder-title">Three neighbours have vouched for you</div>
+          <span class="id-ladder-tag">In progress</span>
+        </div>
+        <p class="id-ladder-say">Ruth, Marcy and Dave. They can see they vouched. Nobody else can.</p>
+        <div class="id-ladder-meter">
+          <div class="id-meter-label">Vouches</div>
+          <div class="id-pips">
+            <span class="id-pip" data-on></span><span class="id-pip" data-on></span><span class="id-pip" data-on></span><span class="id-pip"></span><span class="id-pip"></span>
+            <span class="id-pip"></span><span class="id-pip"></span><span class="id-pip"></span><span class="id-pip"></span><span class="id-pip"></span>
+          </div>
+          <div class="id-meter-count"><b>3</b> of 10</div>
+        </div>
+        <p class="id-ladder-fine">Ten is the default for Russellville. A town operator can set it anywhere, and an admin can lower it for a specific person.</p>
+        <button class="id-btn id-btn-quiet id-btn-wide" type="button"><svg class="i-sm i" aria-hidden="true"><use href="#i-link"/></svg> Get a link to ask someone</button>
+      </div>
+
+      <div class="id-ladder" data-stage="near">
+        <div class="id-ladder-head">
+          <div class="id-ladder-title">One more and you are in</div>
+          <span class="id-ladder-tag">Nearly there</span>
+        </div>
+        <p class="id-ladder-say">Nine neighbours have vouched for you, the most recent on Tuesday.</p>
+        <div class="id-ladder-meter">
+          <div class="id-meter-label">Vouches</div>
+          <div class="id-pips">
+            <span class="id-pip" data-on></span><span class="id-pip" data-on></span><span class="id-pip" data-on></span><span class="id-pip" data-on></span><span class="id-pip" data-on></span>
+            <span class="id-pip" data-on></span><span class="id-pip" data-on></span><span class="id-pip" data-on></span><span class="id-pip" data-on></span><span class="id-pip" data-next></span>
+          </div>
+          <div class="id-meter-count"><b>9</b> of 10</div>
+        </div>
+        <p class="id-ladder-fine">Nothing changes about how you use Town Square when the tenth lands. A few more things simply stop being greyed out.</p>
+        <button class="id-btn id-btn-quiet id-btn-wide" type="button"><svg class="i-sm i" aria-hidden="true"><use href="#i-link"/></svg> Get a link to ask someone</button>
+      </div>
+
+      <div class="id-ladder" data-stage="done">
+        <div class="id-ladder-head">
+          <div class="id-ladder-title"><svg class="i-sm i" aria-hidden="true"><use href="#i-badge-check"/></svg> Verified resident</div>
+          <span class="id-ladder-tag">Since 14 July</span>
+        </div>
+        <p class="id-ladder-say">Ten neighbours said they know you live here. That is the whole record: verified, by vouch, on 14 July. No address was collected or stored at any point.</p>
+        <div class="id-ladder-meter">
+          <div class="id-meter-label">Vouches</div>
+          <div class="id-pips">
+            <span class="id-pip" data-on></span><span class="id-pip" data-on></span><span class="id-pip" data-on></span><span class="id-pip" data-on></span><span class="id-pip" data-on></span>
+            <span class="id-pip" data-on></span><span class="id-pip" data-on></span><span class="id-pip" data-on></span><span class="id-pip" data-on></span><span class="id-pip" data-on></span>
+          </div>
+          <div class="id-meter-count"><b>10</b> of 10</div>
+        </div>
+        <p class="id-ladder-fine">You can publish creations, report things, correct town data, and vouch for other people. Who vouched for you stays private, including from you after the first thank you.</p>
+        <button class="id-btn id-btn-quiet id-btn-wide" type="button"><svg class="i-sm i" aria-hidden="true"><use href="#i-handshake"/></svg> Vouch for a neighbour</button>
+      </div>
+
+      <div class="id-ladder" data-stage="flag">
+        <div class="id-ladder-head">
+          <div class="id-ladder-title"><svg class="i-sm i" aria-hidden="true"><use href="#i-flag"/></svg> Flagged for review</div>
+          <span class="id-ladder-tag">Opened 2 August</span>
+        </div>
+        <p class="id-ladder-say">One of the people who vouched for you withdrew it, so a moderator is reading the branch. This happens for ordinary reasons and usually ends with nothing.</p>
+        <div class="id-ladder-meter">
+          <div class="id-meter-label">Vouches</div>
+          <div class="id-pips">
+            <span class="id-pip" data-on></span><span class="id-pip" data-on></span><span class="id-pip" data-on></span><span class="id-pip" data-on></span><span class="id-pip" data-on></span>
+            <span class="id-pip" data-on></span><span class="id-pip" data-on></span><span class="id-pip" data-on></span><span class="id-pip" data-on></span><span class="id-pip" data-off></span>
+          </div>
+          <div class="id-meter-count"><b>9</b> of 10 active</div>
+        </div>
+        <p class="id-ladder-fine"><b>You are still verified and nothing you made has come down.</b> Withdrawing a vouch never cascades, it only asks a person to look. You will get one email when it closes.</p>
+        <button class="id-btn id-btn-quiet id-btn-wide" type="button"><svg class="i-sm i" aria-hidden="true"><use href="#i-mail"/></svg> Write to the committee</button>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ───────────────── 4. WHAT VERIFIED UNLOCKS ───────────────── -->
+
+  <div class="spec">
+    <div class="spec-label">What verified actually unlocks <em>Said plainly and early. A gate whose reward is unstated reads as arbitrary, and arbitrary gates get resented.</em></div>
+    <div class="plate id-plate">
+      <table class="id-table">
+        <thead>
+          <tr>
+            <th scope="col">You want to</th>
+            <th scope="col">Signed out</th>
+            <th scope="col">Email only</th>
+            <th scope="col">Verified</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <th scope="row">Read the town square, browse the directory, open any creation</th>
+            <td data-y><svg class="i-sm i" aria-hidden="true"><use href="#i-check"/></svg><span class="id-sr">Yes</span></td>
+            <td data-y><svg class="i-sm i" aria-hidden="true"><use href="#i-check"/></svg><span class="id-sr">Yes</span></td>
+            <td data-y><svg class="i-sm i" aria-hidden="true"><use href="#i-check"/></svg><span class="id-sr">Yes</span></td>
+          </tr>
+          <tr>
+            <th scope="row">Save an event, follow a business, get the Friday email</th>
+            <td data-n><span class="id-dash"></span><span class="id-sr">No</span></td>
+            <td data-y><svg class="i-sm i" aria-hidden="true"><use href="#i-check"/></svg><span class="id-sr">Yes</span></td>
+            <td data-y><svg class="i-sm i" aria-hidden="true"><use href="#i-check"/></svg><span class="id-sr">Yes</span></td>
+          </tr>
+          <tr>
+            <th scope="row">Build, validate and preview a creation</th>
+            <td data-n><span class="id-dash"></span><span class="id-sr">No</span></td>
+            <td data-y><svg class="i-sm i" aria-hidden="true"><use href="#i-check"/></svg><span class="id-sr">Yes</span></td>
+            <td data-y><svg class="i-sm i" aria-hidden="true"><use href="#i-check"/></svg><span class="id-sr">Yes</span></td>
+          </tr>
+          <tr>
+            <th scope="row">List a link to something you host yourself</th>
+            <td data-n><span class="id-dash"></span><span class="id-sr">No</span></td>
+            <td data-y><svg class="i-sm i" aria-hidden="true"><use href="#i-check"/></svg><span class="id-sr">Yes</span></td>
+            <td data-y><svg class="i-sm i" aria-hidden="true"><use href="#i-check"/></svg><span class="id-sr">Yes</span></td>
+          </tr>
+          <tr data-gate>
+            <th scope="row">Publish a creation that runs in a neighbour's browser</th>
+            <td data-n><span class="id-dash"></span><span class="id-sr">No</span></td>
+            <td data-n><span class="id-dash"></span><span class="id-sr">No</span></td>
+            <td data-y><svg class="i-sm i" aria-hidden="true"><use href="#i-check"/></svg><span class="id-sr">Yes</span></td>
+          </tr>
+          <tr data-gate>
+            <th scope="row">Report a creation or a record</th>
+            <td data-n><span class="id-dash"></span><span class="id-sr">No</span></td>
+            <td data-n><span class="id-dash"></span><span class="id-sr">No</span></td>
+            <td data-y><svg class="i-sm i" aria-hidden="true"><use href="#i-check"/></svg><span class="id-sr">Yes</span></td>
+          </tr>
+          <tr data-gate>
+            <th scope="row">Correct town data: hours, a closed trail, a moved meeting</th>
+            <td data-n><span class="id-dash"></span><span class="id-sr">No</span></td>
+            <td data-n><span class="id-dash"></span><span class="id-sr">No</span></td>
+            <td data-y><svg class="i-sm i" aria-hidden="true"><use href="#i-check"/></svg><span class="id-sr">Yes</span></td>
+          </tr>
+          <tr data-gate>
+            <th scope="row">Vouch for a neighbour</th>
+            <td data-n><span class="id-dash"></span><span class="id-sr">No</span></td>
+            <td data-n><span class="id-dash"></span><span class="id-sr">No</span></td>
+            <td data-y><svg class="i-sm i" aria-hidden="true"><use href="#i-check"/></svg><span class="id-sr">Yes</span></td>
+          </tr>
+          <tr data-role>
+            <th scope="row">Revert someone else's correction, decide a submission, close a report</th>
+            <td colspan="3" class="id-role-cell"><svg class="i-sm i" aria-hidden="true"><use href="#i-scale"/></svg> Moderator, a role held by the local committee</td>
+          </tr>
+        </tbody>
+      </table>
+      <p class="id-table-foot">Four rows out of nine need a vouch, and three of those four are ways to change something a neighbour will read. Everything a person actually comes here for sits above the line.</p>
+    </div>
+  </div>
+
+  <!-- ───────────────── 5. GIVING A VOUCH ───────────────── -->
+
+  <div class="spec">
+    <div class="spec-label">Giving a vouch <em>One real question, asked plainly, with the consequence stated before the button and not after it.</em></div>
+    <div class="spec-row">
+
+      <div class="phone">
+        <div class="phone-cap">A neighbour asked</div>
+        <div class="phone-screen">
+          <div class="id-scr">
+            <div class="id-eyebrow">From your inbox</div>
+            <div class="id-ask-card">
+              <div class="id-avatar" aria-hidden="true">JO</div>
+              <div class="id-ask-body">
+                <div class="id-ask-name">@bona_dea_jo asked you to vouch for them</div>
+                <div class="id-ask-meta">Joined 28 July · 4 of 10 vouches</div>
+              </div>
+            </div>
+            <p class="id-lede">You are one of the people Jo picked. Nobody else can see that they asked you, and Jo cannot see whether you opened this.</p>
+            <div class="id-actions">
+              <button class="id-btn id-btn-primary id-btn-wide" type="button"><svg class="i-sm i" aria-hidden="true"><use href="#i-handshake"/></svg> Have a look</button>
+              <button class="id-btn id-btn-quiet id-btn-wide" type="button">Not now</button>
+            </div>
+            <p class="id-fine">"Not now" is silent. Jo is told nothing, and this does not come back.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="phone">
+        <div class="phone-cap">The one question</div>
+        <div class="phone-screen">
+          <div class="id-scr">
+            <button class="id-back" type="button"><svg class="i-sm i" aria-hidden="true"><use href="#i-arrow-left"/></svg> Inbox</button>
+
+            <div class="id-vouch-subject">
+              <div class="id-avatar id-avatar-lg" aria-hidden="true">JO</div>
+              <div class="id-vouch-handle">@bona_dea_jo</div>
+              <div class="id-vouch-sub">Joined 28 July. Has not published anything yet.</div>
+            </div>
+
+            <div class="id-question">
+              <div class="id-question-ask">Do you actually know this person lives in Russellville?</div>
+              <p class="id-question-say">Not whether they seem fine. Not whether you have talked online. Whether you know them, the way you know a neighbour.</p>
+              <div class="id-question-answers">
+                <button class="id-btn id-btn-primary id-btn-wide" type="button">Yes, I know Jo</button>
+                <button class="id-btn id-btn-quiet id-btn-wide" type="button">Not really</button>
+              </div>
+            </div>
+
+            <div class="id-consequence">
+              <svg class="i-sm i" aria-hidden="true"><use href="#i-git-branch"/></svg>
+              <div>
+                <b>Your name is on this.</b> Vouch chains are visible to the committee, never to the town. If this one goes wrong, it traces back to you and a moderator will ask.
+              </div>
+            </div>
+
+            <p class="id-fine">Answering "not really" costs Jo nothing and tells them nothing. It is the right answer more often than people expect.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="phone">
+        <div class="phone-cap">Done, and what happens next</div>
+        <div class="phone-screen">
+          <div class="id-scr">
+            <div class="id-mark id-mark-good"><svg class="i-lg i" aria-hidden="true"><use href="#i-handshake"/></svg></div>
+            <h1 class="id-h1">You vouched for Jo</h1>
+            <p class="id-lede">Jo is at 5 of 10 now. They can see the count went up. They cannot see it was you unless you tell them.</p>
+
+            <ul class="id-outcome">
+              <li><svg class="i-sm i" aria-hidden="true"><use href="#i-refresh"/></svg> This vouch comes back to your budget on <b>4 November</b>, ninety days from today.</li>
+              <li><svg class="i-sm i" aria-hidden="true"><use href="#i-eye-off"/></svg> Nothing about you was shared with Jo. Not your email, not where you live, not your other vouches.</li>
+              <li><svg class="i-sm i" aria-hidden="true"><use href="#i-history"/></svg> You can withdraw it later. Withdrawing does not un-verify Jo.</li>
+            </ul>
+
+            <div class="id-actions">
+              <button class="id-btn id-btn-quiet id-btn-wide" type="button"><svg class="i-sm i" aria-hidden="true"><use href="#i-message"/></svg> Send Jo a note</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="plate id-plate id-plate-narrow">
+        <div class="id-eyebrow">Afterwards, on your account</div>
+        <ul class="id-given">
+          <li>
+            <div class="id-avatar id-avatar-sm" aria-hidden="true">JO</div>
+            <div class="id-given-body">
+              <div class="id-given-name">@bona_dea_jo</div>
+              <div class="id-given-meta">Vouched 6 August · returns 4 November</div>
+            </div>
+            <button class="id-btn id-btn-tiny" type="button">Withdraw</button>
+          </li>
+          <li>
+            <div class="id-avatar id-avatar-sm" aria-hidden="true">AM</div>
+            <div class="id-given-body">
+              <div class="id-given-name">@techdrive_amir</div>
+              <div class="id-given-meta">Vouched 19 June · returns 17 September</div>
+            </div>
+            <button class="id-btn id-btn-tiny" type="button">Withdraw</button>
+          </li>
+          <li data-withdrawn>
+            <div class="id-avatar id-avatar-sm" data-off aria-hidden="true">QF</div>
+            <div class="id-given-body">
+              <div class="id-given-name">@quickfix_2026</div>
+              <div class="id-given-meta">Withdrawn 2 August · branch under review</div>
+            </div>
+            <span class="id-flagtag"><svg class="i-sm i" aria-hidden="true"><use href="#i-flag"/></svg> Flagged</span>
+          </li>
+        </ul>
+
+        <div class="id-withdraw-confirm">
+          <div class="id-eyebrow">Withdraw confirmation</div>
+          <p class="id-body"><b>Withdraw your vouch for @quickfix_2026?</b></p>
+          <p class="id-body id-body-muted">They stay verified. The branch under them is flagged so a moderator reads it, and nothing anyone built comes down. Withdrawing is a way to say "I am no longer sure", not a way to remove someone.</p>
+          <div class="id-actions">
+            <button class="id-btn id-btn-primary" type="button">Withdraw it</button>
+            <button class="id-btn id-btn-quiet" type="button">Keep it</button>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ───────────────── 6. THE VOUCH BUDGET METER ───────────────── -->
+
+  <div class="spec">
+    <div class="spec-label">Vouch budget, a rolling ninety days <em>A spent vouch shows the date it comes back, because "you have none left" without a date reads as a punishment.</em></div>
+    <div class="spec-row">
+
+      <div class="plate id-plate id-plate-narrow">
+        <div class="id-budget">
+          <div class="id-budget-head">
+            <div>
+              <div class="id-budget-count"><b>7</b> of 10 available</div>
+              <div class="id-budget-sub">Three are out with people you vouched for</div>
+            </div>
+            <svg class="i-lg i id-budget-icon" aria-hidden="true"><use href="#i-handshake"/></svg>
+          </div>
+          <div class="id-budget-track">
+            <span class="id-budget-cell" data-free></span><span class="id-budget-cell" data-free></span><span class="id-budget-cell" data-free></span>
+            <span class="id-budget-cell" data-free></span><span class="id-budget-cell" data-free></span><span class="id-budget-cell" data-free></span>
+            <span class="id-budget-cell" data-free></span>
+            <span class="id-budget-cell" data-spent></span><span class="id-budget-cell" data-spent></span><span class="id-budget-cell" data-spent></span>
+          </div>
+          <ul class="id-budget-returns">
+            <li><span>@techdrive_amir</span><span>back 17 Sep</span></li>
+            <li><span>@prairie_creek_kim</span><span>back 2 Oct</span></li>
+            <li><span>@bona_dea_jo</span><span>back 4 Nov</span></li>
+          </ul>
+          <p class="id-budget-fine">Vouches replenish on a rolling window, not on a monthly reset. Each one comes back ninety days after you gave it, one at a time.</p>
+        </div>
+      </div>
+
+      <div class="plate id-plate id-plate-narrow">
+        <div class="id-budget" data-empty>
+          <div class="id-budget-head">
+            <div>
+              <div class="id-budget-count"><b>None</b> available today</div>
+              <div class="id-budget-sub">All ten are out with people you vouched for</div>
+            </div>
+            <svg class="i-lg i id-budget-icon" aria-hidden="true"><use href="#i-clock"/></svg>
+          </div>
+          <div class="id-budget-track">
+            <span class="id-budget-cell" data-spent></span><span class="id-budget-cell" data-spent></span><span class="id-budget-cell" data-spent></span>
+            <span class="id-budget-cell" data-spent></span><span class="id-budget-cell" data-spent></span><span class="id-budget-cell" data-spent></span>
+            <span class="id-budget-cell" data-spent></span><span class="id-budget-cell" data-spent></span><span class="id-budget-cell" data-spent></span>
+            <span class="id-budget-cell" data-next></span>
+          </div>
+          <div class="id-budget-next"><svg class="i-sm i" aria-hidden="true"><use href="#i-refresh"/></svg> Your next one comes back on <b>17 September</b>, twelve days from now.</div>
+          <button class="id-btn id-btn-primary id-btn-wide" type="button" disabled>Vouch for someone</button>
+          <p class="id-budget-fine">The limit is not a scarcity trick. Ten in ninety days is roughly the number of people anyone genuinely knows well enough to answer for, and it is what makes a chain worth auditing.</p>
+          <div class="id-quiet-note"><svg class="i-sm i" aria-hidden="true"><use href="#i-sliders"/></svg> An admin can raise this for a long-standing resident, or lower it to zero for a new account. Ten is only the default.</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ───────────────── 7. RECEIVING AND ASKING ───────────────── -->
+
+  <div class="spec">
+    <div class="spec-label">Asking for a vouch <em>No reminders, no counters, no "invite five friends". A growth loop here would turn neighbours into leads.</em></div>
+    <div class="spec-row">
+
+      <div class="phone">
+        <div class="phone-cap">Ask a neighbour</div>
+        <div class="phone-screen">
+          <div class="id-scr">
+            <button class="id-back" type="button"><svg class="i-sm i" aria-hidden="true"><use href="#i-arrow-left"/></svg> Account</button>
+            <h1 class="id-h1">Ask someone to vouch</h1>
+            <p class="id-lede">Send this to someone who knows you live in Russellville. A neighbour, someone from work, someone from church, whoever it actually is.</p>
+
+            <div class="id-sharelink">
+              <div class="id-sharelink-url">townsq.re/v/bona_dea_jo</div>
+              <button class="id-btn id-btn-tiny" type="button"><svg class="i-sm i" aria-hidden="true"><use href="#i-copy"/></svg> Copy</button>
+            </div>
+            <div class="id-share-row">
+              <button class="id-share-btn" type="button"><svg class="i i-lg" aria-hidden="true"><use href="#i-message"/></svg><span>Text</span></button>
+              <button class="id-share-btn" type="button"><svg class="i i-lg" aria-hidden="true"><use href="#i-mail"/></svg><span>Email</span></button>
+              <button class="id-share-btn" type="button"><svg class="i i-lg" aria-hidden="true"><use href="#i-share"/></svg><span>Share</span></button>
+            </div>
+
+            <div class="id-quiet-note"><svg class="i-sm i" aria-hidden="true"><use href="#i-eye-off"/></svg> The link shows your handle and nothing else. Anyone who opens it sees the same page a stranger would.</div>
+
+            <div class="id-eyebrow id-eyebrow-sep">Who you have asked</div>
+            <ul class="id-pending">
+              <li data-done>
+                <svg class="i-sm i" aria-hidden="true"><use href="#i-check-circle"/></svg>
+                <div><div class="id-pending-name">@westside_ruth</div><div class="id-pending-meta">Vouched 2 August</div></div>
+              </li>
+              <li data-done>
+                <svg class="i-sm i" aria-hidden="true"><use href="#i-check-circle"/></svg>
+                <div><div class="id-pending-name">@mainstreetmarcy</div><div class="id-pending-meta">Vouched 3 August</div></div>
+              </li>
+              <li data-wait>
+                <svg class="i-sm i" aria-hidden="true"><use href="#i-clock"/></svg>
+                <div><div class="id-pending-name">@riverviewron</div><div class="id-pending-meta">Asked 1 August, no answer yet</div></div>
+              </li>
+              <li data-wait>
+                <svg class="i-sm i" aria-hidden="true"><use href="#i-clock"/></svg>
+                <div><div class="id-pending-name">@potts_inn_pete</div><div class="id-pending-meta">Asked 4 August, no answer yet</div></div>
+              </li>
+            </ul>
+            <p class="id-fine">"No answer yet" is all you get, and all you get to know. Whether someone read it is their business.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="plate id-plate id-plate-narrow">
+        <div class="id-eyebrow">The nudge, and its limit</div>
+        <div class="id-nudge">
+          <div class="id-nudge-row">
+            <div><div class="id-pending-name">@riverviewron</div><div class="id-pending-meta">Asked 1 August</div></div>
+            <button class="id-btn id-btn-tiny" type="button" disabled>Ask again 15 Aug</button>
+          </div>
+          <p class="id-nudge-say">One nudge, allowed once, after fourteen days. Town Square sends nothing on your behalf and nothing on a schedule.</p>
+        </div>
+
+        <div class="id-nudge">
+          <div class="id-nudge-row">
+            <div><div class="id-pending-name">@potts_inn_pete</div><div class="id-pending-meta">Asked 4 July</div></div>
+            <button class="id-btn id-btn-tiny" type="button"><svg class="i-sm i" aria-hidden="true"><use href="#i-send"/></svg> Ask again</button>
+          </div>
+          <p class="id-nudge-say">After the second ask this row goes quiet for good. If someone did not answer twice, that was the answer.</p>
+        </div>
+
+        <div class="id-refused">
+          <div class="id-eyebrow">Things this surface deliberately does not have</div>
+          <ul class="id-list id-list-no">
+            <li><svg class="i-sm i" aria-hidden="true"><use href="#i-close"/></svg> A progress bar racing to ten in your face</li>
+            <li><svg class="i-sm i" aria-hidden="true"><use href="#i-close"/></svg> Suggested people to ask, pulled from anything</li>
+            <li><svg class="i-sm i" aria-hidden="true"><use href="#i-close"/></svg> Automatic reminders to the person you asked</li>
+            <li><svg class="i-sm i" aria-hidden="true"><use href="#i-close"/></svg> Any way to see who declined</li>
+            <li><svg class="i-sm i" aria-hidden="true"><use href="#i-close"/></svg> A share sheet that writes the message for you</li>
+          </ul>
+          <p class="id-body id-body-muted">Every one of those would raise the verified count and every one of them would make asking feel like work someone assigned you.</p>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ───────────────── 8. THE PROFILE ───────────────── -->
+
+  <div class="spec">
+    <div class="spec-label">A resident's page, visitor and owner <em>The visitor view is the contract. If it cannot leak location or identity, nothing downstream can.</em></div>
+    <div class="spec-row">
+
+      <div class="phone">
+        <div class="phone-cap">Profile – what a visitor sees</div>
+        <div class="phone-screen">
+          <div class="id-scr">
+            <div class="id-profile-head">
+              <div class="id-avatar id-avatar-lg" data-verified aria-hidden="true">RU</div>
+              <div>
+                <div class="id-profile-handle">@westside_ruth <svg class="i-sm i id-verified-tick" aria-hidden="true"><use href="#i-badge-check"/></svg></div>
+                <div class="id-profile-meta">Verified resident · here since March 2026</div>
+              </div>
+            </div>
+
+            <div class="id-eyebrow id-eyebrow-sep">Built</div>
+            <ul class="id-works">
+              <li>
+                <div class="id-works-thumb" aria-hidden="true"></div>
+                <div>
+                  <div class="id-works-name">Bona Dea trail conditions</div>
+                  <div class="id-works-meta">Live since May · 340 opens this month</div>
+                </div>
+              </li>
+              <li>
+                <div class="id-works-thumb" aria-hidden="true"></div>
+                <div>
+                  <div class="id-works-name">Lake Dardanelle water level</div>
+                  <div class="id-works-meta">Live since June · 1,100 opens this month</div>
+                </div>
+              </li>
+            </ul>
+
+            <div class="id-eyebrow id-eyebrow-sep">Contributed</div>
+            <div class="id-contrib">
+              <div class="id-contrib-row"><span>Corrections to town data</span><b>31</b></div>
+              <div class="id-contrib-row"><span>Events added</span><b>12</b></div>
+              <div class="id-contrib-row"><span>Businesses kept current</span><b>7</b></div>
+            </div>
+            <p class="id-fine">Counts, never a list of what and where. Thirty-one edits plotted on a map is a pattern of somebody's week.</p>
+
+            <div class="id-actions">
+              <button class="id-btn id-btn-quiet" type="button"><svg class="i-sm i" aria-hidden="true"><use href="#i-flag"/></svg> Report this account</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="phone">
+        <div class="phone-cap">Profile – what the owner sees</div>
+        <div class="phone-screen">
+          <div class="id-scr">
+            <div class="id-profile-head">
+              <div class="id-avatar id-avatar-lg" data-verified aria-hidden="true">RU</div>
+              <div>
+                <div class="id-profile-handle">@westside_ruth <svg class="i-sm i id-verified-tick" aria-hidden="true"><use href="#i-badge-check"/></svg></div>
+                <div class="id-profile-meta">Verified resident · here since March 2026</div>
+              </div>
+              <button class="id-btn id-btn-tiny id-profile-edit" type="button"><svg class="i-sm i" aria-hidden="true"><use href="#i-edit"/></svg> Edit</button>
+            </div>
+
+            <div class="id-onlyyou">
+              <div class="id-onlyyou-head"><svg class="i-sm i" aria-hidden="true"><use href="#i-eye-off"/></svg> Only you can see this part</div>
+              <div class="id-onlyyou-grid">
+                <div><b>7 of 10</b><span>vouches available</span></div>
+                <div><b>2</b><span>people waiting on you</span></div>
+                <div><b>10</b><span>neighbours vouched for you</span></div>
+                <div><b>Vouch</b><span>method, 14 July</span></div>
+              </div>
+              <button class="id-btn id-btn-quiet id-btn-wide" type="button"><svg class="i-sm i" aria-hidden="true"><use href="#i-settings"/></svg> Account and privacy</button>
+            </div>
+
+            <div class="id-eyebrow id-eyebrow-sep">Built</div>
+            <ul class="id-works">
+              <li>
+                <div class="id-works-thumb" aria-hidden="true"></div>
+                <div>
+                  <div class="id-works-name">Bona Dea trail conditions</div>
+                  <div class="id-works-meta">Live since May · v4 pending review</div>
+                </div>
+              </li>
+              <li>
+                <div class="id-works-thumb" aria-hidden="true"></div>
+                <div>
+                  <div class="id-works-name">Lake Dardanelle water level</div>
+                  <div class="id-works-meta">Live since June · 1,100 opens this month</div>
+                </div>
+              </li>
+            </ul>
+            <p class="id-fine">Same page underneath. The owner block is added, nothing public is removed, so what a visitor sees is never a guess.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="plate id-plate id-plate-narrow">
+        <div class="id-eyebrow">What a creation is handed</div>
+        <p class="id-body">A resident-built creation runs in a sandboxed frame and asks the shell who is signed in. This is the entire answer, for everyone, forever.</p>
+        <pre class="id-code">{
+  "handle": "westside_ruth",
+  "verified": true
+}</pre>
+        <p class="id-body id-body-muted">No email. No id it can join on. No method, no date, no vouch count, no anything a creation could use to build a second identity graph on top of ours. If a creation needs more than a name and a yes, the answer is that it does not.</p>
+        <div class="id-quiet-note"><svg class="i-sm i" aria-hidden="true"><use href="#i-shield"/></svg> The shell owns this shape. A creation cannot widen it, and the review reads the manifest to be sure it never asked to.</div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ───────────────── 9. ADMIN: THE VOUCH GRAPH ───────────────── -->
+
+  <div class="spec">
+    <div class="spec-label">Admin only, the vouch chain <em>The one screen where the social graph is legible, so the graph never has to be public for abuse to be findable.</em></div>
+    <div class="plate id-plate">
+      <div class="id-graph">
+        <div class="id-graph-head">
+          <div>
+            <div class="id-eyebrow">Chain viewer</div>
+            <div class="id-graph-title">@quickfix_2026, back to the seed cohort</div>
+          </div>
+          <div class="id-graph-tools">
+            <span class="id-legend"><span class="id-legend-dot" data-seed></span> seed, verified manually</span>
+            <span class="id-legend"><span class="id-legend-dot" data-ok></span> verified by vouch</span>
+            <span class="id-legend"><span class="id-legend-dot" data-watch></span> pattern worth a look</span>
+          </div>
+        </div>
+
+        <ul class="id-tree">
+          <li>
+            <div class="id-node" data-seed>
+              <span class="id-node-dot"></span>
+              <span class="id-node-handle">@dardanelle_dave</span>
+              <span class="id-node-meta">seed cohort · verified manually 12 March · 6 vouches given</span>
+            </div>
+            <ul>
+              <li>
+                <div class="id-node">
+                  <span class="id-node-dot"></span>
+                  <span class="id-node-handle">@westside_ruth</span>
+                  <span class="id-node-meta">verified 14 July · 3 given · 31 corrections</span>
+                </div>
+                <ul>
+                  <li>
+                    <div class="id-node">
+                      <span class="id-node-dot"></span>
+                      <span class="id-node-handle">@bona_dea_jo</span>
+                      <span class="id-node-meta">5 of 10 · joined 28 July</span>
+                    </div>
+                  </li>
+                </ul>
+              </li>
+              <li>
+                <div class="id-node">
+                  <span class="id-node-dot"></span>
+                  <span class="id-node-handle">@mainstreetmarcy</span>
+                  <span class="id-node-meta">verified 2 May · 4 given</span>
+                </div>
+              </li>
+              <li>
+                <div class="id-node" data-watch>
+                  <span class="id-node-dot"></span>
+                  <span class="id-node-handle">@quickfix_2026</span>
+                  <span class="id-node-meta">verified 29 July · <b>11 given in one day</b></span>
+                  <span class="id-node-tag"><svg class="i-sm i" aria-hidden="true"><use href="#i-alert-circle"/></svg> worth a look</span>
+                </div>
+                <ul class="id-tree-dense">
+                  <li><div class="id-node" data-thin><span class="id-node-dot"></span><span class="id-node-handle">@rv_deals_01</span><span class="id-node-meta">created 3 Aug, 09:14 · no other voucher</span></div></li>
+                  <li><div class="id-node" data-thin><span class="id-node-dot"></span><span class="id-node-handle">@rv_deals_02</span><span class="id-node-meta">created 3 Aug, 09:21 · no other voucher</span></div></li>
+                  <li><div class="id-node" data-thin><span class="id-node-dot"></span><span class="id-node-handle">@pope_savings</span><span class="id-node-meta">created 3 Aug, 09:26 · no other voucher</span></div></li>
+                  <li><div class="id-node" data-thin><span class="id-node-dot"></span><span class="id-node-handle">@atu_textbooks</span><span class="id-node-meta">created 3 Aug, 09:33 · no other voucher</span></div></li>
+                  <li class="id-tree-more">and 7 more, all created 3 August between 09:14 and 09:54</li>
+                </ul>
+              </li>
+            </ul>
+          </li>
+        </ul>
+
+        <div class="id-pattern">
+          <div class="id-pattern-head"><svg class="i-sm i" aria-hidden="true"><use href="#i-alert-circle"/></svg> Why this surfaced</div>
+          <ul class="id-pattern-list">
+            <li>Eleven vouches in forty minutes, against a rolling budget of ten. One was an override raised in June.</li>
+            <li>Every account created inside the same hour, none of them vouched for by anybody else.</li>
+            <li>No handle in the group has read, saved, or opened anything since.</li>
+          </ul>
+          <p class="id-pattern-say">This is a heuristic, not a verdict. It ranks a branch for a human to read. Nothing is acted on automatically, ever.</p>
+        </div>
+
+        <div class="id-graph-act">
+          <label class="id-field">
+            <span class="id-field-label">Why. Required, and kept in the moderation log.</span>
+            <textarea class="id-input id-textarea" rows="2" readonly>Eleven vouches into fresh accounts in under an hour, no activity since. Asked @quickfix_2026 by email on 4 Aug, no reply.</textarea>
+          </label>
+          <div class="id-actions">
+            <button class="id-btn id-btn-primary" type="button">Revoke these 11 vouches</button>
+            <button class="id-btn id-btn-quiet" type="button">Lower this account's budget to 0</button>
+            <button class="id-btn id-btn-quiet" type="button">Leave it, note only</button>
+          </div>
+        </div>
+
+        <div class="id-graph-result">
+          <div class="id-result-head"><svg class="i-sm i" aria-hidden="true"><use href="#i-flag"/></svg> Revoked. Here is what did and did not happen.</div>
+          <ul class="id-result-list">
+            <li data-did><svg class="i-sm i" aria-hidden="true"><use href="#i-check"/></svg> Eleven vouches marked revoked, by @cravenshall, 5 August.</li>
+            <li data-did><svg class="i-sm i" aria-hidden="true"><use href="#i-flag"/></svg> The branch under each is flagged for review and queued under Flagged contributions.</li>
+            <li data-did><svg class="i-sm i" aria-hidden="true"><use href="#i-mail"/></svg> Each account is told once, in plain words, that a moderator is reading.</li>
+            <li data-not><svg class="i-sm i" aria-hidden="true"><use href="#i-close"/></svg> Nobody was un-verified automatically. Revoking never cascades.</li>
+            <li data-not><svg class="i-sm i" aria-hidden="true"><use href="#i-close"/></svg> Nothing was deleted. Not an account, not a creation, not a record version.</li>
+          </ul>
+          <p class="id-pattern-say">Cascading would be one click and would also destroy the legitimate vouches a bad actor happened to give. In a town this size that is a real cost paid by real neighbours, so the blunt version is not on the screen.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ───────────────── 10. REPORTING ───────────────── -->
+
+  <div class="spec">
+    <div class="spec-label">Reporting, from the chrome and never from the thing being reported <em>Quiet by design. No counts, no public marks, no promise of an outcome, so it cannot be used as a vote.</em></div>
+    <div class="spec-row">
+
+      <div class="plate id-plate id-plate-narrow">
+        <div class="id-report">
+          <h3 class="id-report-h">Report Bona Dea trail conditions</h3>
+          <p class="id-report-note">Town Square follows the law and does not referee taste. What gets acted on is mostly the first two.</p>
+
+          <label class="id-field">
+            <span class="id-field-label">What is wrong</span>
+            <select class="id-input id-select">
+              <option>Illegal. This breaks the law.</option>
+              <option selected>Security. It is doing something it should not be able to.</option>
+              <option>Impersonation. It pretends to be someone or something else.</option>
+              <option>Spam. It exists to advertise.</option>
+              <option>Broken. It does not work any more.</option>
+              <option>Something else.</option>
+            </select>
+          </label>
+
+          <label class="id-field">
+            <span class="id-field-label">Anything a moderator should know</span>
+            <textarea class="id-input id-textarea" rows="3" placeholder="Optional. What you saw, and where." readonly></textarea>
+          </label>
+
+          <div class="id-actions">
+            <button class="id-btn id-btn-primary" type="button">Send report</button>
+            <button class="id-btn id-btn-quiet" type="button">Cancel</button>
+          </div>
+          <p class="id-fine">One category, one box. More fields would make a report feel like paperwork and would collect things a moderator does not need.</p>
+        </div>
+      </div>
+
+      <div class="plate id-plate id-plate-narrow">
+        <div class="id-report">
+          <h3 class="id-report-h">Report Bona Dea trail conditions</h3>
+          <p class="id-report-outcome"><svg class="i-sm i" aria-hidden="true"><use href="#i-check-circle"/></svg> Sent. A moderator will read it. Most reports are read and closed with nothing else happening, and that is normal.</p>
+          <button class="id-btn id-btn-quiet" type="button">Close</button>
+        </div>
+
+        <div class="id-report" data-alt>
+          <h3 class="id-report-h">Already reported</h3>
+          <p class="id-report-outcome" data-flat><svg class="i-sm i" aria-hidden="true"><use href="#i-inbox"/></svg> You had already reported this, so we kept your first report rather than adding another.</p>
+          <p class="id-fine">Not a thank you, and not a second report. Pretending a duplicate counted would turn the queue into a tally and reporting into a campaign.</p>
+        </div>
+
+        <div class="id-report" data-alt>
+          <h3 class="id-report-h">Report Bona Dea trail conditions</h3>
+          <p class="id-report-note">Reporting is for verified residents, so a moderator knows a neighbour is behind it. Someone who is already verified can vouch for you from their account page.</p>
+          <button class="id-btn id-btn-quiet" type="button">Close</button>
+          <p class="id-fine">Said before the form, not after the send. Filling in a box that was never going to go anywhere is worse than never seeing the box.</p>
+        </div>
+      </div>
+
+      <div class="plate id-plate id-plate-narrow">
+        <div class="id-eyebrow">What reporting is not</div>
+        <ul class="id-list id-list-no">
+          <li><svg class="i-sm i" aria-hidden="true"><use href="#i-close"/></svg> It does not say how many others reported the same thing.</li>
+          <li><svg class="i-sm i" aria-hidden="true"><use href="#i-close"/></svg> It never marks the creation publicly while it is open.</li>
+          <li><svg class="i-sm i" aria-hidden="true"><use href="#i-close"/></svg> It does not tell the builder who reported them.</li>
+          <li><svg class="i-sm i" aria-hidden="true"><use href="#i-close"/></svg> It promises no outcome and gives no status thread.</li>
+        </ul>
+        <p class="id-body id-body-muted">Every one of those exists on the platforms this is explicitly not. A visible count is a pile-on button, a public mark is a scarlet letter, and a status thread turns a neighbour's quiet note into a case they now have to follow.</p>
+        <div class="id-quiet-note"><svg class="i-sm i" aria-hidden="true"><use href="#i-mail"/></svg> The one thing a reporter gets is an email when the report is closed, saying what was concluded. Often that is "we read it, nothing needed to happen".</div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ───────────────── 11. THE MODERATION QUEUE ───────────────── -->
+
+  <div class="spec">
+    <div class="spec-label">The committee's queue <em>Deliberately plain. The only thing on this screen that earns colour is an update asking for a permission it did not have before.</em></div>
+    <div class="plate id-plate">
+      <div class="id-modq">
+        <input class="id-vh" type="radio" name="id-modtab" id="id-modtab-1" checked>
+        <input class="id-vh" type="radio" name="id-modtab" id="id-modtab-2">
+        <input class="id-vh" type="radio" name="id-modtab" id="id-modtab-3">
+
+        <div class="id-tabs">
+          <label for="id-modtab-1">Submissions</label>
+          <label for="id-modtab-2">Reports</label>
+          <label for="id-modtab-3">Flagged contributions</label>
+        </div>
+
+        <div class="id-panel" data-panel="1">
+          <ul class="id-queue">
+            <li>
+              <div class="id-row">
+                <span class="id-row-name">Pope County meeting minutes search</span>
+                <span class="id-row-detail">@techdrive_amir · v3 · update · 11 files · 84 KB · waiting 2 days</span>
+                <span class="id-row-flags">
+                  <span class="id-flag" data-escalates><svg class="i-sm i" aria-hidden="true"><use href="#i-alert-circle"/></svg> asks for more</span>
+                  <span class="id-flag">2 warnings</span>
+                </span>
+                <svg class="i-sm i id-row-chev" aria-hidden="true"><use href="#i-chevron-right"/></svg>
+              </div>
+            </li>
+            <li>
+              <div class="id-row">
+                <span class="id-row-name">Where's the food truck</span>
+                <span class="id-row-detail">@prairie_creek_kim · v1 · new creation · 6 files · 22 KB · waiting 4 hours</span>
+                <span class="id-row-flags"><span class="id-flag">1 warning</span></span>
+                <svg class="i-sm i id-row-chev" aria-hidden="true"><use href="#i-chevron-right"/></svg>
+              </div>
+            </li>
+            <li>
+              <div class="id-row">
+                <span class="id-row-name">Bona Dea trail conditions</span>
+                <span class="id-row-detail">@westside_ruth · v4 · update · 9 files · 41 KB · waiting 6 hours</span>
+                <span class="id-row-flags"></span>
+                <svg class="i-sm i id-row-chev" aria-hidden="true"><use href="#i-chevron-right"/></svg>
+              </div>
+            </li>
+          </ul>
+        </div>
+
+        <div class="id-panel" data-panel="2">
+          <ul class="id-queue">
+            <li>
+              <div class="id-row" data-static>
+                <span class="id-row-name">Where's the food truck · v1</span>
+                <span class="id-row-detail">Spam · reported by @mainstreetmarcy · 4 August</span>
+                <p class="id-row-say">Every truck listed is the same two, and both link out to the same booking site.</p>
+                <div class="id-actions"><button class="id-btn id-btn-tiny" type="button">Close this report</button></div>
+              </div>
+            </li>
+            <li>
+              <div class="id-row" data-static>
+                <span class="id-row-name">Stoby's, hours · record</span>
+                <span class="id-row-detail">Broken · reported by @riverviewron · 3 August</span>
+                <p class="id-row-say">Sunday hours are wrong again. They have not opened Sundays since June.</p>
+                <div class="id-actions"><button class="id-btn id-btn-tiny" type="button">Close this report</button></div>
+              </div>
+            </li>
+          </ul>
+          <p class="id-fine">No count badge, no severity colour, no ranking. A report is one resident saying they looked at something and did not like what they saw, and dressing that up as a signal would make it one.</p>
+        </div>
+
+        <div class="id-panel" data-panel="3">
+          <ul class="id-queue">
+            <li>
+              <div class="id-row" data-static>
+                <span class="id-row-name">@rv_deals_01 and 10 others</span>
+                <span class="id-row-detail">Branch flagged by @cravenshall · 5 August · vouch revoked upstream</span>
+                <p class="id-row-say">Nothing to do unless one of them writes something. Flagged branches sit here until a human decides, and expire quietly after 90 days.</p>
+                <div class="id-actions"><button class="id-btn id-btn-tiny" type="button">Open the chain</button><button class="id-btn id-btn-tiny" type="button">Close, nothing needed</button></div>
+              </div>
+            </li>
+            <li>
+              <div class="id-row" data-static>
+                <span class="id-row-name">Stoby's, hours · v4</span>
+                <span class="id-row-detail">Written by a resident whose branch is under review · 14 August</span>
+                <p class="id-row-say">Live and staying live. Flagging a contribution marks it for a person to read, it does not take it down.</p>
+                <div class="id-actions"><button class="id-btn id-btn-tiny" type="button">Read the version</button><button class="id-btn id-btn-tiny" type="button">Close, nothing needed</button></div>
+              </div>
+            </li>
+          </ul>
+        </div>
+      </div>
+      <p class="id-table-foot">Three tabs in the order the work happens: decide what may run, read what residents said about what already does, then look at anything a revoked vouch put a question mark over. One screen, because a moderator who has to remember reports live somewhere else is a moderator who reads them weekly.</p>
+    </div>
+  </div>
+
+  <div class="spec">
+    <div class="spec-label">A submission, opened <em>The permission diff comes first. A reviewer re-reading a full permissions block for the fifth time will not spot the one new host.</em></div>
+    <div class="plate id-plate">
+      <div class="id-detail">
+        <button class="id-back" type="button"><svg class="i-sm i" aria-hidden="true"><use href="#i-arrow-left"/></svg> Queue</button>
+        <h3 class="id-detail-title">Pope County meeting minutes search</h3>
+        <p class="id-detail-sub">@techdrive_amir · v3 · update to <code>minutes-search</code>, currently on v2 · submitted 3 August</p>
+        <p class="id-detail-tagline">Search every quorum court and school board packet since 2019.</p>
+
+        <div class="id-diff" data-escalates>
+          <div class="id-diff-head">
+            <span>What changed · v2 to v3</span>
+            <span class="id-flag" data-escalates><svg class="i-sm i" aria-hidden="true"><use href="#i-alert-circle"/></svg> asks for more</span>
+          </div>
+          <p class="id-diff-line" data-add><b>Adds</b> network: <code>tiles.dardanelle-gis.org</code></p>
+          <p class="id-diff-line" data-add><b>Defines new record types:</b> <code>meeting_packet</code></p>
+          <p class="id-diff-line" data-drop>Drops device: <code>camera</code></p>
+        </div>
+
+        <div class="id-diff">
+          <div class="id-diff-head"><span>What changed · v3 to v4, for comparison</span></div>
+          <p class="id-diff-line" data-quiet>Nothing new is being asked for. This update only changes code.</p>
+        </div>
+
+        <div class="id-warnings">
+          <div class="id-eyebrow">Flagged for a human</div>
+          <ul>
+            <li><code>search.js</code> · dynamic-import – builds a module path from a query string</li>
+            <li><code>index.html</code> · inline-handler – one onclick attribute the bundler did not strip</li>
+          </ul>
+        </div>
+
+        <div class="id-source">
+          <div class="id-eyebrow">Source</div>
+          <details open>
+            <summary>townsquare.json · 612 bytes</summary>
+            <pre class="id-code">{
+  "name": "Pope County meeting minutes search",
+  "version": "3",
+  "permissions": {
+    "identity": ["handle", "verified"],
+    "read": ["meeting_packet", "notice"],
+    "network": ["tiles.dardanelle-gis.org"]
+  }
+}</pre>
+          </details>
+          <details>
+            <summary>search.js · 14,208 bytes</summary>
+            <pre class="id-code">export function query(term) { /* ... */ }</pre>
+          </details>
+        </div>
+
+        <div class="id-decide">
+          <div class="id-eyebrow">Decide</div>
+          <label class="id-field">
+            <span class="id-field-label">What the builder should know</span>
+            <textarea class="id-input id-textarea" rows="3" placeholder="Required unless you are approving." readonly></textarea>
+          </label>
+          <div class="id-actions">
+            <button class="id-btn id-btn-primary" type="button">Approve and publish</button>
+            <button class="id-btn id-btn-quiet" type="button">Request changes</button>
+            <button class="id-btn id-btn-quiet" type="button">Reject</button>
+          </div>
+          <p class="id-inline-error"><svg class="i-sm i" aria-hidden="true"><use href="#i-alert-circle"/></svg> A rejection needs a note. "No" with no reason is a dead end the builder cannot act on.</p>
+          <p class="id-fine">Approval is of this exact version, pinned by digest <code>8f2a41c9de07</code>. A later update comes back here.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ───────────────── 12. VERSION HISTORY AND REVERT ───────────────── -->
+
+  <div class="spec">
+    <div class="spec-label">Version history, dual attribution, and revert <em>Revert writes a new version rather than removing one, which is the mechanism that makes light-touch moderation affordable.</em></div>
+    <div class="spec-row">
+
+      <div class="plate id-plate">
+        <div class="id-history">
+          <div class="id-history-head">
+            <div>
+              <div class="id-eyebrow">Record</div>
+              <div class="id-history-title">Stoby's, hours</div>
+              <div class="id-history-sub">Business record · 4 versions · current v4</div>
+            </div>
+            <span class="id-attrib-legend"><svg class="i-sm i" aria-hidden="true"><use href="#i-user"/></svg> resident &nbsp;·&nbsp; <svg class="i-sm i" aria-hidden="true"><use href="#i-puzzle"/></svg> creation</span>
+          </div>
+
+          <ul class="id-versions">
+            <li data-live>
+              <div class="id-version-head">
+                <span class="id-version-n">v4</span>
+                <span class="id-flag" data-live>live</span>
+                <span class="id-version-when">14 August</span>
+              </div>
+              <div class="id-version-attrib">
+                <span><svg class="i-sm i" aria-hidden="true"><use href="#i-user"/></svg> @mainstreetmarcy</span>
+                <span><svg class="i-sm i" aria-hidden="true"><use href="#i-puzzle"/></svg> Hours Helper</span>
+              </div>
+              <p class="id-version-say">Sunday changed to closed. Mon to Sat 6:00 to 21:00.</p>
+              <button class="id-btn id-btn-tiny" type="button" disabled>Current</button>
+            </li>
+            <li>
+              <div class="id-version-head">
+                <span class="id-version-n">v3</span>
+                <span class="id-version-when">2 August</span>
+              </div>
+              <div class="id-version-attrib">
+                <span><svg class="i-sm i" aria-hidden="true"><use href="#i-user"/></svg> @riverviewron</span>
+                <span data-direct>directly, no creation</span>
+              </div>
+              <p class="id-version-say">Sunday 11:00 to 14:00. Phone number corrected.</p>
+              <button class="id-btn id-btn-tiny" type="button">Put v3 back</button>
+            </li>
+            <li>
+              <div class="id-version-head">
+                <span class="id-version-n">v2</span>
+                <span class="id-version-when">21 July</span>
+              </div>
+              <div class="id-version-attrib">
+                <span><svg class="i-sm i" aria-hidden="true"><use href="#i-user"/></svg> @mainstreetmarcy</span>
+                <span><svg class="i-sm i" aria-hidden="true"><use href="#i-puzzle"/></svg> Hours Helper</span>
+              </div>
+              <p class="id-version-say">Holiday hours added for the fourth.</p>
+              <button class="id-btn id-btn-tiny" type="button">Put v2 back</button>
+            </li>
+            <li>
+              <div class="id-version-head">
+                <span class="id-version-n">v1</span>
+                <span class="id-version-when">4 July</span>
+              </div>
+              <div class="id-version-attrib">
+                <span data-direct>imported from the town directory</span>
+              </div>
+              <p class="id-version-say">First record. Address, phone, hours as listed.</p>
+              <button class="id-btn id-btn-tiny" type="button">Put v1 back</button>
+            </li>
+          </ul>
+
+          <p class="id-fine"><b>Both authors are recorded on every version.</b> A creation that starts writing nonsense can be cut off without punishing the residents who used it, and a resident can be answered for without blaming the tool they used.</p>
+        </div>
+      </div>
+
+      <div class="plate id-plate id-plate-narrow">
+        <div class="id-revert">
+          <div class="id-eyebrow">Reverting, before</div>
+          <p class="id-body"><b>Put v3 back?</b></p>
+          <p class="id-body id-body-muted">This publishes v3's exact contents again as <b>v5</b>. Nothing is removed and v4 stays in the list with its author still on it. If v5 turns out to be wrong too, you put v4 back the same way.</p>
+          <div class="id-actions">
+            <button class="id-btn id-btn-primary" type="button">Put v3 back as v5</button>
+            <button class="id-btn id-btn-quiet" type="button">Cancel</button>
+          </div>
+        </div>
+
+        <div class="id-revert" data-done>
+          <div class="id-eyebrow">Reverting, after</div>
+          <ul class="id-versions id-versions-tight">
+            <li data-live data-revert>
+              <div class="id-version-head">
+                <span class="id-version-n">v5</span>
+                <span class="id-flag" data-live>live</span>
+                <span class="id-flag"><svg class="i-sm i" aria-hidden="true"><use href="#i-history"/></svg> a revert</span>
+                <span class="id-version-when">15 August</span>
+              </div>
+              <div class="id-version-attrib">
+                <span><svg class="i-sm i" aria-hidden="true"><use href="#i-user"/></svg> @cravenshall</span>
+                <span data-direct>put v3 back</span>
+              </div>
+              <p class="id-version-say">Same contents as v3. Note: Sunday hours confirmed by phone.</p>
+            </li>
+            <li data-superseded>
+              <div class="id-version-head">
+                <span class="id-version-n">v4</span>
+                <span class="id-flag">replaced</span>
+                <span class="id-version-when">14 August</span>
+              </div>
+              <div class="id-version-attrib">
+                <span><svg class="i-sm i" aria-hidden="true"><use href="#i-user"/></svg> @mainstreetmarcy</span>
+                <span><svg class="i-sm i" aria-hidden="true"><use href="#i-puzzle"/></svg> Hours Helper</span>
+              </div>
+              <p class="id-version-say">Still here, still readable, still attributed.</p>
+            </li>
+          </ul>
+          <p class="id-fine">A revert is a forward operation, so the word "delete" never appears on a moderation screen. That is what lets a committee act quickly without anyone feeling erased.</p>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ───────────────── 13. THE COMMITTEE ───────────────── -->
+
+  <div class="spec">
+    <div class="spec-label">The committee, shown publicly <em>Light-touch moderation only holds if residents can see who holds the role and how to reach them.</em></div>
+    <div class="spec-row">
+
+      <div class="plate id-plate">
+        <div class="id-committee">
+          <div class="id-eyebrow">Who decides things here</div>
+          <h3 class="id-committee-title">Three neighbours, named, with a five line policy</h3>
+          <p class="id-body id-body-muted">Moderation is a role, not a person. Anyone on this list can be scoped in or out by an admin, and the list changes in public.</p>
+
+          <ul class="id-people">
+            <li>
+              <div class="id-avatar id-avatar-lg" data-verified aria-hidden="true">CH</div>
+              <div class="id-person-body">
+                <div class="id-person-handle">@cravenshall <span class="id-role-tag">admin</span></div>
+                <div class="id-person-say">Since March. Runs the Bona Dea trail cleanup. Holds the revert button and the vouch chain viewer.</div>
+              </div>
+            </li>
+            <li>
+              <div class="id-avatar id-avatar-lg" data-verified aria-hidden="true">MA</div>
+              <div class="id-person-body">
+                <div class="id-person-handle">@mainstreetmarcy <span class="id-role-tag">moderator</span></div>
+                <div class="id-person-say">Since May. Downtown, keeps most of the business hours current. Reads reports and decides submissions.</div>
+              </div>
+            </li>
+            <li>
+              <div class="id-avatar id-avatar-lg" data-verified aria-hidden="true">AM</div>
+              <div class="id-person-body">
+                <div class="id-person-handle">@techdrive_amir <span class="id-role-tag">moderator</span></div>
+                <div class="id-person-say">Since July. Reads code, so most creation reviews land with him. Recuses himself on his own submissions.</div>
+              </div>
+            </li>
+          </ul>
+
+          <div class="id-actions">
+            <button class="id-btn id-btn-quiet" type="button"><svg class="i-sm i" aria-hidden="true"><use href="#i-mail"/></svg> Write to the committee</button>
+            <button class="id-btn id-btn-quiet" type="button"><svg class="i-sm i" aria-hidden="true"><use href="#i-document"/></svg> Read the policy</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="plate id-plate id-plate-narrow" data-dark>
+        <div class="id-policy">
+          <div class="id-policy-eyebrow">The whole policy</div>
+          <ol class="id-policy-list">
+            <li>Town Square follows the law. That is the floor and most of the ceiling.</li>
+            <li>Code that runs in a neighbour's browser is read before it runs. Every version, including updates.</li>
+            <li>Nothing is deleted. Things get hidden, reverted, or put back.</li>
+            <li>Every action is logged with who did it and why, and the log is readable by any verified resident.</li>
+            <li>We do not referee taste, tone, or who is right about the school board.</li>
+          </ol>
+          <p class="id-policy-fine">Five lines, because a policy nobody finishes reading is a policy nobody can hold you to. Last changed 14 June, and the change is in the log.</p>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ───────────────── 14. ACCOUNT AND PRIVACY ───────────────── -->
+
+  <div class="spec">
+    <div class="spec-label">Account settings, and the honest version of what we hold <em>Written for a resident to read once and stop wondering. The delete consequences are stated in full, including what cannot be undone.</em></div>
+    <div class="spec-row">
+
+      <div class="phone">
+        <div class="phone-cap">Account – notifications</div>
+        <div class="phone-screen">
+          <div class="id-scr">
+            <button class="id-back" type="button"><svg class="i-sm i" aria-hidden="true"><use href="#i-arrow-left"/></svg> Profile</button>
+            <h1 class="id-h1">Account and privacy</h1>
+
+            <div class="id-eyebrow id-eyebrow-sep">Email me when</div>
+            <ul class="id-toggles">
+              <li>
+                <div><div class="id-toggle-name">Someone vouches for me</div><div class="id-toggle-say">Once per vouch, no digest</div></div>
+                <span class="id-toggle" data-on aria-hidden="true"></span>
+              </li>
+              <li>
+                <div><div class="id-toggle-name">A report I filed is closed</div><div class="id-toggle-say">With what was concluded</div></div>
+                <span class="id-toggle" data-on aria-hidden="true"></span>
+              </li>
+              <li>
+                <div><div class="id-toggle-name">A creation of mine is reviewed</div><div class="id-toggle-say">Approved, changes asked for, or rejected</div></div>
+                <span class="id-toggle" data-on aria-hidden="true"></span>
+              </li>
+              <li>
+                <div><div class="id-toggle-name">A neighbour asks me to vouch</div><div class="id-toggle-say">Otherwise it waits in your inbox</div></div>
+                <span class="id-toggle" aria-hidden="true"></span>
+              </li>
+              <li>
+                <div><div class="id-toggle-name">What is on this weekend</div><div class="id-toggle-say">Friday morning, one email</div></div>
+                <span class="id-toggle" aria-hidden="true"></span>
+              </li>
+            </ul>
+            <p class="id-fine">Five switches and no marketing category, because there is nothing to market. Off by default for the two that are not about something you did.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="phone">
+        <div class="phone-cap">Account – what we hold</div>
+        <div class="phone-screen">
+          <div class="id-scr">
+            <div class="id-eyebrow">In plain English</div>
+            <h1 class="id-h1">What we hold about you</h1>
+
+            <ul class="id-hold" data-have>
+              <li><svg class="i-sm i" aria-hidden="true"><use href="#i-check"/></svg> Your handle, <b>@westside_ruth</b>, which the town sees.</li>
+              <li><svg class="i-sm i" aria-hidden="true"><use href="#i-check"/></svg> Your email, which nobody sees. It signs you in and lets a moderator reach you.</li>
+              <li><svg class="i-sm i" aria-hidden="true"><use href="#i-check"/></svg> The date you joined.</li>
+              <li><svg class="i-sm i" aria-hidden="true"><use href="#i-check"/></svg> Three facts about verification: that you are verified, that the method was vouch, and that it happened on 14 July.</li>
+              <li><svg class="i-sm i" aria-hidden="true"><use href="#i-check"/></svg> Which handles vouched for you and which you vouched for. Committee only.</li>
+              <li><svg class="i-sm i" aria-hidden="true"><use href="#i-check"/></svg> What you built and what you changed, with the date.</li>
+            </ul>
+
+            <div class="id-eyebrow id-eyebrow-sep">And what we do not</div>
+            <ul class="id-hold" data-havent>
+              <li><svg class="i-sm i" aria-hidden="true"><use href="#i-close"/></svg> Your address. Not hashed, not once, not ever. There is no column.</li>
+              <li><svg class="i-sm i" aria-hidden="true"><use href="#i-close"/></svg> Your real name, unless you typed it into your handle yourself.</li>
+              <li><svg class="i-sm i" aria-hidden="true"><use href="#i-close"/></svg> Your phone number.</li>
+              <li><svg class="i-sm i" aria-hidden="true"><use href="#i-close"/></svg> Where you are, or where you were. No location, no IP log past the day.</li>
+              <li><svg class="i-sm i" aria-hidden="true"><use href="#i-close"/></svg> What you read. Browsing is not tied to your account.</li>
+            </ul>
+
+            <div class="id-quiet-note"><svg class="i-sm i" aria-hidden="true"><use href="#i-shield"/></svg> The postcard method, if a town ever turns it on, touches an address once to mail it and never hands it to us. That is the design, not the promise.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="phone">
+        <div class="phone-cap">Account – export and delete</div>
+        <div class="phone-screen">
+          <div class="id-scr">
+            <div class="id-eyebrow">Your copy</div>
+            <div class="id-export">
+              <div class="id-export-body">
+                <div class="id-export-name">Download everything we hold</div>
+                <div class="id-export-say">One JSON file, ready in about a minute. It is short.</div>
+              </div>
+              <button class="id-btn id-btn-tiny" type="button"><svg class="i-sm i" aria-hidden="true"><use href="#i-download"/></svg> Export</button>
+            </div>
+
+            <div class="id-eyebrow id-eyebrow-sep">Leaving</div>
+            <div class="id-danger">
+              <div class="id-danger-head">Delete my account</div>
+              <p class="id-body id-body-muted">Straight answers, so nothing here surprises you afterwards.</p>
+              <ul class="id-hold" data-havent>
+                <li><svg class="i-sm i" aria-hidden="true"><use href="#i-check"/></svg> Your email is deleted. Sign-in stops working immediately.</li>
+                <li><svg class="i-sm i" aria-hidden="true"><use href="#i-check"/></svg> Your verification record is deleted.</li>
+                <li><svg class="i-sm i" aria-hidden="true"><use href="#i-check"/></svg> The vouches you gave are withdrawn. Those branches get flagged for a moderator to read, and nobody is un-verified by it.</li>
+                <li><svg class="i-sm i" aria-hidden="true"><use href="#i-close"/></svg> Your handle is retired, not freed. Nobody can take @westside_ruth afterwards.</li>
+                <li><svg class="i-sm i" aria-hidden="true"><use href="#i-close"/></svg> Versions you wrote stay, still attributed to the retired handle. Town history cannot be rewritten by one person leaving, and that is the point of it.</li>
+                <li><svg class="i-sm i" aria-hidden="true"><use href="#i-close"/></svg> Creations you published keep running unless you take them down first.</li>
+              </ul>
+              <div class="id-actions">
+                <button class="id-btn id-btn-quiet" type="button">Take my creations down first</button>
+                <button class="id-btn id-btn-danger" type="button">Delete my account</button>
+              </div>
+              <p class="id-fine">The destructive button is the plainer of the two, and the softer path is listed first. Neither is red, because red here would be theatre and the alarm colour belongs to the river.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <p class="why"><b>What this section refuses to build, on purpose.</b> A public vouch count on a profile, which would make verification a status. A "verified since" badge on every post, which turns pseudonymity into a two-tier town. A report count, which is a pile-on button. Auto-cascade on a revoked vouch, which is one click of admin convenience paid for by ten innocent neighbours. And a growth loop on the ask surface, which is the exact move that turns a community platform into the thing everyone left. <b>Every one of those was cheap to add and each is a step toward the app this is explicitly not.</b></p>
+</section>

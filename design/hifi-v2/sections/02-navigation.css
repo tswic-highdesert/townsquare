@@ -1,0 +1,2289 @@
+/*
+ * Section 02 — navigation and shell.
+ *
+ * Everything here is namespaced `nv-`. Not one hex literal: the bar, the tab bar
+ * and the switcher are the three surfaces a resident sees in every town, so they
+ * are also the three most expensive places to hand-copy a colour. Where a value
+ * genuinely does not exist in the contract it is mixed from one that does.
+ */
+
+/* ── sheet-local scaffolding for laying specimens out ───────────────────── */
+
+.nv-stack {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ts-space-6);
+  max-width: 460px;
+}
+
+.nv-barwrap {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ts-space-2);
+}
+
+.nv-barcap {
+  font-family: var(--ts-font-mono);
+  font-size: 9.5px;
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ts-ink45);
+}
+
+.nv-barnote {
+  margin: 0;
+  max-width: 46ch;
+  font-size: var(--ts-text-caption);
+  line-height: 1.45;
+  color: var(--ts-ink60);
+}
+
+.nv-sr {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+/* ── the resident bar ───────────────────────────────────────────────────────
+ *
+ * Four things and a hard refusal of a fifth: the mark, the place, find, and you.
+ * The shipped `.today-bar` is the ancestor of this; the additions are the
+ * condensed variant and the switcher affordance on the place line.
+ */
+
+.nv-bar {
+  display: flex;
+  align-items: center;
+  gap: var(--ts-space-3);
+  padding: var(--ts-space-3) var(--ts-space-5);
+  background: var(--ts-cream);
+  border-bottom: 1px solid var(--ts-ink13);
+  transition: padding var(--ts-dur-2) var(--ts-ease), box-shadow var(--ts-dur-2) var(--ts-ease);
+}
+
+/*
+ * The mark. A navy tile with a cream square lifted out of it: a town square, and
+ * at 30px it survives as a shape rather than a picture of one.
+ */
+.nv-mark {
+  flex: none;
+  width: 30px;
+  height: 30px;
+  border-radius: 8px;
+  background:
+    linear-gradient(var(--ts-cream), var(--ts-cream)) center / 11px 11px no-repeat,
+    linear-gradient(var(--ts-terracotta), var(--ts-terracotta)) center / 5px 5px no-repeat,
+    var(--ts-navy);
+  transition: width var(--ts-dur-2) var(--ts-ease), height var(--ts-dur-2) var(--ts-ease);
+}
+
+.nv-brand {
+  min-width: 0;
+  display: block;
+  text-align: left;
+}
+
+.nv-wordmark {
+  display: block;
+  font-family: var(--ts-font-serif);
+  font-size: var(--ts-text-label);
+  font-weight: 500;
+  line-height: 1.15;
+  letter-spacing: 0.01em;
+  color: var(--ts-ink);
+}
+
+/*
+ * The place line is set in the serif on purpose. In sans it reads as a field
+ * value; in the serif it reads as a dateline, which is what it actually is.
+ */
+.nv-place {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  font-family: var(--ts-font-serif);
+  font-size: 13.5px;
+  line-height: 1.2;
+  color: var(--ts-ink45);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.nv-place .i {
+  color: var(--ts-ink26);
+}
+
+.nv-actions {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: var(--ts-space-1);
+}
+
+/* 44px target around a 20px glyph. The glyph is the picture, the button is the
+   thing a thumb has to hit, and they are not the same size. */
+.nv-iconbtn {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  border-radius: var(--ts-radius-full);
+  background: none;
+  color: var(--ts-ink60);
+  cursor: pointer;
+  transition: background var(--ts-dur-1) var(--ts-ease), color var(--ts-dur-1) var(--ts-ease);
+}
+
+.nv-iconbtn:hover {
+  background: var(--ts-ink08);
+  color: var(--ts-ink);
+}
+
+.nv-iconbtn:active {
+  background: var(--ts-ink13);
+}
+
+.nv-iconbtn:focus-visible,
+.nv-avatarbtn:focus-visible,
+.nv-signin:focus-visible,
+.nv-townbtn:focus-visible {
+  outline: none;
+  box-shadow: var(--ts-focus);
+}
+
+/*
+ * A dot, not a count. Three unread and thirty unread feel identical from across
+ * the room, and the number buys anxiety with no decision attached to it.
+ */
+.nv-dot {
+  position: absolute;
+  top: 10px;
+  right: 11px;
+  width: 8px;
+  height: 8px;
+  border-radius: var(--ts-radius-full);
+  background: var(--ts-terracotta);
+  box-shadow: 0 0 0 2px var(--ts-cream);
+}
+
+.nv-signin {
+  min-height: 44px;
+  padding: 0 var(--ts-space-3);
+  border: 0;
+  border-radius: var(--ts-radius-button);
+  background: none;
+  font-family: var(--ts-font-sans);
+  font-size: var(--ts-text-label);
+  font-weight: 500;
+  color: var(--ts-ink60);
+  cursor: pointer;
+}
+
+.nv-signin:hover {
+  color: var(--ts-terracotta-hover);
+}
+
+.nv-avatarbtn {
+  display: flex;
+  margin: 0 var(--ts-space-1) 0 var(--ts-space-2);
+  padding: 0;
+  border: 0;
+  border-radius: var(--ts-radius-input);
+  background: none;
+  cursor: pointer;
+}
+
+.nv-avatar {
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  border-radius: var(--ts-radius-input);
+  background: var(--ts-navy);
+  color: var(--ts-cream);
+  font-family: var(--ts-font-sans);
+  font-size: var(--ts-text-caption);
+  font-weight: 500;
+  transition: width var(--ts-dur-2) var(--ts-ease), height var(--ts-dur-2) var(--ts-ease);
+}
+
+/*
+ * The ring is the verified badge, carried over from the shipped app. A tick
+ * would be one more object on a bar that already carries the mark, and being
+ * vouched for is a quiet fact about a neighbour rather than a decoration.
+ */
+.nv-avatar[data-verified] {
+  box-shadow: 0 0 0 2px var(--ts-cream), 0 0 0 3.5px var(--ts-navy40);
+}
+
+/* ── condensed on scroll ────────────────────────────────────────────────────
+ *
+ * Applied past 64px of scroll. The place line is an orientation, and once a
+ * resident is reading they know what town they are in, so it is the first thing
+ * to go. The hairline becomes a shadow so the bar sits above the read.
+ */
+
+.nv-bar[data-condensed] {
+  padding-top: var(--ts-space-2);
+  padding-bottom: var(--ts-space-2);
+  border-bottom-color: transparent;
+  box-shadow: var(--ts-shadow-flat);
+}
+
+.nv-bar[data-condensed] .nv-place {
+  display: none;
+}
+
+.nv-bar[data-condensed] .nv-mark {
+  width: 26px;
+  height: 26px;
+}
+
+.nv-bar[data-condensed] .nv-avatar {
+  width: 28px;
+  height: 28px;
+  font-size: var(--ts-text-eyebrow);
+}
+
+.nv-bar[data-condensed] .nv-iconbtn {
+  height: 40px;
+}
+
+/* ── the town switcher ──────────────────────────────────────────────────────
+ *
+ * The trigger wraps the brand block rather than sitting beside it, because the
+ * thing being switched is the second line and the first line never changes.
+ * "Town Square" constant, location swapping, is the product in one gesture.
+ */
+
+.nv-townbtn {
+  display: flex;
+  align-items: center;
+  min-width: 0;
+  min-height: 44px;
+  margin: 0;
+  padding: 0 var(--ts-space-2) 0 0;
+  border: 0;
+  border-radius: var(--ts-radius-button);
+  background: none;
+  text-align: left;
+  cursor: pointer;
+}
+
+.nv-townbtn:hover .nv-place {
+  color: var(--ts-ink60);
+}
+
+.nv-townbtn[aria-expanded='true'] .nv-place .i {
+  transform: rotate(180deg);
+}
+
+.nv-menuwrap {
+  position: relative;
+  z-index: 3;
+}
+
+.nv-townmenu {
+  position: absolute;
+  top: var(--ts-space-1);
+  left: var(--ts-space-4);
+  right: var(--ts-space-4);
+  padding: var(--ts-space-2);
+  border-radius: var(--ts-radius-card);
+  background: var(--ts-surface);
+  border: 1px solid var(--ts-hairline);
+  box-shadow: var(--ts-shadow-lifted);
+}
+
+.nv-townmenu[hidden] {
+  display: none;
+}
+
+.nv-menulabel {
+  padding: var(--ts-space-2) var(--ts-space-3) var(--ts-space-1);
+  font-family: var(--ts-font-mono);
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ts-ink45);
+}
+
+.nv-townopt {
+  display: flex;
+  align-items: center;
+  gap: var(--ts-space-3);
+  width: 100%;
+  min-height: 52px;
+  padding: var(--ts-space-2) var(--ts-space-3);
+  border: 0;
+  border-radius: var(--ts-radius-button);
+  background: none;
+  text-align: left;
+  cursor: pointer;
+}
+
+.nv-townopt:hover {
+  background: var(--ts-ink08);
+}
+
+.nv-townopt:focus-visible {
+  outline: none;
+  box-shadow: var(--ts-focus);
+}
+
+.nv-townopt-txt {
+  min-width: 0;
+  flex: 1;
+}
+
+.nv-townopt-name {
+  display: block;
+  font-family: var(--ts-font-serif);
+  font-size: var(--ts-text-card-title);
+  font-weight: 500;
+  line-height: 1.15;
+  color: var(--ts-ink);
+}
+
+.nv-townopt-sub {
+  display: block;
+  margin-top: 2px;
+  font-family: var(--ts-font-sans);
+  font-size: 12.5px;
+  line-height: 1.3;
+  color: var(--ts-ink45);
+}
+
+/* The tick is the redundant carrier for aria-checked, so current is not simply
+   "the one that is slightly darker". */
+.nv-townopt-check {
+  flex: none;
+  color: var(--ts-terracotta);
+  opacity: 0;
+}
+
+.nv-townopt[aria-checked='true'] {
+  background: var(--ts-terracotta10);
+}
+
+.nv-townopt[aria-checked='true'] .nv-townopt-check {
+  opacity: 1;
+}
+
+.nv-menufoot {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--ts-space-2);
+  margin-top: var(--ts-space-1);
+  padding: var(--ts-space-3);
+  border-top: 1px solid var(--ts-ink13);
+  font-size: 12.5px;
+  line-height: 1.4;
+  color: var(--ts-ink60);
+}
+
+.nv-menufoot .i {
+  margin-top: 1px;
+  color: var(--ts-sage);
+}
+
+/* ── the three-town miniatures ──────────────────────────────────────────────
+ *
+ * The point of these is that there is nothing to see in the markup. Same
+ * classes, same structure, one attribute.
+ */
+
+.nv-minis {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ts-space-4);
+  width: 320px;
+}
+
+.nv-minicap {
+  font-family: var(--ts-font-mono);
+  font-size: 9.5px;
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ts-ink45);
+}
+
+.nv-mini {
+  border: 1px solid var(--ts-ink13);
+  border-radius: var(--ts-radius-card);
+  overflow: hidden;
+  background: var(--ts-cream);
+}
+
+.nv-bar-mini {
+  padding: var(--ts-space-2) var(--ts-space-3);
+  gap: var(--ts-space-2);
+}
+
+.nv-bar-mini .nv-mark {
+  width: 26px;
+  height: 26px;
+}
+
+.nv-bar-mini .nv-avatar {
+  width: 26px;
+  height: 26px;
+  font-size: var(--ts-text-eyebrow);
+}
+
+.nv-mini-body {
+  display: flex;
+  align-items: center;
+  gap: var(--ts-space-2);
+  padding: var(--ts-space-3);
+}
+
+.nv-mini-chip {
+  padding: 5px var(--ts-space-3);
+  border-radius: var(--ts-radius-chip);
+  background: var(--ts-gold14);
+  font-size: 12.5px;
+  font-weight: 500;
+  color: var(--ts-gold-text);
+}
+
+.nv-mini-btn {
+  margin-left: auto;
+  padding: 6px var(--ts-space-4);
+  border-radius: var(--ts-radius-button);
+  background: var(--ts-terracotta);
+  font-size: 12.5px;
+  font-weight: 500;
+  color: var(--ts-surface);
+}
+
+.nv-mini-tag {
+  padding: 0 var(--ts-space-3) var(--ts-space-3);
+  font-family: var(--ts-font-mono);
+  font-size: 10px;
+  letter-spacing: 0.06em;
+  color: var(--ts-ink45);
+}
+
+/* ── bottom navigation ──────────────────────────────────────────────────────
+ *
+ * Five destinations. Active is carried by a rule, a weight, a fill and
+ * aria-current before colour is asked to do anything, because a resident with
+ * deuteranopia should still know which tab they are on.
+ */
+
+.nv-tabbar {
+  position: relative;
+  display: flex;
+  justify-content: space-around;
+  gap: var(--ts-space-1);
+  padding: var(--ts-space-1) var(--ts-space-3)
+           calc(var(--ts-space-2) + env(safe-area-inset-bottom, 0px));
+  background: var(--ts-cream);
+  border-top: 1px solid var(--ts-hairline);
+}
+
+.nv-tab {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  flex: 1;
+  min-width: 48px;
+  min-height: 56px;
+  padding: var(--ts-space-2) 2px var(--ts-space-1);
+  border-radius: var(--ts-radius-button);
+  color: var(--ts-ink60);
+  text-decoration: none;
+  cursor: pointer;
+}
+
+/* The active rule. 16px of terracotta at the top edge, present or absent, which
+   is a shape difference before it is a colour difference. */
+.nv-tab-ind {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  width: 16px;
+  height: 2px;
+  border-radius: var(--ts-radius-full);
+  background: var(--ts-terracotta);
+  transform: translateX(-50%) scaleX(0);
+  transform-origin: center;
+  transition: transform var(--ts-dur-2) var(--ts-ease-out);
+}
+
+.nv-tab-label {
+  font-family: var(--ts-font-sans);
+  font-size: 10px;
+  font-weight: 500;
+  line-height: 1.1;
+  letter-spacing: 0.01em;
+}
+
+.nv-tab[aria-current='page'] {
+  color: var(--ts-navy);
+}
+
+.nv-tab[aria-current='page'] .nv-tab-ind {
+  transform: translateX(-50%) scaleX(1);
+}
+
+.nv-tab[aria-current='page'] .nv-tab-label {
+  font-weight: 700;
+}
+
+.nv-tab[aria-current='page'] .i {
+  stroke-width: 1.9;
+}
+
+.nv-tab:hover:not([aria-disabled='true']) {
+  color: var(--ts-ink);
+}
+
+.nv-tab[data-pressed],
+.nv-tab:active:not([aria-disabled='true']) {
+  background: var(--ts-ink08);
+  color: var(--ts-ink);
+}
+
+.nv-tab[data-focus],
+.nv-tab:focus-visible {
+  outline: none;
+  box-shadow: var(--ts-focus);
+}
+
+/*
+ * Disabled keeps its label and stays reachable. A tab that is grey and inert is
+ * a dead end with no explanation, so this one is still tabbable and tapping it
+ * opens sign in.
+ */
+.nv-tab[aria-disabled='true'] {
+  color: var(--ts-ink26);
+  cursor: default;
+}
+
+.nv-tab[aria-disabled='true'] .nv-tab-label {
+  font-weight: 400;
+}
+
+.nv-tab-icon {
+  position: relative;
+  display: block;
+  line-height: 0;
+}
+
+.nv-tab-badge {
+  position: absolute;
+  top: -5px;
+  left: 11px;
+  min-width: 16px;
+  height: 16px;
+  padding: 0 4px;
+  border-radius: var(--ts-radius-full);
+  background: var(--ts-terracotta);
+  box-shadow: 0 0 0 2px var(--ts-cream);
+  font-family: var(--ts-font-sans);
+  font-size: 10px;
+  font-weight: 700;
+  line-height: 16px;
+  text-align: center;
+  color: var(--ts-surface);
+}
+
+/* Sheet-only: the inset is 0 in a browser window, so it is drawn here. */
+.nv-tabbar[data-safearea] {
+  padding-bottom: calc(var(--ts-space-2) + 22px);
+}
+
+.nv-inset-band {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 22px;
+  display: grid;
+  place-items: center;
+  background: repeating-linear-gradient(
+    45deg,
+    var(--ts-ink08) 0 5px,
+    transparent 5px 10px
+  );
+}
+
+.nv-inset-band span {
+  font-family: var(--ts-font-mono);
+  font-size: 9px;
+  letter-spacing: 0.06em;
+  color: var(--ts-ink45);
+}
+
+.nv-safe-row {
+  align-items: stretch;
+}
+
+.nv-measure {
+  width: 370px;
+  flex: none;
+  align-self: flex-start;
+  border: 1px solid var(--ts-ink13);
+  border-radius: var(--ts-radius-card);
+  overflow: hidden;
+}
+
+.nv-rules {
+  flex: 1;
+  min-width: 300px;
+  display: flex;
+  flex-direction: column;
+  gap: var(--ts-space-4);
+}
+
+.nv-rule {
+  display: grid;
+  grid-template-columns: 84px minmax(0, 1fr);
+  gap: var(--ts-space-4);
+  align-items: baseline;
+}
+
+.nv-rule-k {
+  font-family: var(--ts-font-mono);
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ts-terracotta-hover);
+}
+
+.nv-rule-v {
+  font-size: 13.5px;
+  line-height: 1.5;
+  color: var(--ts-ink60);
+}
+
+.nv-rule-v code,
+.why code,
+.nv-barnote code {
+  font-family: var(--ts-font-mono);
+  font-size: 0.92em;
+  color: var(--ts-ink);
+}
+
+/* ── phone screen scaffolding ───────────────────────────────────────────── */
+
+.nv-screen {
+  position: relative;
+  height: 100%;
+  background: var(--ts-cream);
+}
+
+.nv-screenbody {
+  padding: var(--ts-space-5);
+}
+
+.nv-eyebrow {
+  font-family: var(--ts-font-mono);
+  font-size: var(--ts-text-eyebrow);
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ts-terracotta-hover);
+}
+
+.nv-screentitle {
+  margin: var(--ts-space-2) 0 0;
+  font-family: var(--ts-font-serif);
+  font-size: 28px;
+  font-weight: 400;
+  line-height: 1.08;
+  letter-spacing: -0.015em;
+}
+
+.nv-screenlede {
+  margin: var(--ts-space-2) 0 var(--ts-space-5);
+  font-family: var(--ts-font-serif);
+  font-size: var(--ts-text-label);
+  line-height: 1.4;
+  color: var(--ts-ink60);
+}
+
+.nv-storyrow {
+  display: flex;
+  align-items: center;
+  gap: var(--ts-space-3);
+  padding: var(--ts-space-3) 0;
+  border-top: 1px solid var(--ts-ink13);
+}
+
+.nv-thumb {
+  flex: none;
+  width: 62px;
+  height: 62px;
+  border-radius: var(--ts-radius-input);
+  background:
+    linear-gradient(150deg, var(--ts-navy10), transparent 62%),
+    var(--ts-stone);
+}
+
+.nv-story-t {
+  font-family: var(--ts-font-serif);
+  font-size: var(--ts-text-label);
+  font-weight: 500;
+  line-height: 1.28;
+  letter-spacing: -0.008em;
+  text-wrap: pretty;
+}
+
+.nv-story-b {
+  margin-top: 3px;
+  font-family: var(--ts-font-serif);
+  font-size: 13.5px;
+  color: var(--ts-ink45);
+}
+
+/* ── the desktop shell ──────────────────────────────────────────────────────
+ *
+ * The same information architecture at 1200px: the five destinations become a
+ * rail instead of a bar, the reading column is capped, and the peripheral
+ * things get a third column they are allowed to be ignored in. Drawn at true
+ * width in a scroll frame rather than scaled, because a shell that is only
+ * honest at 78% is not evidence of anything.
+ */
+
+.nv-deskframe {
+  max-width: 100%;
+  overflow-x: auto;
+  padding-bottom: var(--ts-space-2);
+}
+
+.nv-desk {
+  width: 1200px;
+  border: 1px solid var(--ts-ink13);
+  border-radius: var(--ts-radius-card);
+  overflow: hidden;
+  background: var(--ts-cream);
+  box-shadow: var(--ts-shadow-raised);
+}
+
+.nv-desk-topbar {
+  padding-left: var(--ts-space-6);
+  padding-right: var(--ts-space-6);
+}
+
+/* Resting search on desktop is a field, not an icon: there is room, and a field
+   says what it will do before you press it. */
+.nv-desk-search {
+  display: flex;
+  align-items: center;
+  gap: var(--ts-space-2);
+  width: 380px;
+  margin: 0 auto;
+  padding: 9px var(--ts-space-3);
+  border: 1px solid var(--ts-hairline);
+  border-radius: var(--ts-radius-input);
+  background: var(--ts-surface);
+  font-size: var(--ts-text-label);
+  color: var(--ts-ink45);
+  cursor: text;
+}
+
+.nv-desk-search .i {
+  color: var(--ts-ink45);
+}
+
+.nv-kbd {
+  margin-left: auto;
+  min-width: 20px;
+  padding: 1px 6px;
+  border: 1px solid var(--ts-ink13);
+  border-radius: 5px;
+  font-family: var(--ts-font-mono);
+  font-size: 11px;
+  line-height: 1.5;
+  text-align: center;
+  color: var(--ts-ink45);
+}
+
+.nv-desk-body {
+  display: grid;
+  grid-template-columns: 220px minmax(0, 1fr) 300px;
+  gap: var(--ts-space-8);
+  padding: var(--ts-space-8) var(--ts-space-6) var(--ts-space-10);
+  align-items: start;
+}
+
+/* Nearby drops the aside and uncaps the middle. Browsing is a scan, and a scan
+   wants many things in the eye at once. */
+.nv-desk[data-view='nearby'] .nv-desk-body {
+  grid-template-columns: 220px minmax(0, 1fr);
+}
+
+.nv-desk-rail {
+  position: sticky;
+  top: var(--ts-space-4);
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.nv-rail-item {
+  display: flex;
+  align-items: center;
+  gap: var(--ts-space-3);
+  min-height: 44px;
+  padding: 0 var(--ts-space-3);
+  border-radius: var(--ts-radius-button);
+  font-size: var(--ts-text-label);
+  color: var(--ts-ink60);
+  text-decoration: none;
+}
+
+.nv-rail-item:hover {
+  background: var(--ts-ink08);
+  color: var(--ts-ink);
+}
+
+.nv-rail-item:focus-visible {
+  outline: none;
+  box-shadow: var(--ts-focus);
+}
+
+/* Current is a fill and a weight, not just a tint, for the same reason the tab
+   bar carries a rule. */
+.nv-rail-item[aria-current='page'] {
+  background: var(--ts-navy);
+  color: var(--ts-cream);
+  font-weight: 500;
+}
+
+.nv-rail-count {
+  margin-left: auto;
+  min-width: 20px;
+  padding: 1px 6px;
+  border-radius: var(--ts-radius-full);
+  background: var(--ts-terracotta14);
+  font-size: var(--ts-text-eyebrow);
+  font-weight: 700;
+  text-align: center;
+  color: var(--ts-terracotta-hover);
+}
+
+.nv-rail-item[aria-current='page'] .nv-rail-count {
+  background: var(--ts-cream14);
+  color: var(--ts-cream);
+}
+
+.nv-rail-note {
+  margin-top: var(--ts-space-5);
+  padding-top: var(--ts-space-4);
+  border-top: 1px solid var(--ts-ink13);
+  font-family: var(--ts-font-serif);
+  font-size: 13.5px;
+  line-height: 1.45;
+  color: var(--ts-ink45);
+}
+
+.nv-desk-main {
+  max-width: 640px;
+  min-width: 0;
+}
+
+.nv-desk[data-view='nearby'] .nv-desk-main {
+  max-width: none;
+}
+
+.nv-desk-h1 {
+  margin: var(--ts-space-2) 0 0;
+  font-family: var(--ts-font-serif);
+  font-size: 34px;
+  font-weight: 400;
+  line-height: 1.05;
+  letter-spacing: -0.02em;
+}
+
+.nv-lead {
+  margin-bottom: var(--ts-space-5);
+}
+
+.nv-lead-img {
+  height: 240px;
+  margin-bottom: var(--ts-space-3);
+  border-radius: var(--ts-radius-card);
+  background:
+    linear-gradient(160deg, var(--ts-navy10), transparent 55%),
+    linear-gradient(20deg, var(--ts-terracotta10), transparent 50%),
+    var(--ts-stone);
+}
+
+.nv-lead-t {
+  font-family: var(--ts-font-serif);
+  font-size: 25px;
+  font-weight: 500;
+  line-height: 1.16;
+  letter-spacing: -0.015em;
+  text-wrap: balance;
+}
+
+/* ── the third column ───────────────────────────────────────────────────────
+ *
+ * Peripheral by construction. One tinted card is the ceiling: the moment the
+ * notice, the open list and the shipped list are all coloured, none of them is
+ * the notice any more.
+ */
+
+.nv-desk-aside {
+  position: sticky;
+  top: var(--ts-space-4);
+  display: flex;
+  flex-direction: column;
+  gap: var(--ts-space-6);
+}
+
+.nv-aside-card {
+  padding: var(--ts-space-4);
+  border-radius: var(--ts-radius-card);
+  background: var(--ts-gold14);
+}
+
+.nv-aside-label {
+  display: flex;
+  align-items: center;
+  gap: var(--ts-space-1);
+  font-family: var(--ts-font-mono);
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ts-ink60);
+  margin-bottom: var(--ts-space-2);
+}
+
+.nv-aside-card[data-tone='notice'] .nv-aside-label {
+  color: var(--ts-gold-text);
+}
+
+.nv-aside-t {
+  font-family: var(--ts-font-serif);
+  font-size: var(--ts-text-card-title);
+  font-weight: 500;
+  line-height: 1.2;
+}
+
+.nv-aside-s {
+  margin-top: var(--ts-space-1);
+  font-family: var(--ts-font-serif);
+  font-size: 13.5px;
+  color: var(--ts-ink60);
+}
+
+.nv-aside-row {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--ts-space-3);
+  padding: var(--ts-space-2) 0;
+  border-top: 1px solid var(--ts-ink13);
+  font-size: 13.5px;
+}
+
+.nv-aside-row span {
+  flex: none;
+  font-family: var(--ts-font-sans);
+  font-size: 12.5px;
+  color: var(--ts-ink45);
+}
+
+.nv-aside-link {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--ts-space-1);
+  margin-top: var(--ts-space-2);
+  font-size: var(--ts-text-caption);
+  font-weight: 500;
+  color: var(--ts-terracotta-hover);
+  text-decoration: none;
+}
+
+/* ── the browse grid ────────────────────────────────────────────────────── */
+
+.nv-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--ts-space-5);
+  margin-top: var(--ts-space-5);
+}
+
+.nv-tile {
+  padding: var(--ts-space-3);
+  border: 1px solid var(--ts-hairline);
+  border-radius: var(--ts-radius-card);
+  background: var(--ts-surface);
+}
+
+.nv-tile-img {
+  height: 96px;
+  margin-bottom: var(--ts-space-3);
+  border-radius: var(--ts-radius-input);
+  background:
+    linear-gradient(135deg, var(--ts-navy10), transparent 60%),
+    var(--ts-stone);
+}
+
+.nv-tile-n {
+  font-family: var(--ts-font-serif);
+  font-size: var(--ts-text-label);
+  font-weight: 500;
+  line-height: 1.25;
+}
+
+.nv-tile-d {
+  margin-top: var(--ts-space-1);
+  font-size: 12.5px;
+  color: var(--ts-ink60);
+}
+
+.nv-open {
+  font-weight: 700;
+  color: var(--ts-sage);
+}
+
+/* ── page headers ───────────────────────────────────────────────────────────
+ *
+ * Three registers, and the difference between them is how much chrome the page
+ * has earned. Editorial has none because the title is the page. Utility has a
+ * back and exactly one action, because two actions is a menu wearing a
+ * disguise. Host is set on navy and names the neighbour who built the thing.
+ */
+
+.nv-pagehead {
+  display: block;
+  margin-top: var(--ts-space-3);
+}
+
+.nv-ph-title {
+  margin: 0;
+  font-family: var(--ts-font-serif);
+  font-size: var(--ts-text-h1);
+  font-weight: 400;
+  line-height: 1.1;
+  letter-spacing: -0.018em;
+}
+
+.nv-ph-sub {
+  margin: var(--ts-space-2) 0 0;
+  font-family: var(--ts-font-serif);
+  font-size: var(--ts-text-label);
+  line-height: 1.4;
+  color: var(--ts-ink60);
+}
+
+.nv-pagehead[data-register='editorial'] .nv-ph-title {
+  margin-top: var(--ts-space-2);
+  font-size: 28px;
+}
+
+.nv-pagehead[data-register='utility'],
+.nv-pagehead[data-register='host'] {
+  display: flex;
+  align-items: center;
+  gap: var(--ts-space-3);
+  padding: var(--ts-space-2) var(--ts-space-2) var(--ts-space-2) 0;
+}
+
+.nv-ph-stack {
+  flex: 1;
+  min-width: 0;
+}
+
+.nv-pagehead[data-register='utility'] .nv-ph-title,
+.nv-pagehead[data-register='host'] .nv-ph-title {
+  flex: 1;
+  min-width: 0;
+  font-family: var(--ts-font-sans);
+  font-size: var(--ts-text-body);
+  font-weight: 500;
+  letter-spacing: 0;
+}
+
+.nv-pagehead[data-register='utility'] .nv-ph-sub,
+.nv-pagehead[data-register='host'] .nv-ph-sub {
+  margin-top: 1px;
+  font-family: var(--ts-font-sans);
+  font-size: 12.5px;
+}
+
+.nv-ph-back {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  flex: none;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  border-radius: var(--ts-radius-full);
+  background: none;
+  color: var(--ts-ink60);
+  cursor: pointer;
+}
+
+.nv-ph-back:hover {
+  background: var(--ts-ink08);
+  color: var(--ts-ink);
+}
+
+.nv-ph-back:focus-visible,
+.nv-ph-action:focus-visible {
+  outline: none;
+  box-shadow: var(--ts-focus);
+}
+
+.nv-ph-action {
+  display: grid;
+  place-items: center;
+  min-width: 44px;
+  height: 44px;
+  flex: none;
+  margin: 0;
+  padding: 0 var(--ts-space-3);
+  border: 0;
+  border-radius: var(--ts-radius-button);
+  background: none;
+  font-family: var(--ts-font-sans);
+  font-size: var(--ts-text-label);
+  font-weight: 500;
+  color: var(--ts-terracotta-hover);
+  cursor: pointer;
+}
+
+/* The host header. The one place a header goes dark, because a resident needs
+   to feel the boundary of the sandbox without reading a word of it. */
+.nv-pagehead[data-register='host'] {
+  padding-right: var(--ts-space-2);
+  border-radius: var(--ts-radius-card);
+  background: var(--ts-navy);
+  color: var(--ts-cream);
+}
+
+.nv-pagehead[data-register='host'] .nv-ph-back,
+.nv-pagehead[data-register='host'] .nv-ph-action {
+  color: var(--ts-cream-muted);
+}
+
+.nv-pagehead[data-register='host'] .nv-ph-back:hover,
+.nv-pagehead[data-register='host'] .nv-ph-action:hover {
+  background: var(--ts-cream14);
+  color: var(--ts-cream);
+}
+
+.nv-pagehead[data-register='host'] .nv-ph-sub {
+  color: var(--ts-cream-muted);
+}
+
+.nv-ph-chip {
+  display: inline-block;
+  margin-bottom: 3px;
+  padding: 1px 6px;
+  border-radius: 4px;
+  background: var(--ts-cream14);
+  font-family: var(--ts-font-mono);
+  font-size: 9.5px;
+  font-weight: 500;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--ts-cream);
+}
+
+/* ── tabs, segments, chips ──────────────────────────────────────────────────
+ *
+ * Three shapes, three meanings, and mixing them up is the most common way a
+ * navigation stops being legible. Underline = you are now looking at a
+ * different set of things. Pill = the same set, fewer of them. Chip rail = the
+ * list is longer than the screen and always will be.
+ */
+
+.nv-stack-wide {
+  max-width: 620px;
+}
+
+.nv-tabs {
+  display: flex;
+  gap: var(--ts-space-5);
+  border-bottom: 1px solid var(--ts-ink13);
+}
+
+.nv-tabs-item {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: var(--ts-space-2);
+  min-height: 44px;
+  margin: 0;
+  padding: 0 2px;
+  border: 0;
+  background: none;
+  font-family: var(--ts-font-sans);
+  font-size: var(--ts-text-label);
+  color: var(--ts-ink60);
+  cursor: pointer;
+}
+
+.nv-tabs-item::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -1px;
+  height: 2px;
+  background: var(--ts-terracotta);
+  transform: scaleX(0);
+  transition: transform var(--ts-dur-2) var(--ts-ease-out);
+}
+
+.nv-tabs-item[aria-selected='true'] {
+  color: var(--ts-ink);
+  font-weight: 700;
+}
+
+.nv-tabs-item[aria-selected='true']::after {
+  transform: scaleX(1);
+}
+
+.nv-tabs-item:hover:not(:disabled) {
+  color: var(--ts-ink);
+}
+
+.nv-tabs-item:focus-visible {
+  outline: none;
+  box-shadow: var(--ts-focus);
+  border-radius: 6px;
+}
+
+.nv-tabs-item:disabled {
+  color: var(--ts-ink26);
+  cursor: not-allowed;
+}
+
+.nv-tabs-n {
+  font-family: var(--ts-font-serif);
+  font-size: 13.5px;
+  font-weight: 400;
+  color: var(--ts-ink45);
+}
+
+.nv-seg {
+  display: inline-flex;
+  gap: 2px;
+  padding: 3px;
+  border-radius: var(--ts-radius-full);
+  background: var(--ts-ink08);
+}
+
+.nv-seg-item {
+  min-height: 38px;
+  margin: 0;
+  padding: 0 var(--ts-space-4);
+  border: 0;
+  border-radius: var(--ts-radius-full);
+  background: none;
+  font-family: var(--ts-font-sans);
+  font-size: var(--ts-text-caption);
+  font-weight: 500;
+  color: var(--ts-ink60);
+  cursor: pointer;
+  transition: background var(--ts-dur-1) var(--ts-ease);
+}
+
+.nv-seg-item[aria-pressed='true'] {
+  background: var(--ts-surface);
+  color: var(--ts-ink);
+  box-shadow: var(--ts-shadow-flat);
+}
+
+.nv-seg-item:hover[aria-pressed='false'] {
+  color: var(--ts-ink);
+}
+
+.nv-seg-item:focus-visible {
+  outline: none;
+  box-shadow: var(--ts-focus);
+}
+
+/* The rail bleeds right and a fade covers the last 32px. A chip ending flush
+   with the margin reads as the end of the list, which is a lie. */
+.nv-chips-wrap {
+  position: relative;
+  padding: var(--ts-space-3) 0 var(--ts-space-3) var(--ts-space-4);
+  border-radius: var(--ts-radius-card);
+  background: var(--ts-cream);
+}
+
+.nv-chips-wrap::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  right: 0;
+  width: 40px;
+  pointer-events: none;
+  background: linear-gradient(to right, transparent, var(--ts-cream));
+}
+
+.nv-chips {
+  display: flex;
+  gap: var(--ts-space-2);
+  padding: 2px 40px 2px 2px;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.nv-chips::-webkit-scrollbar {
+  display: none;
+}
+
+.nv-chips:focus-visible {
+  outline: none;
+  box-shadow: var(--ts-focus);
+  border-radius: var(--ts-radius-chip);
+}
+
+.nv-chip {
+  flex: none;
+  min-height: 36px;
+  margin: 0;
+  padding: 0 var(--ts-space-4);
+  border: 1px solid var(--ts-hairline);
+  border-radius: var(--ts-radius-chip);
+  background: var(--ts-surface);
+  font-family: var(--ts-font-sans);
+  font-size: var(--ts-text-caption);
+  font-weight: 500;
+  white-space: nowrap;
+  color: var(--ts-ink60);
+  cursor: pointer;
+}
+
+.nv-chip:hover {
+  border-color: var(--ts-ink26);
+  color: var(--ts-ink);
+}
+
+.nv-chip[aria-pressed='true'] {
+  background: var(--ts-navy);
+  border-color: var(--ts-navy);
+  color: var(--ts-cream);
+}
+
+.nv-chip:focus-visible {
+  outline: none;
+  box-shadow: var(--ts-focus);
+}
+
+/* ── breadcrumb ─────────────────────────────────────────────────────────── */
+
+.nv-crumbs {
+  display: flex;
+  align-items: center;
+  gap: var(--ts-space-1);
+  flex-wrap: wrap;
+  font-size: 12.5px;
+  color: var(--ts-ink45);
+}
+
+.nv-crumbs a {
+  min-height: 32px;
+  display: inline-flex;
+  align-items: center;
+  color: var(--ts-ink60);
+  text-decoration: none;
+}
+
+.nv-crumbs a:hover {
+  color: var(--ts-terracotta-hover);
+  text-decoration: underline;
+}
+
+.nv-crumbs a:focus-visible {
+  outline: none;
+  box-shadow: var(--ts-focus);
+  border-radius: 5px;
+}
+
+.nv-crumbs [aria-current='page'] {
+  color: var(--ts-ink);
+  font-weight: 500;
+}
+
+.nv-crumbs .i {
+  color: var(--ts-ink26);
+}
+
+/* ── back affordance ────────────────────────────────────────────────────── */
+
+.nv-back {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--ts-space-1);
+  min-height: 44px;
+  margin: 0 0 var(--ts-space-2) calc(var(--ts-space-2) * -1);
+  padding: 0 var(--ts-space-3) 0 var(--ts-space-2);
+  border: 0;
+  border-radius: var(--ts-radius-button);
+  background: none;
+  font-family: var(--ts-font-sans);
+  font-size: var(--ts-text-label);
+  font-weight: 500;
+  color: var(--ts-ink60);
+  cursor: pointer;
+}
+
+.nv-back:hover {
+  background: var(--ts-ink08);
+  color: var(--ts-ink);
+}
+
+.nv-back:focus-visible,
+.nv-crumb-more:focus-visible {
+  outline: none;
+  box-shadow: var(--ts-focus);
+}
+
+.nv-crumb-more {
+  display: inline-grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  border-radius: 6px;
+  background: var(--ts-ink08);
+  color: var(--ts-ink60);
+  cursor: pointer;
+}
+
+/* ── omni search ────────────────────────────────────────────────────────────
+ *
+ * One field over five kinds of thing, because a resident looking for Riverfest
+ * has no idea whether the town filed it as a story, an event or a place. The
+ * grouping does the work a filter row would otherwise be asked to do, and it
+ * does it without making anyone choose first.
+ */
+
+.nv-omni {
+  position: absolute;
+  inset: 0;
+  z-index: 4;
+  display: flex;
+  flex-direction: column;
+  background: var(--ts-cream);
+}
+
+.nv-omni[hidden] {
+  display: none;
+}
+
+.nv-omni-head {
+  display: flex;
+  align-items: center;
+  gap: var(--ts-space-2);
+  padding: var(--ts-space-3) var(--ts-space-4);
+  border-bottom: 1px solid var(--ts-ink13);
+}
+
+.nv-omni-field {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  gap: var(--ts-space-2);
+  min-height: 44px;
+  padding: 0 var(--ts-space-3);
+  border: 1px solid var(--ts-navy40);
+  border-radius: var(--ts-radius-input);
+  background: var(--ts-surface);
+  box-shadow: var(--ts-focus);
+}
+
+.nv-omni-field .i {
+  color: var(--ts-ink45);
+}
+
+.nv-omni-q {
+  font-family: var(--ts-font-sans);
+  font-size: var(--ts-text-body);
+  color: var(--ts-ink);
+}
+
+.nv-omni-ph {
+  font-family: var(--ts-font-sans);
+  font-size: var(--ts-text-body);
+  color: var(--ts-ink45);
+}
+
+.nv-caret {
+  width: 1.5px;
+  height: 20px;
+  margin-left: -3px;
+  background: var(--ts-terracotta);
+  animation: nv-blink 1.1s steps(1) infinite;
+}
+
+@keyframes nv-blink {
+  50% { opacity: 0; }
+}
+
+.nv-omni-cancel {
+  flex: none;
+  min-height: 44px;
+  margin: 0;
+  padding: 0 var(--ts-space-2);
+  border: 0;
+  background: none;
+  font-family: var(--ts-font-sans);
+  font-size: var(--ts-text-label);
+  color: var(--ts-terracotta-hover);
+  cursor: pointer;
+}
+
+.nv-omni-cancel:focus-visible {
+  outline: none;
+  box-shadow: var(--ts-focus);
+  border-radius: var(--ts-radius-button);
+}
+
+.nv-omni-body {
+  flex: 1;
+  overflow-y: auto;
+  padding: var(--ts-space-2) 0 var(--ts-space-8);
+}
+
+.nv-omni-lede {
+  margin: var(--ts-space-3) var(--ts-space-5) var(--ts-space-2);
+  font-family: var(--ts-font-serif);
+  font-size: var(--ts-text-label);
+  line-height: 1.4;
+  color: var(--ts-ink60);
+}
+
+.nv-omni-group + .nv-omni-group {
+  margin-top: var(--ts-space-2);
+  border-top: 1px solid var(--ts-ink13);
+}
+
+.nv-omni-glabel {
+  display: flex;
+  align-items: center;
+  padding: var(--ts-space-4) var(--ts-space-5) var(--ts-space-1);
+  font-family: var(--ts-font-mono);
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ts-ink45);
+}
+
+.nv-omni-clear {
+  margin-left: auto;
+  padding: 4px var(--ts-space-2);
+  border: 0;
+  border-radius: 6px;
+  background: none;
+  font-family: var(--ts-font-sans);
+  font-size: var(--ts-text-caption);
+  letter-spacing: 0;
+  text-transform: none;
+  color: var(--ts-terracotta-hover);
+  cursor: pointer;
+}
+
+.nv-omni-row {
+  display: flex;
+  align-items: center;
+  gap: var(--ts-space-3);
+  min-height: 52px;
+  padding: var(--ts-space-2) var(--ts-space-5);
+  color: inherit;
+  text-decoration: none;
+}
+
+.nv-omni-row:hover {
+  background: var(--ts-ink08);
+}
+
+.nv-omni-row:focus-visible {
+  outline: none;
+  box-shadow: var(--ts-focus);
+}
+
+/* The leading icon is what lets a resident skip four groups without reading
+   them, so it is a type marker and never decoration. */
+.nv-omni-ico {
+  flex: none;
+  color: var(--ts-navy60);
+}
+
+.nv-omni-txt {
+  flex: 1;
+  min-width: 0;
+}
+
+.nv-omni-t {
+  display: block;
+  font-family: var(--ts-font-serif);
+  font-size: var(--ts-text-label);
+  font-weight: 500;
+  line-height: 1.25;
+  text-wrap: pretty;
+}
+
+.nv-omni-s {
+  display: block;
+  margin-top: 2px;
+  font-family: var(--ts-font-sans);
+  font-size: 12.5px;
+  color: var(--ts-ink60);
+}
+
+/* The arrow points up and back into the field: press to fill, not to open. */
+.nv-omni-fill {
+  flex: none;
+  color: var(--ts-ink26);
+  transform: rotate(-45deg);
+}
+
+.nv-omni-more {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  min-height: 44px;
+  padding: 0 var(--ts-space-5);
+  font-family: var(--ts-font-sans);
+  font-size: var(--ts-text-caption);
+  font-weight: 500;
+  color: var(--ts-terracotta-hover);
+  text-decoration: none;
+}
+
+.nv-omni-more:hover {
+  background: var(--ts-terracotta10);
+}
+
+.nv-omni-foot {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--ts-space-2);
+  margin: var(--ts-space-5) var(--ts-space-5) 0;
+  padding-top: var(--ts-space-4);
+  border-top: 1px solid var(--ts-ink13);
+  font-size: 12.5px;
+  line-height: 1.4;
+  color: var(--ts-ink45);
+}
+
+.nv-omni-foot .i {
+  margin-top: 1px;
+}
+
+/*
+ * The offer. "No results found" is a full stop; the person who just searched for
+ * the missing thing is the best-qualified person in town to add it.
+ */
+.nv-omni-offer {
+  margin: var(--ts-space-5) var(--ts-space-5) 0;
+  padding: var(--ts-space-4);
+  border-radius: var(--ts-radius-card);
+  background: var(--ts-terracotta-tint);
+}
+
+.nv-offer-t {
+  font-family: var(--ts-font-serif);
+  font-size: var(--ts-text-card-title);
+  font-weight: 500;
+  line-height: 1.2;
+}
+
+.nv-offer-s {
+  margin-top: var(--ts-space-1);
+  font-size: 13.5px;
+  color: var(--ts-ink60);
+}
+
+.nv-offer-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--ts-space-2);
+  min-height: 44px;
+  margin-top: var(--ts-space-3);
+  padding: 0 var(--ts-space-4);
+  border: 0;
+  border-radius: var(--ts-radius-button);
+  background: var(--ts-terracotta);
+  font-family: var(--ts-font-sans);
+  font-size: var(--ts-text-label);
+  font-weight: 500;
+  color: var(--ts-surface);
+  cursor: pointer;
+}
+
+.nv-offer-btn:hover {
+  background: var(--ts-terracotta-hover);
+}
+
+.nv-offer-btn:focus-visible {
+  outline: none;
+  box-shadow: var(--ts-focus);
+}
+
+/* ── scrim, bottom sheet, side drawer ───────────────────────────────────────
+ *
+ * The scrim is ink rather than navy: a coloured scrim tints the photograph
+ * underneath it and makes the page behind look like a different page.
+ */
+
+.nv-scrim {
+  position: absolute;
+  inset: 0;
+  z-index: 5;
+  background: color-mix(in srgb, var(--ts-ink) 44%, transparent);
+}
+
+.nv-modal {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 6;
+  display: flex;
+  flex-direction: column;
+  border-radius: var(--ts-radius-sheet) var(--ts-radius-sheet) 0 0;
+  background: var(--ts-surface);
+  box-shadow: var(--ts-shadow-overlay);
+  overflow: hidden;
+  transition: height var(--ts-dur-3) var(--ts-ease-out);
+}
+
+/* The handle promises a drag, so it is only drawn where a drag exists. */
+.nv-grab {
+  display: block;
+  width: 100%;
+  padding: var(--ts-space-3) 0 var(--ts-space-2);
+  border: 0;
+  background: none;
+  cursor: grab;
+}
+
+.nv-grab::before {
+  content: '';
+  display: block;
+  width: 40px;
+  height: 4px;
+  margin: 0 auto;
+  border-radius: var(--ts-radius-full);
+  background: var(--ts-ink26);
+}
+
+.nv-grab:focus-visible {
+  outline: none;
+  box-shadow: var(--ts-focus);
+}
+
+.nv-modal-body {
+  flex: 1;
+  overflow-y: auto;
+  padding: 0 var(--ts-space-5) var(--ts-space-6);
+  scrollbar-width: none;
+}
+
+.nv-modal-body::-webkit-scrollbar {
+  display: none;
+}
+
+.nv-modal-t {
+  font-family: var(--ts-font-serif);
+  font-size: var(--ts-text-h2);
+  font-weight: 500;
+  line-height: 1.15;
+  letter-spacing: -0.012em;
+}
+
+.nv-modal-s {
+  margin: var(--ts-space-1) 0 var(--ts-space-4);
+  font-family: var(--ts-font-serif);
+  font-size: var(--ts-text-label);
+  color: var(--ts-ink60);
+}
+
+.nv-modal-rows {
+  display: flex;
+  flex-direction: column;
+}
+
+.nv-modal-row {
+  display: flex;
+  align-items: center;
+  gap: var(--ts-space-3);
+  min-height: 52px;
+  padding: var(--ts-space-2) 0;
+  border-top: 1px solid var(--ts-ink13);
+  font-size: var(--ts-text-label);
+  color: var(--ts-ink);
+}
+
+.nv-modal-row .i {
+  color: var(--ts-ink60);
+}
+
+.nv-modal-go {
+  margin-left: auto;
+  color: var(--ts-ink26);
+}
+
+.nv-modal-note {
+  margin: var(--ts-space-5) 0 0;
+  font-size: 12.5px;
+  line-height: 1.45;
+  color: var(--ts-ink45);
+}
+
+/* Three heights. Peek is one decision, half is the default, full leaves a strip
+   of page showing so the resident can still tell this is a layer. */
+.nv-screen[data-height='peek'] .nv-modal { height: 180px; }
+.nv-screen[data-height='half'] .nv-modal { height: 56%; }
+.nv-screen[data-height='full'] .nv-modal { height: calc(100% - 56px); }
+
+.nv-screen[data-height='peek'] .nv-scrim {
+  background: color-mix(in srgb, var(--ts-ink) 26%, transparent);
+}
+
+.nv-screen[data-height='full'] .nv-scrim {
+  background: color-mix(in srgb, var(--ts-ink) 56%, transparent);
+}
+
+.nv-sheetctl {
+  display: flex;
+  justify-content: center;
+  gap: 2px;
+  margin-top: var(--ts-space-2);
+  padding: 3px;
+}
+
+.nv-sheetctl .nv-seg-item {
+  min-height: 34px;
+  color: var(--ts-cream-muted);
+}
+
+.nv-sheetctl .nv-seg-item[aria-pressed='true'] {
+  background: var(--ts-cream14);
+  color: var(--ts-cream);
+  box-shadow: none;
+}
+
+/* ── the desktop drawer ─────────────────────────────────────────────────── */
+
+.nv-drawerdemo {
+  width: 420px;
+  display: flex;
+  flex-direction: column;
+  gap: var(--ts-space-2);
+}
+
+.nv-drawerframe {
+  position: relative;
+  height: 300px;
+  border: 1px solid var(--ts-ink13);
+  border-radius: var(--ts-radius-card);
+  overflow: hidden;
+  background: var(--ts-cream);
+}
+
+.nv-drawer-page {
+  padding: var(--ts-space-5);
+  display: flex;
+  flex-direction: column;
+  gap: var(--ts-space-3);
+}
+
+.nv-drawer-line {
+  height: 10px;
+  border-radius: var(--ts-radius-full);
+  background: var(--ts-ink13);
+}
+
+.nv-drawer-line[data-short] {
+  width: 62%;
+}
+
+.nv-drawer {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 6;
+  width: 280px;
+  padding: 0 var(--ts-space-4) var(--ts-space-4);
+  background: var(--ts-surface);
+  box-shadow: var(--ts-shadow-overlay);
+}
+
+.nv-drawer-head {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--ts-space-2);
+  padding: var(--ts-space-4) 0;
+}
+
+.nv-drawer-head .nv-modal-t {
+  flex: 1;
+  font-size: var(--ts-text-card-title);
+}
+
+/* ── the command palette ────────────────────────────────────────────────────
+ *
+ * This belongs to the builder path and must never leak into the resident one.
+ * The separation is enforced by what mounts, not by what is styled quietly, but
+ * the visual distance is the second line of defence: mono throughout, 32px rows
+ * against resident search's 52px, and the only navy-dark overlay in the product.
+ * A resident who never builds anything should never see this surface.
+ */
+
+.nv-palwrap {
+  width: 560px;
+  max-width: 100%;
+  padding: var(--ts-space-6);
+  border-radius: var(--ts-radius-card);
+  background: color-mix(in srgb, var(--ts-ink) 82%, transparent);
+}
+
+.nv-palette {
+  border-radius: var(--ts-radius-card);
+  overflow: hidden;
+  background: var(--ts-navy-dark);
+  box-shadow: var(--ts-shadow-overlay);
+  color: var(--ts-cream);
+}
+
+.nv-pal-head {
+  display: flex;
+  align-items: center;
+  gap: var(--ts-space-2);
+  padding: var(--ts-space-3) var(--ts-space-4);
+  border-bottom: 1px solid var(--ts-cream14);
+  color: var(--ts-cream-muted);
+}
+
+.nv-pal-q {
+  font-family: var(--ts-font-mono);
+  font-size: 14.5px;
+  color: var(--ts-cream);
+}
+
+.nv-pal-head .nv-caret {
+  height: 16px;
+  background: var(--ts-cream);
+}
+
+.nv-pal-head .nv-kbd {
+  border-color: var(--ts-cream14);
+  color: var(--ts-cream-muted);
+}
+
+.nv-pal-body {
+  max-height: 340px;
+  overflow-y: auto;
+  padding: var(--ts-space-2) 0;
+}
+
+.nv-pal-glabel {
+  padding: var(--ts-space-3) var(--ts-space-4) var(--ts-space-1);
+  font-family: var(--ts-font-mono);
+  font-size: 9.5px;
+  font-weight: 500;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: color-mix(in srgb, var(--ts-cream) 38%, transparent);
+}
+
+.nv-pal-row {
+  display: flex;
+  align-items: center;
+  gap: var(--ts-space-3);
+  min-height: 32px;
+  padding: 0 var(--ts-space-4);
+  font-family: var(--ts-font-mono);
+  font-size: 12.5px;
+  color: var(--ts-cream-muted);
+  cursor: default;
+}
+
+.nv-pal-ico {
+  flex: none;
+  color: color-mix(in srgb, var(--ts-cream) 45%, transparent);
+}
+
+.nv-pal-n {
+  flex: none;
+  color: var(--ts-cream);
+}
+
+.nv-pal-d {
+  min-width: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  font-family: var(--ts-font-sans);
+  font-size: 12.5px;
+  color: color-mix(in srgb, var(--ts-cream) 45%, transparent);
+}
+
+.nv-pal-row .nv-kbd {
+  margin-left: auto;
+  border-color: var(--ts-cream14);
+  color: var(--ts-cream-muted);
+}
+
+/* Active is the keyboard cursor, not a hover. It carries a fill and a rule so
+   it survives a screen a builder is squinting at from across a desk. */
+.nv-pal-row[data-active] {
+  background: var(--ts-cream14);
+  box-shadow: inset 2px 0 0 var(--ts-terracotta);
+  color: var(--ts-cream);
+}
+
+.nv-pal-foot {
+  display: flex;
+  align-items: center;
+  gap: var(--ts-space-4);
+  padding: var(--ts-space-2) var(--ts-space-4);
+  border-top: 1px solid var(--ts-cream14);
+  font-family: var(--ts-font-sans);
+  font-size: var(--ts-text-eyebrow);
+  color: color-mix(in srgb, var(--ts-cream) 45%, transparent);
+}
+
+.nv-pal-foot .nv-kbd {
+  margin-right: 2px;
+  border-color: var(--ts-cream14);
+  color: var(--ts-cream-muted);
+}
+
+.nv-pal-scope {
+  margin-left: auto;
+  font-family: var(--ts-font-mono);
+  letter-spacing: 0.06em;
+}
+
+/* ── footer and sign-off ────────────────────────────────────────────────────
+ *
+ * The timestamp is load-bearing. When a scrape fails the API serves the last
+ * good screen rather than an error, which is the right call at 6am, and this
+ * line is the only thing keeping that policy from being a quiet lie.
+ */
+
+.nv-footer {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: var(--ts-space-6);
+  flex-wrap: wrap;
+  padding-top: var(--ts-space-5);
+  border-top: 1px solid var(--ts-ink13);
+}
+
+.nv-signoff {
+  margin: 0;
+  max-width: 34ch;
+  font-family: var(--ts-font-serif);
+  font-size: var(--ts-text-label);
+  line-height: 1.35;
+  color: var(--ts-ink60);
+}
+
+.nv-updated {
+  margin: var(--ts-space-2) 0 0;
+  font-family: var(--ts-font-serif);
+  font-size: 13.5px;
+  color: var(--ts-ink45);
+}
+
+/*
+ * Gold, not brick. Brick is the one alarm register and a late calendar scrape is
+ * not an emergency; spending it here is how it stops meaning anything the
+ * morning the river is actually up.
+ */
+.nv-updated[data-stale] {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--ts-space-2);
+  max-width: 46ch;
+  margin-top: var(--ts-space-3);
+  padding: var(--ts-space-2) var(--ts-space-3);
+  border-radius: var(--ts-radius-input);
+  background: var(--ts-gold14);
+  line-height: 1.35;
+  color: var(--ts-gold-text);
+}
+
+.nv-updated[data-stale] .i {
+  margin-top: 2px;
+  flex: none;
+}
+
+.nv-foot-links {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ts-space-1);
+  align-items: flex-start;
+}
+
+.nv-foot-link {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--ts-space-2);
+  min-height: 32px;
+  font-size: var(--ts-text-caption);
+  color: var(--ts-ink60);
+  text-decoration: none;
+}
+
+.nv-foot-link:hover {
+  color: var(--ts-terracotta-hover);
+  text-decoration: underline;
+}
+
+.nv-foot-link:focus-visible {
+  outline: none;
+  box-shadow: var(--ts-focus);
+  border-radius: 6px;
+}
+
+/* ── skip link and focus order ──────────────────────────────────────────────
+ *
+ * A real link, first in the DOM, off screen until focused. Not a hidden div
+ * with a click handler: it has to work before any script has run, because the
+ * resident who needs it most is on the slowest connection in the county.
+ */
+
+.nv-skipdemo {
+  position: relative;
+  width: 370px;
+  flex: none;
+  padding-bottom: var(--ts-space-4);
+  border: 1px solid var(--ts-ink13);
+  border-radius: var(--ts-radius-card);
+  overflow: hidden;
+  background: var(--ts-cream);
+}
+
+.nv-skip {
+  position: absolute;
+  top: var(--ts-space-2);
+  left: var(--ts-space-2);
+  z-index: 9;
+  padding: var(--ts-space-2) var(--ts-space-4);
+  border-radius: var(--ts-radius-button);
+  background: var(--ts-navy);
+  font-family: var(--ts-font-sans);
+  font-size: var(--ts-text-label);
+  font-weight: 500;
+  color: var(--ts-cream);
+  text-decoration: none;
+  box-shadow: var(--ts-shadow-lifted);
+  transform: translateY(-160%);
+  transition: transform var(--ts-dur-2) var(--ts-ease-out);
+}
+
+.nv-skip:focus {
+  transform: translateY(0);
+  outline: none;
+  box-shadow: var(--ts-focus), var(--ts-shadow-lifted);
+}
+
+/* Sheet-only: the same link parked in flow so the specimen reads on paper. */
+.nv-skip[data-shown] {
+  position: static;
+  display: inline-block;
+  margin: 0 var(--ts-space-4);
+  transform: none;
+}
+
+#nv-skip-target:focus {
+  outline: none;
+  box-shadow: var(--ts-focus);
+  border-radius: var(--ts-radius-card);
+}
+
+.nv-focusmap {
+  flex: 1;
+  min-width: 300px;
+  display: flex;
+  flex-direction: column;
+  gap: var(--ts-space-3);
+}
+
+.nv-focuslist {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+}
+
+.nv-focuslist li {
+  display: flex;
+  align-items: center;
+  gap: var(--ts-space-3);
+  padding: var(--ts-space-2) 0;
+  border-top: 1px solid var(--ts-ink13);
+  font-size: 13.5px;
+  color: var(--ts-ink60);
+}
+
+.nv-focuslist li:first-child {
+  border-top: 0;
+}
+
+.nv-focuslist b {
+  font-weight: 500;
+  color: var(--ts-ink);
+}
+
+.nv-focus-n {
+  display: grid;
+  place-items: center;
+  width: 22px;
+  height: 22px;
+  flex: none;
+  border-radius: var(--ts-radius-full);
+  background: var(--ts-navy10);
+  font-family: var(--ts-font-mono);
+  font-size: 10px;
+  font-weight: 500;
+  color: var(--ts-navy);
+}
+
+/* ── narrow sheet fallback ──────────────────────────────────────────────── */
+
+@media (max-width: 760px) {
+  .nv-desk {
+    box-shadow: none;
+  }
+  .nv-palwrap,
+  .nv-drawerdemo,
+  .nv-skipdemo,
+  .nv-measure {
+    width: 100%;
+  }
+}
