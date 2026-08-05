@@ -22,6 +22,7 @@
 import { Textarea, TextInput } from '../ui/index.js'
 import { Icon } from '../Icon.js'
 import { CORRECTION_FIELDS, type Listing } from './contributeData.js'
+import { PlacePicker } from './PlacePicker.js'
 
 export interface CorrectionDraft {
   listing: Listing | null
@@ -82,6 +83,22 @@ export function CorrectionComposer(props: {
         Pick the one thing that is wrong. One correction, one field, so it can be accepted or turned
         down on its own.
       </p>
+
+      {/* No escape hatch here: a correction is an edit against a listing that
+          already exists, so there is nothing to correct if it is not one. */}
+      <PlacePicker
+        label="Which listing"
+        listingsOnly
+        place={draft.listing ? { listingId: draft.listing.id, name: draft.listing.name } : null}
+        onPick={(_place, listing) =>
+          onChange({
+            ...draft,
+            listing: listing ?? null,
+            beforeValue: currentValue(listing ?? null, draft.field),
+            newValue: '',
+          })
+        }
+      />
 
       <div className="cn-field">
         <span className="cn-label" id="cn-fieldpick">

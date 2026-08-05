@@ -19,6 +19,7 @@
 
 import { useId, useState } from 'react'
 import { Icon } from './Icon.js'
+import { Button, Radio, Textarea } from './ui/index.js'
 import {
   REPORT_REASONS,
   fileReport,
@@ -57,9 +58,9 @@ export function ReportPanel(props: ReportPanelProps) {
             : 'Sign in to report this. Reporting is for verified residents, so a moderator knows a neighbour is behind it.'}
         </p>
         <div className="cr-report-foot">
-          <button className="cr-secondary-sm" onClick={props.onClose}>
+          <Button variant="secondary" size="sm" onClick={props.onClose}>
             Close
-          </button>
+          </Button>
         </div>
       </div>
     )
@@ -93,9 +94,9 @@ export function ReportPanel(props: ReportPanelProps) {
         <div className="cr-report-h">Report {props.name}</div>
         <p className="cr-report-note">{outcome}</p>
         <div className="cr-report-foot">
-          <button className="cr-secondary-sm" onClick={props.onClose}>
+          <Button variant="secondary" size="sm" onClick={props.onClose}>
             Close
-          </button>
+          </Button>
         </div>
       </div>
     )
@@ -111,29 +112,26 @@ export function ReportPanel(props: ReportPanelProps) {
 
       <div className="cr-report-opts" role="radiogroup" aria-label="What is wrong">
         {REPORT_REASONS.map((r) => (
-          <label key={r.value} className="cr-radio">
-            <input
-              type="radio"
-              name={group}
-              value={r.value}
-              checked={reason === r.value}
-              onChange={() => setReason(r.value)}
-            />
+          <Radio
+            key={r.value}
+            name={group}
+            value={r.value}
+            checked={reason === r.value}
+            onChange={() => setReason(r.value)}
+          >
             {r.label}
-          </label>
+          </Radio>
         ))}
       </div>
 
-      <label className="cr-report-detail">
-        <span>Anything a moderator should know</span>
-        <textarea
-          className="cr-textarea"
-          value={detail}
-          onChange={(e) => setDetail(e.target.value)}
-          rows={2}
-          placeholder="Optional. A sentence is plenty."
-        />
-      </label>
+      <Textarea
+        label="Anything a moderator should know"
+        value={detail}
+        onChange={(e) => setDetail(e.target.value)}
+        rows={2}
+        maxLength={2000}
+        placeholder="Optional. A sentence is plenty."
+      />
 
       {problem && (
         <p className="cr-report-problem" role="alert">
@@ -151,12 +149,12 @@ export function ReportPanel(props: ReportPanelProps) {
           Sent as @{props.account.handle}
           {props.version ? ` with version ${props.version}` : ''}.
         </span>
-        <button className="cr-secondary-sm" disabled={busy} onClick={props.onClose}>
+        <Button variant="secondary" size="sm" disabled={busy} onClick={props.onClose}>
           Cancel
-        </button>
-        <button className="cr-primary-sm" disabled={busy} onClick={() => void send()}>
-          {busy ? 'Sending…' : 'Send'}
-        </button>
+        </Button>
+        <Button variant="primary" size="sm" loading={busy} onClick={() => void send()}>
+          Send
+        </Button>
       </div>
     </div>
   )

@@ -79,10 +79,8 @@ export function EventComposer(props: {
       />
 
       <WhenField
-        text={draft.whenText}
-        onText={(whenText) => set('whenText', whenText)}
-        startsAt={draft.startsAt}
-        onConfirm={(startsAt) => set('startsAt', startsAt)}
+        value={{ text: draft.whenText, startsAt: draft.startsAt }}
+        onChange={(next) => onChange({ ...draft, whenText: next.text, startsAt: next.startsAt })}
       />
 
       <PlacePicker

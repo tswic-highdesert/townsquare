@@ -11,12 +11,22 @@
  * **Not one hex literal.** Every colour is a `var(--ts-*)` or a `color-mix()`
  * derived from one. This is the seam a second town reskins through.
  *
- * **`--ts-brick` appears nowhere in this file, on purpose.** It is the single
+ * **A role token where the colour means something, the raw token where it is
+ * just a colour.** The verification ring, the verified tick and the budget
+ * cells are `--ts-verified` rather than sage, because "verified" is a meaning
+ * and the colour carrying it is a per-town decision — Harbor's is not sage and
+ * the ring should still be right there. The sage *wash* behind the budget card
+ * stays `--ts-sage14`: that is a tint, not a claim. Same split for
+ * `--ts-civic-text` on the expired-link notice against a raw `--ts-gold14`
+ * wash, and for `--ts-structure` on the avatar tile.
+ *
+ * **`--ts-alarm` appears nowhere in this file, on purpose.** It is the single
  * alarm register and the temptation to spend it is highest exactly here: a
- * blocked creation, a withdrawn vouch, a delete button. A resident who learns
- * that red means "that handle is taken" has been taught to ignore it by the
- * time the river is up. Refusals are terracotta, destructive controls are
- * plain, and the alarm colour stays unspent.
+ * blocked creation, a withdrawn vouch, a rejected submission. None of those is
+ * an emergency. A resident who learns that the alarm colour means "that handle
+ * is taken" has been taught to ignore it by the time the river is up. Refusals
+ * are terracotta, dangerous buttons use the `destructive` Button variant, and
+ * the alarm colour stays unspent.
  *
  * **Three voices of type.** Newsreader for anything editorial — headings,
  * counts, attributions, timestamps. DM Mono only where it labels the page.
@@ -34,7 +44,7 @@
 .id-screen,
 .mod-screen {
   --id-line: color-mix(in srgb, var(--ts-ink) 12%, transparent);
-  --id-sage-line: color-mix(in srgb, var(--ts-sage) 34%, transparent);
+  --id-sage-line: color-mix(in srgb, var(--ts-verified) 34%, transparent);
   --id-terra-line: color-mix(in srgb, var(--ts-terracotta) 30%, transparent);
   --id-inset: color-mix(in srgb, var(--ts-ink) 3%, transparent);
 
@@ -140,7 +150,7 @@
   display: grid;
   place-items: center;
   background: var(--ts-navy10);
-  color: var(--ts-navy);
+  color: var(--ts-structure);
   margin-bottom: var(--ts-space-4);
 }
 
@@ -149,7 +159,7 @@
   align-items: flex-start;
   gap: var(--ts-space-2);
   font-size: var(--ts-text-label);
-  color: var(--ts-sage);
+  color: var(--ts-verified);
   background: var(--ts-sage14);
   border-radius: var(--ts-radius-button);
   padding: var(--ts-space-3) var(--ts-space-4);
@@ -197,7 +207,7 @@
   align-items: flex-start;
   gap: var(--ts-space-3);
   background: var(--ts-gold14);
-  color: var(--ts-gold-text);
+  color: var(--ts-civic-text);
   border-radius: var(--ts-radius-card);
   padding: var(--ts-space-4);
   margin-bottom: var(--ts-space-6);
@@ -245,7 +255,7 @@
   border-radius: var(--ts-radius-full);
   display: grid;
   place-items: center;
-  background: var(--ts-navy);
+  background: var(--ts-structure);
   color: var(--ts-cream);
   font-family: var(--ts-font-sans);
   font-size: var(--ts-text-label);
@@ -261,34 +271,28 @@
  * every row a person appears in. Here it is one ring on one page.
  */
 .id-avatar[data-verified] {
-  box-shadow: 0 0 0 2px var(--ts-cream), 0 0 0 4px var(--ts-sage);
+  box-shadow: 0 0 0 2px var(--ts-cream), 0 0 0 4px var(--ts-verified);
 }
 
 .id-tick {
-  color: var(--ts-sage);
+  color: var(--ts-verified);
 }
 
 .id-profile-meta {
   font-family: var(--ts-font-serif);
   font-size: var(--ts-text-label);
-  color: var(--ts-ink60);
+  color: var(--ts-quiet);
   margin: 0;
 }
 
 /* ── the verification rung ─────────────────────────────────────────────── */
 
-.id-rung {
-  border: 1px solid var(--ts-hairline);
-  border-radius: var(--ts-radius-card);
-  background: var(--ts-surface);
-  padding: var(--ts-space-5);
-  box-shadow: var(--ts-shadow-flat);
-}
+/* The surface, border, radius, padding and elevation come from `Card`. */
 
-/* Verified is a sage edge, not a sage card. One tinted surface per screen, and
- * on this screen it is spent on the budget meter. */
-.id-rung[data-verified] {
-  border-left: 3px solid var(--ts-sage);
+/* Verified is an edge, not a tinted card. One tinted surface per screen, and on
+ * this screen it is spent on the budget meter. */
+.id-rung-verified {
+  border-left: 3px solid var(--ts-verified);
 }
 
 .id-rung-head {
@@ -308,8 +312,8 @@
   gap: var(--ts-space-2);
 }
 
-.id-rung[data-verified] .id-rung-t > svg {
-  color: var(--ts-sage);
+.id-rung-verified .id-rung-t > svg {
+  color: var(--ts-verified);
 }
 
 .id-rung-say {
@@ -441,11 +445,19 @@
   color: var(--ts-navy);
 }
 
-/* The line the four gated rows sit under. Terracotta, because it is the accent
- * this app spends on "this one is different", and one row's worth of it. */
-.id-table tr[data-gate]:first-of-type th,
-.id-table tr[data-gate]:first-of-type td {
-  border-top: 1.5px solid var(--id-terra-line);
+/*
+ * The line the four gated rows sit under. Terracotta, because it is the accent
+ * this app spends on "this one is different", and one row's worth of it.
+ *
+ * 2px rather than 1.5. Under `border-collapse: collapse` this border is
+ * resolved against the 1px divider on the row above and the wider one wins, and
+ * at 1.5px the two rounded to the same device pixel on a 2x screen: the line
+ * drew across the label column, which is a flex block and never entered the
+ * collapse, and vanished across the three cells that are actual table cells.
+ */
+.id-table tr[data-gate-start] th,
+.id-table tr[data-gate-start] td {
+  border-top: 2px solid var(--id-terra-line);
 }
 
 .id-table tr[data-role] th,
@@ -499,7 +511,7 @@
 
 .id-budget-icon {
   flex: none;
-  color: var(--ts-sage);
+  color: var(--ts-verified);
 }
 
 .id-budget[data-empty] .id-budget-icon {
@@ -518,7 +530,7 @@
   min-width: 14px;
   height: 8px;
   border-radius: var(--ts-radius-full);
-  background: var(--ts-sage);
+  background: var(--ts-verified);
 }
 
 /* A spent vouch is out with somebody, not lost. Hollow rather than absent. */
@@ -592,7 +604,7 @@
  * warning colour would read as a list of things that went wrong.
  */
 .id-hold-list[data-havent] > li > svg {
-  color: var(--ts-sage);
+  color: var(--ts-verified);
 }
 
 .id-leaving {
@@ -660,6 +672,16 @@
   border-radius: var(--ts-radius-input);
 }
 
+/*
+ * The queue rows and cards come from `ui/`: `RowList` and `RowItem` for the
+ * two navigable queues, `Card` for a report and for a version, which each
+ * carry a control that acts on them and so cannot be one tap target.
+ *
+ * What is left here is the two places this screen says something the
+ * primitives do not: a resident's own words inside a report card, and the
+ * metadata line on the submission detail, which is not inside a Row.
+ */
+
 .mod-queue {
   list-style: none;
   margin: 0;
@@ -668,51 +690,19 @@
   gap: var(--ts-space-3);
 }
 
-.mod-row {
-  display: grid;
-  gap: var(--ts-space-2);
-  width: 100%;
-  text-align: left;
-  appearance: none;
-  border: 1px solid var(--ts-hairline);
-  border-radius: var(--ts-radius-card);
-  background: var(--ts-surface);
-  padding: var(--ts-space-4);
-  color: inherit;
-}
-
-button.mod-row:hover {
-  border-color: var(--ts-ink26);
-}
-
-button.mod-row:focus-visible {
-  outline: none;
-  box-shadow: var(--ts-focus);
-}
-
-.mod-row-name {
-  font-family: var(--ts-font-serif);
-  font-size: var(--ts-text-card-title);
-}
-
 /* The metadata line is editorial, not terminal output. Mono here would make a
  * neighbour's handle read as a log entry. */
 .mod-row-detail {
   font-family: var(--ts-font-serif);
   font-size: 13.5px;
-  color: var(--ts-ink60);
+  color: var(--ts-quiet);
 }
 
+/* What the resident actually wrote, at full ink against the card's own meta. */
 .mod-row-say {
   margin: 0;
   font-size: var(--ts-text-label);
   color: var(--ts-ink);
-}
-
-.mod-flags {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--ts-space-2);
 }
 
 /*
@@ -841,17 +831,10 @@ button.mod-row:focus-visible {
   gap: var(--ts-space-3);
 }
 
-.mod-version {
-  border: 1px solid var(--ts-hairline);
-  border-radius: var(--ts-radius-card);
-  background: var(--ts-surface);
-  padding: var(--ts-space-4);
-  display: grid;
-  gap: var(--ts-space-2);
-}
-
-.mod-version[data-live] {
-  border-left: 3px solid var(--ts-sage);
+/* The surface, border, radius and padding come from `Card`. The only thing
+ * this adds is the edge on the version residents are running right now. */
+.mod-version-live {
+  border-left: 3px solid var(--ts-verified);
 }
 
 .mod-version-head {
@@ -881,7 +864,7 @@ button.mod-row:focus-visible {
   gap: var(--ts-space-3);
   font-family: var(--ts-font-serif);
   font-size: 13.5px;
-  color: var(--ts-ink60);
+  color: var(--ts-quiet);
 }
 
 .mod-attrib span {

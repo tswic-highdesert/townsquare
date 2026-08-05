@@ -33,7 +33,20 @@
  */
 
 import { useEffect, useState } from 'react'
-import { Button, EmptyState, InlineError, Skeleton, StatusPill, Textarea } from './ui/index.js'
+import {
+  Button,
+  Card,
+  CardBody,
+  CardMeta,
+  CardTitle,
+  EmptyState,
+  InlineError,
+  RowItem,
+  RowList,
+  Skeleton,
+  StatusPill,
+  Textarea,
+} from './ui/index.js'
 import { Icon } from './Icon.js'
 import {
   decide,
@@ -81,7 +94,13 @@ export function ReviewScreen(props: ReviewScreenProps) {
 
   return (
     <div className="mod-screen">
-      <Button variant="quiet" size="sm" icon="arrow-left" className="id-back" onClick={props.onBack}>
+      <Button
+        variant="quiet"
+        size="sm"
+        icon="arrow-left"
+        className="id-back"
+        onClick={props.onBack}
+      >
         Back
       </Button>
 
@@ -142,32 +161,39 @@ function SubmissionsTab() {
         />
       )}
 
-      <ul className="mod-queue">
-        {queue?.map((item) => (
-          <li key={item.id}>
-            <button className="mod-row" onClick={() => setOpen(item.id)}>
-              <span className="mod-row-name">{item.name}</span>
-              <span className="mod-row-detail">
-                @{item.handle} · v{item.version} ·{' '}
-                {item.kind === 'update' ? 'update' : 'new creation'} · {item.fileCount} files ·{' '}
-                {Math.ceil(item.byteSize / 1024)} KB · {waited(item.submittedAt)}
-              </span>
-              <span className="mod-flags">
-                {item.escalates && (
-                  <StatusPill tone="pending" icon="alert-circle">
-                    asks for more
-                  </StatusPill>
-                )}
-                {item.warningCount > 0 && (
-                  <StatusPill tone="quiet">
-                    {item.warningCount} warning{item.warningCount === 1 ? '' : 's'}
-                  </StatusPill>
-                )}
-              </span>
-            </button>
-          </li>
-        ))}
-      </ul>
+      {queue !== null && queue.length > 0 && (
+        <RowList label="Waiting for review">
+          {queue.map((item) => (
+            <RowItem
+              key={item.id}
+              onClick={() => setOpen(item.id)}
+              title={item.name}
+              meta={
+                <>
+                  @{item.handle} · v{item.version} ·{' '}
+                  {item.kind === 'update' ? 'update' : 'new creation'} · {item.fileCount} files ·{' '}
+                  {Math.ceil(item.byteSize / 1024)} KB · {waited(item.submittedAt)}
+                </>
+              }
+              trailing={
+                <>
+                  {item.escalates && (
+                    <StatusPill tone="pending" icon="alert-circle">
+                      asks for more
+                    </StatusPill>
+                  )}
+                  {item.warningCount > 0 && (
+                    <StatusPill tone="quiet">
+                      {item.warningCount} warning
+                      {item.warningCount === 1 ? '' : 's'}
+                    </StatusPill>
+                  )}
+                </>
+              }
+            />
+          ))}
+        </RowList>
+      )}
     </>
   )
 }
@@ -210,14 +236,23 @@ function Submission(props: { id: string; onBack(): void; onDone(): void }) {
   if (problem && !detail) return <InlineError>{problem}</InlineError>
   if (!detail) return <QueueSkeleton />
 
-  const manifest = detail.submission.manifest as { tagline?: string; description?: string }
+  const manifest = detail.submission.manifest as {
+    tagline?: string
+    description?: string
+  }
   // A rejection or a change request is the only moment the platform tells a
   // resident no, and how it reads decides whether they ever build again.
   const needsNote = note.trim().length === 0
 
   return (
     <>
-      <Button variant="quiet" size="sm" icon="arrow-left" className="id-back" onClick={props.onBack}>
+      <Button
+        variant="quiet"
+        size="sm"
+        icon="arrow-left"
+        className="id-back"
+        onClick={props.onBack}
+      >
         Queue
       </Button>
 
@@ -292,7 +327,11 @@ function Submission(props: { id: string; onBack(): void; onDone(): void }) {
           >
             Request changes
           </Button>
-          <Button variant="quiet" disabled={busy || needsNote} onClick={() => void submit('reject')}>
+          <Button
+            variant="quiet"
+            disabled={busy || needsNote}
+            onClick={() => void submit('reject')}
+          >
             Reject
           </Button>
         </div>
@@ -313,7 +352,8 @@ function Submission(props: { id: string; onBack(): void; onDone(): void }) {
         <p className="id-fine">
           <Icon name="lock" size={14} />
           Approval is of this exact version, pinned by digest{' '}
-          <code>{detail.submission.bundleDigest.slice(0, 12)}</code>. A later update comes back here.
+          <code>{detail.submission.bundleDigest.slice(0, 12)}</code>. A later update comes back
+          here.
         </p>
       </section>
     </>
@@ -353,28 +393,36 @@ function ReportsTab() {
         />
       )}
 
+      {/*
+        A card rather than a row, and the difference is not cosmetic. A Row is
+        one target: a resident's own words and a control to answer them are two
+        things, and nesting a button inside a row's tap area is the one thing
+        the primitive is written not to do.
+      */}
       <ul className="mod-queue">
         {reports?.map((report) => (
           <li key={report.id}>
-            <div className="mod-row">
-              <span className="mod-row-name">
-                {report.targetLabel}
-                {report.targetVersion ? ` · v${report.targetVersion}` : ''}
-              </span>
-              <span className="mod-row-detail">
-                {report.reason} · reported by @{report.reporterHandle} · {onDay(report.createdAt)}
-              </span>
-              {report.detail && <p className="mod-row-say">{report.detail}</p>}
-              {open === report.id ? (
-                <ResolveForm id={report.id} onDone={load} onCancel={() => setOpen(null)} />
-              ) : (
-                <div className="id-actions">
-                  <Button variant="secondary" size="sm" onClick={() => setOpen(report.id)}>
-                    Close this report
-                  </Button>
-                </div>
-              )}
-            </div>
+            <Card>
+              <CardBody>
+                <CardTitle>
+                  {report.targetLabel}
+                  {report.targetVersion ? ` · v${report.targetVersion}` : ''}
+                </CardTitle>
+                <CardMeta>
+                  {report.reason} · reported by @{report.reporterHandle} · {onDay(report.createdAt)}
+                </CardMeta>
+                {report.detail && <p className="mod-row-say">{report.detail}</p>}
+                {open === report.id ? (
+                  <ResolveForm id={report.id} onDone={load} onCancel={() => setOpen(null)} />
+                ) : (
+                  <div className="id-actions">
+                    <Button variant="secondary" size="sm" onClick={() => setOpen(report.id)}>
+                      Close this report
+                    </Button>
+                  </div>
+                )}
+              </CardBody>
+            </Card>
           </li>
         ))}
       </ul>
@@ -413,7 +461,12 @@ function ResolveForm(props: { id: string; onDone(): void; onCancel(): void }) {
         help="Kept with the report. The person who filed it is told what was concluded, and often that is “we read it, nothing needed to happen”."
       />
       <div className="id-actions">
-        <Button variant="secondary" size="sm" loading={busy} onClick={() => void submit('dismissed')}>
+        <Button
+          variant="secondary"
+          size="sm"
+          loading={busy}
+          onClick={() => void submit('dismissed')}
+        >
           Nothing to do
         </Button>
         <Button variant="secondary" size="sm" disabled={busy} onClick={() => void submit('upheld')}>
@@ -463,32 +516,39 @@ function LiveTab() {
         />
       )}
 
-      <ul className="mod-queue">
-        {rows?.map((row) => (
-          <li key={row.id}>
-            <button className="mod-row" onClick={() => setOpen(row.id)}>
-              <span className="mod-row-name">{row.name}</span>
-              <span className="mod-row-detail">
-                /{row.slug}
-                {row.activeVersion ? ` · v${row.activeVersion}` : ''}
-              </span>
-              <span className="mod-flags">
-                {row.status !== 'active' && <StatusPill tone="quiet">{row.status}</StatusPill>}
-                {/*
-                  A count, not a ranking, and only on a screen no resident can
-                  reach. It tells a moderator there is something to read here;
-                  the same number anywhere public would be a pile-on button.
-                */}
-                {row.openReports > 0 && (
-                  <StatusPill tone="pending">
-                    {row.openReports} open report{row.openReports === 1 ? '' : 's'}
-                  </StatusPill>
-                )}
-              </span>
-            </button>
-          </li>
-        ))}
-      </ul>
+      {rows !== null && rows.length > 0 && (
+        <RowList label="Everything already running">
+          {rows.map((row) => (
+            <RowItem
+              key={row.id}
+              onClick={() => setOpen(row.id)}
+              title={row.name}
+              meta={
+                <>
+                  /{row.slug}
+                  {row.activeVersion ? ` · v${row.activeVersion}` : ''}
+                </>
+              }
+              trailing={
+                <>
+                  {row.status !== 'active' && <StatusPill tone="quiet">{row.status}</StatusPill>}
+                  {/*
+                    A count, not a ranking, and only on a screen no resident can
+                    reach. It tells a moderator there is something to read here;
+                    the same number anywhere public would be a pile-on button.
+                  */}
+                  {row.openReports > 0 && (
+                    <StatusPill tone="pending">
+                      {row.openReports} open report
+                      {row.openReports === 1 ? '' : 's'}
+                    </StatusPill>
+                  )}
+                </>
+              }
+            />
+          ))}
+        </RowList>
+      )}
     </>
   )
 }
@@ -560,7 +620,13 @@ function LiveCreation(props: { id: string; onBack(): void }) {
 
   return (
     <>
-      <Button variant="quiet" size="sm" icon="arrow-left" className="id-back" onClick={props.onBack}>
+      <Button
+        variant="quiet"
+        size="sm"
+        icon="arrow-left"
+        className="id-back"
+        onClick={props.onBack}
+      >
         Live creations
       </Button>
 
@@ -598,7 +664,11 @@ function LiveCreation(props: { id: string; onBack(): void }) {
         <div className="id-actions">
           {detail.creation.status === 'active' ? (
             <>
-              <Button variant="secondary" disabled={busy || needsReason} onClick={() => void act('hide')}>
+              <Button
+                variant="secondary"
+                disabled={busy || needsReason}
+                onClick={() => void act('hide')}
+              >
                 Hide
               </Button>
               {/*
@@ -607,12 +677,20 @@ function LiveCreation(props: { id: string; onBack(): void }) {
                 for the river, and a moderator using this reads the sentence
                 under it, not the paint.
               */}
-              <Button variant="secondary" disabled={busy || needsReason} onClick={() => void act('block')}>
+              <Button
+                variant="secondary"
+                disabled={busy || needsReason}
+                onClick={() => void act('block')}
+              >
                 Block
               </Button>
             </>
           ) : (
-            <Button variant="primary" disabled={busy || needsReason} onClick={() => void act('restore')}>
+            <Button
+              variant="primary"
+              disabled={busy || needsReason}
+              onClick={() => void act('restore')}
+            >
               Put it back
             </Button>
           )}
@@ -634,40 +712,53 @@ function LiveCreation(props: { id: string; onBack(): void }) {
       <section>
         <h2 className="id-eyebrow id-eyebrow-sep">Versions</h2>
         <ul className="mod-versions">
+          {/*
+            A card each, and the live one carries the only edge on the list.
+            These are not rows for the same reason a report is not: each holds a
+            button that acts on it, and a Row is one target.
+
+            Live is marked with a class rather than a data attribute, because
+            `Card` forwards `className` and deliberately does not spread
+            arbitrary props onto its element.
+          */}
           {detail.versions.map((version) => (
-            <li key={version.id} className="mod-version" data-live={version.live || undefined}>
-              <div className="mod-version-head">
-                <span className="mod-version-n">v{version.version}</span>
-                {version.live && <StatusPill tone="live">live</StatusPill>}
-                {version.revertedFromVersionId && (
-                  <StatusPill tone="quiet" icon="history">
-                    a revert
-                  </StatusPill>
-                )}
-                {!version.live && version.status === 'superseded' && (
-                  <StatusPill tone="quiet">replaced</StatusPill>
-                )}
-                <span className="mod-version-when">{onDay(version.createdAt)}</span>
-              </div>
-              <div className="mod-attrib">
-                <span>
-                  <Icon name="lock" size={14} />
-                  <code>{version.bundleDigest.slice(0, 12)}</code>
-                </span>
-                <span>{version.status}</span>
-              </div>
-              {version.revertable && (
-                <div className="id-actions">
-                  <Button
-                    variant="secondary"
-                    size="sm"
-                    disabled={busy || needsReason}
-                    onClick={() => void act('revert', version.id)}
-                  >
-                    Put v{version.version} back
-                  </Button>
-                </div>
-              )}
+            <li key={version.id}>
+              <Card className={version.live ? 'mod-version mod-version-live' : 'mod-version'}>
+                <CardBody>
+                  <div className="mod-version-head">
+                    <span className="mod-version-n">v{version.version}</span>
+                    {version.live && <StatusPill tone="live">live</StatusPill>}
+                    {version.revertedFromVersionId && (
+                      <StatusPill tone="quiet" icon="history">
+                        a revert
+                      </StatusPill>
+                    )}
+                    {!version.live && version.status === 'superseded' && (
+                      <StatusPill tone="quiet">replaced</StatusPill>
+                    )}
+                    <span className="mod-version-when">{onDay(version.createdAt)}</span>
+                  </div>
+                  <div className="mod-attrib">
+                    <span>
+                      <Icon name="lock" size={14} />
+                      <code>{version.bundleDigest.slice(0, 12)}</code>
+                    </span>
+                    <span>{version.status}</span>
+                  </div>
+                  {version.revertable && (
+                    <div className="id-actions">
+                      <Button
+                        variant="secondary"
+                        size="sm"
+                        disabled={busy || needsReason}
+                        onClick={() => void act('revert', version.id)}
+                      >
+                        Put v{version.version} back
+                      </Button>
+                    </div>
+                  )}
+                </CardBody>
+              </Card>
             </li>
           ))}
         </ul>
@@ -730,7 +821,9 @@ function Diff(props: { diff: ManifestDiff }) {
         )}
       </div>
 
-      {quiet && <p className="id-note">Nothing new is being asked for. This update only changes code.</p>}
+      {quiet && (
+        <p className="id-note">Nothing new is being asked for. This update only changes code.</p>
+      )}
 
       {diff.renamed && (
         <p data-add>

@@ -7,12 +7,16 @@
  * moves up this list changes what wins, not just where it lives. Add a new
  * screen at the end; put a rule everything depends on in `base.css`.
  *
- * The primitives layer, `ui/ui.css`, is deliberately not imported from here.
- * It has to load *before* this file, so a screen can override a primitive and
- * never the other way round, and `main.tsx` does both imports in that order.
- * It cannot be an `@import` here at all: postcss will not follow a parent
- * traversal out of this directory, and fails with an ENOENT that names the
- * path but not the reason.
+ * The primitives layer, `ui/ui.css`, is not imported from here. It cannot be:
+ * postcss will not follow a parent traversal out of this directory, and fails
+ * with an ENOENT that names the path but not the reason. `main.tsx` imports it.
+ *
+ * It used to say that load order was what let a screen override a primitive.
+ * That was false for any stylesheet imported from its own component, which is
+ * how every screen here is written, and screen overrides were losing silently.
+ * Ordering is now enforced by cascade layers rather than by import position:
+ * `ts-base` < `ts-primitives` < unlayered. The files below are unlayered on
+ * purpose, so a screen rule beats a primitive without needing to know this.
  */
 
 @import './base.css';

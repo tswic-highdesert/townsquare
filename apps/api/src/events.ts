@@ -247,6 +247,45 @@ function clockLabel(iso: string, timezone: string): string {
 
 /* ─────────────────────────────────────────────────────── the data traps ── */
 
+const NAMED_ENTITIES: Readonly<Record<string, string>> = {
+  amp: '&',
+  lt: '<',
+  gt: '>',
+  quot: '"',
+  apos: "'",
+  nbsp: ' ',
+}
+
+/**
+ * Undo one round of HTML escaping left behind by the scrapes.
+ *
+ * Two of the sources hand back text they read out of an HTML attribute without
+ * unescaping it, so the feed carries `RVLA Written Driver&#039;s License Prep`
+ * as a title and `calendar.aspx?game_id=7748&amp;sport_id=1` as a URL. React
+ * escapes on output, so the title renders the entity to a resident verbatim,
+ * and the URL is worse than cosmetic: `&amp;sport_id` is not a parameter, so
+ * the link opens the wrong page.
+ *
+ * This is decoding, not editing. It changes no word of what a source wrote,
+ * and it is a single pass, so a title that genuinely contains `&amp;amp;`
+ * comes out as `&amp;` rather than being unwound to something nobody typed.
+ * The real fix is in the scrapers; this stops the bug reaching a screen in the
+ * meantime.
+ */
+export function decodeEntities(text: string): string {
+  return text.replace(/&(#\d{1,6}|#[xX][0-9a-fA-F]{1,5}|[a-zA-Z]{2,6});/g, (whole, body: string) => {
+    if (body.startsWith('#')) {
+      const code = body[1] === 'x' || body[1] === 'X'
+        ? Number.parseInt(body.slice(2), 16)
+        : Number.parseInt(body.slice(1), 10)
+      // Refuse anything outside the printable range rather than emitting a
+      // control character or a lone surrogate into the payload.
+      return code >= 32 && code <= 0x10ffff ? String.fromCodePoint(code) : whole
+    }
+    return NAMED_ENTITIES[body.toLowerCase()] ?? whole
+  })
+}
+
 /**
  * An end time, or null when there is not an honest one.
  *
@@ -300,7 +339,16 @@ export function eventDay(event: EventItem, timezone: string): string {
 function byStart(a: EventItem, b: EventItem): number {
   const allDay = Number(a.isAllDay ?? false) - Number(b.isAllDay ?? false)
   if (allDay !== 0) return allDay
-  return a.startDate.localeCompare(b.startDate)
+  /*
+   * Parsed, not compared as strings.
+   *
+   * The scrapes do not agree on a format: the iCal sources emit
+   * `2026-08-17T17:00:00-05:00` and the school district's emits
+   * `2026-08-17T19:30:00.000Z`. Sorting those lexicographically put a 7:30pm
+   * event above a 5:00pm one, and then the written gap announced the wrong
+   * time to come back. Caught by screenshotting a busy Monday.
+   */
+  return Date.parse(a.startDate) - Date.parse(b.startDate)
 }
 
 /**
@@ -331,12 +379,12 @@ function toRow(event: EventItem, input: EventsInput): EventRow {
 
   return {
     id: event.id,
-    title: event.title,
+    title: decodeEntities(event.title),
     // The location is the only detail line there is. `cost`, `recurrence`,
     // `contactPhone` and `contactEmail` are declared on `EventItem` and set by
     // nothing: zero of 343 events carry any of them.
-    detail: event.location,
-    location: event.location,
+    detail: decodeEntities(event.location),
+    location: decodeEntities(event.location),
     startsAt: event.startDate,
     endsAt: end,
     allDay,
@@ -349,7 +397,7 @@ function toRow(event: EventItem, input: EventsInput): EventRow {
     category: categorize(event),
     source: event.source,
     sourceName: source?.name ?? event.source,
-    url: event.url ?? null,
+    url: event.url ? decodeEntities(event.url) : null,
   }
 }
 
@@ -562,7 +610,7 @@ export function assembleMonth(input: EventsInput & { month?: string }): MonthPay
       count,
       chips: events.slice(0, CHIP_CAP).map((e) => ({
         id: e.id,
-        title: e.title,
+        title: decodeEntities(e.title),
         category: categorize(e),
       })),
       more: Math.max(0, count - CHIP_CAP),
@@ -625,19 +673,26 @@ export function whenPlain(iso: string, timezone: string, today: string, allDay: 
   const weekday = parts(dayInstant(day), timezone, { weekday: 'long' })
 
   const relative =
-    away === 0 ? 'Today' : away === 1 ? 'Tomorrow' : away === -1 ? 'Yesterday' : null
+    away === 0 ? 'This' : away === 1 ? 'Tomorrow' : away === -1 ? 'Yesterday' : null
   // Inside the coming week a bare weekday is unambiguous and warmer than a
   // date. Past that it stops being, and "Saturday" three weeks out is a trap.
-  const named = relative ?? (away > 1 && away < 7 ? weekday : `${weekday} ${dayAndMonth(dayInstant(day), timezone)}`)
+  const dated = away > 1 && away < 7 ? weekday : `${weekday} ${dayAndMonth(dayInstant(day), timezone)}`
 
-  if (allDay) return `${named}, all day`
+  if (allDay) {
+    // "This, all day" is not a sentence. The day says itself here.
+    const named = away === 0 ? 'Today' : (relative ?? dated)
+    return `${named}, all day`
+  }
 
   // `% 24` because `hour12: false` reports midnight as 24 in some ICU builds
   // and as 0 in others, and "24 is not less than 12" quietly moves every
   // midnight event to the evening.
   const hour = Number(parts(iso, timezone, { hour: '2-digit', hour12: false })) % 24
   const partOfDay = hour < 12 ? 'morning' : hour < 17 ? 'afternoon' : 'evening'
-  return relative ? `${relative} ${partOfDay}` : `${named} ${partOfDay}`
+  if (relative) return `${relative} ${partOfDay}`
+  // A comma once the date is in it. "Monday 17 August afternoon" is three
+  // nouns in a row; "Monday 17 August, afternoon" is how a person says it.
+  return away > 1 && away < 7 ? `${dated} ${partOfDay}` : `${dated}, ${partOfDay}`
 }
 
 /** `Sat 8 August, 7:00 am to 12:00 pm`. The stamp, for the calendar filler. */
@@ -676,12 +731,12 @@ export function assembleDetail(input: EventsInput & { id: string }): EventDetail
   return {
     town: input.town,
     id: event.id,
-    title: event.title,
+    title: decodeEntities(event.title),
     // 91 of 343 events carry no description, and a third of the ones that do
     // are the title again. An empty block is worse than no block.
     description:
       event.description && event.description.trim() && event.description.trim() !== event.title
-        ? event.description.trim()
+        ? decodeEntities(event.description.trim())
         : null,
     category: categorize(event),
     allDay: event.isAllDay === true,
@@ -690,14 +745,14 @@ export function assembleDetail(input: EventsInput & { id: string }): EventDetail
     day,
     whenPlain: whenPlain(event.startDate, tz, today, event.isAllDay === true),
     whenExact: whenExact(event, tz),
-    location: event.location,
-    directionsUrl: directionsFor(event.location),
+    location: decodeEntities(event.location),
+    directionsUrl: directionsFor(decodeEntities(event.location)),
     source: {
       id: event.source,
       name: source?.name ?? event.source,
       url: source?.url ?? null,
     },
-    url: event.url ?? null,
+    url: event.url ? decodeEntities(event.url) : null,
     alsoThatDay: also,
     generatedAt: input.now,
   }

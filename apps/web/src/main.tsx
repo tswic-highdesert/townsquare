@@ -1,9 +1,13 @@
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import { cssVariables, fontFaceCss, townCss } from '@townsquare/tokens'
-import { App } from './App.js'
+// Stylesheets before the component tree. `App` pulls in every screen, and a
+// screen's stylesheet is evaluated when its module is, so importing App first
+// put screen CSS ahead of the primitives. Cascade layers make the ordering
+// correct regardless (see `ui/ui.css`); this keeps the file honest to read.
 import './ui/ui.css'
 import './styles/index.css'
+import { App } from './App.js'
 
 /**
  * The shell takes its palette from the same tokens a creation gets.

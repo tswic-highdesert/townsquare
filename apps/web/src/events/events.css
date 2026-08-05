@@ -92,7 +92,13 @@
 
 .ev-week {
   display: grid;
-  grid-template-columns: repeat(7, 1fr);
+  /*
+   * `minmax(0, 1fr)`, never a bare `1fr`. A bare `1fr` floors at the column's
+   * min-content, so one cell holding "Intramural Sports: Sunday Night Indoor
+   * Wiffle Ball" widened its own week and every week in August came out a
+   * different shape. Found by screenshotting it.
+   */
+  grid-template-columns: repeat(7, minmax(0, 1fr));
   gap: var(--ts-space-1);
   margin-bottom: var(--ts-space-4);
 }
@@ -570,7 +576,13 @@
 
 .ev-month-dow {
   display: grid;
-  grid-template-columns: repeat(7, 1fr);
+  /*
+   * `minmax(0, 1fr)`, never a bare `1fr`. A bare `1fr` floors at the column's
+   * min-content, so one cell holding "Intramural Sports: Sunday Night Indoor
+   * Wiffle Ball" widened its own week and every week in August came out a
+   * different shape. Found by screenshotting it.
+   */
+  grid-template-columns: repeat(7, minmax(0, 1fr));
   gap: 1px;
   margin-bottom: var(--ts-space-1);
 }
@@ -584,9 +596,16 @@
   text-align: center;
 }
 
+/*
+ * The weeks stack, and each week is its own seven-column grid.
+ *
+ * Nesting a grid row inside a grid parent looks tidier and is wrong: each row
+ * becomes an independently sized grid item, so every week works out its own
+ * column widths and the calendar comes out ragged. Found by screenshotting it.
+ * A block parent gives every week the same width to divide by seven.
+ */
 .ev-month-grid {
-  display: grid;
-  gap: 1px;
+  display: block;
   background: var(--ts-ink13);
   border: 1px solid var(--ts-ink13);
   border-radius: var(--ts-radius-card);
@@ -595,8 +614,18 @@
 
 .ev-month-week {
   display: grid;
-  grid-template-columns: repeat(7, 1fr);
+  /*
+   * `minmax(0, 1fr)`, never a bare `1fr`. A bare `1fr` floors at the column's
+   * min-content, so one cell holding "Intramural Sports: Sunday Night Indoor
+   * Wiffle Ball" widened its own week and every week in August came out a
+   * different shape. Found by screenshotting it.
+   */
+  grid-template-columns: repeat(7, minmax(0, 1fr));
   gap: 1px;
+}
+
+.ev-month-week + .ev-month-week {
+  margin-top: 1px;
 }
 
 .ev-mday {
@@ -619,7 +648,6 @@
 
 .ev-mday[data-out] {
   background: color-mix(in srgb, var(--ts-stone) 45%, var(--ts-cream));
-  cursor: default;
 }
 
 .ev-mday[data-out] .ev-mday-num {

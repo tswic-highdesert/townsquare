@@ -6,11 +6,28 @@
  * `styles/index.css`, so this file arrives with the screens that need it and
  * six people are not editing one import list.
  *
- * Every colour is a `--ts-*` custom property and there is not one hex literal
- * below. That matters more here than anywhere else in the shell: a creation
- * inherits these same properties inside its frame, so a hand-copied colour
- * would be a colour the guest cannot see, and the two sides would drift apart
- * in exactly the place the design is trying to prove they do not.
+ * What is *not* here is as deliberate as what is. Cards, rows, buttons, radios
+ * and text areas come from `ui/`, so there is no card CSS, no button CSS and no
+ * form-control CSS below. This file styles what is specific to the build layer:
+ * the touch strip, the trust list's weight treatment, the host chrome, and the
+ * builder door's panels.
+ *
+ * Two colour rules, and the second is the newer one:
+ *
+ *   Every colour is a custom property. There is not one hex literal below. That
+ *   matters more here than anywhere else in the shell: a creation inherits these
+ *   same properties inside its frame, so a hand-copied colour would be a colour
+ *   the guest cannot see, and the two sides would drift apart in exactly the
+ *   place the design is trying to prove they do not.
+ *
+ *   Use the **role** token where the colour carries meaning and the raw palette
+ *   token where it is only a colour. `--ts-action` on the inset rule beside a
+ *   consequential permission, because that rule means "this one matters";
+ *   `--ts-terracotta-tint` on the wash behind it, because a wash is a wash. A
+ *   town whose action colour is teal moves the first and not the second.
+ *
+ * `--ts-alarm` appears nowhere in this file. Nothing in the build layer is the
+ * river coming up.
  *
  * Class names follow the hi-fi sheet's `cr-` prefix, so a specimen in
  * `design/hifi-v2/sections/06-creations.html` and the component that shipped
@@ -34,7 +51,7 @@
   background: none;
   border: 0;
   border-radius: var(--ts-radius-button);
-  color: var(--ts-ink60);
+  color: var(--ts-quiet);
   font-family: var(--ts-font-sans);
   font-size: var(--ts-text-label);
 }
@@ -76,7 +93,7 @@
   font-family: var(--ts-font-serif);
   font-size: 15.5px;
   line-height: 1.5;
-  color: var(--ts-ink60);
+  color: var(--ts-quiet);
   margin: 0 0 var(--ts-space-5);
   max-width: 52ch;
 }
@@ -84,6 +101,14 @@
 .cr-lede-tight {
   font-size: 14.5px;
   margin-bottom: var(--ts-space-2);
+}
+
+/* The attribution line, wherever it is not inside a `CardMeta`. */
+.cr-by {
+  margin: var(--ts-space-2) 0 0;
+  font-family: var(--ts-font-serif);
+  font-size: 13px;
+  color: var(--ts-quiet);
 }
 
 .cr-footnote {
@@ -117,7 +142,7 @@
   flex: none;
   border-radius: 11px;
   overflow: hidden;
-  color: var(--ts-navy);
+  color: var(--ts-structure);
   background: var(--ts-navy10);
 }
 
@@ -139,12 +164,12 @@
 }
 
 .cr-appicon[data-tone='sage'] {
-  color: var(--ts-sage);
+  color: var(--ts-verified);
   background: var(--ts-sage14);
 }
 
 .cr-appicon[data-tone='gold'] {
-  color: var(--ts-gold-text);
+  color: var(--ts-civic-text);
   background: var(--ts-gold14);
 }
 
@@ -170,6 +195,11 @@
   padding: 0;
 }
 
+/* Inside a card the body grid already spaces its children. */
+.ts-card-body > .cr-touch {
+  margin-top: 0;
+}
+
 .cr-touch-item {
   display: inline-flex;
   align-items: center;
@@ -178,7 +208,7 @@
   border-radius: var(--ts-radius-chip);
   font-size: 11.5px;
   line-height: 1.2;
-  color: var(--ts-ink60);
+  color: var(--ts-quiet);
   background: var(--ts-ink08);
 }
 
@@ -188,10 +218,10 @@
 }
 
 .cr-touch-item[data-w='consequential'] {
-  color: var(--ts-terracotta);
+  color: var(--ts-action);
   background: var(--ts-terracotta10);
   font-weight: 500;
-  box-shadow: inset 2px 0 0 var(--ts-terracotta);
+  box-shadow: inset 2px 0 0 var(--ts-action);
   padding-left: 9px;
 }
 
@@ -202,10 +232,10 @@
 
 .cr-touch[data-on='dark'] .cr-touch-item[data-w='consequential'] {
   color: var(--ts-cream);
-  box-shadow: inset 2px 0 0 var(--ts-terracotta);
+  box-shadow: inset 2px 0 0 var(--ts-action);
 }
 
-/* ── gallery cards ──────────────────────────────────────────────────────── */
+/* ── gallery ────────────────────────────────────────────────────────────── */
 
 .cr-cats {
   display: flex;
@@ -239,11 +269,11 @@
   background: var(--ts-cream);
 }
 
-/* Selection is navy, not terracotta: terracotta means "this does something",
-   and a filter chip has already done it. */
+/* Selection is the structural colour, not the action colour: terracotta means
+   "this does something", and a filter chip has already done it. */
 .cr-cat[data-state='on'] {
-  background: var(--ts-navy);
-  border-color: var(--ts-navy);
+  background: var(--ts-structure);
+  border-color: var(--ts-structure);
   color: var(--ts-cream);
 }
 
@@ -262,56 +292,11 @@
   gap: var(--ts-space-3);
 }
 
-.cr-card {
-  display: block;
-  width: 100%;
-  text-align: left;
-  padding: var(--ts-space-4);
-  background: var(--ts-surface);
-  border: 1px solid var(--ts-hairline);
-  border-radius: var(--ts-radius-card);
-  box-shadow: var(--ts-shadow-flat);
-  color: inherit;
-  font: inherit;
-  transition:
-    box-shadow var(--ts-dur-2) var(--ts-ease),
-    transform var(--ts-dur-2) var(--ts-ease);
-}
-
-.cr-card:hover {
-  box-shadow: var(--ts-shadow-raised);
-  transform: translateY(-1px);
-}
-
-.cr-card:focus-visible {
-  outline: none;
-  box-shadow: var(--ts-focus);
-}
-
-.cr-card-name {
-  display: block;
-  font-family: var(--ts-font-serif);
-  font-size: var(--ts-text-card-title);
-  font-weight: 600;
-  line-height: 1.2;
-  margin-top: var(--ts-space-3);
-}
-
 .cr-card-tagline {
-  display: block;
+  margin: 0;
   font-size: 13px;
   line-height: 1.45;
-  color: var(--ts-ink60);
-  margin: 4px 0 0;
-}
-
-.cr-card-by,
-.cr-by {
-  display: block;
-  margin-top: var(--ts-space-3);
-  font-family: var(--ts-font-serif);
-  font-size: 13px;
-  color: var(--ts-ink60);
+  color: var(--ts-quiet);
 }
 
 /* ── the launch-week arrangement ────────────────────────────────────────── */
@@ -337,7 +322,7 @@
   font-size: 11px;
   font-weight: 500;
   letter-spacing: 0.08em;
-  color: var(--ts-terracotta);
+  color: var(--ts-action);
   flex: none;
   width: 22px;
   padding-top: var(--ts-space-4);
@@ -361,8 +346,12 @@
   box-shadow: var(--ts-focus);
 }
 
-.cr-firsts .cr-card-name {
-  margin-top: 0;
+.cr-firsts-name {
+  display: block;
+  font-family: var(--ts-font-serif);
+  font-size: var(--ts-text-card-title);
+  font-weight: 600;
+  line-height: 1.2;
 }
 
 .cr-firsts-why {
@@ -370,22 +359,30 @@
   font-family: var(--ts-font-serif);
   font-size: 14.5px;
   line-height: 1.5;
-  color: var(--ts-ink60);
+  color: var(--ts-quiet);
   margin: var(--ts-space-1) 0 0;
   max-width: 56ch;
+}
+
+.cr-firsts-by {
+  display: block;
+  margin-top: var(--ts-space-2);
+  font-family: var(--ts-font-serif);
+  font-size: 13px;
+  color: var(--ts-quiet);
 }
 
 /* ── the invitation ─────────────────────────────────────────────────────── */
 
 /*
- * The dashed edge is doing a job. This is the one card in the gallery that is
- * not a creation, and it should read as an empty slot waiting for somebody
- * rather than as an advertisement.
+ * The dashed edge is doing a job neither the dark card nor the civic card can:
+ * this is the one card in the gallery that is not a creation, and it should
+ * read as an empty slot waiting for somebody rather than as an advertisement.
  */
 .cr-invite-card {
   margin-top: var(--ts-space-6);
   padding: var(--ts-space-5);
-  border: 1px dashed color-mix(in srgb, var(--ts-terracotta) 45%, transparent);
+  border: 1px dashed color-mix(in srgb, var(--ts-action) 45%, transparent);
   border-radius: var(--ts-radius-card);
   background: var(--ts-terracotta-tint);
 }
@@ -397,7 +394,7 @@
   width: 40px;
   height: 40px;
   border-radius: 12px;
-  color: var(--ts-terracotta);
+  color: var(--ts-action);
   background: var(--ts-surface);
   margin-bottom: var(--ts-space-3);
 }
@@ -412,7 +409,7 @@
 .cr-invite-copy {
   font-size: 13.5px;
   line-height: 1.5;
-  color: var(--ts-ink60);
+  color: var(--ts-quiet);
   margin: var(--ts-space-2) 0 var(--ts-space-4);
   max-width: 52ch;
 }
@@ -427,7 +424,7 @@
   border-top: 1px solid var(--ts-ink13);
   font-family: var(--ts-font-serif);
   font-size: 13.5px;
-  color: var(--ts-ink60);
+  color: var(--ts-quiet);
 }
 
 .cr-invite-link {
@@ -438,7 +435,7 @@
   background: none;
   border: 0;
   padding: 6px 2px;
-  color: var(--ts-terracotta);
+  color: var(--ts-action);
   font-family: var(--ts-font-sans);
   font-size: 13.5px;
   font-weight: 500;
@@ -450,110 +447,13 @@
   border-radius: 6px;
 }
 
-/* ── buttons ────────────────────────────────────────────────────────────── */
-
-.cr-primary,
-.cr-secondary {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: var(--ts-space-2);
-  min-height: 44px;
-  padding: var(--ts-space-3) var(--ts-space-5);
-  border-radius: var(--ts-radius-button);
-  font-family: var(--ts-font-sans);
-  font-size: var(--ts-text-label);
-  font-weight: 500;
-  transition: background var(--ts-dur-1) var(--ts-ease);
-}
-
-.cr-primary {
-  background: var(--ts-terracotta);
-  color: var(--ts-surface);
-  border: 0;
-}
-
-.cr-primary:hover:not([disabled]) {
-  background: var(--ts-terracotta-hover);
-}
-
-.cr-secondary {
-  background: var(--ts-surface);
-  color: var(--ts-ink);
-  border: 1px solid var(--ts-hairline);
-}
-
-.cr-secondary:hover:not([disabled]) {
-  background: var(--ts-cream);
-}
-
-.cr-primary:focus-visible,
-.cr-secondary:focus-visible,
-.cr-primary-sm:focus-visible,
-.cr-secondary-sm:focus-visible,
-.cr-linkbtn:focus-visible,
-.cr-iconbtn:focus-visible {
-  outline: none;
-  box-shadow: var(--ts-focus);
-}
-
-.cr-primary[disabled],
-.cr-secondary[disabled],
-.cr-primary-sm[disabled],
-.cr-secondary-sm[disabled] {
-  opacity: 0.55;
-  cursor: not-allowed;
-}
-
-.cr-primary-wide,
-.cr-secondary-wide {
-  width: 100%;
-  margin-top: var(--ts-space-5);
-}
-
-/* The safe choice first, so it is the easy target on a phone. */
-.cr-actions {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(0, 1.4fr);
-  gap: var(--ts-space-3);
-}
-
-.cr-primary-sm,
-.cr-secondary-sm {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 6px;
-  min-height: 36px;
-  padding: 0 var(--ts-space-3);
-  border-radius: var(--ts-radius-button);
-  font-family: var(--ts-font-sans);
-  font-size: var(--ts-text-caption);
-  font-weight: 500;
-}
-
-.cr-primary-sm {
-  background: var(--ts-terracotta);
-  color: var(--ts-surface);
-  border: 0;
-}
-
-.cr-secondary-sm {
-  background: var(--ts-surface);
-  color: var(--ts-ink);
-  border: 1px solid var(--ts-hairline);
-}
-
-.cr-secondary-sm[data-copied] {
-  color: var(--ts-sage);
-  border-color: var(--ts-sage);
-}
+/* ── small chrome controls ──────────────────────────────────────────────── */
 
 .cr-linkbtn {
   background: none;
   border: 0;
   padding: 10px 2px;
-  color: var(--ts-ink60);
+  color: var(--ts-quiet);
   font-family: var(--ts-font-sans);
   font-size: var(--ts-text-caption);
   text-decoration: underline;
@@ -561,7 +461,7 @@
 }
 
 .cr-linkbtn[data-state='on'] {
-  color: var(--ts-terracotta);
+  color: var(--ts-action);
   font-weight: 500;
 }
 
@@ -576,13 +476,32 @@
   background: none;
   border: 0;
   border-radius: var(--ts-radius-full);
-  color: var(--ts-ink60);
+  color: var(--ts-quiet);
   transition: background var(--ts-dur-1) var(--ts-ease);
 }
 
 .cr-iconbtn:hover {
   background: var(--ts-ink08);
   color: var(--ts-ink);
+}
+
+.cr-linkbtn:focus-visible,
+.cr-iconbtn:focus-visible {
+  outline: none;
+  box-shadow: var(--ts-focus);
+}
+
+.cr-action,
+.cr-actions {
+  margin-top: var(--ts-space-5);
+}
+
+/* The safe choice first and narrower, so the committing one is the deliberate
+   target rather than the reflexive one. */
+.cr-actions {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.4fr);
+  gap: var(--ts-space-3);
 }
 
 /* ── trust page ─────────────────────────────────────────────────────────── */
@@ -630,7 +549,7 @@
 }
 
 .cr-tally[data-tone='calm'] svg {
-  color: var(--ts-sage);
+  color: var(--ts-verified);
 }
 
 .cr-tally[data-tone='notable'] {
@@ -642,17 +561,17 @@
 }
 
 /*
- * Heavier, and still not brick. A demanding manifest is a judgement call, not
- * an emergency; brick is the one alarm register and spending it here is how it
- * stops meaning anything at 6am when the river is up.
+ * Heavier, and still not the alarm register. A demanding manifest is a
+ * judgement call, not an emergency, and frightening this screen teaches
+ * residents to skip it.
  */
 .cr-tally[data-tone='heavy'] {
   background: var(--ts-terracotta-tint);
-  box-shadow: inset 3px 0 0 var(--ts-terracotta);
+  box-shadow: inset 3px 0 0 var(--ts-action);
 }
 
 .cr-tally[data-tone='heavy'] svg {
-  color: var(--ts-terracotta);
+  color: var(--ts-action);
 }
 
 .cr-trust-group {
@@ -665,6 +584,12 @@
   margin: var(--ts-space-5) 0 var(--ts-space-2);
 }
 
+/*
+ * Deliberately not a `RowList`. A row is a navigation target with a chevron and
+ * one line of meta; these are static statements, and the weight treatment below
+ * is the security design rather than styling. Restyling a Row hard enough to
+ * carry it would be forking the primitive in place.
+ */
 .cr-trust {
   list-style: none;
   margin: 0;
@@ -703,7 +628,7 @@
 }
 
 .cr-trust-detail {
-  color: var(--ts-ink60);
+  color: var(--ts-quiet);
   font-size: var(--ts-text-caption);
   line-height: 1.45;
   margin-top: 3px;
@@ -712,12 +637,12 @@
 /* Anything that outlives the visit, or leaves town, is marked. The rest is
    background reassurance and reads that way. */
 .cr-trust li[data-weight='consequential'] {
-  box-shadow: inset 3px 0 0 var(--ts-terracotta);
+  box-shadow: inset 3px 0 0 var(--ts-action);
   background: var(--ts-terracotta-tint);
 }
 
 .cr-trust li[data-weight='consequential'] .cr-trust-icon {
-  color: var(--ts-terracotta);
+  color: var(--ts-action);
 }
 
 .cr-counsel {
@@ -747,7 +672,7 @@
   display: block;
   font-size: 12.5px;
   line-height: 1.45;
-  color: var(--ts-ink60);
+  color: var(--ts-quiet);
   margin-top: 2px;
 }
 
@@ -785,7 +710,7 @@
   font-size: 10.5px;
   letter-spacing: 0.06em;
   text-transform: uppercase;
-  color: var(--ts-ink60);
+  color: var(--ts-quiet);
   background: var(--ts-ink08);
   border-radius: var(--ts-radius-chip);
   padding: 4px 9px;
@@ -805,8 +730,10 @@
   align-items: flex-start;
 }
 
+/* Sage, because a type the next creation can build on is the alive thing on
+   this page rather than the actionable one. */
 .cr-defines-head svg {
-  color: var(--ts-sage);
+  color: var(--ts-verified);
   margin-top: 2px;
   flex: none;
 }
@@ -822,7 +749,7 @@
   display: block;
   font-size: 12.5px;
   line-height: 1.45;
-  color: var(--ts-ink60);
+  color: var(--ts-quiet);
   margin-top: 2px;
 }
 
@@ -856,7 +783,7 @@
   text-align: right;
   font-family: var(--ts-font-sans);
   font-size: 11px;
-  color: var(--ts-terracotta);
+  color: var(--ts-action);
 }
 
 /* ── host chrome ────────────────────────────────────────────────────────── */
@@ -870,7 +797,7 @@
 }
 
 .cr-chrome[data-state='alert'] {
-  border-bottom-color: var(--ts-terracotta);
+  border-bottom-color: var(--ts-action);
 }
 
 .cr-chrome-id {
@@ -893,7 +820,7 @@
   display: block;
   font-family: var(--ts-font-serif);
   font-size: var(--ts-text-caption);
-  color: var(--ts-ink60);
+  color: var(--ts-quiet);
 }
 
 /*
@@ -912,7 +839,7 @@
   font-weight: 500;
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  color: var(--ts-navy);
+  color: var(--ts-structure);
   background: var(--ts-sage14);
   border-radius: var(--ts-radius-chip);
   padding: 5px 10px;
@@ -923,7 +850,7 @@
 .cr-livetitle {
   font-family: var(--ts-font-serif);
   font-size: var(--ts-text-caption);
-  color: var(--ts-ink60);
+  color: var(--ts-quiet);
   padding-top: var(--ts-space-2);
 }
 
@@ -1045,9 +972,9 @@
   margin-bottom: var(--ts-space-3);
 }
 
-/* Held on purpose, not an emergency. Still not brick. */
+/* Held on purpose, not an emergency. Still not the alarm register. */
 .cr-failure-mark[data-tone='hold'] {
-  color: var(--ts-terracotta);
+  color: var(--ts-action);
   background: var(--ts-terracotta14);
 }
 
@@ -1062,7 +989,7 @@
 .cr-failure p {
   font-size: 13.5px;
   line-height: 1.5;
-  color: var(--ts-ink60);
+  color: var(--ts-quiet);
   max-width: 42ch;
   margin: 0 auto var(--ts-space-4);
 }
@@ -1103,7 +1030,7 @@
 .cr-report-note {
   font-size: 12.5px;
   line-height: 1.5;
-  color: var(--ts-ink60);
+  color: var(--ts-quiet);
   margin: 0 0 var(--ts-space-3);
   max-width: 54ch;
 }
@@ -1112,52 +1039,6 @@
   display: grid;
   gap: 2px;
   margin-bottom: var(--ts-space-3);
-}
-
-.cr-radio {
-  display: flex;
-  align-items: center;
-  gap: var(--ts-space-2);
-  min-height: 44px;
-  font-size: 13.5px;
-  color: var(--ts-ink60);
-  cursor: pointer;
-}
-
-.cr-radio input {
-  accent-color: var(--ts-terracotta);
-  width: 18px;
-  height: 18px;
-  flex: none;
-}
-
-.cr-radio input:focus-visible {
-  outline: none;
-  box-shadow: var(--ts-focus);
-}
-
-.cr-report-detail > span {
-  display: block;
-  font-size: var(--ts-text-caption);
-  color: var(--ts-ink60);
-  margin-bottom: 4px;
-}
-
-.cr-textarea {
-  width: 100%;
-  padding: var(--ts-space-3);
-  border: 1px solid var(--ts-hairline);
-  border-radius: var(--ts-radius-input);
-  background: var(--ts-cream);
-  color: var(--ts-ink);
-  font-family: var(--ts-font-sans);
-  font-size: 13.5px;
-  resize: vertical;
-}
-
-.cr-textarea:focus-visible {
-  outline: none;
-  box-shadow: var(--ts-focus);
 }
 
 .cr-report-foot {
@@ -1174,24 +1055,56 @@
   margin-right: auto;
 }
 
-/* Terracotta, never brick: a failed send is recoverable, and a resident who
-   learns the alarm colour means "try again" has been taught to ignore it. */
+/* The action colour, never the alarm one: a failed send is recoverable, and a
+   resident who learns the alarm colour means "try again" has been taught to
+   ignore it by the time it means the river. */
 .cr-report-problem {
   display: flex;
   align-items: center;
   gap: 6px;
   font-size: 12.5px;
-  color: var(--ts-terracotta);
+  color: var(--ts-action);
   margin: var(--ts-space-3) 0 0;
 }
 
 /* ── builder door ───────────────────────────────────────────────────────── */
 
+/*
+ * The build layer's one dark surface. See the comment on the component: the
+ * design puts it on the featured creation, nothing counts usage, so the weight
+ * lands on the screen that is genuinely the interruption.
+ */
+.cr-bd-hero {
+  margin-bottom: var(--ts-space-6);
+}
+
+.cr-bd-hero .cr-eyebrow {
+  color: var(--ts-cream-muted);
+}
+
+.cr-bd-hero-h {
+  font-family: var(--ts-font-serif);
+  font-size: 25px;
+  font-weight: 400;
+  letter-spacing: -0.02em;
+  line-height: 1.15;
+  margin: 0 0 var(--ts-space-3);
+}
+
+.cr-bd-hero-lede {
+  font-family: var(--ts-font-serif);
+  font-size: 15px;
+  line-height: 1.5;
+  color: var(--ts-cream-muted);
+  margin: 0 0 var(--ts-space-4);
+  max-width: 52ch;
+}
+
 .cr-bd-count {
   font-family: var(--ts-font-serif);
   font-size: 13px;
-  color: var(--ts-ink45);
-  margin: calc(var(--ts-space-3) * -1) 0 var(--ts-space-5);
+  color: var(--ts-cream-muted);
+  margin: var(--ts-space-4) 0 0;
 }
 
 .cr-bd-steps {
@@ -1219,7 +1132,7 @@
   font-size: 11px;
   font-weight: 500;
   color: var(--ts-surface);
-  background: var(--ts-navy);
+  background: var(--ts-structure);
 }
 
 .cr-bd-steps b {
@@ -1235,7 +1148,7 @@
   display: block;
   font-size: 13px;
   line-height: 1.5;
-  color: var(--ts-ink60);
+  color: var(--ts-quiet);
   margin-top: 3px;
   max-width: 58ch;
 }
@@ -1268,7 +1181,7 @@
 .cr-bd-prereq p {
   font-size: 13.5px;
   line-height: 1.55;
-  color: var(--ts-ink60);
+  color: var(--ts-quiet);
   margin: 0 0 var(--ts-space-3);
   max-width: 58ch;
 }
@@ -1287,7 +1200,7 @@
   align-items: flex-start;
   font-size: 13.5px;
   line-height: 1.45;
-  color: var(--ts-ink60);
+  color: var(--ts-quiet);
 }
 
 .cr-bd-prereq-list svg {
@@ -1310,12 +1223,13 @@
   border: 1px solid var(--ts-hairline);
   border-radius: var(--ts-radius-card);
   background: var(--ts-surface);
+  margin-top: var(--ts-space-6);
 }
 
 .cr-bd-gate p {
   font-size: 13.5px;
   line-height: 1.55;
-  color: var(--ts-ink60);
+  color: var(--ts-quiet);
   margin: 0 0 var(--ts-space-4);
   max-width: 56ch;
 }
@@ -1332,7 +1246,7 @@
 }
 
 .cr-bd-panel[data-state='warn'] {
-  border-color: color-mix(in srgb, var(--ts-terracotta) 40%, transparent);
+  border-color: color-mix(in srgb, var(--ts-action) 40%, transparent);
 }
 
 .cr-bd-panel-head {
@@ -1351,7 +1265,7 @@
 }
 
 .cr-bd-panel-head[data-state='warn'] {
-  color: var(--ts-terracotta);
+  color: var(--ts-action);
 }
 
 .cr-bd-field {
@@ -1363,7 +1277,7 @@
   display: block;
   font-size: var(--ts-text-caption);
   font-weight: 500;
-  color: var(--ts-ink60);
+  color: var(--ts-quiet);
   margin-bottom: 4px;
 }
 
@@ -1395,6 +1309,7 @@
   padding: var(--ts-space-3);
   border-radius: var(--ts-radius-card);
   background: var(--ts-cream);
+  margin-bottom: var(--ts-space-4);
 }
 
 .cr-bd-scopes-head {
@@ -1431,11 +1346,11 @@
   font-weight: 500;
 }
 
-.cr-bd-scopes span {
+.cr-bd-scopes li > span {
   display: block;
   font-size: 13px;
   line-height: 1.45;
-  color: var(--ts-ink60);
+  color: var(--ts-quiet);
 }
 
 .cr-bd-scopes > p {
@@ -1452,14 +1367,14 @@
   padding: var(--ts-space-3);
   border-radius: var(--ts-radius-card);
   background: var(--ts-terracotta-tint);
-  box-shadow: inset 3px 0 0 var(--ts-terracotta);
+  box-shadow: inset 3px 0 0 var(--ts-action);
   font-size: 13px;
   line-height: 1.5;
   margin: 0 0 var(--ts-space-4);
 }
 
 .cr-bd-once svg {
-  color: var(--ts-terracotta);
+  color: var(--ts-action);
   margin-top: 2px;
   flex: none;
 }
@@ -1495,6 +1410,12 @@
   overflow-wrap: anywhere;
 }
 
+/* Sage on the copied state, because it is a confirmation and not an action. */
+.cr-bd-copy[data-copied] {
+  color: var(--ts-verified);
+  border-color: var(--ts-verified);
+}
+
 .cr-bd-note {
   font-size: 12.5px;
   line-height: 1.5;
@@ -1512,6 +1433,11 @@
   overflow: hidden;
 }
 
+/*
+ * Not a `RowList`. A `Row`'s trailing slot is explicitly not a second tap
+ * target, and every row here ends in a Revoke button that opens an inline
+ * confirmation inside the row itself. That is a small panel, not a row.
+ */
 .cr-bd-tok {
   display: flex;
   align-items: center;
@@ -1547,7 +1473,7 @@
   align-items: center;
   gap: 6px;
   font-size: 12.5px;
-  color: var(--ts-ink60);
+  color: var(--ts-quiet);
   margin-top: 2px;
 }
 
@@ -1560,7 +1486,7 @@
 }
 
 .cr-bd-dot[data-live] {
-  background: var(--ts-sage);
+  background: var(--ts-verified);
 }
 
 .cr-bd-tok-confirm {
@@ -1573,7 +1499,7 @@
 .cr-bd-tok-confirm p {
   font-size: 13px;
   line-height: 1.5;
-  color: var(--ts-ink60);
+  color: var(--ts-quiet);
   margin: 0 0 var(--ts-space-3);
 }
 

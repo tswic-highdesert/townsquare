@@ -1,4 +1,14 @@
 /*
+ * In `ts-base`, the lowest layer: these are element-level resets, and an
+ * unlayered `button { cursor: pointer }` would otherwise beat a layered
+ * `.ts-btn:disabled { cursor: not-allowed }` — layer order outranks
+ * specificity. See the header of `ui/ui.css` for the whole ordering.
+ */
+@layer ts-base, ts-primitives;
+
+@layer ts-base {
+
+/*
  * The shell's own look.
  *
  * Every colour, radius and size here is `var(--ts-*)`, injected at startup from
@@ -56,4 +66,6 @@ button {
 .lede {
   color: var(--ts-ink60);
   max-width: 46ch;
+}
+
 }

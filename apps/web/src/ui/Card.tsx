@@ -35,6 +35,15 @@ export interface CardProps {
   dark?: boolean
   /** The single tinted card. Gold wash, for the town speaking. */
   tone?: 'civic'
+  /**
+   * Turn off the 16px inset.
+   *
+   * For a card whose children own their own edges: a full-bleed image, a row
+   * list that already pads itself, a screen that lays its own grid inside.
+   * The default stays padded because the common case is a card with copy in
+   * it, and an unpadded default would put every headline against the border.
+   */
+  padded?: boolean
   /** Renders as a link and takes the whole card as one target. */
   href?: string
   onClick?: () => void
@@ -55,6 +64,7 @@ export function Card({
   elevation = 'flat',
   dark,
   tone,
+  padded = true,
   href,
   onClick,
   className,
@@ -65,6 +75,7 @@ export function Card({
     'data-dark': dark || undefined,
     'data-on-dark': dark || undefined,
     'data-tone': tone,
+    'data-bare': padded ? undefined : '',
   }
   if (href) {
     return (
@@ -84,23 +95,49 @@ export function Card({
 }
 
 /**
- * The image at the top of a card.
+ * The image at the top of a card. Radius 12 against the card's 16, so the
+ * inner curve nests instead of fighting the outer one.
  *
- * Radius 12 against the card's 16, so the inner curve nests instead of
- * fighting the outer one. With no `src` it draws a stone placeholder rather
- * than collapsing, because roughly half the town's stories carry no photo and
- * a card that changes height on that is a list that jumps.
+ * **With no `src` this renders nothing.** That reverses what it used to do,
+ * and the reasoning is worth keeping, because both sides are defensible and
+ * the argument came from a real screen.
+ *
+ * The case for a placeholder is that a card changing height is a list that
+ * jumps. The case against is that roughly half this town's stories carry art
+ * and none of the university's do, so a reserved grey rectangle is what a
+ * resident sees most days of the week, and it reads as a photo that failed to
+ * load rather than as a story that never had one.
+ *
+ * Two things settled it. The house rule everywhere in this repo is that a
+ * surface with no real source is omitted rather than mocked, and a grey
+ * rectangle standing in for a photograph that does not exist is exactly a
+ * mocked surface. And the design sheet already decided this for the loading
+ * case: section 10 draws its second skeleton row without a thumbnail, on the
+ * grounds that "a skeleton that always draws a thumb teaches a layout that
+ * will not arrive". Drawing a placeholder that always arrives empty is the
+ * same mistake one step later.
+ *
+ * The jump is real, but it belongs to whoever knows whether art is coming. A
+ * list that knows it is loading reserves the space with a `Skeleton`; a list
+ * showing a story that has no art should not reserve space for one. Pass
+ * `placeholder` where you genuinely want the rectangle held.
  */
 export function CardMedia({
   src,
   alt,
+  placeholder,
   className,
 }: {
   src?: string
   alt?: string
+  /** Hold the space with a stone fill even when there is no image. */
+  placeholder?: boolean
   className?: string
 }) {
-  if (!src) return <div className={cx('ts-card-media', className)} aria-hidden="true" />
+  if (!src) {
+    if (!placeholder) return null
+    return <div className={cx('ts-card-media', className)} aria-hidden="true" />
+  }
   return <img className={cx('ts-card-media', className)} src={src} alt={alt ?? ''} />
 }
 
@@ -146,8 +183,27 @@ export interface RowProps {
   lead?: ReactNode
   title: ReactNode
   meta?: ReactNode
-  /** The right-hand end: a chip, a time, a status. Not a second tap target. */
+  /**
+   * The right-hand end: a chip, a time, a status, or a thumbnail.
+   *
+   * Not a second tap target. When the row is pressable the whole row is the
+   * target, and anything genuinely separate — Call, Directions — belongs
+   * outside the row rather than inside its trailing slot.
+   *
+   * Sized by the content rather than by `--ts-row-lead`, because the news
+   * feed's 68px thumbnail trails a headline that leads, and forcing it into
+   * the leading block's square would invert the thing section 3 argues for.
+   */
   trailing?: ReactNode
+  /**
+   * Drop the chevron on a row that is still pressable.
+   *
+   * A chevron and a trailing thumbnail compete for the same corner, and the
+   * chevron loses that argument: the photo is already telling you there is
+   * something here. Only ever set this on a row whose affordance is carried
+   * some other way.
+   */
+  chevron?: boolean
   /** Draws a chevron and makes the whole row one target. */
   href?: string
   onClick?: () => void
@@ -161,7 +217,16 @@ export interface RowProps {
  * leading block rather than running edge to edge, so a list reads as a stack
  * of things rather than a table.
  */
-export function Row({ lead, title, meta, trailing, href, onClick, className }: RowProps) {
+export function Row({
+  lead,
+  title,
+  meta,
+  trailing,
+  chevron = true,
+  href,
+  onClick,
+  className,
+}: RowProps) {
   const inner = (
     <>
       {lead ? <span className="ts-row-lead">{lead}</span> : null}
@@ -170,7 +235,9 @@ export function Row({ lead, title, meta, trailing, href, onClick, className }: R
         {meta ? <span className="ts-row-meta">{meta}</span> : null}
       </span>
       {trailing ? <span className="ts-row-trailing">{trailing}</span> : null}
-      {href || onClick ? <Icon name="chevron-right" size={16} className="ts-row-chev" /> : null}
+      {chevron && (href || onClick) ? (
+        <Icon name="chevron-right" size={16} className="ts-row-chev" />
+      ) : null}
     </>
   )
 

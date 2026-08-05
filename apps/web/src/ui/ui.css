@@ -1,4 +1,35 @@
 /*
+ * ── LOAD ORDER, AND WHY THIS FILE IS IN A CASCADE LAYER ─────────────────────
+ *
+ * A screen must be able to override a primitive. A primitive must never
+ * silently override a screen. That used to depend on this file being imported
+ * before any screen's stylesheet, and that guarantee was false: a stylesheet
+ * imported from its own component is evaluated when that component's module
+ * is, which is during `App`'s import chain — before `main.tsx` reaches its own
+ * `import './ui/ui.css'`. Measured order in dev was nav.css, news.css, ui.css,
+ * index.css. Every screen-level override of a `.ts-*` class lost, silently,
+ * and the only reason anybody noticed was one agent reading a screenshot.
+ *
+ * Cascade layers make the rule true by construction instead of by convention.
+ * Unlayered CSS beats layered CSS regardless of source order *and regardless
+ * of specificity*, so:
+ *
+ *     ts-base  <  ts-primitives  <  anything a screen writes
+ *
+ * A screen overrides a primitive by writing an ordinary rule. No doubled
+ * selectors, no `!important`, no import-order discipline for five people to
+ * remember. If you are writing a screen stylesheet: do nothing, you already
+ * win. If you are adding to this file: stay inside the layer block.
+ *
+ * The one thing to know: because layer beats specificity, a screen's
+ * `.news-card { padding: 0 }` now beats `.ts-card` here. That is the intent.
+ */
+
+@layer ts-base, ts-primitives;
+
+@layer ts-primitives {
+
+/*
  * The primitives layer.
  *
  * Everything a screen composes rather than restyles: buttons, chips, fields,
@@ -1713,4 +1744,6 @@ button.ts-row:focus-visible { outline: none; box-shadow: var(--ts-focus); }
   border-radius: var(--ts-radius-button);
   background: var(--ts-ink08);
   color: var(--ts-ink60);
+}
+
 }

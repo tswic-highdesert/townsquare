@@ -46,7 +46,15 @@ import { useEffect, useMemo, useState } from 'react'
 import { AppBar } from '../AppBar.js'
 import { Icon } from '../Icon.js'
 import { TabBar, type TabName } from '../TabBar.js'
-import { Button, EmptyState, SearchInput, BottomSheet, Skeleton } from '../ui/index.js'
+import {
+  BottomSheet,
+  Button,
+  Card,
+  EmptyState,
+  RowList,
+  SearchInput,
+  Skeleton,
+} from '../ui/index.js'
 import { formatDistance, positionAlreadyAllowed, requestPosition, type Position } from '../nearbyData.js'
 import { saveThing, unsaveThing, type SavedThing } from '../savesData.js'
 import type { AccountView } from '../session.js'
@@ -61,7 +69,7 @@ import {
   type RankedPlace,
   type SortKey,
 } from './directoryData.js'
-import { BrowseCard, GROUP_ICON, GROUP_TONE, ListRow, MiniCard, OpenPill, PinCard, directionsUrl } from './parts.js'
+import { BrowseCard, GROUP_ICON, GROUP_TONE, ListRow, MiniCard, PinCard, directionsUrl } from './parts.js'
 import { Stumble } from './Stumble.js'
 import './directory.css'
 
@@ -91,6 +99,8 @@ const RAIL = 8
 /** Long-tail chips shown before the rest collapse into one count. */
 const TAIL_CHIPS = 16
 
+export type Layout = 'rows' | 'grid'
+
 type View =
   | { name: 'home' }
   | { name: 'group'; id: GroupId }
@@ -109,6 +119,16 @@ export function Directory(props: DirectoryProps) {
   const [query, setQuery] = useState('')
   const [openOnly, setOpenOnly] = useState(false)
   const [sort, setSort] = useState<SortKey>('near')
+  /**
+   * Rows by default, cards on request.
+   *
+   * The list row carries the same five facts as the browse card in a third of
+   * the height, which is what makes a group of 127 nine screens rather than
+   * thirty. The card is the browsing layout — more room, bigger plate, easier
+   * to skim without reading — and choosing between them is a resident's call
+   * rather than a width the shell never reaches.
+   */
+  const [layout, setLayout] = useState<Layout>('rows')
   const [selected, setSelected] = useState<RankedPlace | null>(null)
 
   useEffect(() => {
@@ -278,6 +298,7 @@ export function Directory(props: DirectoryProps) {
           </div>
           <Results
             places={listed}
+            layout={layout}
             empty={
               query.trim() === ''
                 ? 'Type a few letters, or go back and let the directory pick something.'
@@ -298,8 +319,10 @@ export function Directory(props: DirectoryProps) {
           position={position}
           openOnly={openOnly}
           sort={sort}
+          layout={layout}
           onOpenOnly={setOpenOnly}
           onSort={setSort}
+          onLayout={setLayout}
           onBack={() => setView({ name: 'home' })}
           onCategory={(category) => setView({ name: 'category', category })}
           savedRefs={savedRefs}
@@ -374,7 +397,14 @@ function Home({
         </p>
       </div>
 
-      <button className="dir-serendipity" onClick={onStumble}>
+      {/*
+        The one dark card on this screen, and `Card` already knows what that
+        means: navy fill from `--ts-structure`, the navy shadow rather than the
+        neutral one, and the focus halo flipped to the card colour so the ring
+        does not fuse with it. Hand-rolling those three was the version this
+        replaced.
+      */}
+      <Card dark onClick={onStumble} className="dir-serendipity">
         <span className="dir-serendipity-icon">
           <Icon name="sparkle" size={22} />
         </span>
@@ -383,7 +413,7 @@ function Home({
           <span className="dir-serendipity-sub">One place at a time, drawn at random</span>
         </span>
         <Icon name="arrow-right" size={16} className="dir-serendipity-go" />
-      </button>
+      </Card>
 
       {openRail.length > 0 && (
         <section className="dir-block">
@@ -513,8 +543,10 @@ function GroupLanding({
   position,
   openOnly,
   sort,
+  layout,
   onOpenOnly,
   onSort,
+  onLayout,
   onBack,
   onCategory,
   savedRefs,
@@ -529,8 +561,10 @@ function GroupLanding({
   position: Position | null
   openOnly: boolean
   sort: SortKey
+  layout: Layout
   onOpenOnly: (on: boolean) => void
   onSort: (key: SortKey) => void
+  onLayout: (layout: Layout) => void
   onBack: () => void
   onCategory: (category: string) => void
   savedRefs: Set<string>
@@ -589,6 +623,14 @@ function GroupLanding({
             <Icon name="sort" size={14} />
             A to Z
           </button>
+          <button
+            className="dir-tool"
+            onClick={() => onLayout(layout === 'rows' ? 'grid' : 'rows')}
+            aria-label={layout === 'rows' ? 'Show these as cards' : 'Show these as a list'}
+          >
+            <Icon name={layout === 'rows' ? 'grid' : 'list'} size={14} />
+            {layout === 'rows' ? 'Cards' : 'List'}
+          </button>
         </div>
 
         {/*
@@ -624,6 +666,7 @@ function GroupLanding({
 
       <Results
         places={places}
+        layout={layout}
         empty={
           openOnly
             ? 'Nothing in here is open at this minute.'
@@ -639,16 +682,15 @@ function GroupLanding({
 }
 
 /**
- * The results, as cards on a wide screen and rows on a narrow one.
+ * The results, in one of the two densities.
  *
- * Both are drawn, and CSS decides which is visible. The row exists because 127
- * cards is thirty screens and 127 rows is nine; the card exists because a grid
- * with room in it is what makes browsing feel like looking rather than
- * scanning. They carry the same five facts, which is what makes swapping them
- * a layout decision rather than a content one.
+ * One is rendered, not both. An earlier pass drew the grid and the rows
+ * together and let a media query hide one, which is fine for three items and is
+ * 254 React nodes for a group of 127 — half of them permanently invisible.
  */
 function Results({
   places,
+  layout,
   empty,
   savedRefs,
   canSave,
@@ -656,6 +698,7 @@ function Results({
   onOpen,
 }: {
   places: RankedPlace[]
+  layout: Layout
   empty: string
   savedRefs: Set<string>
   canSave: boolean
@@ -666,33 +709,34 @@ function Results({
     return <EmptyState mark="lens" line={empty} align="center" />
   }
 
-  return (
-    <>
+  const shared = (place: RankedPlace) => ({
+    place,
+    saved: savedRefs.has(`business:${place.id}`),
+    canSave,
+    onToggleSave: () => onToggleSave(place),
+    onOpen,
+  })
+
+  if (layout === 'grid') {
+    return (
       <div className="dir-grid">
         {places.map((place) => (
-          <BrowseCard
-            key={place.id}
-            place={place}
-            saved={savedRefs.has(`business:${place.id}`)}
-            canSave={canSave}
-            onToggleSave={() => onToggleSave(place)}
-            onOpen={onOpen}
-          />
+          <BrowseCard key={place.id} {...shared(place)} />
         ))}
       </div>
-      <ul className="dir-rows">
-        {places.map((place) => (
-          <ListRow
-            key={place.id}
-            place={place}
-            saved={savedRefs.has(`business:${place.id}`)}
-            canSave={canSave}
-            onToggleSave={() => onToggleSave(place)}
-            onOpen={onOpen}
-          />
-        ))}
-      </ul>
-    </>
+    )
+  }
+
+  return (
+    // `compact` is the density workhorse, and it is the same Row: four
+    // variables, no variant, tap targets still floored at 44px. The lead is
+    // widened from compact's 32px because the plate is the only thing making a
+    // list of 127 scannable in the peripheral, and at 32 it is a smudge.
+    <RowList density="compact" framed className="dir-rows" label="Listings">
+      {places.map((place) => (
+        <ListRow key={place.id} {...shared(place)} />
+      ))}
+    </RowList>
   )
 }
 
@@ -722,7 +766,7 @@ function PlaceSheet({
   const directions = directionsUrl(place.address)
 
   return (
-    <BottomSheet open onClose={onClose} title={place.name} description={place.category}>
+    <BottomSheet open onClose={onClose} title={place.name} className="dir-sheet-overlay">
       <div className="dir-sheet">
         <PinCard place={place} />
 
@@ -829,4 +873,3 @@ function BackLink({ onBack, label }: { onBack: () => void; label: string }) {
  * leads with distance and this leads with discovery. That is one screen with a
  * sort control, not two tabs.
  */
-export { OpenPill }

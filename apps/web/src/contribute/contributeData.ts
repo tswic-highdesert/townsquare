@@ -268,13 +268,59 @@ export interface Listing {
   phone?: string
 }
 
+/**
+ * The whole directory, fetched once and searched in the browser.
+ *
+ * It reads `/api/nearby` rather than `/api/businesses`, and the reason is a bug
+ * this had first: `/api/businesses` caps at 200 rows, so filtering its response
+ * meant the picker could only ever find businesses in the first two hundred of
+ * seven hundred and forty one. Stoby's is not in the first two hundred. A
+ * search box that silently cannot find most of the town is worse than no search
+ * box, because a resident concludes the listing does not exist and stops.
+ *
+ * `/api/nearby` is the payload the Nearby screen already loads: every placeable
+ * listing, uncapped, 54 KB over the wire gzipped, and it takes no cookie and no
+ * coordinates in either direction. Searching it here rather than server-side
+ * keeps that property — the town does not learn what somebody typed into a
+ * place picker.
+ */
+let directory: Promise<Listing[]> | null = null
+
+function loadDirectory(): Promise<Listing[]> {
+  directory ??= fetch('/api/nearby', { credentials: 'same-origin' })
+    .then((res) => (res.ok ? res.json() : { places: [] }))
+    .then((body: { places?: Array<Record<string, unknown>> }) =>
+      (body.places ?? []).map((p) => ({
+        id: String(p['id'] ?? ''),
+        name: String(p['name'] ?? ''),
+        category: String(p['detail'] ?? ''),
+        address: String(p['address'] ?? ''),
+        ...(typeof p['phone'] === 'string' ? { phone: p['phone'] } : {}),
+      })),
+    )
+    // A failed load must not poison the cache: the next keystroke should try
+    // again rather than leave the picker permanently empty.
+    .catch(() => {
+      directory = null
+      return []
+    })
+  return directory
+}
+
 export async function searchListings(query: string): Promise<Listing[]> {
   const trimmed = query.trim().toLowerCase()
   if (trimmed.length < 2) return []
-  const res = await fetch(`/api/businesses?limit=200`, { credentials: 'same-origin' })
-  if (!res.ok) return []
-  const body = (await res.json()) as { items: Listing[] }
-  return body.items.filter((l) => l.name.toLowerCase().includes(trimmed)).slice(0, 8)
+  const all = await loadDirectory()
+  // Names that start with what was typed first: somebody typing "sto" wants
+  // Stoby's above "Big Sto Auto", and a plain `includes` buries it.
+  const starts: Listing[] = []
+  const contains: Listing[] = []
+  for (const l of all) {
+    const name = l.name.toLowerCase()
+    if (name.startsWith(trimmed)) starts.push(l)
+    else if (name.includes(trimmed)) contains.push(l)
+  }
+  return [...starts, ...contains].slice(0, 8)
 }
 
 /** The categories the event chips offer. Closed, so the feed can be filtered. */

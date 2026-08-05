@@ -13,6 +13,7 @@ import {
   assembleDetail,
   assembleMonth,
   daysBetween,
+  decodeEntities,
   directionsFor,
   eventDay,
   honestEnd,
@@ -338,13 +339,15 @@ describe('the detail', () => {
   })
 
   it('says today and tomorrow rather than naming the weekday', () => {
-    expect(whenPlain('2026-08-05T19:00:00-05:00', TZ, '2026-08-05', false)).toBe('Today evening')
+    expect(whenPlain('2026-08-05T19:00:00-05:00', TZ, '2026-08-05', false)).toBe('This evening')
     expect(whenPlain('2026-08-06T09:00:00-05:00', TZ, '2026-08-05', false)).toBe('Tomorrow morning')
+    expect(whenPlain('2026-08-05T09:00:00-05:00', TZ, '2026-08-05', true)).toBe('Today, all day')
   })
 
   it('dates anything past the coming week, because a bare weekday is a trap', () => {
+    // With a comma once the date is in it: three nouns in a row is not English.
     expect(whenPlain('2026-08-26T09:00:00-05:00', TZ, '2026-08-05', false)).toBe(
-      'Wednesday 26 August morning',
+      'Wednesday 26 August, morning',
     )
   })
 
@@ -403,5 +406,53 @@ describe('what is never in the payload', () => {
     // a screen left open for an hour.
     const soon = event({ id: 's', startDate: '2026-08-05T14:45:00-05:00' })
     expect(JSON.stringify(assembleDay(base([soon])))).not.toContain('min')
+  })
+})
+
+describe('escaped text out of the scrapes', () => {
+  it('decodes an entity a source left in a title', () => {
+    // React escapes on output, so `&#039;` reaches the resident verbatim.
+    const e = event({
+      id: 'prep',
+      title: 'RVLA Written Driver&#039;s License Prep',
+      startDate: '2026-08-11T17:00:00-05:00',
+    })
+    expect(assembleDetail({ ...base([e]), id: 'prep' })?.title).toBe(
+      "RVLA Written Driver's License Prep",
+    )
+  })
+
+  it('decodes an entity in a url, which is not cosmetic', () => {
+    // `&amp;sport_id` is not a parameter, so the link opens the wrong page.
+    const e = event({
+      id: 'game',
+      startDate: '2026-08-11T17:00:00-05:00',
+      url: 'https://arkansastechsports.com/calendar.aspx?game_id=7748&amp;sport_id=1',
+    })
+    expect(assembleDetail({ ...base([e]), id: 'game' })?.url).toBe(
+      'https://arkansastechsports.com/calendar.aspx?game_id=7748&sport_id=1',
+    )
+  })
+
+  it('unwinds one round only, and leaves anything it does not know', () => {
+    expect(decodeEntities('a &amp;amp; b')).toBe('a &amp; b')
+    expect(decodeEntities('50 &fake; 60')).toBe('50 &fake; 60')
+    expect(decodeEntities('&#x2019;')).toBe('’')
+  })
+})
+
+describe('sorting across sources', () => {
+  it('orders by the instant, not by the ISO string', () => {
+    // The scrapes disagree on format: `2026-08-17T22:00:00.000Z` from the
+    // school district and `2026-08-17T19:30:00-05:00` from the iCal feeds are
+    // 5:00pm and 7:30pm in town. Compared as strings the `-` of the offset
+    // sorts below the `.` of the milliseconds, so the later event came first
+    // and the written gap then announced the wrong time to come back.
+    const items = [
+      event({ id: 'offset', title: 'Involvement fair', startDate: '2026-08-17T19:30:00-05:00' }),
+      event({ id: 'zulu', title: 'Kindergarten meet up', startDate: '2026-08-17T22:00:00.000Z' }),
+    ]
+    const rows = rowsOf(assembleDay({ ...base(items), day: '2026-08-17' }).segments)
+    expect(rows.map((r) => r.id)).toEqual(['zulu', 'offset'])
   })
 })

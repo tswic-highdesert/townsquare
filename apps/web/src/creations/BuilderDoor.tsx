@@ -22,6 +22,7 @@
 
 import { useEffect, useState } from 'react'
 import { Icon } from '../Icon.js'
+import { Button, Card } from '../ui/index.js'
 import {
   fetchTokens,
   isError,
@@ -32,6 +33,9 @@ import {
   type MintedToken,
 } from './connectApi.js'
 import './creations.css'
+
+/** The connect panel's anchor, so the hero can jump a long page to it. */
+const CONNECT_ID = 'cr-connect'
 
 export interface BuilderDoorProps {
   /** Null when signed out. Minting needs a session, so the page says so early. */
@@ -49,19 +53,37 @@ export function BuilderDoor(props: BuilderDoorProps) {
         <Icon name="arrow-left" size={16} /> Back
       </button>
 
-      <div className="cr-eyebrow">Build on Town Square</div>
-      <h1 className="cr-h1">This town square runs on things somebody made.</h1>
-      <p className="cr-lede">
-        If you can describe an app, the AI tool you already use can build it, and Town Square can
-        host it. A trail conditions board. A map of every camera anyone has spotted. A list of who
-        still has a generator after an ice storm.
-      </p>
-      {props.creationCount !== undefined && props.creationCount > 0 && (
-        <p className="cr-bd-count">
-          {props.creationCount} {props.creationCount === 1 ? 'creation is' : 'creations are'} live
-          right now.
+      {/*
+        The one dark surface in the build layer.
+
+        Section 06 puts it on the featured creation and section 12's
+        interstitial inverts for the same reason: dark means *this is the build
+        layer*. There is no featured creation to carry it — nothing counts usage
+        — so the weight lands here, on the screen that is genuinely the
+        interruption, and it is reached by asking rather than sprung.
+      */}
+      <Card dark elevation="raised" className="cr-bd-hero">
+        <div className="cr-eyebrow">Build on Town Square</div>
+        <h1 className="cr-bd-hero-h">This town square runs on things somebody made.</h1>
+        <p className="cr-bd-hero-lede">
+          If you can describe an app, the AI tool you already use can build it, and Town Square can
+          host it. A trail conditions board. A map of every camera anyone has spotted. A list of who
+          still has a generator after an ice storm.
         </p>
-      )}
+        <Button
+          variant="on-navy"
+          icon="plug"
+          onClick={() => document.getElementById(CONNECT_ID)?.scrollIntoView({ block: 'start' })}
+        >
+          Connect your AI tool
+        </Button>
+        {props.creationCount !== undefined && props.creationCount > 0 && (
+          <p className="cr-bd-count">
+            {props.creationCount} {props.creationCount === 1 ? 'creation is' : 'creations are'} live
+            right now.
+          </p>
+        )}
+      </Card>
 
       <Steps />
       <Prerequisite />
@@ -188,15 +210,15 @@ function Connect({
 
   if (!account) {
     return (
-      <div className="cr-bd-gate">
+      <div className="cr-bd-gate" id={CONNECT_ID}>
         <div className="cr-detail-h">Connect your AI tool</div>
         <p>
           A connection token is minted against your account, so this part needs you signed in. It is
           the same sign-in as the rest of Town Square.
         </p>
-        <button className="cr-primary" onClick={onSignIn}>
+        <Button variant="primary" onClick={onSignIn}>
           Sign in
-        </button>
+        </Button>
       </div>
     )
   }
@@ -228,7 +250,9 @@ function Connect({
 
   return (
     <>
-      <div className="cr-detail-h">Connect your AI tool</div>
+      <div className="cr-detail-h" id={CONNECT_ID}>
+        Connect your AI tool
+      </div>
 
       {minted ? (
         <Minted minted={minted} onDone={() => setMinted(null)} />
@@ -297,9 +321,9 @@ function Connect({
             </p>
           </div>
 
-          <button className="cr-primary cr-primary-wide" disabled={busy} onClick={() => void mint()}>
-            {busy ? 'Minting…' : 'Mint token'}
-          </button>
+          <Button variant="primary" full loading={busy} onClick={() => void mint()}>
+            Mint token
+          </Button>
         </div>
       )}
 
@@ -361,9 +385,9 @@ function Minted({ minted, onDone }: { minted: MintedToken; onDone: () => void })
       <div className="cr-bd-field-label">Paste this in your terminal</div>
       <Copyable value={minted.claude_code_command} label="the command" mono block />
 
-      <button className="cr-secondary cr-secondary-wide" onClick={onDone}>
+      <Button variant="secondary" full onClick={onDone}>
         Done, I have copied it
-      </button>
+      </Button>
     </div>
   )
 }
@@ -391,8 +415,11 @@ function Copyable({
   return (
     <div className="cr-bd-copyable" data-block={block || undefined}>
       <code className={mono ? 'cr-bd-secret' : undefined}>{value}</code>
-      <button
-        className="cr-secondary-sm"
+      <Button
+        variant="secondary"
+        size="sm"
+        icon={copied ? 'check' : 'copy'}
+        className="cr-bd-copy"
         data-copied={copied || undefined}
         onClick={() => {
           void navigator.clipboard?.writeText(value).then(
@@ -404,9 +431,8 @@ function Copyable({
         }}
         aria-label={copied ? `Copied ${label}` : `Copy ${label}`}
       >
-        <Icon name={copied ? 'check' : 'copy'} size={14} />
         {copied ? 'Copied' : 'Copy'}
-      </button>
+      </Button>
     </div>
   )
 }
@@ -439,18 +465,24 @@ function TokenRow({ token, onRevoke }: { token: ConnectToken; onRevoke: () => vo
             Your drafts and anything you have published stay exactly where they are.
           </p>
           <div className="cr-bd-tok-confirm-acts">
-            <button className="cr-secondary-sm" onClick={() => setConfirming(false)}>
+            <Button variant="secondary" size="sm" onClick={() => setConfirming(false)}>
               Keep it
-            </button>
-            <button className="cr-primary-sm" onClick={onRevoke}>
+            </Button>
+            {/*
+              Destructive is an outlined terracotta, never brick: revoking a
+              token is reversible in ten seconds by minting another, and
+              spending the alarm register on it is how the alarm stops meaning
+              anything.
+            */}
+            <Button variant="destructive" size="sm" onClick={onRevoke}>
               Yes, revoke it
-            </button>
+            </Button>
           </div>
         </div>
       ) : (
-        <button className="cr-secondary-sm" onClick={() => setConfirming(true)}>
+        <Button variant="secondary" size="sm" onClick={() => setConfirming(true)}>
           Revoke
-        </button>
+        </Button>
       )}
     </li>
   )

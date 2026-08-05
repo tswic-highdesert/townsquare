@@ -167,7 +167,7 @@ export function CollectionComposer(props: {
             {results
               .filter((l) => !draft.items.some((i) => i.refId === l.id))
               .map((listing) => (
-                <li key={listing.id}>
+                <li key={listing.id} role="presentation">
                   <button
                     type="button"
                     className="cn-picker-opt"

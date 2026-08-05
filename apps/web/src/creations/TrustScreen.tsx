@@ -21,7 +21,8 @@
  */
 
 import { Icon } from '../Icon.js'
-import { AppIcon, MadeBy, TRUST_GLYPHS } from './parts.js'
+import { Button } from '../ui/index.js'
+import { AppIcon, MADE_BY, TRUST_GLYPHS } from './parts.js'
 import { summariseTrust } from './trustGroups.js'
 import type { CreationSummary } from '../townData.js'
 import './creations.css'
@@ -53,7 +54,7 @@ export function TrustScreen(props: TrustScreenProps) {
         <div>
           <h1 className="cr-h1 cr-h1-tight">{creation.name}</h1>
           <p className="cr-lede cr-lede-tight">{creation.tagline}</p>
-          <MadeBy className="cr-card-by" />
+          <p className="cr-by">{MADE_BY}</p>
         </div>
       </div>
 
@@ -108,15 +109,16 @@ export function TrustScreen(props: TrustScreenProps) {
         name on the button under a heading that already carries it adds nothing
         for a sighted resident and makes a screen reader say it twice.
       */}
-      <div className={summary.counsel ? 'cr-actions' : undefined}>
+      <div className={summary.counsel ? 'cr-actions' : 'cr-action'}>
+        {/* The safe choice first, so it is the easy target under a thumb. */}
         {summary.counsel && (
-          <button className="cr-secondary cr-secondary-wide" onClick={props.onBack}>
+          <Button variant="secondary" size="lg" full onClick={props.onBack}>
             Not now
-          </button>
+          </Button>
         )}
-        <button className="cr-primary cr-primary-wide" onClick={props.onOpen}>
+        <Button variant="primary" size="lg" full onClick={props.onOpen}>
           Open
-        </button>
+        </Button>
       </div>
 
       {props.onDetail && (

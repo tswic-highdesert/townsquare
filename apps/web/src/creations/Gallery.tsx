@@ -17,7 +17,9 @@
  *   - **The featured slot, and "new this week".** Both are rankings, and the
  *     catalogue carries neither a usage count nor a published date to rank on.
  *     A "featured" card picked off array order is a leaderboard with no
- *     scoreboard behind it.
+ *     scoreboard behind it. That slot is also where the design's one dark card
+ *     lives, so this screen has none; the build layer's dark surface is the
+ *     builder door instead.
  *
  * What survives is the part that was doing the work anyway: every entry carries
  * what it does, who made it, and what it can touch, and the touch strip is on
@@ -26,8 +28,8 @@
 
 import { useMemo, useState } from 'react'
 import { Icon } from '../Icon.js'
-import { EmptyState, Skeleton } from '../ui/index.js'
-import { AppIcon, MadeBy, TouchStrip } from './parts.js'
+import { Button, Card, CardBody, CardMeta, CardTitle, EmptyState, Skeleton } from '../ui/index.js'
+import { AppIcon, MADE_BY, TouchStrip } from './parts.js'
 import type { CreationSummary } from '../townData.js'
 import './creations.css'
 
@@ -131,7 +133,7 @@ export function Gallery(props: GalleryProps) {
           ) : (
             <div className="cr-cardgrid">
               {shown.map((creation) => (
-                <Card key={creation.slug} creation={creation} onOpen={props.onOpen} />
+                <CreationCard key={creation.slug} creation={creation} onOpen={props.onOpen} />
               ))}
             </div>
           )}
@@ -151,11 +153,12 @@ export function Gallery(props: GalleryProps) {
 /**
  * One card, and the whole card is the control.
  *
- * A card with an Open button beside a tappable body gives a resident two
- * targets for one intention and a screen reader two announcements of the same
- * creation. One button, whose accessible name is everything printed on it.
+ * `Card` with `onClick` gives that for free: one tab stop, one hit area, one
+ * announcement. A card with an Open button beside a tappable body gives a
+ * resident two targets for one intention and a screen reader two names for the
+ * same creation.
  */
-function Card({
+function CreationCard({
   creation,
   onOpen,
 }: {
@@ -163,17 +166,28 @@ function Card({
   onOpen: (creation: CreationSummary) => void
 }) {
   return (
-    <button className="cr-card" onClick={() => onOpen(creation)}>
-      <AppIcon creation={creation} />
-      <span className="cr-card-name">{creation.name}</span>
-      <span className="cr-card-tagline">{creation.tagline}</span>
-      <MadeBy className="cr-card-by" />
-      <TouchStrip creation={creation} />
-    </button>
+    <Card onClick={() => onOpen(creation)}>
+      <CardBody>
+        <AppIcon creation={creation} />
+        <CardTitle>{creation.name}</CardTitle>
+        <p className="cr-card-tagline">{creation.tagline}</p>
+        <CardMeta>{MADE_BY}</CardMeta>
+        <TouchStrip creation={creation} />
+      </CardBody>
+    </Card>
   )
 }
 
-/** The launch-week arrangement: numbered, with the builder's own sentence. */
+/**
+ * The launch-week arrangement: numbered, with the builder's own sentence.
+ *
+ * Deliberately not `Card` and not `RowList`. A card here would be the
+ * failed-store layout this treatment exists to avoid, and a row is a one-line
+ * navigation item — these entries carry a name, a sentence, an attribution and
+ * a touch strip, which is a short article rather than a row. The hairline
+ * between them is the whole visual argument: a numbered list reads as a
+ * beginning, and three cards read as empty shelves.
+ */
 function Firsts({
   creations,
   onOpen,
@@ -189,9 +203,9 @@ function Firsts({
             {String(i + 1).padStart(2, '0')}
           </span>
           <button className="cr-firsts-body" onClick={() => onOpen(creation)}>
-            <span className="cr-card-name">{creation.name}</span>
+            <span className="cr-firsts-name">{creation.name}</span>
             <span className="cr-firsts-why">{firstSentence(creation.description)}</span>
-            <MadeBy className="cr-card-by" />
+            <span className="cr-firsts-by">{MADE_BY}</span>
             <TouchStrip creation={creation} />
           </button>
         </li>
@@ -205,9 +219,13 @@ function Firsts({
  *
  * A quiet permanent fixture rather than a banner that appears once: present
  * enough to be noticed on the fourth visit, quiet enough to never be in the way
- * on the first. The dashed edge is doing a job — it is the one card here that
- * is not a creation, and it should read as an empty slot waiting for somebody
- * rather than as an advertisement.
+ * on the first.
+ *
+ * Not a dark `Card` and not a civic one. The dashed terracotta edge is doing a
+ * job neither fill can: this is the one card in the gallery that is not a
+ * creation, and it should read as an empty slot waiting for somebody. Filling
+ * it navy would make the loudest thing on the screen an advertisement for
+ * building, which is exactly what this section is defined against.
  */
 function Invitation({ onHowItWorks }: { onHowItWorks: () => void }) {
   return (
@@ -221,9 +239,9 @@ function Invitation({ onHowItWorks }: { onHowItWorks: () => void }) {
           Describe what you want to the AI tool you already use, connect it to Town Square, and a
           neighbour on the review committee reads it before it goes up.
         </p>
-        <button className="cr-secondary" onClick={onHowItWorks}>
-          How it works <Icon name="arrow-right" size={16} />
-        </button>
+        <Button variant="secondary" trailingIcon="arrow-right" onClick={onHowItWorks}>
+          How it works
+        </Button>
       </article>
 
       <p className="cr-invite-line">

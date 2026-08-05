@@ -19,7 +19,8 @@
  */
 
 import { Icon } from '../Icon.js'
-import { AppIcon, MadeBy, TRUST_GLYPHS } from './parts.js'
+import { Button } from '../ui/index.js'
+import { AppIcon, MADE_BY, TRUST_GLYPHS } from './parts.js'
 import { summariseTrust } from './trustGroups.js'
 import type { CreationSummary } from '../townData.js'
 import './creations.css'
@@ -47,14 +48,14 @@ export function CreationDetail(props: CreationDetailProps) {
         <div>
           <h1 className="cr-h1 cr-h1-tight">{creation.name}</h1>
           <p className="cr-lede cr-lede-tight">{creation.tagline}</p>
-          <MadeBy className="cr-card-by" />
+          <p className="cr-by">{MADE_BY}</p>
         </div>
       </div>
 
       <div className="cr-detail-acts">
-        <button className="cr-primary" onClick={props.onOpen}>
-          Open <Icon name="arrow-right" size={16} />
-        </button>
+        <Button variant="primary" trailingIcon="arrow-right" onClick={props.onOpen}>
+          Open
+        </Button>
       </div>
 
       {creation.description.split(/\n{2,}/).map((para, i) => (

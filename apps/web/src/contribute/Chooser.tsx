@@ -117,9 +117,17 @@ function ChooserRow({ row, onPick }: { row: GateAvailability; onPick: () => void
               </span>
             )}
           </span>
+          {/* The description says what the type is, always. The server's
+              reason says why this row is locked, and it is a separate line
+              rather than a replacement: a resident who cannot use a type still
+              needs to know what it is, and swapping the two leaves a lock with
+              no explanation of what is behind it. */}
           <span className="cn-choose-desc" id={descId}>
-            {row.allowed ? meta.desc : (row.reason ?? meta.desc)}
+            {meta.desc}
           </span>
+          {row.allowed || !row.reason ? null : (
+            <span className="cn-choose-why">{sentence(row.reason)}</span>
+          )}
           {row.ifUsed === 'hold' ? (
             <span className="cn-choose-hold">
               You can write it now. It posts the moment you are verified.
@@ -130,6 +138,20 @@ function ChooserRow({ row, onPick }: { row: GateAvailability; onPick: () => void
       </button>
     </li>
   )
+}
+
+/**
+ * The service's reason, as a sentence.
+ *
+ * Those strings are written as clauses because they are also thrown as error
+ * messages, where "adding this is for verified residents" reads correctly after
+ * a colon. On a chooser row it is standing on its own, so it gets a capital and
+ * a full stop rather than being rewritten in two places.
+ */
+function sentence(reason: string): string {
+  const trimmed = reason.trim()
+  const first = trimmed.charAt(0).toUpperCase() + trimmed.slice(1)
+  return /[.!?]$/.test(first) ? first : `${first}.`
 }
 
 function lockLabel(row: GateAvailability): string {

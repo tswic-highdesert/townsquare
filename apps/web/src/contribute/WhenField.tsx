@@ -25,13 +25,26 @@ import { Button, InlineError } from '../ui/index.js'
 import { Icon } from '../Icon.js'
 import { readWhen, type WhenResult } from './contributeData.js'
 
-export interface WhenFieldProps {
+/**
+ * One value and one setter, deliberately.
+ *
+ * An earlier version of this took `onText` and `onConfirm` separately, and
+ * typing into the field silently did nothing: the input handler called both,
+ * each closed over the same render's draft, and the second overwrote the first.
+ * The words went in and were immediately replaced by a copy of the draft that
+ * never had them. Two setters for two halves of one fact is the shape that bug
+ * lives in, so there is one of each here now.
+ */
+export interface WhenValue {
   /** The words the resident typed. Kept, always, whatever happens. */
   text: string
-  onText: (text: string) => void
   /** The instant they confirmed, or null while nothing is settled. */
   startsAt: number | null
-  onConfirm: (startsAt: number | null) => void
+}
+
+export interface WhenFieldProps {
+  value: WhenValue
+  onChange: (next: WhenValue) => void
 }
 
 export function WhenField(props: WhenFieldProps) {
@@ -46,12 +59,12 @@ export function WhenField(props: WhenFieldProps) {
     if (manual) return
     const seq = ++latest.current
     const timer = setTimeout(() => {
-      void readWhen(props.text).then((next) => {
+      void readWhen(props.value.text).then((next) => {
         if (seq === latest.current) setResult(next)
       })
     }, 250)
     return () => clearTimeout(timer)
-  }, [props.text, manual])
+  }, [props.value.text, manual])
 
   return (
     <div className="cn-field">
@@ -63,7 +76,7 @@ export function WhenField(props: WhenFieldProps) {
         <input
           id="cn-when"
           className="cn-input cn-input--nl"
-          value={props.text}
+          value={props.value.text}
           // The placeholder teaches the input by example. No format is
           // documented anywhere, because a documented format is a format
           // somebody has to get right.
@@ -71,8 +84,9 @@ export function WhenField(props: WhenFieldProps) {
           aria-invalid={result.kind === 'unreadable' || undefined}
           aria-describedby="cn-when-read"
           onChange={(e) => {
-            props.onText(e.target.value)
-            props.onConfirm(null)
+            // One update carrying both halves. Changing the words un-confirms
+            // the instant, and that has to happen in the same write.
+            props.onChange({ text: e.target.value, startsAt: null })
             setManual(false)
           }}
         />
@@ -83,15 +97,15 @@ export function WhenField(props: WhenFieldProps) {
           <ManualEntry
             onBack={() => {
               setManual(false)
-              props.onConfirm(null)
+              props.onChange({ text: props.value.text, startsAt: null })
             }}
-            onSet={props.onConfirm}
+            onSet={(startsAt) => props.onChange({ text: props.value.text, startsAt })}
           />
         ) : (
           <ParseLine
             result={result}
-            confirmed={props.startsAt}
-            onConfirm={props.onConfirm}
+            confirmed={props.value.startsAt}
+            onConfirm={(startsAt) => props.onChange({ text: props.value.text, startsAt })}
             onManual={() => setManual(true)}
           />
         )}

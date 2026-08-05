@@ -104,7 +104,7 @@ export function ComposerShell(props: ComposerShellProps) {
 
       <footer className="cn-publish">
         {props.onSaveDraft ? (
-          <Button variant="ghost" onClick={props.onSaveDraft}>
+          <Button variant="quiet" onClick={props.onSaveDraft}>
             Save draft
           </Button>
         ) : (

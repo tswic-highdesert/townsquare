@@ -11,10 +11,17 @@
  * this file loads before it: the shell's stylesheet is imported from
  * `main.tsx`, and a stylesheet imported from a component ends up wherever the
  * module graph puts it. Rather than fight over load order with a file another
- * agent owns, every rule that has to win is written as `.today-bar.ts-bar` —
+ * agent owns, every rule that has to win is written as `.today-bar.ts-appbar` —
  * two classes beats one, whatever order they arrive in. The `ts-` class is
  * added by the component, so nothing here can reach a bar this file did not
  * mean to touch.
+ *
+ * The chrome class is `ts-appbar` and not the obvious `ts-bar`, because
+ * `ts-bar` is already the fill track of `Progress` in `ui/ui.css`. That
+ * collision silently gave the resident bar `height: 6px; overflow: hidden` and
+ * flattened it to a 25px strip with its own contents hanging out of it. Every
+ * class invented here is checked against `ui/ui.css` first; the primitives
+ * layer got the `ts-` prefix first and keeps it.
  *
  * Not one hex literal, the same as every other stylesheet here. Where a value
  * does not exist in the contract it is mixed from one that does.
@@ -49,7 +56,10 @@
   /* No shadow at rest. The pill itself parks exactly off the top edge, but a
      lift cast downward from it still fell across the wordmark — a smudge over
      the brand on every screen, from a control nobody had touched. */
-  transform: translateY(-100%);
+  /* The extra 2px is not superstition: the pill's height lands on a fraction
+     of a pixel at most text sizes, and a flush -100% left a hairline of navy
+     across the top of the window. */
+  transform: translateY(calc(-100% - 2px));
   transition: transform var(--ts-dur-2) var(--ts-ease-out);
 }
 
@@ -69,7 +79,7 @@
 
 /* ── the resident bar ────────────────────────────────────────────────────── */
 
-.today-bar.ts-bar {
+.today-bar.ts-appbar {
   position: sticky;
   top: 0;
   z-index: 10;
@@ -78,14 +88,14 @@
   transition: padding var(--ts-dur-2) var(--ts-ease), box-shadow var(--ts-dur-2) var(--ts-ease);
 }
 
-.ts-bar-brand {
+.ts-appbar-brand {
   min-width: 0;
   display: flex;
   flex-direction: column;
   line-height: 1.15;
 }
 
-.ts-bar .today-place {
+.ts-appbar .today-place {
   display: block;
   white-space: nowrap;
   overflow: hidden;
@@ -100,23 +110,23 @@
  * hairline becomes a shadow so the bar sits above the read rather than beside
  * it.
  */
-.today-bar.ts-bar[data-condensed] {
+.today-bar.ts-appbar[data-condensed] {
   padding-top: var(--ts-space-2);
   padding-bottom: var(--ts-space-2);
   border-bottom-color: transparent;
   box-shadow: var(--ts-shadow-flat);
 }
 
-.today-bar.ts-bar[data-condensed] .today-place {
+.today-bar.ts-appbar[data-condensed] .today-place {
   display: none;
 }
 
-.today-bar.ts-bar[data-condensed] .ts-bar-mark {
+.today-bar.ts-appbar[data-condensed] .ts-appbar-mark {
   width: 18px;
   height: 18px;
 }
 
-.today-bar.ts-bar[data-condensed] .avatar {
+.today-bar.ts-appbar[data-condensed] .avatar {
   width: 28px;
   height: 28px;
   font-size: var(--ts-text-eyebrow);
@@ -129,7 +139,7 @@
  * describe.
  */
 
-.ts-bar-search {
+.ts-appbar-search {
   display: grid;
   place-items: center;
   flex: none;
@@ -144,23 +154,23 @@
   transition: background var(--ts-dur-1) var(--ts-ease), color var(--ts-dur-1) var(--ts-ease);
 }
 
-.ts-bar-search:hover {
+.ts-appbar-search:hover {
   background: var(--ts-ink08);
   color: var(--ts-ink);
 }
 
-.ts-bar-search:active {
+.ts-appbar-search:active {
   background: var(--ts-ink13);
 }
 
-.ts-bar-search:focus-visible,
+.ts-appbar-search:focus-visible,
 .avatar-button:focus-visible,
 .ts-back:focus-visible {
   outline: none;
   box-shadow: var(--ts-focus);
 }
 
-.ts-bar-search-label {
+.ts-appbar-search-label {
   /* Present for a screen reader on a phone, drawn only where there is room. */
   position: absolute;
   width: 1px;
@@ -170,7 +180,7 @@
   white-space: nowrap;
 }
 
-.today-bar.ts-bar .today-bar-actions {
+.today-bar.ts-appbar .today-bar-actions {
   margin-left: 0;
 }
 
@@ -311,15 +321,14 @@
   }
 
   /* At this width there is room to say it, so the field says it. */
-  .ts-shell .ts-bar-search {
-    width: auto;
-    height: auto;
-    min-height: 40px;
-    gap: var(--ts-space-2);
+  .ts-shell .ts-appbar-search {
     display: flex;
     align-items: center;
     justify-content: flex-start;
+    gap: var(--ts-space-2);
     width: 340px;
+    height: auto;
+    min-height: 40px;
     margin: 0 auto;
     padding: 0 var(--ts-space-3);
     border: 1px solid var(--ts-hairline);
@@ -331,13 +340,13 @@
     cursor: text;
   }
 
-  .ts-shell .ts-bar-search:hover {
+  .ts-shell .ts-appbar-search:hover {
     background: var(--ts-surface);
     border-color: var(--ts-ink26);
     color: var(--ts-ink60);
   }
 
-  .ts-shell .ts-bar-search-label {
+  .ts-shell .ts-appbar-search-label {
     position: static;
     width: auto;
     height: auto;
@@ -839,7 +848,7 @@
 
 @media (prefers-reduced-motion: reduce) {
   .ts-skip,
-  .today-bar.ts-bar,
+  .today-bar.ts-appbar,
   .nav-item.ts-tab,
   .ts-tab-ind {
     transition: none;

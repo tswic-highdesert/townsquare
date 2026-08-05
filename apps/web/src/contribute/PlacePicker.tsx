@@ -25,9 +25,19 @@ export interface PickedPlace {
 export function PlacePicker(props: {
   label: string
   place: PickedPlace | null
-  onPick: (place: PickedPlace | null) => void
+  /**
+   * The full listing rides along beside the place.
+   *
+   * A correction needs more than a name and an id: it has to show what the
+   * listing currently says for the field being corrected, so the reviewer reads
+   * a diff. Handing back the row we already fetched avoids a second request for
+   * data that was on screen a moment ago.
+   */
+  onPick: (place: PickedPlace | null, listing?: Listing) => void
   help?: string
   optional?: boolean
+  /** A correction is against a real listing, so there is no escape hatch. */
+  listingsOnly?: boolean
 }) {
   const [query, setQuery] = useState('')
   const [results, setResults] = useState<Listing[]>([])
@@ -109,13 +119,13 @@ export function PlacePicker(props: {
       {open ? (
         <ul className="cn-picker-list" role="listbox" id={listId} aria-label="Places">
           {results.map((listing) => (
-            <li key={listing.id}>
+            <li key={listing.id} role="presentation">
               <button
                 type="button"
                 className="cn-picker-opt"
                 role="option"
                 aria-selected={false}
-                onClick={() => props.onPick({ listingId: listing.id, name: listing.name })}
+                onClick={() => props.onPick({ listingId: listing.id, name: listing.name }, listing)}
               >
                 <span className="cn-place-ic cn-place-ic--sm">
                   <Icon name="building" size={16} />
@@ -127,7 +137,8 @@ export function PlacePicker(props: {
               </button>
             </li>
           ))}
-          <li>
+          {props.listingsOnly ? null : (
+          <li role="presentation">
             <button
               type="button"
               className="cn-picker-opt"
@@ -145,6 +156,7 @@ export function PlacePicker(props: {
               </span>
             </button>
           </li>
+          )}
         </ul>
       ) : null}
       {props.help ? <p className="cn-hint">{props.help}</p> : null}

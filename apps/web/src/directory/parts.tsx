@@ -1,30 +1,33 @@
 /**
  * The pieces every directory surface is built from.
  *
- * Five densities of the same listing — a rail card, a browse card, a list row,
- * a pin card and a stumble card — and one open-now pill shared by all of them.
- * Kept in one file because that is what keeps them the same component rather
- * than five drifting copies of a card: the design's whole argument for the pin
- * card is that the map is not a second design system.
+ * Four densities of one listing — a browse card, a list row, a compact rail
+ * card and a pin card. Three of them are `Card` and `Row` from `ui/` plus
+ * props; the fourth is not, and the note on `MiniCard` says exactly why.
  *
  * ## There are no photographs, and nothing here pretends otherwise
  *
  * The directory is a Google Places extract with images deliberately excluded.
- * Not one of the 741 listings carries a picture, and there is no upload path
- * yet, so every card here draws `Plate` — a washed gradient in the category's
- * own tone with the category glyph on it, which is the design's own no-photo
- * treatment. It is a fixed box at every size so a grid of 700 never goes
- * ragged: a shorter card beside a taller one would make "we have no picture of
- * this place" look like a layout bug instead of a fact we are stating.
+ * Not one of the 741 listings carries a picture, there is no upload path yet,
+ * and there is no image API budget — so the absence is permanent rather than
+ * pending. Every card draws `Plate`: the design's own CSS-gradient-over-
+ * `--ts-stone` convention, tinted by the group and carrying the group's glyph.
+ * It is a fixed box at every size so a grid of 700 never goes ragged, because a
+ * shorter card beside a taller one would make "we have no picture of this
+ * place" look like a layout bug instead of a fact we are stating.
  *
- * Drawing the design's `data-shot` storefronts and bookshelves against real
- * listings was the tempting version and it is the one thing this codebase will
- * not do. An abstract plate says "no photograph". A drawn awning over a
+ * Drawing the design sheet's `data-shot` storefronts and bookshelves against
+ * real listings was the tempting version and it is the one thing this codebase
+ * will not do. An abstract plate says "no photograph". A drawn awning over a
  * neighbour's salon says "here is a photograph of it", and it is not.
+ *
+ * `CardMedia` is deliberately not used, and that is the one place the primitive
+ * does not reach. See the note on `Plate`.
  */
 
 import type { ReactNode } from 'react'
 import { Icon, type IconName } from '../Icon.js'
+import { Card, CardBody, CardMeta, CardTitle, Row } from '../ui/index.js'
 import { formatDistance } from '../nearbyData.js'
 import type { GroupId, OpenPhase, RankedPlace } from './directoryData.js'
 import { shortAddress } from './directoryData.js'
@@ -87,10 +90,15 @@ export const GROUP_TONE: Readonly<Record<GroupId, 'clay' | 'navy' | 'sage' | 'go
  * Five states, and they differ in **dot shape** before they differ in colour:
  * solid, haloed, half, hollow, and no dot at all. Desaturate the screen and
  * every state is still readable, which is the requirement — `unknown` is 184 of
- * the 741 listings, and a muted dot beside a sage one reads as "closed". "We
+ * the 741 listings, and a muted dot beside an open one reads as "closed". "We
  * could not read this business's hours" and "this business is shut" are
  * different facts and they must not share a shape, so unknown swaps the dot for
  * a clock. The glyph changes, not just the colour.
+ *
+ * Open is `--ts-verified`, the role rather than the raw sage. Open and vouched
+ * are the same claim in this system — something is alive and we checked it —
+ * which is why they share a colour, and naming the role is what keeps them
+ * moving together when a town reskins.
  */
 export function OpenPill({ phase, label }: { phase: OpenPhase; label: string }) {
   return (
@@ -106,12 +114,18 @@ export function OpenPill({ phase, label }: { phase: OpenPhase; label: string }) 
 }
 
 /**
- * The stand-in for a photograph we do not have.
+ * The stand-in for a photograph that is never coming.
  *
- * Not a skeleton and not a broken image: it is the finished state of a card for
- * a listing nobody has photographed, and it is meant to look deliberate. The
- * caption appears only at the sizes where there is room to read it — at 48px in
- * a list row the glyph alone is the whole message.
+ * Not `CardMedia` with no `src`, and the difference is the whole point.
+ * `CardMedia`'s placeholder is right for Today, where roughly half the town's
+ * stories carry a photo and the other half might tomorrow: a bare stone
+ * rectangle holds the height and waits. In the directory nothing will ever fill
+ * it — the extract excluded images and there is no paid image API — so a bare
+ * rectangle in every one of 741 cards reads as an app that failed to load. This
+ * says what it is instead: the category's glyph, the category's tone, and the
+ * words "no photo yet" where there is room to read them.
+ *
+ * If `CardMedia` grew a `children` slot and a tone, this would be that.
  */
 export function Plate({
   group,
@@ -147,7 +161,14 @@ export function directionsUrl(address: string | null): string | null {
     : null
 }
 
-export interface CardProps {
+/** The line under a name: what it is, and which street it is on. */
+function whatAndWhere(place: RankedPlace): string {
+  return [place.category, place.address ? shortAddress(place.address) : null]
+    .filter(Boolean)
+    .join(' · ')
+}
+
+export interface ListingProps {
   place: RankedPlace
   saved: boolean
   canSave: boolean
@@ -156,71 +177,93 @@ export interface CardProps {
 }
 
 /**
- * The browse card. A fixed 16:10 plate so a grid of 700 never goes ragged.
+ * The browse card: `Card`, a plate, a body, and one secondary target.
  *
- * Save is a separate 44px target sitting on the plate rather than part of the
- * card's own press, because saving and opening are different intentions and
- * rolling them together gets one of them wrong every time.
+ * The card is not itself the press, which is the one deviation from `Card`'s
+ * default shape and the reason it stays a `<div>` rather than taking `onClick`.
+ * Save is a separate 44px button sitting on the plate, and a button nested
+ * inside a button is invalid markup and unreachable by keyboard. `Card`'s own
+ * note names the pattern — Nearby's Call and Directions — and this is the same
+ * situation one size smaller: opening a listing and saving it are different
+ * intentions, and rolling them into one press gets one of them wrong every
+ * time.
  */
-export function BrowseCard({ place, saved, canSave, onToggleSave, onOpen }: CardProps) {
+export function BrowseCard({ place, saved, canSave, onToggleSave, onOpen }: ListingProps) {
   return (
-    <article className="dir-card">
+    <Card className="dir-card">
       <span className="dir-card-plate">
         <Plate group={place.group} category={place.category} caption />
         {canSave && <SaveButton place={place} saved={saved} onToggle={onToggleSave} />}
       </span>
-      <button className="dir-card-body" onClick={() => onOpen(place)}>
-        <span className="dir-card-name">{place.name}</span>
-        <span className="dir-card-cat">
-          {[place.category, place.address ? shortAddress(place.address) : null]
-            .filter(Boolean)
-            .join(' · ')}
-        </span>
+      <CardBody className="dir-card-body">
+        <button className="dir-card-open" onClick={() => onOpen(place)}>
+          <CardTitle as="h3">{place.name}</CardTitle>
+          <CardMeta>{whatAndWhere(place)}</CardMeta>
+        </button>
         <span className="dir-card-foot">
           <OpenPill phase={place.phase} label={place.detail} />
           {place.miles !== null && (
             <span className="dir-card-dist">{formatDistance(place.miles)}</span>
           )}
         </span>
-      </button>
-    </article>
+      </CardBody>
+    </Card>
   )
 }
 
 /**
- * The density workhorse: 72px per listing, so a group of 127 is nine screens
- * rather than thirty.
+ * The density workhorse: `Row`, inside a `compact` `RowList`.
  *
- * The open state sits right-aligned in its own column, so a finger running down
- * the edge of the screen reads a column of dots and can skip everything else.
+ * The `<li>` is written out rather than using `RowItem`, for one reason:
+ * `RowItem` renders exactly one `Row` inside the list item, and the save
+ * bookmark has to be a **sibling** of it rather than a child. `Row` with
+ * `onClick` is a `<button>`, so a bookmark in its `trailing` slot would be a
+ * button inside a button. `RowList` still draws the frame and still sets the
+ * density, and the inset divider still lands, because both are keyed off
+ * `.ts-row` inside an `li` rather than off `RowItem` itself.
+ *
+ * The open state goes in `trailing`, which is a fixed column, so a finger
+ * running down the edge of the screen reads a column of dots and can skip
+ * everything else.
  */
-export function ListRow({ place, saved, canSave, onToggleSave, onOpen }: CardProps) {
+export function ListRow({ place, saved, canSave, onToggleSave, onOpen }: ListingProps) {
   return (
     <li className="dir-row">
-      <button className="dir-row-main" onClick={() => onOpen(place)}>
-        <Plate group={place.group} category={place.category} />
-        <span className="dir-row-body">
-          <span className="dir-row-name">{place.name}</span>
-          <span className="dir-row-cat">
-            {[place.category, place.address ? shortAddress(place.address) : null]
-              .filter(Boolean)
-              .join(' · ')}
+      <Row
+        className="dir-row-main"
+        lead={<Plate group={place.group} category={place.category} />}
+        title={place.name}
+        meta={whatAndWhere(place)}
+        trailing={
+          <span className="dir-row-right">
+            <OpenPill phase={place.phase} label={place.detail} />
+            {place.miles !== null && (
+              <span className="dir-row-dist">{formatDistance(place.miles)}</span>
+            )}
           </span>
-        </span>
-        <span className="dir-row-right">
-          <OpenPill phase={place.phase} label={place.detail} />
-          {place.miles !== null && (
-            <span className="dir-row-dist">{formatDistance(place.miles)}</span>
-          )}
-        </span>
-        <Icon name="chevron-right" size={16} className="dir-row-go" />
-      </button>
+        }
+        onClick={() => onOpen(place)}
+      />
       {canSave && <SaveButton place={place} saved={saved} onToggle={onToggleSave} inline />}
     </li>
   )
 }
 
-/** The 132px rail card. Drops the address before it drops the open state. */
+/**
+ * The 132px rail card, and the one shape here that is **not** `Card` plus props.
+ *
+ * `Card` is a full-width block with `--ts-space-4` of padding all round and an
+ * inset media well. This is a fixed-width tile in a horizontal scroller, with
+ * the plate running full bleed to three of its edges and a name clamped to two
+ * lines at caption size. Building it out of `Card` means overriding the width,
+ * the padding, the media inset and the title size — at which point nothing of
+ * the primitive survives except the border, and a component overridden to
+ * nothing is worse than one that was not used, because the next person reads it
+ * as shared and edits it as shared.
+ *
+ * A `Card` that took `padding="none"` and let a caller size it would absorb
+ * this exactly. Reported rather than worked around.
+ */
 export function MiniCard({ place, onOpen }: { place: RankedPlace; onOpen: (p: RankedPlace) => void }) {
   return (
     <button className="dir-mini" onClick={() => onOpen(place)}>
@@ -239,18 +282,21 @@ export function MiniCard({ place, onOpen }: { place: RankedPlace; onOpen: (p: Ra
 }
 
 /**
- * The pin card, which is the same component loose or over a map.
+ * The pin card: a raised `Card`, laid out sideways.
  *
+ * The same component loose or over a map, which is the design's argument for
+ * having one at all — a map that grows its own card is a second design system.
  * Call, directions and the website open three different apps, so they are three
- * targets and never one card link. A listing with no phone number draws the
- * call target as disabled and takes it out of the tab order rather than
- * offering to dial nothing.
+ * targets and never one card link, which is also why this card is not itself
+ * pressable. A listing with no phone number draws the call target as
+ * unavailable and takes it out of the tab order rather than offering to dial
+ * nothing.
  */
 export function PinCard({ place }: { place: RankedPlace }) {
   const directions = directionsUrl(place.address)
 
   return (
-    <article className="dir-pin">
+    <Card elevation="raised" className="dir-pin">
       <span className="dir-pin-plate">
         <Plate group={place.group} category={place.category} />
       </span>
@@ -287,7 +333,7 @@ export function PinCard({ place }: { place: RankedPlace }) {
           </a>
         )}
       </span>
-    </article>
+    </Card>
   )
 }
 

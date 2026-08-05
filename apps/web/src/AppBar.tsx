@@ -105,10 +105,10 @@ export function AppBar(props: AppBarProps) {
         Skip to the top of {props.place || 'town'}
       </a>
 
-      <header className="today-bar ts-bar" data-condensed={condensed || undefined} ref={bar}>
-        <Mark size={22} className="ts-bar-mark" />
+      <header className="today-bar ts-appbar" data-condensed={condensed || undefined} ref={bar}>
+        <Mark size={22} className="ts-appbar-mark" />
 
-        <div className="ts-bar-brand">
+        <div className="ts-appbar-brand">
           <span className="today-wordmark">{props.label}</span>
           <span className="today-place">{props.place}</span>
         </div>
@@ -120,14 +120,14 @@ export function AppBar(props: AppBarProps) {
           shapes, so there is only ever one thing to focus.
         */}
         <button
-          className="ts-bar-search"
+          className="ts-appbar-search"
           type="button"
           onClick={shell.onSearch}
           aria-expanded={shell.searchOpen}
           aria-label={`Search ${props.place || 'the town'}`}
         >
           <Icon name="search" size={18} />
-          <span className="ts-bar-search-label">Search {props.place || 'the town'}</span>
+          <span className="ts-appbar-search-label">Search {props.place || 'the town'}</span>
         </button>
 
         <div className="today-bar-actions">

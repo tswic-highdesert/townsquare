@@ -49,7 +49,6 @@ import { fetchYours, type BuiltCreation, type SavedThing } from './savesData.js'
 import { fetchToday, type TodayPayload } from './todayData.js'
 import { fetchNearby, type NearbyPayload } from './nearbyData.js'
 import { fetchCreations, fetchTown, type CreationSummary } from './townData.js'
-import { AppChip } from './ui/index.js'
 
 type Screen =
   | { name: 'today' }
@@ -443,7 +442,13 @@ export function App() {
         <PageHeader
           register="host"
           title={creation.name}
-          subtitle="by a neighbor · sandboxed, and can only reach what the last screen said"
+          /*
+            "by a neighbor" and not initials of the creation's own name: a
+            creation's author is platform-assigned at approval, and nothing in
+            development has been through the queue. "TB" for The Burrito Index
+            would be an avatar for a person who does not exist.
+          */
+          subtitle="by a neighbor · sandboxed"
           back={{
             label: BACK_LABEL[screen.from],
             onClick: () => {
@@ -460,7 +465,12 @@ export function App() {
               alt=""
             />
           }
-          action={<AppChip inverse />}
+          /*
+            No action on the right. The hi-fi puts an "about this creation"
+            control there, and the screen it would open is the trust page the
+            resident pressed Open on a second ago — which the close control
+            already goes back to.
+          */
         />
 
         {/* Set by the creation through app.setTitle. Rendered as a text node. */}

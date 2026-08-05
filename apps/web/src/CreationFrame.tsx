@@ -14,6 +14,7 @@ import type { Manifest } from '@townsquare/manifest'
 import { createActTokenHolder } from './actToken.js'
 import { townData } from './townData.js'
 import { Icon, type IconName } from './Icon.js'
+import { Button } from './ui/index.js'
 import './creations/creations.css'
 
 export interface CreationFrameProps {
@@ -206,20 +207,20 @@ function Failure(props: {
       <p>{copy.body}</p>
 
       {copy.retry ? (
-        <button className="cr-primary" onClick={props.onRetry}>
+        <Button variant="primary" icon="refresh" onClick={props.onRetry}>
           Try again
-        </button>
+        </Button>
       ) : (
         <div className="cr-failure-acts">
           {props.onLeave && (
-            <button className="cr-primary" onClick={props.onLeave}>
+            <Button variant="primary" onClick={props.onLeave}>
               Back to the gallery
-            </button>
+            </Button>
           )}
           {props.onReport && (
-            <button className="cr-secondary" onClick={props.onReport}>
+            <Button variant="secondary" onClick={props.onReport}>
               Report
-            </button>
+            </Button>
           )}
         </div>
       )}

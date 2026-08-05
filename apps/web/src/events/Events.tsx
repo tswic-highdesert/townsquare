@@ -141,7 +141,12 @@ export function EventsScreen(props: EventsScreenProps) {
         />
       </div>
 
-      {failed ? (
+      {/*
+        Each view owns its own failure. A day that could not load must not blank
+        the month, because the month is a working answer to the same question
+        and taking it away turns one broken request into a broken screen.
+      */}
+      {view === 'day' && failed ? (
         <ErrorState
           scope="screen"
           line="The calendar could not be loaded."
@@ -700,8 +705,13 @@ function MonthDay(props: {
       onClick={props.onPick}
     >
       <span className="ev-mday-num">{cell.num}</span>
-      {cell.count === 0 ? (
-        cell.inMonth && <span className="ev-mnone">nothing on</span>
+      {/*
+        A day outside the month shows its number and nothing else. It is there
+        to keep the grid rectangular and to be somewhere to arrow into, not to
+        compete with the month being read.
+      */}
+      {!cell.inMonth ? null : cell.count === 0 ? (
+        <span className="ev-mnone">nothing on</span>
       ) : (
         <>
           {cell.chips.map((chip) => (

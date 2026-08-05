@@ -53,6 +53,38 @@ export function News(props: NewsProps) {
     }
   }, [topic])
 
+  /**
+   * Staleness has to be able to arrive without a refetch.
+   *
+   * It is a fact about elapsed time rather than about the payload, so checking
+   * it once while rendering means the resident who most needs the warning —
+   * the one who left the tab open through an outage — is the only one who
+   * never sees it. That inverts the entire point of the banner.
+   *
+   * A minute of granularity against a ten-minute threshold is invisible, and
+   * it is also roughly what a browser throttles a background tab's timers to
+   * anyway, so this costs nothing in the case it exists for. The interval
+   * stops itself the moment the answer can no longer change: stale never
+   * becomes fresh again without a new payload, and a new payload re-runs this.
+   */
+  const assembledAt = payload?.assembledAt
+  const [stale, setStale] = useState(false)
+
+  useEffect(() => {
+    if (!assembledAt) return
+    if (isStale(assembledAt)) {
+      setStale(true)
+      return
+    }
+    setStale(false)
+    const id = setInterval(() => {
+      if (!isStale(assembledAt)) return
+      setStale(true)
+      clearInterval(id)
+    }, 60_000)
+    return () => clearInterval(id)
+  }, [assembledAt])
+
   const bar = (
     <AppBar
       label="News"
@@ -135,7 +167,7 @@ export function News(props: NewsProps) {
         news believing it is current, so the admission is at the top of the
         screen rather than in the footer.
       */}
-      {isStale(payload.assembledAt) && (
+      {stale && (
         <div className="nw-banner" role="status">
           <Icon name="clock" size={15} />
           <span className="nw-banner-text">

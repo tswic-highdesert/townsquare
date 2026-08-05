@@ -82,7 +82,7 @@ export function TouchStrip({ creation, onDark }: { creation: CreationSummary; on
 }
 
 /**
- * Who made it.
+ * Who made it, as one string in one place.
  *
  * A creation's author is assigned by the platform at approval and
  * `packages/manifest` rejects a self-asserted `author` outright as an
@@ -90,7 +90,9 @@ export function TouchStrip({ creation, onDark }: { creation: CreationSummary; on
  * queue, so the honest label is "a neighbor" with no initials beside it — a
  * two-letter avatar derived from the creation's own name reads as a person who
  * does not exist, which is the failure this whole rule is guarding against.
+ *
+ * A constant rather than a component, because the gallery says it inside a
+ * `CardMeta` and the trust page says it in its own header block. Two shapes,
+ * one sentence, and the sentence is the part that must not drift.
  */
-export function MadeBy({ className }: { className?: string }) {
-  return <div className={className ?? 'cr-by'}>Made by a neighbor</div>
-}
+export const MADE_BY = 'Made by a neighbor'

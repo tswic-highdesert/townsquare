@@ -119,7 +119,7 @@ describe('GET /api/events/detail', () => {
     expect(res.status).toBe(200)
     const body = (await res.json()) as { title: string; whenPlain: string }
     expect(body.title).toBe('City council, regular session')
-    expect(body.whenPlain).toBe('Today evening')
+    expect(body.whenPlain).toBe('This evening')
   })
 
   it('404s an event that has rolled off the feed', async () => {
