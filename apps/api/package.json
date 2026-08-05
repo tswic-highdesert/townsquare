@@ -9,6 +9,7 @@
   },
   "dependencies": {
     "@townsquare/bundle": "workspace:*",
+    "@townsquare/civic": "workspace:*",
     "@townsquare/contributions": "workspace:*",
     "@townsquare/feed": "workspace:*",
     "@townsquare/identity": "workspace:*",

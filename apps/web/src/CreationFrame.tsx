@@ -9,10 +9,12 @@
  */
 
 import { useEffect, useRef, useState } from 'react'
-import { CreationHost, type HostState } from '@townsquare/host'
+import { CreationHost, type ErrorReason, type HostState } from '@townsquare/host'
 import type { Manifest } from '@townsquare/manifest'
 import { createActTokenHolder } from './actToken.js'
 import { townData } from './townData.js'
+import { Icon, type IconName } from './Icon.js'
+import './creations/creations.css'
 
 export interface CreationFrameProps {
   guestOrigin: string
@@ -31,6 +33,17 @@ export interface CreationFrameProps {
   town: { id: string; name: string; timezone: string }
   onTitleChange?(title: string): void
   onIncident?(kind: string, detail: Record<string, unknown>): void
+  /**
+   * Lifted so the chrome *around* the frame can react.
+   *
+   * A creation that navigated itself away is the one failure the host chrome
+   * changes shape for, and the chrome is drawn outside this component on
+   * purpose — a creation cannot reach a pixel of it.
+   */
+  onStateChange?(state: HostState): void
+  /** Offered instead of a retry on the failure that should not be retried. */
+  onLeave?(): void
+  onReport?(): void
 }
 
 export function CreationFrame(props: CreationFrameProps) {
@@ -38,6 +51,7 @@ export function CreationFrame(props: CreationFrameProps) {
   const [state, setState] = useState<HostState>({ name: 'mounting' })
   const [attempt, setAttempt] = useState(0)
 
+  const { onStateChange } = props
   useEffect(() => {
     const el = mountRef.current
     if (!el) return
@@ -58,7 +72,10 @@ export function CreationFrame(props: CreationFrameProps) {
         identity: act.identity,
         storage: act.storage,
       },
-      onStateChange: setState,
+      onStateChange: (next) => {
+        setState(next)
+        onStateChange?.(next)
+      },
       onTitleChange: props.onTitleChange,
       onIncident: props.onIncident,
     })
@@ -78,11 +95,13 @@ export function CreationFrame(props: CreationFrameProps) {
 
   if (state.name === 'error') {
     return (
-      <div className="frame-wrap">
+      <div className="cr-framewrap">
         <Failure
           manifest={props.manifest}
           reason={state.reason}
           onRetry={() => setAttempt((n) => n + 1)}
+          onLeave={props.onLeave}
+          onReport={props.onReport}
         />
       </div>
     )
@@ -98,48 +117,115 @@ export function CreationFrame(props: CreationFrameProps) {
    * Found by the boundary suite.
    */
   return (
-    <div className="frame-wrap frame-stack">
+    <div className="cr-framewrap cr-frame-stack">
       <div ref={mountRef} />
       {state.name !== 'ready' && (
-        <div className="skeleton skeleton-overlay">starting {props.manifest.name}…</div>
+        <div className="cr-skeleton cr-skeleton-overlay" aria-busy="true">
+          {/*
+           * A skeleton's job is to hold the shape the real thing will take, so
+           * these are a heading, a line and a block rather than three equal
+           * bars. The widths are uneven for the same reason: a stack of
+           * full-width rectangles teaches a layout that will not arrive.
+           */}
+          <div className="cr-sk-line" style={{ width: '52%' }} />
+          <div className="cr-sk-line" style={{ width: '78%' }} />
+          <div className="cr-sk-block" />
+          <div className="cr-sk-line" style={{ width: '64%' }} />
+          <div className="cr-sk-note">starting {props.manifest.name}…</div>
+        </div>
       )}
     </div>
   )
 }
 
-const REASONS: Record<string, { title: string; body: string }> = {
+interface FailureCopy {
+  title: string
+  body: string
+  mark: IconName
+  /**
+   * `hold` is terracotta: something was stopped on purpose. The rest are the
+   * neutral plate, because a creation that timed out is a bug and not a
+   * betrayal. Brick appears nowhere on this screen; it is the one alarm
+   * register and the river is not up.
+   */
+  tone?: 'hold'
+  /**
+   * A creation that tried to send a resident somewhere else does not get a Try
+   * again. Retrying it is an invitation to keep pressing until it works, which
+   * is precisely the wrong instinct in the one failure that was an attempt
+   * rather than an accident.
+   */
+  retry: boolean
+}
+
+const REASONS: Record<ErrorReason, FailureCopy> = {
   handshake_timeout: {
     title: "This one didn't start",
     // The blame goes to the code, never to the resident, and never to a
     // "network error" they cannot act on.
-    body: 'The last update broke something. Its builder has been told — nothing you did.',
+    body: 'It never answered Town Square. Its builder has been told, and nothing you did caused it.',
+    mark: 'plug',
+    retry: true,
   },
   ready_timeout: {
     title: "This one didn't finish loading",
-    body: 'It connected but never finished rendering. Its builder has been told.',
+    body: 'It connected but never finished rendering. Its builder has been told, and nothing you did caused it.',
+    mark: 'clock',
+    retry: true,
   },
   navigated: {
-    title: 'This one navigated away',
-    body: 'It tried to send you somewhere else instead of running here. We have flagged it for review.',
+    title: 'This one tried to send you somewhere else',
+    body: 'It left Town Square instead of running here. We stopped it and flagged it for the committee. Nothing you did.',
+    mark: 'shield',
+    tone: 'hold',
+    retry: false,
   },
   crashed: {
     title: 'This one stopped responding',
-    body: 'It stopped answering Town Square. Its builder has been told.',
+    body: 'It stopped answering Town Square partway through. Its builder has been told.',
+    mark: 'alert-circle',
+    retry: true,
   },
 }
 
-function Failure(props: { manifest: Manifest; reason: string; onRetry(): void }) {
-  const copy = REASONS[props.reason] ?? REASONS['crashed']!
+function Failure(props: {
+  manifest: Manifest
+  reason: ErrorReason
+  onRetry(): void
+  onLeave?(): void
+  onReport?(): void
+}) {
+  const copy = REASONS[props.reason] ?? REASONS.crashed
 
   return (
-    <div className="failure">
+    <div className="cr-failure">
+      <span className="cr-failure-mark" data-tone={copy.tone}>
+        <Icon name={copy.mark} size={24} />
+      </span>
       <h2>{copy.title}</h2>
       <p>{copy.body}</p>
-      <button className="primary" onClick={props.onRetry}>
-        Try again
-      </button>
-      <div className="meta">
-        manifest v{props.manifest.version} · {props.reason.replace(/_/g, ' ')}
+
+      {copy.retry ? (
+        <button className="cr-primary" onClick={props.onRetry}>
+          Try again
+        </button>
+      ) : (
+        <div className="cr-failure-acts">
+          {props.onLeave && (
+            <button className="cr-primary" onClick={props.onLeave}>
+              Back to the gallery
+            </button>
+          )}
+          {props.onReport && (
+            <button className="cr-secondary" onClick={props.onReport}>
+              Report
+            </button>
+          )}
+        </div>
+      )}
+
+      <div className="cr-failure-meta">
+        v{props.manifest.version} · {props.reason.replace(/_/g, ' ')}
       </div>
     </div>
   )

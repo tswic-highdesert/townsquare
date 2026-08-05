@@ -1,0 +1,1006 @@
+/*
+ * The calendar. `design/hifi-v2` section 04.
+ *
+ * Imported from `Events.tsx` rather than from `styles/index.css`, which six
+ * people write into at once. Everything here is prefixed `ev-`.
+ *
+ * Every colour is a `--ts-*` token or a `color-mix()` of one. There is not a
+ * hex literal in this file and there must never be: that rule is the entire
+ * multi-town theming seam, and one hardcoded navy is one town that cannot have
+ * its own.
+ *
+ * The three voices, from AUTHORING.md, hold throughout:
+ *   Newsreader — titles, times, counts, anything editorial
+ *   DM Mono    — the eyebrow and the day-of-week header, which label the page
+ *   DM Sans    — meridiems, buttons, chips, anything a finger acts on
+ */
+
+.ev {
+  min-height: 100vh;
+  background: var(--ts-cream);
+  padding-bottom: var(--ts-space-16);
+}
+
+.ev-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--ts-space-3);
+  padding: var(--ts-space-3) var(--ts-space-4) 0;
+}
+
+.ev-back {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--ts-space-1);
+  /* 44px of target, whatever the label happens to measure. */
+  min-height: 44px;
+  padding: 0 var(--ts-space-2) 0 0;
+  border: 0;
+  background: none;
+  color: var(--ts-navy);
+  font-family: var(--ts-font-sans);
+  font-size: var(--ts-text-label);
+  cursor: pointer;
+}
+
+.ev-back:hover {
+  color: var(--ts-terracotta);
+}
+
+.ev :focus-visible {
+  outline: none;
+  box-shadow: var(--ts-focus);
+  border-radius: var(--ts-radius-input);
+}
+
+.ev-screen {
+  padding: var(--ts-space-4);
+}
+
+/* ── the head ─────────────────────────────────────────────────────────── */
+
+.ev-head {
+  margin-bottom: var(--ts-space-4);
+}
+
+.ev-eyebrow {
+  font-family: var(--ts-font-mono);
+  font-size: var(--ts-text-eyebrow);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ts-ink45);
+}
+
+.ev-h1 {
+  margin: var(--ts-space-2) 0 var(--ts-space-1);
+  font-family: var(--ts-font-serif);
+  font-size: var(--ts-text-h1);
+  font-weight: 500;
+  line-height: 1.15;
+  color: var(--ts-ink);
+}
+
+.ev-sub {
+  margin: 0;
+  font-family: var(--ts-font-serif);
+  font-size: var(--ts-text-label);
+  color: var(--ts-ink60);
+}
+
+/* ── the week strip ───────────────────────────────────────────────────── */
+
+.ev-week {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: var(--ts-space-1);
+  margin-bottom: var(--ts-space-4);
+}
+
+.ev-day {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  /* Comfortably past the 44px floor in both directions. */
+  min-width: 44px;
+  min-height: 68px;
+  padding: var(--ts-space-2) 0;
+  border: 1px solid transparent;
+  border-radius: var(--ts-radius-card);
+  background: var(--ts-surface);
+  color: var(--ts-ink);
+  cursor: pointer;
+  transition: background var(--ts-dur-1) var(--ts-ease);
+}
+
+.ev-day:hover {
+  background: color-mix(in srgb, var(--ts-navy) 6%, var(--ts-surface));
+}
+
+.ev-day-name {
+  font-family: var(--ts-font-mono);
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ts-ink45);
+}
+
+.ev-day-num {
+  font-family: var(--ts-font-serif);
+  font-size: var(--ts-text-card-title);
+  line-height: 1;
+}
+
+/* A past day is quieter, never hidden: "did I miss it" is asked constantly. */
+.ev-day[data-past] .ev-day-num,
+.ev-day[data-past] .ev-day-name {
+  color: var(--ts-ink45);
+}
+
+/*
+ * Today is a ring, selected is a fill, and both at once is the common case, so
+ * they have to compose. The ring survives inside the fill.
+ */
+.ev-day[data-today] {
+  border-color: var(--ts-terracotta);
+}
+
+.ev-day[aria-selected='true'] {
+  background: var(--ts-navy);
+  color: var(--ts-cream);
+}
+
+.ev-day[aria-selected='true'] .ev-day-name,
+.ev-day[aria-selected='true'] .ev-day-num {
+  color: var(--ts-cream);
+}
+
+.ev-dots {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  height: 8px;
+}
+
+.ev-dots i {
+  width: 4px;
+  height: 4px;
+  border-radius: var(--ts-radius-full);
+  background: var(--ts-navy40);
+}
+
+/* The bar means four or more. Past three the exact number stops mattering. */
+.ev-dots b {
+  width: 10px;
+  height: 4px;
+  border-radius: var(--ts-radius-full);
+  background: var(--ts-terracotta);
+}
+
+/* An en dash, not an empty space: empty space reads as "not loaded yet". */
+.ev-dots em {
+  font-style: normal;
+  font-size: 11px;
+  line-height: 1;
+  color: var(--ts-ink26);
+}
+
+.ev-day[aria-selected='true'] .ev-dots i {
+  background: var(--ts-cream14);
+}
+
+.ev-day[aria-selected='true'] .ev-dots em {
+  color: var(--ts-cream-muted);
+}
+
+/* ── earlier today ────────────────────────────────────────────────────── */
+
+.ev-earlier {
+  display: flex;
+  align-items: center;
+  gap: var(--ts-space-2);
+  width: 100%;
+  min-height: 44px;
+  margin-bottom: var(--ts-space-3);
+  padding: 0 var(--ts-space-3);
+  border: 1px dashed var(--ts-ink13);
+  border-radius: var(--ts-radius-card);
+  background: none;
+  color: var(--ts-ink60);
+  font-family: var(--ts-font-sans);
+  font-size: var(--ts-text-caption);
+  cursor: pointer;
+}
+
+.ev-earlier:hover {
+  color: var(--ts-ink);
+  border-color: var(--ts-ink26);
+}
+
+/* ── the agenda ───────────────────────────────────────────────────────── */
+
+.ev-list {
+  list-style: none;
+  margin: 0 0 var(--ts-space-3);
+  padding: 0;
+  background: var(--ts-surface);
+  border: 1px solid var(--ts-hairline);
+  border-radius: var(--ts-radius-sheet);
+  overflow: hidden;
+}
+
+.ev-list li + li {
+  border-top: 1px solid var(--ts-ink13);
+}
+
+.ev-row {
+  display: flex;
+  align-items: center;
+  gap: var(--ts-space-3);
+  width: 100%;
+  min-height: 60px;
+  padding: var(--ts-space-3);
+  border: 0;
+  background: none;
+  text-align: left;
+  color: inherit;
+  cursor: pointer;
+}
+
+.ev-row:hover {
+  background: color-mix(in srgb, var(--ts-navy) 4%, transparent);
+}
+
+/*
+ * The time column is fixed width so titles start on the same vertical line no
+ * matter what the source published: a clock, a clock with an end, a clock with
+ * nothing after it, or an all-day marker that is not a time at all.
+ */
+.ev-time {
+  flex: none;
+  width: 46px;
+  text-align: center;
+}
+
+.ev-clock {
+  display: block;
+  font-family: var(--ts-font-serif);
+  font-size: var(--ts-text-label);
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+}
+
+.ev-meridiem {
+  display: block;
+  font-family: var(--ts-font-sans);
+  font-size: 11px;
+  text-transform: uppercase;
+  color: var(--ts-ink45);
+}
+
+.ev-end {
+  display: block;
+  margin-top: 2px;
+  font-family: var(--ts-font-sans);
+  font-size: 10px;
+  color: var(--ts-ink45);
+}
+
+/*
+ * No end time published, which is 40% of the feed. A short rule running off the
+ * bottom of the clock says "this keeps going" without inventing an hour.
+ */
+.ev-open {
+  display: block;
+  width: 1px;
+  height: 10px;
+  margin: 3px auto 0;
+  background: linear-gradient(var(--ts-ink26), transparent);
+}
+
+/*
+ * An all-day entry has no clock at all. Rendering its stored midnight start as
+ * "12:00 AM" claims something happens at midnight; two small words claim only
+ * what is true.
+ */
+.ev-allday {
+  display: block;
+  font-family: var(--ts-font-sans);
+  font-size: 11px;
+  line-height: 1.15;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--ts-ink60);
+}
+
+.ev-icon {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 34px;
+  height: 34px;
+  border-radius: var(--ts-radius-input);
+  background: var(--ts-stone);
+  color: var(--ts-ink60);
+}
+
+.ev-icon[data-category='civic'] {
+  background: var(--ts-gold14);
+  color: var(--ts-gold-text);
+}
+
+.ev-icon[data-category='music'] {
+  background: var(--ts-sage14);
+  color: var(--ts-sage);
+}
+
+.ev-icon[data-category='sport'] {
+  background: var(--ts-terracotta14);
+  color: var(--ts-terracotta-hover);
+}
+
+.ev-icon[data-category='community'] {
+  background: var(--ts-navy10);
+  color: var(--ts-navy);
+}
+
+.ev-text {
+  min-width: 0;
+  flex: 1;
+}
+
+.ev-title {
+  display: block;
+  font-family: var(--ts-font-serif);
+  font-size: var(--ts-text-label);
+  line-height: 1.25;
+  color: var(--ts-ink);
+}
+
+.ev-detail {
+  display: block;
+  margin-top: 2px;
+  font-family: var(--ts-font-sans);
+  font-size: var(--ts-text-caption);
+  color: var(--ts-ink60);
+  /* Scraped locations run to a full postal address. One line, then stop. */
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/*
+ * A row that has already happened is quieter and still legible. It is not
+ * struck through: the title is the one part of a past event still true, and
+ * making it the hardest thing on the row to read is backwards.
+ */
+.ev-row[data-state='done'] .ev-title {
+  color: var(--ts-ink60);
+}
+
+.ev-row[data-state='done'] .ev-icon {
+  filter: saturate(0.4);
+}
+
+.ev-chip {
+  display: inline-block;
+  margin-left: var(--ts-space-2);
+  padding: 1px var(--ts-space-2);
+  border-radius: var(--ts-radius-full);
+  font-family: var(--ts-font-sans);
+  font-size: 11px;
+  white-space: nowrap;
+  vertical-align: 1px;
+}
+
+.ev-chip--soon {
+  background: var(--ts-terracotta14);
+  color: var(--ts-terracotta-hover);
+}
+
+.ev-chip--now {
+  background: var(--ts-sage14);
+  color: var(--ts-sage);
+}
+
+/* ── the now line ─────────────────────────────────────────────────────── */
+
+/*
+ * A list item in document order, never an overlay. It is announced in reading
+ * order and it can never land on top of a title. It carries a real clock time
+ * because "now" on a screen someone left open for an hour is a lie.
+ */
+.ev-nowline {
+  display: flex;
+  align-items: center;
+  gap: var(--ts-space-2);
+  padding: 0 var(--ts-space-3);
+}
+
+.ev-nowline::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--ts-terracotta);
+}
+
+.ev-nowline-label {
+  font-family: var(--ts-font-mono);
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ts-terracotta);
+}
+
+/* ── the written gap ──────────────────────────────────────────────────── */
+
+/*
+ * Written, not drawn. Four hours of nothing on a civic calendar is normal and
+ * should feel normal: a dotted rule with "3 hr" on it reads as an error, and a
+ * sentence reads as a town.
+ */
+.ev-gap {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--ts-space-3);
+  margin: 0 var(--ts-space-2) var(--ts-space-3);
+  padding: var(--ts-space-2) 0;
+}
+
+.ev-gap p {
+  margin: 0;
+  font-family: var(--ts-font-serif);
+  font-size: var(--ts-text-caption);
+  font-style: italic;
+  color: var(--ts-ink60);
+}
+
+.ev-gap-len {
+  flex: none;
+  font-family: var(--ts-font-mono);
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ts-ink45);
+}
+
+/* ── tomorrow, on the same scroll ─────────────────────────────────────── */
+
+.ev-dayline {
+  display: flex;
+  align-items: center;
+  gap: var(--ts-space-3);
+  margin: var(--ts-space-6) 0 var(--ts-space-3);
+}
+
+.ev-dayline::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--ts-ink13);
+}
+
+.ev-dayline button {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--ts-space-1);
+  min-height: 44px;
+  border: 0;
+  background: none;
+  padding: 0;
+  font-family: var(--ts-font-mono);
+  font-size: var(--ts-text-eyebrow);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--ts-ink60);
+  cursor: pointer;
+}
+
+.ev-dayline button:hover {
+  color: var(--ts-terracotta);
+}
+
+/* Tomorrow is a pointer at tomorrow, not a second agenda. */
+.ev-list--next .ev-title,
+.ev-list--next .ev-clock {
+  color: var(--ts-ink60);
+}
+
+.ev-tail {
+  margin: var(--ts-space-6) 0 0;
+  text-align: center;
+}
+
+.ev-tail button,
+.ev-link {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--ts-space-1);
+  min-height: 44px;
+  border: 0;
+  background: none;
+  font-family: var(--ts-font-sans);
+  font-size: var(--ts-text-label);
+  color: var(--ts-navy);
+  cursor: pointer;
+}
+
+.ev-tail button:hover,
+.ev-link:hover {
+  color: var(--ts-terracotta);
+}
+
+/* ── the month grid ───────────────────────────────────────────────────── */
+
+.ev-month-layout {
+  display: grid;
+  gap: var(--ts-space-4);
+  padding: var(--ts-space-4);
+}
+
+.ev-month-loading {
+  padding: var(--ts-space-4);
+}
+
+.ev-month-head {
+  display: flex;
+  align-items: center;
+  gap: var(--ts-space-2);
+  margin-bottom: var(--ts-space-3);
+}
+
+.ev-month-head h2 {
+  margin: 0;
+  font-family: var(--ts-font-serif);
+  font-size: var(--ts-text-h2);
+  font-weight: 500;
+}
+
+.ev-month-count {
+  margin-left: auto;
+  font-family: var(--ts-font-mono);
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ts-ink45);
+}
+
+.ev-month-dow {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 1px;
+  margin-bottom: var(--ts-space-1);
+}
+
+.ev-month-dow span {
+  font-family: var(--ts-font-mono);
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ts-ink45);
+  text-align: center;
+}
+
+.ev-month-grid {
+  display: grid;
+  gap: 1px;
+  background: var(--ts-ink13);
+  border: 1px solid var(--ts-ink13);
+  border-radius: var(--ts-radius-card);
+  overflow: hidden;
+}
+
+.ev-month-week {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 1px;
+}
+
+.ev-mday {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 2px;
+  /* Past the 44px floor even on the narrowest phone. */
+  min-height: 60px;
+  padding: var(--ts-space-1);
+  border: 0;
+  background: var(--ts-surface);
+  text-align: left;
+  cursor: pointer;
+}
+
+.ev-mday:hover {
+  background: color-mix(in srgb, var(--ts-navy) 5%, var(--ts-surface));
+}
+
+.ev-mday[data-out] {
+  background: color-mix(in srgb, var(--ts-stone) 45%, var(--ts-cream));
+  cursor: default;
+}
+
+.ev-mday[data-out] .ev-mday-num {
+  color: var(--ts-ink26);
+}
+
+.ev-mday[aria-selected='true'] {
+  box-shadow: inset 0 0 0 2px var(--ts-navy);
+}
+
+.ev-mday[data-today] .ev-mday-num {
+  display: inline-grid;
+  place-items: center;
+  width: 22px;
+  height: 22px;
+  border-radius: var(--ts-radius-full);
+  background: var(--ts-terracotta);
+  color: var(--ts-surface);
+}
+
+.ev-mday-num {
+  font-family: var(--ts-font-serif);
+  font-size: var(--ts-text-caption);
+  color: var(--ts-ink);
+  align-self: flex-start;
+}
+
+.ev-mnone {
+  font-family: var(--ts-font-sans);
+  font-size: 10px;
+  color: var(--ts-ink26);
+}
+
+/*
+ * Three real titles, then the load bar. Showing everything turns August into a
+ * wall of 4pt text; showing a bare count turns it into a spreadsheet. Three is
+ * enough to recognise the thing you half remember.
+ */
+.ev-mchip {
+  display: block;
+  padding: 1px var(--ts-space-1);
+  border-radius: 4px;
+  border-left: 2px solid var(--ts-ink26);
+  background: var(--ts-stone);
+  color: var(--ts-ink);
+  font-family: var(--ts-font-sans);
+  font-size: 10px;
+  line-height: 1.4;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.ev-mchip[data-category='civic'] {
+  background: var(--ts-gold14);
+  border-left-color: var(--ts-gold);
+  color: var(--ts-gold-text);
+}
+
+.ev-mchip[data-category='music'] {
+  background: var(--ts-sage14);
+  border-left-color: var(--ts-sage);
+  color: var(--ts-sage);
+}
+
+.ev-mchip[data-category='sport'] {
+  background: var(--ts-terracotta14);
+  border-left-color: var(--ts-terracotta);
+  color: var(--ts-terracotta-hover);
+}
+
+.ev-mchip[data-category='community'] {
+  background: var(--ts-navy10);
+  border-left-color: var(--ts-navy);
+  color: var(--ts-navy);
+}
+
+.ev-mmore {
+  font-family: var(--ts-font-sans);
+  font-size: 10px;
+  color: var(--ts-ink45);
+}
+
+/*
+ * The bar is ink, not a category colour, because it is measuring volume and
+ * not kind. Scaled against the busiest day in this month, so an 11-event day
+ * and a 3-event day look genuinely different from six feet away.
+ */
+.ev-mload {
+  display: block;
+  height: 3px;
+  margin-top: auto;
+  border-radius: var(--ts-radius-full);
+  background: color-mix(in srgb, var(--ts-ink) 6%, transparent);
+}
+
+.ev-mload i {
+  display: block;
+  height: 100%;
+  border-radius: var(--ts-radius-full);
+  background: var(--ts-ink26);
+}
+
+/* On a phone the cells are too narrow for a readable title, so they carry the
+   number, the count and the bar. The titles come back with the width. */
+.ev-mchip,
+.ev-mmore,
+.ev-mnone {
+  display: none;
+}
+
+/* ── the day beside the grid ──────────────────────────────────────────── */
+
+.ev-daypanel {
+  padding: var(--ts-space-4);
+  background: var(--ts-surface);
+  border: 1px solid var(--ts-hairline);
+  border-radius: var(--ts-radius-sheet);
+}
+
+.ev-daypanel-date {
+  margin: var(--ts-space-1) 0 var(--ts-space-1);
+  font-family: var(--ts-font-serif);
+  font-size: var(--ts-text-h2);
+  font-weight: 500;
+}
+
+.ev-daypanel-sub {
+  margin: 0 0 var(--ts-space-3);
+  font-family: var(--ts-font-serif);
+  font-size: var(--ts-text-caption);
+  color: var(--ts-ink60);
+}
+
+.ev-daypanel .ev-list {
+  border: 0;
+  border-radius: 0;
+  background: none;
+}
+
+.ev-daypanel .ev-row {
+  padding-left: 0;
+  padding-right: 0;
+}
+
+/* ── the detail ───────────────────────────────────────────────────────── */
+
+/*
+ * `ev-detailscreen`, not `ev-detail`. The row's venue line is already
+ * `.ev-detail`, and naming the whole screen the same thing gave every agenda
+ * row a 100vh venue line. Caught by screenshotting it, which is how every bug
+ * on this surface has been caught.
+ */
+.ev-detailscreen {
+  min-height: 100vh;
+  padding: var(--ts-space-3) var(--ts-space-4) var(--ts-space-16);
+  background: var(--ts-cream);
+}
+
+.ev-detailscreen-top {
+  display: flex;
+  align-items: center;
+  gap: var(--ts-space-2);
+  margin-top: var(--ts-space-2);
+}
+
+.ev-cat {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--ts-space-1);
+  padding: 2px var(--ts-space-2);
+  border-radius: var(--ts-radius-full);
+  background: var(--ts-stone);
+  color: var(--ts-ink60);
+  font-family: var(--ts-font-sans);
+  font-size: var(--ts-text-caption);
+}
+
+.ev-cat[data-category='civic'] {
+  background: var(--ts-gold14);
+  color: var(--ts-gold-text);
+}
+
+.ev-cat[data-category='music'] {
+  background: var(--ts-sage14);
+  color: var(--ts-sage);
+}
+
+.ev-cat[data-category='sport'] {
+  background: var(--ts-terracotta14);
+  color: var(--ts-terracotta-hover);
+}
+
+.ev-cat[data-category='community'] {
+  background: var(--ts-navy10);
+  color: var(--ts-navy);
+}
+
+.ev-detailscreen-title {
+  margin: var(--ts-space-3) 0 var(--ts-space-4);
+  font-family: var(--ts-font-serif);
+  font-size: var(--ts-text-h1);
+  font-weight: 500;
+  line-height: 1.2;
+}
+
+/* Plain words first, exact times second, and neither has to be hunted for. */
+.ev-when {
+  padding: var(--ts-space-3);
+  background: var(--ts-surface);
+  border: 1px solid var(--ts-hairline);
+  border-radius: var(--ts-radius-card);
+}
+
+.ev-when-plain {
+  margin: 0;
+  font-family: var(--ts-font-serif);
+  font-size: var(--ts-text-card-title);
+  color: var(--ts-ink);
+}
+
+.ev-when-exact {
+  display: flex;
+  align-items: center;
+  gap: var(--ts-space-2);
+  margin: var(--ts-space-2) 0 0;
+  font-family: var(--ts-font-sans);
+  font-size: var(--ts-text-caption);
+  color: var(--ts-ink60);
+}
+
+.ev-when-note {
+  margin: var(--ts-space-1) 0 0;
+  font-family: var(--ts-font-sans);
+  font-size: var(--ts-text-caption);
+  color: var(--ts-ink45);
+}
+
+.ev-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--ts-space-2);
+  margin: var(--ts-space-4) 0;
+}
+
+.ev-block {
+  margin: var(--ts-space-6) 0;
+}
+
+.ev-blocklabel {
+  margin: 0 0 var(--ts-space-2);
+  font-family: var(--ts-font-mono);
+  font-size: var(--ts-text-eyebrow);
+  font-weight: 400;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ts-ink45);
+}
+
+.ev-where {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--ts-space-3);
+  padding: var(--ts-space-3);
+  background: var(--ts-surface);
+  border: 1px solid var(--ts-hairline);
+  border-radius: var(--ts-radius-card);
+}
+
+.ev-where p {
+  margin: 0;
+  font-family: var(--ts-font-serif);
+  font-size: var(--ts-text-label);
+}
+
+.ev-directions {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--ts-space-1);
+  flex: none;
+  min-height: 44px;
+  font-family: var(--ts-font-sans);
+  font-size: var(--ts-text-caption);
+  color: var(--ts-navy);
+  text-decoration: none;
+}
+
+.ev-directions:hover {
+  color: var(--ts-terracotta);
+}
+
+.ev-prose {
+  margin: 0;
+  font-family: var(--ts-font-serif);
+  font-size: var(--ts-text-body);
+  line-height: 1.55;
+  color: var(--ts-ink);
+}
+
+/*
+ * The source line is not a footnote. Everything on this screen came off
+ * somebody else's website, and saying so is the basis for trusting the rest.
+ */
+.ev-source {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--ts-space-3);
+  margin-top: var(--ts-space-8);
+  padding-top: var(--ts-space-3);
+  border-top: 1px solid var(--ts-ink13);
+}
+
+.ev-source b {
+  display: block;
+  font-family: var(--ts-font-serif);
+  font-size: var(--ts-text-caption);
+  font-weight: 500;
+}
+
+.ev-source span {
+  font-family: var(--ts-font-sans);
+  font-size: var(--ts-text-caption);
+  color: var(--ts-ink45);
+}
+
+.ev-source a {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--ts-space-1);
+  flex: none;
+  min-height: 44px;
+  font-family: var(--ts-font-sans);
+  font-size: var(--ts-text-caption);
+  color: var(--ts-navy);
+  text-decoration: none;
+}
+
+.ev-source a:hover {
+  color: var(--ts-terracotta);
+}
+
+/* ── the width the month grid was designed for ────────────────────────── */
+
+@media (min-width: 700px) {
+  .ev-mday {
+    min-height: 104px;
+    padding: var(--ts-space-2);
+  }
+
+  .ev-mchip,
+  .ev-mmore,
+  .ev-mnone {
+    display: block;
+  }
+
+  .ev-screen,
+  .ev-detailscreen {
+    max-width: 720px;
+    margin: 0 auto;
+  }
+}
+
+@media (min-width: 1040px) {
+  .ev-month-layout {
+    grid-template-columns: minmax(0, 1fr) 340px;
+    align-items: start;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+
+  .ev-mday {
+    min-height: 124px;
+  }
+}
+
+/* A resident who has asked for less motion gets less motion. */
+@media (prefers-reduced-motion: reduce) {
+  .ev-day,
+  .ev-row {
+    transition: none;
+  }
+}

@@ -1,0 +1,847 @@
+/*
+ * Navigation and shell. `design/hifi-v2/sections/02-navigation`.
+ *
+ * Imported from `AppBar.tsx` and `TabBar.tsx` rather than added to
+ * `styles/index.css`, because that file is shared by everyone writing a screen
+ * and an import line is the cheapest merge conflict in the world.
+ *
+ * ## Why so many double-class selectors
+ *
+ * `today.css` already styles `.today-bar`, `.today-nav` and `.nav-item`, and
+ * this file loads before it: the shell's stylesheet is imported from
+ * `main.tsx`, and a stylesheet imported from a component ends up wherever the
+ * module graph puts it. Rather than fight over load order with a file another
+ * agent owns, every rule that has to win is written as `.today-bar.ts-bar` —
+ * two classes beats one, whatever order they arrive in. The `ts-` class is
+ * added by the component, so nothing here can reach a bar this file did not
+ * mean to touch.
+ *
+ * Not one hex literal, the same as every other stylesheet here. Where a value
+ * does not exist in the contract it is mixed from one that does.
+ */
+
+/* ── the skip link ───────────────────────────────────────────────────────────
+ *
+ * A real link, first in the DOM, off screen until focused. The target id is
+ * put on the bar's next sibling by `AppBar`, which is the first block of
+ * content on every screen that has a bar.
+ */
+
+.ts-skip {
+  position: absolute;
+  /*
+   * Parked at the top edge and translated fully clear of itself, rather than
+   * inset and nudged by a percentage. The link's height depends on the town's
+   * name and on the resident's text size, and "-180% of something I guessed"
+   * left a navy sliver showing above the bar on a wide screen.
+   */
+  top: 0;
+  left: var(--ts-space-2);
+  z-index: 20;
+  padding: var(--ts-space-2) var(--ts-space-4);
+  border-radius: var(--ts-radius-button);
+  background: var(--ts-navy);
+  font-family: var(--ts-font-sans);
+  font-size: var(--ts-text-label);
+  font-weight: 500;
+  color: var(--ts-cream);
+  text-decoration: none;
+  /* No shadow at rest. The pill itself parks exactly off the top edge, but a
+     lift cast downward from it still fell across the wordmark — a smudge over
+     the brand on every screen, from a control nobody had touched. */
+  transform: translateY(-100%);
+  transition: transform var(--ts-dur-2) var(--ts-ease-out);
+}
+
+.ts-skip:focus {
+  transform: translateY(var(--ts-space-2));
+  outline: none;
+  box-shadow: var(--ts-focus), var(--ts-shadow-lifted);
+}
+
+/* The block the skip link lands on is not a control, so it gets the ring and
+   nothing else: a resident who just jumped here needs to see where they are. */
+#ts-main:focus-visible {
+  outline: none;
+  box-shadow: var(--ts-focus);
+  border-radius: var(--ts-radius-card);
+}
+
+/* ── the resident bar ────────────────────────────────────────────────────── */
+
+.today-bar.ts-bar {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  gap: var(--ts-space-3);
+  background: var(--ts-cream);
+  transition: padding var(--ts-dur-2) var(--ts-ease), box-shadow var(--ts-dur-2) var(--ts-ease);
+}
+
+.ts-bar-brand {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  line-height: 1.15;
+}
+
+.ts-bar .today-place {
+  display: block;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/*
+ * Condensed past 64px of scroll.
+ *
+ * The place line is an orientation, not a label: once a resident is reading
+ * they know what town they are in, so it is the first thing to go. The
+ * hairline becomes a shadow so the bar sits above the read rather than beside
+ * it.
+ */
+.today-bar.ts-bar[data-condensed] {
+  padding-top: var(--ts-space-2);
+  padding-bottom: var(--ts-space-2);
+  border-bottom-color: transparent;
+  box-shadow: var(--ts-shadow-flat);
+}
+
+.today-bar.ts-bar[data-condensed] .today-place {
+  display: none;
+}
+
+.today-bar.ts-bar[data-condensed] .ts-bar-mark {
+  width: 18px;
+  height: 18px;
+}
+
+.today-bar.ts-bar[data-condensed] .avatar {
+  width: 28px;
+  height: 28px;
+  font-size: var(--ts-text-eyebrow);
+}
+
+/* ── search, one control in two shapes ───────────────────────────────────────
+ *
+ * A 44px icon button on a phone, a resting field on a wide screen. One button
+ * either way, so there is only ever one thing to focus and one thing to
+ * describe.
+ */
+
+.ts-bar-search {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 44px;
+  height: 44px;
+  margin-left: auto;
+  padding: 0;
+  border: 0;
+  border-radius: var(--ts-radius-full);
+  background: none;
+  color: var(--ts-ink60);
+  transition: background var(--ts-dur-1) var(--ts-ease), color var(--ts-dur-1) var(--ts-ease);
+}
+
+.ts-bar-search:hover {
+  background: var(--ts-ink08);
+  color: var(--ts-ink);
+}
+
+.ts-bar-search:active {
+  background: var(--ts-ink13);
+}
+
+.ts-bar-search:focus-visible,
+.avatar-button:focus-visible,
+.ts-back:focus-visible {
+  outline: none;
+  box-shadow: var(--ts-focus);
+}
+
+.ts-bar-search-label {
+  /* Present for a screen reader on a phone, drawn only where there is room. */
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+.today-bar.ts-bar .today-bar-actions {
+  margin-left: 0;
+}
+
+/* ── the destinations ────────────────────────────────────────────────────────
+ *
+ * 48 by 56 minimum, never under 44 by 44, and the label is inside the target
+ * so the tap area is the whole column rather than the 22px glyph.
+ *
+ * Padding rather than margin for the home indicator, so the cream fill runs to
+ * the glass. A margin would leave a stripe of page showing through underneath.
+ *
+ * The bar is `sticky`, not `fixed`, which is inherited from `today.css` and
+ * worth keeping: an open keyboard pushes a sticky bar off screen instead of
+ * pinning it over the field being typed into.
+ */
+
+.today-nav.ts-nav {
+  z-index: 9;
+  padding: var(--ts-space-1) var(--ts-space-3)
+           calc(var(--ts-space-2) + env(safe-area-inset-bottom, 0px));
+  gap: var(--ts-space-1);
+}
+
+.nav-item.ts-tab {
+  position: relative;
+  width: auto;
+  flex: 1;
+  min-width: 48px;
+  min-height: 56px;
+  padding: var(--ts-space-2) 2px var(--ts-space-1);
+  border-radius: var(--ts-radius-button);
+  color: var(--ts-ink60);
+  transition: color var(--ts-dur-1) var(--ts-ease), background var(--ts-dur-1) var(--ts-ease);
+}
+
+/*
+ * The active rule. 16px of terracotta at the top edge, present or absent,
+ * which is a shape difference before it is a colour difference.
+ */
+.ts-tab-ind {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  width: 16px;
+  height: 2px;
+  border-radius: var(--ts-radius-full);
+  background: var(--ts-terracotta);
+  transform: translateX(-50%) scaleX(0);
+  transition: transform var(--ts-dur-2) var(--ts-ease-out);
+}
+
+.ts-tab-label {
+  font-family: var(--ts-font-sans);
+  font-size: 10px;
+  font-weight: 500;
+  line-height: 1.1;
+  letter-spacing: 0.01em;
+}
+
+.nav-item.ts-tab[aria-current='page'] {
+  color: var(--ts-navy);
+}
+
+.nav-item.ts-tab[aria-current='page'] .ts-tab-ind {
+  transform: translateX(-50%) scaleX(1);
+}
+
+.nav-item.ts-tab[aria-current='page'] .ts-tab-label {
+  font-weight: 700;
+}
+
+.nav-item.ts-tab:hover {
+  color: var(--ts-ink);
+}
+
+.nav-item.ts-tab:active {
+  background: var(--ts-ink08);
+  color: var(--ts-ink);
+}
+
+.nav-item.ts-tab:focus-visible {
+  outline: none;
+  box-shadow: var(--ts-focus);
+}
+
+/* ── the desktop shell ───────────────────────────────────────────────────────
+ *
+ * The same information architecture at 1040px and up: the destinations become
+ * a rail, the reading column is capped, and the bar runs the full width of the
+ * window above both.
+ *
+ * The grid is declared on `.today`, which is the container all three screens
+ * render, scoped under `.ts-shell` so it can only reach a screen this file's
+ * `App` put there. The four-track layout is what lets the bar bleed to the
+ * edges of the window while the rail and the reading column stay centred
+ * together.
+ *
+ * Today is 640px of reading column and nothing else. The obvious move at this
+ * width is a dashboard of cards, and it is the wrong one: a dashboard implies
+ * everything is equally urgent, which is precisely the feeling this product is
+ * avoiding. Nearby gets the wide column instead, because browsing 700
+ * businesses is a scan rather than a read, and a scan wants many things in the
+ * eye at once. The test is what the column is *for*, not how much room the
+ * window happens to have.
+ */
+
+@media (min-width: 1040px) {
+  .ts-shell .today {
+    max-width: none;
+    display: grid;
+    grid-template-columns:
+      minmax(var(--ts-space-6), 1fr)
+      220px
+      minmax(0, 640px)
+      minmax(var(--ts-space-6), 1fr);
+    column-gap: var(--ts-space-8);
+    align-content: start;
+  }
+
+  /* Browsing wants breadth. Same rail, same bar, no reading cap. */
+  .ts-shell[data-view='nearby'] .today {
+    grid-template-columns:
+      minmax(var(--ts-space-6), 1fr)
+      220px
+      minmax(0, 1080px)
+      minmax(var(--ts-space-6), 1fr);
+  }
+
+  /* Everything a screen renders goes in the reading column unless it is chrome. */
+  .ts-shell .today > * {
+    grid-column: 3;
+  }
+
+  .ts-shell .today > .today-bar {
+    grid-column: 1 / -1;
+    padding-left: var(--ts-space-6);
+    padding-right: var(--ts-space-6);
+  }
+
+  /* At this width there is room to say it, so the field says it. */
+  .ts-shell .ts-bar-search {
+    width: auto;
+    height: auto;
+    min-height: 40px;
+    gap: var(--ts-space-2);
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    width: 340px;
+    margin: 0 auto;
+    padding: 0 var(--ts-space-3);
+    border: 1px solid var(--ts-hairline);
+    border-radius: var(--ts-radius-input);
+    background: var(--ts-surface);
+    font-family: var(--ts-font-sans);
+    font-size: var(--ts-text-label);
+    color: var(--ts-ink45);
+    cursor: text;
+  }
+
+  .ts-shell .ts-bar-search:hover {
+    background: var(--ts-surface);
+    border-color: var(--ts-ink26);
+    color: var(--ts-ink60);
+  }
+
+  .ts-shell .ts-bar-search-label {
+    position: static;
+    width: auto;
+    height: auto;
+    clip-path: none;
+  }
+
+  /* ── the rail ─────────────────────────────────────────────────────────────
+   *
+   * Same markup as the bottom bar, laid on its side. Current is a fill and a
+   * weight rather than a tint alone, for the same reason the bar carries a
+   * rule: colour is never the only carrier.
+   */
+
+  .ts-shell .today > .today-nav.ts-nav {
+    grid-column: 2;
+    /*
+     * Spanning rather than sitting in row 2.
+     *
+     * A rail pinned to one row makes that row as tall as the rail, and every
+     * screen opened with a 190px hole between its first block and its second.
+     * Spanning lets the rail be tall without any single row having to be, and
+     * `align-self: start` keeps it at the top of the span. The span is longer
+     * than any screen's block count; rows beyond the content are empty and
+     * cost nothing.
+     */
+    grid-row: 2 / span 100;
+    position: sticky;
+    top: calc(var(--ts-space-16) + var(--ts-space-4));
+    bottom: auto;
+    align-self: start;
+    flex-direction: column;
+    justify-content: flex-start;
+    gap: 2px;
+    margin-top: var(--ts-space-8);
+    padding: 0;
+    border-top: 0;
+  }
+
+  .ts-shell .nav-item.ts-tab {
+    flex: none;
+    flex-direction: row;
+    justify-content: flex-start;
+    gap: var(--ts-space-3);
+    width: 100%;
+    min-height: 44px;
+    padding: 0 var(--ts-space-3);
+  }
+
+  .ts-shell .ts-tab-label {
+    font-size: var(--ts-text-label);
+    font-weight: 400;
+  }
+
+  .ts-shell .nav-item.ts-tab[aria-current='page'] {
+    background: var(--ts-navy);
+    color: var(--ts-cream);
+  }
+
+  .ts-shell .nav-item.ts-tab[aria-current='page'] .ts-tab-label {
+    font-weight: 500;
+  }
+
+  /* The rule belongs to the bottom bar. In the rail the fill is the signal, and
+     two signals for one state is a second thing to notice for no gain. */
+  .ts-shell .ts-tab-ind {
+    display: none;
+  }
+
+  /* The first block of content, whatever element a screen chose for it.
+     `:first-of-type` matched the first of every type and put the gap above
+     four different things. */
+  .ts-shell .today > .today-bar + * {
+    margin-top: var(--ts-space-8);
+  }
+}
+
+/* ── omni search ─────────────────────────────────────────────────────────────
+ *
+ * A full screen on a phone, a centred panel on a wide one. Not a dropdown
+ * under the bar: on a phone that is a list read through a keyboard.
+ */
+
+.ts-omni {
+  position: fixed;
+  inset: 0;
+  z-index: 30;
+  display: flex;
+  flex-direction: column;
+  background: var(--ts-cream);
+}
+
+.ts-omni-head {
+  display: flex;
+  align-items: center;
+  gap: var(--ts-space-2);
+  padding: var(--ts-space-3) var(--ts-space-4);
+  border-bottom: 1px solid var(--ts-ink13);
+}
+
+.ts-omni-field {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  gap: var(--ts-space-2);
+  min-height: 44px;
+  padding: 0 var(--ts-space-3);
+  border: 1px solid var(--ts-navy40);
+  border-radius: var(--ts-radius-input);
+  background: var(--ts-surface);
+  color: var(--ts-ink45);
+}
+
+.ts-omni-field:focus-within {
+  box-shadow: var(--ts-focus);
+}
+
+.ts-omni-field input {
+  flex: 1;
+  min-width: 0;
+  border: 0;
+  background: none;
+  outline: none;
+  font-family: var(--ts-font-sans);
+  font-size: var(--ts-text-body);
+  color: var(--ts-ink);
+}
+
+/* The clear affordance a search input draws for itself is a second, smaller,
+   differently-shaped control inside a 44px one. Cancel is the way out. */
+.ts-omni-field input::-webkit-search-cancel-button {
+  display: none;
+}
+
+.ts-omni-cancel {
+  flex: none;
+  min-height: 44px;
+  padding: 0 var(--ts-space-2);
+  border: 0;
+  border-radius: var(--ts-radius-button);
+  background: none;
+  font-family: var(--ts-font-sans);
+  font-size: var(--ts-text-label);
+  color: var(--ts-terracotta-hover);
+}
+
+.ts-omni-cancel:focus-visible {
+  outline: none;
+  box-shadow: var(--ts-focus);
+}
+
+.ts-omni-body {
+  flex: 1;
+  overflow-y: auto;
+  padding: var(--ts-space-2) 0 var(--ts-space-16);
+  overscroll-behavior: contain;
+}
+
+.ts-omni-lede,
+.ts-omni-count {
+  margin: var(--ts-space-3) var(--ts-space-5) var(--ts-space-2);
+  font-family: var(--ts-font-serif);
+  font-size: var(--ts-text-label);
+  line-height: 1.4;
+  color: var(--ts-ink60);
+}
+
+/* The result count is announced, not read: it is there for a screen reader,
+   and on screen it is the quietest thing in the panel. */
+.ts-omni-count {
+  font-size: var(--ts-text-caption);
+  color: var(--ts-ink45);
+}
+
+.ts-omni-group + .ts-omni-group {
+  margin-top: var(--ts-space-2);
+  border-top: 1px solid var(--ts-ink13);
+}
+
+.ts-omni-glabel {
+  display: flex;
+  align-items: center;
+  padding: var(--ts-space-4) var(--ts-space-5) var(--ts-space-1);
+  font-family: var(--ts-font-mono);
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ts-ink45);
+}
+
+.ts-omni-clear {
+  margin-left: auto;
+  min-height: 32px;
+  padding: 0 var(--ts-space-2);
+  border: 0;
+  border-radius: 6px;
+  background: none;
+  font-family: var(--ts-font-sans);
+  font-size: var(--ts-text-caption);
+  letter-spacing: 0;
+  text-transform: none;
+  color: var(--ts-terracotta-hover);
+}
+
+.ts-omni-clear:focus-visible,
+.ts-omni-row:focus-visible,
+.ts-omni-more:focus-visible {
+  outline: none;
+  box-shadow: var(--ts-focus);
+}
+
+.ts-omni-row {
+  display: flex;
+  align-items: center;
+  gap: var(--ts-space-3);
+  width: 100%;
+  min-height: 52px;
+  padding: var(--ts-space-2) var(--ts-space-5);
+  border: 0;
+  background: none;
+  text-align: left;
+  color: inherit;
+}
+
+.ts-omni-row:hover:not(:disabled) {
+  background: var(--ts-ink08);
+}
+
+.ts-omni-row:disabled {
+  cursor: default;
+}
+
+/* The leading glyph is a type marker, never decoration: it is what lets a
+   resident skip three groups without reading them. */
+.ts-omni-ico {
+  flex: none;
+  color: var(--ts-navy60);
+}
+
+.ts-omni-txt {
+  flex: 1;
+  min-width: 0;
+}
+
+.ts-omni-t {
+  display: block;
+  font-family: var(--ts-font-serif);
+  font-size: var(--ts-text-label);
+  font-weight: 500;
+  line-height: 1.25;
+  text-wrap: pretty;
+}
+
+/*
+ * Two lines, then clipped.
+ *
+ * A story's detail carries its summary, because half a remembered sentence is
+ * a real way people look for a story. Printed in full it turns a 52px row into
+ * a paragraph and four results into a screenful, which is the opposite of what
+ * a recognition surface is for.
+ */
+.ts-omni-s {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  overflow: hidden;
+  margin-top: 2px;
+  font-family: var(--ts-font-sans);
+  font-size: 12.5px;
+  line-height: 1.35;
+  color: var(--ts-ink60);
+}
+
+/* Points up and back into the field: press to fill, not to open. */
+.ts-omni-fill {
+  flex: none;
+  color: var(--ts-ink26);
+  transform: rotate(-45deg);
+}
+
+/* This row leaves town, and says so before it is pressed. */
+.ts-omni-out {
+  flex: none;
+  color: var(--ts-ink26);
+}
+
+.ts-omni-more {
+  display: flex;
+  align-items: center;
+  gap: var(--ts-space-1);
+  width: 100%;
+  min-height: 44px;
+  padding: 0 var(--ts-space-5);
+  border: 0;
+  background: none;
+  font-family: var(--ts-font-sans);
+  font-size: var(--ts-text-caption);
+  font-weight: 500;
+  text-align: left;
+  color: var(--ts-terracotta-hover);
+}
+
+.ts-omni-more:hover {
+  background: var(--ts-terracotta10);
+}
+
+.ts-omni-foot {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--ts-space-2);
+  margin: var(--ts-space-5) var(--ts-space-5) 0;
+  padding-top: var(--ts-space-4);
+  border-top: 1px solid var(--ts-ink13);
+  font-size: 12.5px;
+  line-height: 1.4;
+  color: var(--ts-ink45);
+}
+
+.ts-omni-foot svg {
+  flex: none;
+  margin-top: 2px;
+}
+
+@media (min-width: 760px) {
+  /* A panel rather than the whole window. At this width a full-bleed field is
+     a 1400px-wide input with three words in it. */
+  .ts-omni {
+    inset: var(--ts-space-10) auto auto 50%;
+    transform: translateX(-50%);
+    width: min(640px, calc(100vw - var(--ts-space-8)));
+    max-height: min(640px, calc(100vh - var(--ts-space-16)));
+    border: 1px solid var(--ts-hairline);
+    border-radius: var(--ts-radius-card);
+    box-shadow: var(--ts-shadow-overlay);
+    overflow: hidden;
+  }
+
+  .ts-omni-body {
+    padding-bottom: var(--ts-space-6);
+  }
+}
+
+/* ── page headers ────────────────────────────────────────────────────────────
+ *
+ * Editorial has no chrome because the title is the page. Utility has a back
+ * and exactly one action. Host is the one header set on navy, because a
+ * resident needs to feel the boundary of the sandbox without reading a word.
+ */
+
+.ts-ph[data-register='editorial'] {
+  padding: var(--ts-space-5) 0 var(--ts-space-2);
+}
+
+.ts-ph-eyebrow {
+  font-family: var(--ts-font-mono);
+  font-size: var(--ts-text-eyebrow);
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ts-terracotta-hover);
+}
+
+.ts-ph[data-register='editorial'] .ts-ph-title {
+  margin: var(--ts-space-2) 0 0;
+  font-family: var(--ts-font-serif);
+  font-size: 28px;
+  font-weight: 400;
+  line-height: 1.08;
+  letter-spacing: -0.015em;
+}
+
+.ts-ph-sub {
+  margin: var(--ts-space-2) 0 0;
+  max-width: 46ch;
+  font-family: var(--ts-font-serif);
+  font-size: var(--ts-text-label);
+  line-height: 1.4;
+  color: var(--ts-ink60);
+}
+
+.ts-ph[data-register='utility'],
+.ts-ph[data-register='host'] {
+  display: flex;
+  align-items: center;
+  gap: var(--ts-space-3);
+  padding: var(--ts-space-2) var(--ts-space-2) var(--ts-space-2) 0;
+}
+
+.ts-ph-stack {
+  flex: 1;
+  min-width: 0;
+}
+
+.ts-ph[data-register='utility'] .ts-ph-title,
+.ts-ph[data-register='host'] .ts-ph-title {
+  margin: 0;
+  font-family: var(--ts-font-sans);
+  font-size: var(--ts-text-body);
+  font-weight: 500;
+  line-height: 1.2;
+  letter-spacing: 0;
+}
+
+.ts-ph[data-register='utility'] .ts-ph-sub,
+.ts-ph[data-register='host'] .ts-ph-sub {
+  margin-top: 1px;
+  font-family: var(--ts-font-sans);
+  font-size: 12.5px;
+}
+
+.ts-ph-back {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  border: 0;
+  border-radius: var(--ts-radius-full);
+  background: none;
+  color: var(--ts-ink60);
+}
+
+.ts-ph-back:hover {
+  background: var(--ts-ink08);
+  color: var(--ts-ink);
+}
+
+.ts-ph-back:focus-visible {
+  outline: none;
+  box-shadow: var(--ts-focus);
+}
+
+/* The one place a header goes dark. A creation that looked exactly like the
+   rest of the app would be more elegant and much worse. */
+.ts-ph[data-register='host'] {
+  padding: var(--ts-space-2);
+  border-radius: var(--ts-radius-card);
+  background: var(--ts-navy);
+  color: var(--ts-cream);
+}
+
+.ts-ph[data-register='host'] .ts-ph-back {
+  color: var(--ts-cream-muted);
+}
+
+.ts-ph[data-register='host'] .ts-ph-back:hover {
+  background: var(--ts-cream14);
+  color: var(--ts-cream);
+}
+
+.ts-ph[data-register='host'] .ts-ph-sub {
+  color: var(--ts-cream-muted);
+}
+
+/* ── the Creations destination ───────────────────────────────────────────────
+ *
+ * The gallery moved out of `.shell`, which is a centred 680px page, and into
+ * the same `.today` column the other destinations use. It needs the padding
+ * that page was giving it, and nothing else: the cards themselves are still
+ * `gallery.css`.
+ */
+
+.gallery-body {
+  padding: 0 var(--ts-space-5) var(--ts-space-8);
+}
+
+/* ── back on its own ─────────────────────────────────────────────────────── */
+
+.ts-back {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--ts-space-1);
+  min-height: 44px;
+  margin: 0 0 var(--ts-space-2) calc(var(--ts-space-2) * -1);
+  padding: 0 var(--ts-space-3) 0 var(--ts-space-2);
+  border: 0;
+  border-radius: var(--ts-radius-button);
+  background: none;
+  font-family: var(--ts-font-sans);
+  font-size: var(--ts-text-label);
+  font-weight: 500;
+  color: var(--ts-ink60);
+}
+
+.ts-back:hover {
+  background: var(--ts-ink08);
+  color: var(--ts-ink);
+}
+
+/* ── motion ──────────────────────────────────────────────────────────────────
+ *
+ * Everything above animates position or scale, which is exactly the class of
+ * motion that makes a vestibular disorder worse. The states all survive
+ * without the transition: the rule is still there, it simply arrives.
+ */
+
+@media (prefers-reduced-motion: reduce) {
+  .ts-skip,
+  .today-bar.ts-bar,
+  .nav-item.ts-tab,
+  .ts-tab-ind {
+    transition: none;
+  }
+}

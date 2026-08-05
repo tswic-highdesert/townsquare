@@ -1,14 +1,36 @@
 /**
- * The bar across the top of every tab.
+ * The bar across the top of every tab. `design/hifi-v2` section 02, specimens
+ * 1, 2 and 16.
  *
- * Lifted out of `Today.tsx` alongside `TabBar` when Nearby and Yours arrived.
- * The mark, the town's name and the way back to your account are the resident's
- * fixed points; a tab that drew its own would be a tab where signing in works
- * differently.
+ * It carries four things and refuses a fifth: **who made this** (the mark),
+ * **where you are** (the place line), **find something**, and **you**. Every
+ * product like this eventually grows a hamburger, and the hamburger is where
+ * the five destinations go to die. They are at the bottom under a thumb
+ * instead, or in the rail on a wide screen.
+ *
+ * ## What the hi-fi has and this does not
+ *
+ * **The notification bell.** There is no notifications source, no table and no
+ * endpoint. A bell that never lights is a promise the product has not made.
+ *
+ * **The town switcher.** `GET /api/town` returns exactly one town. A menu
+ * offering Delta and Harbor would be two fictional towns in a resident's face
+ * on the screen whose entire job is being true about this one. The place line
+ * is therefore text, not a control — and the moment there is a second town it
+ * becomes a button without anything else here moving, which is the point of
+ * the seam in `design/hifi-v2/sections/11-system`.
+ *
+ * ## The place line is set in the serif
+ *
+ * In sans it reads as a field value. In the serif it reads as a dateline,
+ * which is what it actually is.
  */
 
+import { useEffect, useRef, useState } from 'react'
 import { Icon, Mark } from './Icon.js'
+import { useShell } from './nav/shellContext.js'
 import type { AccountView } from './session.js'
+import './nav/nav.css'
 
 export interface AppBarProps {
   /** "Town Square" on Today, the tab's name elsewhere. */
@@ -20,47 +42,130 @@ export interface AppBarProps {
   onReview: () => void
 }
 
+/**
+ * Past this much scroll the bar condenses.
+ *
+ * 64px is roughly the greeting: far enough that it never fires on the small
+ * bounce a thumb makes settling on a screen, close enough that it has happened
+ * by the time a resident is reading the first headline.
+ */
+const CONDENSE_AT = 64
+
 export function AppBar(props: AppBarProps) {
   const { account } = props
+  const shell = useShell()
+  const [condensed, setCondensed] = useState(false)
+  const bar = useRef<HTMLElement | null>(null)
+
+  useEffect(() => {
+    // Read in a frame rather than on every scroll event. Layout-reading in a
+    // scroll handler is how a list that scrolls beautifully on a laptop
+    // stutters on the phone somebody actually owns.
+    let queued = false
+    const onScroll = () => {
+      if (queued) return
+      queued = true
+      requestAnimationFrame(() => {
+        queued = false
+        setCondensed(window.scrollY > CONDENSE_AT)
+      })
+    }
+    onScroll()
+    window.addEventListener('scroll', onScroll, { passive: true })
+    return () => window.removeEventListener('scroll', onScroll)
+  }, [])
+
+  /**
+   * The skip link needs something to skip to.
+   *
+   * The content after this bar is rendered by Today, Nearby and Yours, and none
+   * of them carries an id. Rather than fork three screens to add one, the bar
+   * marks its own next sibling — which is exactly the first block of content on
+   * every screen that renders a bar. The id is only ever added when nothing
+   * already claims it, so the day a screen labels its own main region, that
+   * wins and this does nothing.
+   *
+   * The link stays a real anchor rather than a button with a handler. In a
+   * client-rendered app there is no pre-script page for it to work on, but an
+   * anchor to an id is still what a screen reader announces as a skip link and
+   * what the browser's own focus handling understands.
+   */
+  useEffect(() => {
+    const next = bar.current?.nextElementSibling
+    if (!(next instanceof HTMLElement)) return
+    if (document.getElementById(SKIP_TARGET)) return
+    next.id = SKIP_TARGET
+    if (!next.hasAttribute('tabindex')) next.tabIndex = -1
+  })
 
   return (
-    <header className="today-bar">
-      <Mark size={22} />
-      <span className="today-wordmark">{props.label}</span>
-      <span className="today-place">{props.place}</span>
+    <>
+      {/* First in the DOM, off screen until focused. */}
+      <a className="ts-skip" href={`#${SKIP_TARGET}`}>
+        Skip to the top of {props.place || 'town'}
+      </a>
 
-      <div className="today-bar-actions">
-        {props.canReview && (
-          <button className="back" onClick={props.onReview}>
-            Review queue
-          </button>
-        )}
+      <header className="today-bar ts-bar" data-condensed={condensed || undefined} ref={bar}>
+        <Mark size={22} className="ts-bar-mark" />
+
+        <div className="ts-bar-brand">
+          <span className="today-wordmark">{props.label}</span>
+          <span className="today-place">{props.place}</span>
+        </div>
+
         {/*
-          The label carries the handle, not the initials on the tile. "BT" is a
-          visual shorthand for someone who can already see the screen and is
-          meaningless to anyone who cannot.
+          Resting search on a wide screen is a field, not an icon: there is
+          room, and a field says what it will do before you press it. On a
+          phone the same control is a 44px icon button. One button, two
+          shapes, so there is only ever one thing to focus.
         */}
         <button
-          className="avatar-button"
-          onClick={props.onAccount}
-          aria-label={
-            account
-              ? `${account.handle}${account.verified ? ', verified' : ''} — your account`
-              : 'Sign in'
-          }
+          className="ts-bar-search"
+          type="button"
+          onClick={shell.onSearch}
+          aria-expanded={shell.searchOpen}
+          aria-label={`Search ${props.place || 'the town'}`}
         >
-          {account ? (
-            <span className="avatar" data-verified={account.verified || undefined}>
-              {initials(account.handle)}
-            </span>
-          ) : (
-            <span className="today-signin">Sign in</span>
-          )}
+          <Icon name="search" size={18} />
+          <span className="ts-bar-search-label">Search {props.place || 'the town'}</span>
         </button>
-      </div>
-    </header>
+
+        <div className="today-bar-actions">
+          {props.canReview && (
+            <button className="back" onClick={props.onReview}>
+              Review queue
+            </button>
+          )}
+          {/*
+            The label carries the handle, not the initials on the tile. "BT" is
+            a visual shorthand for someone who can already see the screen and is
+            meaningless to anyone who cannot.
+          */}
+          <button
+            className="avatar-button"
+            onClick={props.onAccount}
+            aria-label={
+              account
+                ? `${account.handle}${account.verified ? ', verified' : ''} — your account`
+                : 'Sign in'
+            }
+          >
+            {account ? (
+              <span className="avatar" data-verified={account.verified || undefined}>
+                {initials(account.handle)}
+              </span>
+            ) : (
+              <span className="today-signin">Sign in</span>
+            )}
+          </button>
+        </div>
+      </header>
+    </>
   )
 }
+
+/** The id the skip link points at, and the bar assigns. */
+export const SKIP_TARGET = 'ts-main'
 
 /** The verified tick, where a screen has room to say it in words as well. */
 export function VerifiedChip({ verified }: { verified: boolean }) {

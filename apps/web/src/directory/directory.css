@@ -1,0 +1,1326 @@
+/*
+ * The directory and discovery. `design/hifi-v2` section 05.
+ *
+ * Imported from `Directory.tsx` rather than from `styles/index.css`, so this
+ * screen owns its own cascade and cannot be reordered by somebody adding a
+ * line to a shared file. Every class is prefixed `dir-`; the sheet is one
+ * document and an unprefixed `.card` collides with four other screens.
+ *
+ * Two rules run through all of it.
+ *
+ * 1. **No literal colour anywhere.** Every value is a `--ts-*` token or a
+ *    `color-mix()` derived from one. This is the multi-town theming seam: a
+ *    town that reskins Town Square reskins this screen without touching it.
+ * 2. **Nothing here draws a photograph.** `.dir-plate` is the finished state of
+ *    a card for a listing nobody has photographed, not a placeholder waiting
+ *    for one, because the directory holds no images at all. It is a fixed box
+ *    at every size so a grid of 700 never goes ragged.
+ */
+
+.dir {
+  padding-bottom: var(--ts-space-16);
+}
+
+/* ── the open-now system ───────────────────────────────────────────────────
+ *
+ * Four dot shapes and one glyph substitution, so the state survives greyscale
+ * and survives being printed. `unknown` deliberately has no dot: a muted dot
+ * beside a sage one reads as "closed", and "we could not read this business's
+ * hours" is a different fact about a different party.
+ */
+
+.dir-open {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+  font-family: var(--ts-font-sans);
+  font-size: 12.5px;
+  font-weight: 500;
+  line-height: 1.25;
+  color: var(--ts-ink60);
+  text-align: left;
+  /* Never wraps. A two-line "Open until 12 AM" in a right-hand column steals
+   * the width the business's own name needs, which is how a row of listings
+   * turns into a column of ellipses. */
+  white-space: nowrap;
+}
+
+.dir-open-dot {
+  width: 7px;
+  height: 7px;
+  flex: none;
+  border-radius: var(--ts-radius-full);
+  background: var(--ts-ink26);
+}
+
+.dir-open[data-state='open'] {
+  color: var(--ts-sage);
+}
+.dir-open[data-state='open'] .dir-open-dot {
+  background: var(--ts-sage);
+}
+
+/* A halo, so "closing" is a different shape and not merely a different hue. */
+.dir-open[data-state='soon'] {
+  color: var(--ts-gold-text);
+}
+.dir-open[data-state='soon'] .dir-open-dot {
+  background: var(--ts-gold-text);
+  box-shadow: 0 0 0 3px var(--ts-gold14);
+}
+
+/* Half filled: shut now, but the same day is still in play. */
+.dir-open[data-state='later'] {
+  color: var(--ts-gold-text);
+}
+.dir-open[data-state='later'] .dir-open-dot {
+  background: linear-gradient(90deg, var(--ts-gold-text) 0 50%, transparent 50%);
+  box-shadow: inset 0 0 0 1.5px var(--ts-gold-text);
+}
+
+.dir-open[data-state='closed'] {
+  color: var(--ts-ink60);
+}
+.dir-open[data-state='closed'] .dir-open-dot {
+  background: transparent;
+  box-shadow: inset 0 0 0 1.5px var(--ts-ink45);
+}
+
+.dir-open[data-state='unknown'] {
+  color: var(--ts-ink45);
+}
+
+/*
+ * The plate fills whatever box it is given, and every box it is given has a
+ * definite height — 16:10 on a card, 48px in a row, the remaining column on a
+ * stumble card. `height: 100%` against an indefinite parent collapses to the
+ * glyph, which is what put a 40px band of gradient above 400px of white on the
+ * first pass at the stumble surface.
+ */
+
+/* ── the plate that is not a photograph ────────────────────────────────────
+ *
+ * Four washes across fifteen groups. A palette with a hue per category is a
+ * dashboard; four tones give a grid rhythm and keep colour reserved for the
+ * thing that earns it.
+ */
+
+.dir-plate {
+  position: relative;
+  display: grid;
+  place-items: center;
+  gap: 2px;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background-color: var(--ts-stone);
+  color: var(--ts-ink45);
+}
+
+.dir-plate[data-tone='clay'] {
+  background-image:
+    radial-gradient(circle at 78% 14%, color-mix(in srgb, var(--ts-terracotta) 30%, transparent), transparent 62%),
+    linear-gradient(152deg, color-mix(in srgb, var(--ts-terracotta) 14%, transparent), transparent 74%);
+}
+.dir-plate[data-tone='navy'] {
+  background-image:
+    radial-gradient(circle at 78% 14%, color-mix(in srgb, var(--ts-navy) 26%, transparent), transparent 62%),
+    linear-gradient(152deg, color-mix(in srgb, var(--ts-navy) 12%, transparent), transparent 74%);
+}
+.dir-plate[data-tone='sage'] {
+  background-image:
+    radial-gradient(circle at 78% 14%, color-mix(in srgb, var(--ts-sage) 32%, transparent), transparent 62%),
+    linear-gradient(152deg, color-mix(in srgb, var(--ts-sage) 14%, transparent), transparent 74%);
+}
+.dir-plate[data-tone='gold'] {
+  background-image:
+    radial-gradient(circle at 78% 14%, color-mix(in srgb, var(--ts-gold) 34%, transparent), transparent 62%),
+    linear-gradient(152deg, color-mix(in srgb, var(--ts-gold) 14%, transparent), transparent 74%);
+}
+
+.dir-plate-cap {
+  font-family: var(--ts-font-mono);
+  font-size: 9px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--ts-ink45);
+}
+
+/* ── loading ───────────────────────────────────────────────────────────── */
+
+.dir-loading {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ts-space-3);
+  padding: var(--ts-space-6) var(--ts-space-5);
+}
+
+/* ── the intro ─────────────────────────────────────────────────────────── */
+
+.dir-intro {
+  padding: var(--ts-space-6) var(--ts-space-5) var(--ts-space-5);
+}
+
+.dir-intro p {
+  font-family: var(--ts-font-serif);
+  font-size: 25px;
+  line-height: 1.24;
+  letter-spacing: -0.015em;
+  margin: 0;
+  text-wrap: balance;
+}
+
+.dir-intro-sub {
+  font-size: var(--ts-text-label) !important;
+  line-height: 1.5 !important;
+  letter-spacing: 0 !important;
+  color: var(--ts-ink60);
+  margin-top: var(--ts-space-3) !important;
+}
+
+/* ── show me something ─────────────────────────────────────────────────── */
+
+.dir-serendipity {
+  display: flex;
+  align-items: center;
+  gap: var(--ts-space-3);
+  width: calc(100% - var(--ts-space-5) * 2);
+  min-height: 68px;
+  margin: 0 var(--ts-space-5);
+  padding: var(--ts-space-3) var(--ts-space-4);
+  border: none;
+  border-radius: var(--ts-radius-card);
+  background: var(--ts-navy-dark);
+  color: var(--ts-cream);
+  text-align: left;
+  cursor: pointer;
+  box-shadow: var(--ts-shadow-navy);
+  transition: transform var(--ts-dur-2) var(--ts-ease);
+}
+.dir-serendipity:hover {
+  transform: translateY(-1px);
+}
+.dir-serendipity:focus-visible {
+  outline: none;
+  /* The halo has to become the card colour on a dark surface, which is why the
+   * token is redefined here rather than the ring being hand-rolled. */
+  --ts-cream: var(--ts-navy-dark);
+  box-shadow: var(--ts-focus);
+}
+
+.dir-serendipity-icon {
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  flex: none;
+  border-radius: var(--ts-radius-full);
+  background: var(--ts-terracotta);
+  color: var(--ts-surface);
+}
+
+.dir-serendipity-text {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.dir-serendipity-title {
+  font-family: var(--ts-font-sans);
+  font-size: var(--ts-text-card-title);
+  font-weight: 500;
+}
+
+.dir-serendipity-sub {
+  font-family: var(--ts-font-serif);
+  font-size: 14px;
+  color: var(--ts-cream-muted);
+}
+
+.dir-serendipity-go {
+  margin-left: auto;
+  color: var(--ts-cream-muted);
+}
+
+/* ── blocks and rails ──────────────────────────────────────────────────── */
+
+.dir-block {
+  padding: var(--ts-space-8) 0 0;
+}
+
+.dir-block-last {
+  padding-bottom: var(--ts-space-6);
+}
+
+.dir-block-head {
+  display: flex;
+  align-items: baseline;
+  gap: var(--ts-space-3);
+  padding: 0 var(--ts-space-5);
+}
+
+.dir-block-title {
+  font-family: var(--ts-font-serif);
+  font-size: var(--ts-text-h2);
+  font-weight: 500;
+  line-height: 1.2;
+  margin: 0;
+}
+
+.dir-block-count {
+  margin-left: auto;
+  font-family: var(--ts-font-serif);
+  font-size: 14px;
+  color: var(--ts-ink45);
+  white-space: nowrap;
+}
+
+.dir-block-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  margin-left: auto;
+  min-height: 44px;
+  padding: 0 var(--ts-space-1);
+  border: none;
+  background: none;
+  font-family: var(--ts-font-sans);
+  font-size: var(--ts-text-caption);
+  font-weight: 500;
+  color: var(--ts-terracotta-hover);
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.dir-block-note {
+  padding: 0 var(--ts-space-5);
+  margin: var(--ts-space-1) 0 0;
+  font-family: var(--ts-font-serif);
+  font-size: 14px;
+  color: var(--ts-ink45);
+}
+
+.dir-rail {
+  display: flex;
+  gap: var(--ts-space-3);
+  overflow-x: auto;
+  padding: var(--ts-space-4) var(--ts-space-5);
+  scrollbar-width: none;
+}
+.dir-rail::-webkit-scrollbar {
+  display: none;
+}
+
+.dir-back {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  min-height: 44px;
+  margin: 0 var(--ts-space-5);
+  padding: 0 var(--ts-space-1);
+  border: none;
+  background: none;
+  font-family: var(--ts-font-sans);
+  font-size: var(--ts-text-caption);
+  font-weight: 500;
+  color: var(--ts-terracotta-hover);
+  cursor: pointer;
+}
+.dir-back:focus-visible,
+.dir-block-link:focus-visible {
+  outline: none;
+  border-radius: var(--ts-radius-input);
+  box-shadow: var(--ts-focus);
+}
+
+/* ── the location prompt ───────────────────────────────────────────────── */
+
+.dir-locate {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--ts-space-3);
+  margin: var(--ts-space-5) var(--ts-space-5) 0;
+  padding: var(--ts-space-3) var(--ts-space-4);
+  border: 1px solid var(--ts-hairline);
+  border-radius: var(--ts-radius-card);
+  background: var(--ts-surface);
+  color: var(--ts-ink60);
+}
+
+.dir-locate-text {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  min-width: 0;
+  /* Wide enough that the sentence about the position staying on the device
+   * does not set four words to a line. Below that it takes the whole row and
+   * the button drops underneath, which is the readable order anyway. */
+  flex: 1 1 200px;
+}
+
+.dir-locate-title {
+  font-size: 14.5px;
+  font-weight: 500;
+  color: var(--ts-ink);
+}
+
+.dir-locate-detail {
+  font-family: var(--ts-font-serif);
+  font-size: 13.5px;
+  color: var(--ts-ink45);
+}
+
+/* ── category tiles ────────────────────────────────────────────────────── */
+
+.dir-tiles {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--ts-space-3);
+  padding: var(--ts-space-4) var(--ts-space-5) 0;
+}
+
+@media (min-width: 700px) {
+  .dir-tiles {
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  }
+}
+
+/*
+ * The tile is a door, not a row in a taxonomy. The art plate does that work: an
+ * icon on a flat grey square is an admin console, an icon over a warm washed
+ * plate reads as somewhere you could walk into.
+ */
+.dir-tile {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-height: 108px;
+  padding: var(--ts-space-3);
+  border: 1px solid var(--ts-hairline);
+  border-radius: var(--ts-radius-card);
+  background: var(--ts-surface);
+  color: inherit;
+  text-align: left;
+  overflow: hidden;
+  cursor: pointer;
+  transition:
+    transform var(--ts-dur-2) var(--ts-ease),
+    box-shadow var(--ts-dur-2) var(--ts-ease);
+}
+.dir-tile:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--ts-shadow-raised);
+}
+.dir-tile:focus-visible {
+  outline: none;
+  box-shadow: var(--ts-focus);
+}
+
+.dir-tile-art {
+  position: absolute;
+  inset: 0;
+}
+.dir-tile[data-tone='clay'] .dir-tile-art {
+  background:
+    radial-gradient(circle at 88% 8%, color-mix(in srgb, var(--ts-terracotta) 26%, transparent), transparent 58%),
+    linear-gradient(158deg, color-mix(in srgb, var(--ts-terracotta) 12%, transparent), transparent 72%);
+}
+.dir-tile[data-tone='navy'] .dir-tile-art {
+  background:
+    radial-gradient(circle at 88% 8%, color-mix(in srgb, var(--ts-navy) 24%, transparent), transparent 58%),
+    linear-gradient(158deg, color-mix(in srgb, var(--ts-navy) 11%, transparent), transparent 72%);
+}
+.dir-tile[data-tone='sage'] .dir-tile-art {
+  background:
+    radial-gradient(circle at 88% 8%, color-mix(in srgb, var(--ts-sage) 30%, transparent), transparent 58%),
+    linear-gradient(158deg, color-mix(in srgb, var(--ts-sage) 13%, transparent), transparent 72%);
+}
+.dir-tile[data-tone='gold'] .dir-tile-art {
+  background:
+    radial-gradient(circle at 88% 8%, color-mix(in srgb, var(--ts-gold) 30%, transparent), transparent 58%),
+    linear-gradient(158deg, color-mix(in srgb, var(--ts-gold) 12%, transparent), transparent 72%);
+}
+
+.dir-tile-icon {
+  position: relative;
+  color: var(--ts-ink);
+  margin-bottom: auto;
+}
+
+.dir-tile-name {
+  position: relative;
+  font-size: 14.5px;
+  font-weight: 500;
+  line-height: 1.2;
+}
+
+.dir-tile-count {
+  position: relative;
+  font-family: var(--ts-font-serif);
+  font-size: var(--ts-text-caption);
+  color: var(--ts-ink45);
+}
+
+/* ── the long tail, as chips ───────────────────────────────────────────── */
+
+.dir-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--ts-space-2);
+  padding: var(--ts-space-4) var(--ts-space-5) 0;
+}
+
+.dir-chips-inset {
+  padding-top: var(--ts-space-3);
+}
+
+.dir-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 36px;
+  padding: 0 var(--ts-space-3);
+  border: 1px solid var(--ts-hairline);
+  border-radius: var(--ts-radius-chip);
+  background: var(--ts-surface);
+  color: var(--ts-ink);
+  font-family: var(--ts-font-sans);
+  font-size: 13.5px;
+  cursor: pointer;
+  white-space: nowrap;
+}
+.dir-chip:hover {
+  border-color: var(--ts-terracotta);
+  background: var(--ts-terracotta-tint);
+}
+.dir-chip:focus-visible {
+  outline: none;
+  box-shadow: var(--ts-focus);
+}
+
+.dir-chip span {
+  font-family: var(--ts-font-serif);
+  font-size: 12.5px;
+  color: var(--ts-ink45);
+}
+
+.dir-chip[data-tail] {
+  border-style: dashed;
+  color: var(--ts-terracotta-hover);
+  font-weight: 500;
+}
+
+/* ── the quiet search fallback ─────────────────────────────────────────── */
+
+.dir-searchfield {
+  display: flex;
+  align-items: center;
+  gap: var(--ts-space-2);
+  width: calc(100% - var(--ts-space-5) * 2);
+  min-height: 46px;
+  margin: var(--ts-space-3) var(--ts-space-5) 0;
+  padding: 0 var(--ts-space-4);
+  border: 1px dashed var(--ts-ink26);
+  border-radius: var(--ts-radius-input);
+  background: transparent;
+  color: var(--ts-ink45);
+  font-family: var(--ts-font-sans);
+  font-size: var(--ts-text-label);
+  text-align: left;
+  cursor: pointer;
+}
+.dir-searchfield:hover {
+  border-style: solid;
+  background: var(--ts-surface);
+  color: var(--ts-ink60);
+}
+.dir-searchfield:focus-visible {
+  outline: none;
+  box-shadow: var(--ts-focus);
+}
+
+.dir-searchwrap {
+  padding: var(--ts-space-4) var(--ts-space-5) 0;
+}
+
+/* ── the rail card, 132px ──────────────────────────────────────────────── */
+
+.dir-mini {
+  display: flex;
+  flex-direction: column;
+  width: 138px;
+  flex: none;
+  padding: 0;
+  border: 1px solid var(--ts-hairline);
+  border-radius: var(--ts-radius-card);
+  background: var(--ts-surface);
+  color: inherit;
+  text-align: left;
+  overflow: hidden;
+  cursor: pointer;
+  box-shadow: var(--ts-shadow-flat);
+}
+.dir-mini:hover {
+  box-shadow: var(--ts-shadow-raised);
+}
+.dir-mini:focus-visible {
+  outline: none;
+  box-shadow: var(--ts-focus);
+}
+
+.dir-mini-plate {
+  display: block;
+  height: 76px;
+}
+
+.dir-mini-body {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  padding: var(--ts-space-2) var(--ts-space-3) var(--ts-space-3);
+}
+
+.dir-mini-name {
+  font-size: var(--ts-text-caption);
+  font-weight: 500;
+  line-height: 1.25;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.dir-mini-dist {
+  font-family: var(--ts-font-serif);
+  font-size: var(--ts-text-caption);
+  color: var(--ts-ink45);
+}
+
+/* ── the browse card ───────────────────────────────────────────────────── */
+
+/*
+ * The grid is the wide layout and the rows are the narrow one, and only one is
+ * ever displayed. Both are rendered because they carry the same five facts, so
+ * which one shows is a layout decision rather than a content one.
+ */
+.dir-grid {
+  display: none;
+}
+
+@media (min-width: 700px) {
+  .dir-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: var(--ts-space-4);
+    padding: var(--ts-space-5);
+  }
+  .dir-rows {
+    display: none;
+  }
+}
+
+.dir-card {
+  display: flex;
+  flex-direction: column;
+  border: 1px solid var(--ts-hairline);
+  border-radius: var(--ts-radius-card);
+  background: var(--ts-surface);
+  overflow: hidden;
+  box-shadow: var(--ts-shadow-flat);
+  transition:
+    box-shadow var(--ts-dur-2) var(--ts-ease),
+    transform var(--ts-dur-2) var(--ts-ease);
+}
+.dir-card:hover {
+  box-shadow: var(--ts-shadow-raised);
+  transform: translateY(-2px);
+}
+
+/* Fixed 16:10, so a grid of 700 never goes ragged and the absence of a photo
+ * never reads as a broken card. */
+.dir-card-plate {
+  position: relative;
+  display: block;
+  aspect-ratio: 16 / 10;
+  width: 100%;
+}
+
+.dir-card-save {
+  position: absolute;
+  top: var(--ts-space-2);
+  right: var(--ts-space-2);
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border: none;
+  border-radius: var(--ts-radius-full);
+  background: color-mix(in srgb, var(--ts-surface) 88%, transparent);
+  color: var(--ts-ink60);
+  cursor: pointer;
+  backdrop-filter: blur(6px);
+}
+.dir-card-save:hover,
+.dir-card-save[data-saved] {
+  background: var(--ts-surface);
+  color: var(--ts-terracotta-hover);
+}
+.dir-card-save:focus-visible {
+  outline: none;
+  box-shadow: var(--ts-focus);
+}
+
+.dir-card-body {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  padding: var(--ts-space-3) var(--ts-space-4) var(--ts-space-4);
+  border: none;
+  background: none;
+  text-align: left;
+  cursor: pointer;
+}
+.dir-card-body:focus-visible {
+  outline: none;
+  box-shadow: var(--ts-focus);
+}
+
+.dir-card-name {
+  font-family: var(--ts-font-sans);
+  font-size: var(--ts-text-card-title);
+  font-weight: 500;
+  line-height: 1.22;
+}
+
+.dir-card-cat {
+  font-family: var(--ts-font-serif);
+  font-size: 14.5px;
+  color: var(--ts-ink60);
+  margin-top: 3px;
+}
+
+.dir-card-foot {
+  display: flex;
+  align-items: center;
+  gap: var(--ts-space-3);
+  margin-top: var(--ts-space-3);
+  padding-top: var(--ts-space-3);
+  border-top: 1px solid var(--ts-hairline);
+}
+
+.dir-card-dist {
+  margin-left: auto;
+  font-family: var(--ts-font-serif);
+  font-size: var(--ts-text-caption);
+  color: var(--ts-ink45);
+  white-space: nowrap;
+}
+
+/* ── the list row, the density workhorse ───────────────────────────────── */
+
+.dir-rows {
+  list-style: none;
+  margin: var(--ts-space-4) var(--ts-space-4) 0;
+  padding: 0;
+  background: var(--ts-surface);
+  border: 1px solid var(--ts-hairline);
+  border-radius: var(--ts-radius-card);
+  overflow: hidden;
+}
+
+.dir-row {
+  display: flex;
+  align-items: center;
+}
+.dir-row + .dir-row {
+  border-top: 1px solid var(--ts-hairline);
+}
+
+.dir-row-main {
+  display: flex;
+  align-items: center;
+  gap: var(--ts-space-3);
+  flex: 1;
+  min-width: 0;
+  min-height: 72px;
+  padding: var(--ts-space-3) var(--ts-space-3) var(--ts-space-3) var(--ts-space-4);
+  border: none;
+  background: none;
+  color: inherit;
+  text-align: left;
+  cursor: pointer;
+  transition: background var(--ts-dur-1) var(--ts-ease);
+}
+.dir-row-main:hover {
+  background: var(--ts-cream);
+}
+.dir-row-main:focus-visible {
+  outline: none;
+  box-shadow: var(--ts-focus);
+}
+
+/* 48px and square. At that size the plate is a texture that makes the list
+ * scannable in the peripheral, which is the only job it has here. */
+.dir-row-main .dir-plate {
+  width: 48px;
+  height: 48px;
+  flex: none;
+  border-radius: var(--ts-radius-input);
+}
+
+.dir-row-body {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  min-width: 0;
+  flex: 1;
+}
+
+.dir-row-name {
+  font-size: var(--ts-text-label);
+  font-weight: 500;
+  line-height: 1.25;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.dir-row-cat {
+  font-family: var(--ts-font-serif);
+  font-size: 14px;
+  color: var(--ts-ink45);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Right-aligned in a fixed column, so a finger running down the edge of the
+ * screen reads a column of dots and can skip everything else. */
+/*
+ * A fixed column, not a percentage. The open state is the thing a finger scans
+ * down the edge of the screen, so it holds one width for every row; letting it
+ * take a share of the space instead means a long "Closed · opens 7 AM" quietly
+ * squeezes the name of the business beside it into three letters.
+ */
+.dir-row-right {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 2px;
+  flex: none;
+  width: 112px;
+  text-align: right;
+}
+
+.dir-row-dist {
+  font-family: var(--ts-font-serif);
+  font-size: 12.5px;
+  color: var(--ts-ink45);
+}
+
+.dir-row-go {
+  color: var(--ts-ink26);
+  flex: none;
+}
+
+/* On a phone the chevron is 16px of decoration on a row that is entirely a
+ * button. The name of the business is worth more than the affordance. */
+@media (max-width: 480px) {
+  .dir-row-go {
+    display: none;
+  }
+  .dir-row-main {
+    gap: var(--ts-space-2);
+    padding-left: var(--ts-space-3);
+    padding-right: var(--ts-space-1);
+  }
+  .dir-row-main .dir-plate {
+    width: 44px;
+    height: 44px;
+  }
+  .dir-rows {
+    margin-left: var(--ts-space-3);
+    margin-right: var(--ts-space-3);
+  }
+}
+
+.dir-row-save {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  flex: none;
+  margin-right: var(--ts-space-2);
+  border: none;
+  border-radius: var(--ts-radius-full);
+  background: none;
+  color: var(--ts-ink26);
+  cursor: pointer;
+}
+.dir-row-save:hover,
+.dir-row-save[data-saved] {
+  color: var(--ts-terracotta-hover);
+}
+.dir-row-save:focus-visible {
+  outline: none;
+  box-shadow: var(--ts-focus);
+}
+
+/* ── the pin card, loose or over a map ─────────────────────────────────── */
+
+.dir-pin {
+  display: flex;
+  align-items: center;
+  gap: var(--ts-space-3);
+  padding: var(--ts-space-3);
+  background: var(--ts-surface);
+  border: 1px solid var(--ts-hairline);
+  border-radius: var(--ts-radius-card);
+  box-shadow: var(--ts-shadow-raised);
+}
+
+.dir-pin-plate {
+  display: block;
+  width: 68px;
+  height: 68px;
+  flex: none;
+  border-radius: var(--ts-radius-input);
+  overflow: hidden;
+}
+
+.dir-pin-body {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+  flex: 1;
+}
+
+.dir-pin-cat {
+  font-family: var(--ts-font-mono);
+  font-size: 9.5px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--ts-ink45);
+}
+
+.dir-pin-name {
+  font-size: var(--ts-text-card-title);
+  font-weight: 500;
+  line-height: 1.2;
+}
+
+.dir-pin-addr {
+  font-family: var(--ts-font-serif);
+  font-size: 14px;
+  color: var(--ts-ink60);
+}
+
+.dir-pin-acts {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ts-space-2);
+  flex: none;
+}
+
+.dir-iconbtn {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  flex: none;
+  border-radius: var(--ts-radius-button);
+  border: 1px solid var(--ts-hairline);
+  background: var(--ts-surface);
+  color: var(--ts-terracotta-hover);
+  text-decoration: none;
+}
+.dir-iconbtn:hover {
+  background: var(--ts-terracotta-tint);
+}
+.dir-iconbtn:focus-visible {
+  outline: none;
+  box-shadow: var(--ts-focus);
+}
+/* No phone on file, so the target is drawn as unavailable and taken out of the
+ * tab order rather than offering to dial nothing. */
+.dir-iconbtn[data-off] {
+  color: var(--ts-ink26);
+  background: var(--ts-cream);
+  border-style: dashed;
+  cursor: not-allowed;
+}
+
+/* ── the category landing ──────────────────────────────────────────────── */
+
+.dir-cathead {
+  padding: var(--ts-space-4) 0 0;
+}
+
+.dir-cathead-main {
+  display: flex;
+  align-items: center;
+  gap: var(--ts-space-3);
+  padding: var(--ts-space-3) var(--ts-space-5) 0;
+}
+
+.dir-cathead-icon {
+  display: grid;
+  place-items: center;
+  width: 46px;
+  height: 46px;
+  flex: none;
+  border-radius: var(--ts-radius-card);
+  background: var(--ts-terracotta14);
+  color: var(--ts-terracotta-hover);
+}
+
+.dir-cathead-title {
+  font-family: var(--ts-font-serif);
+  font-size: var(--ts-text-h1);
+  font-weight: 500;
+  line-height: 1.1;
+  margin: 0;
+}
+
+.dir-cathead-sub {
+  font-size: 13.5px;
+  color: var(--ts-ink60);
+  margin: 2px 0 0;
+}
+
+.dir-cathead-blurb {
+  padding: 0 var(--ts-space-5);
+  margin: var(--ts-space-4) 0 0;
+  font-family: var(--ts-font-serif);
+  font-size: var(--ts-text-label);
+  line-height: 1.45;
+  color: var(--ts-ink60);
+}
+
+.dir-tools {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--ts-space-2);
+  padding: var(--ts-space-4) var(--ts-space-5) 0;
+}
+
+.dir-tool {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 40px;
+  padding: 0 var(--ts-space-3);
+  border: 1px solid var(--ts-hairline);
+  border-radius: var(--ts-radius-chip);
+  background: var(--ts-cream);
+  color: var(--ts-ink);
+  font-family: var(--ts-font-sans);
+  font-size: 13.5px;
+  font-weight: 500;
+  cursor: pointer;
+}
+.dir-tool:hover {
+  border-color: var(--ts-terracotta);
+}
+.dir-tool:focus-visible {
+  outline: none;
+  box-shadow: var(--ts-focus);
+}
+/* Selection is navy, not terracotta: terracotta means "this does something",
+ * and a filter that is already on has done it. */
+.dir-tool[data-on] {
+  background: var(--ts-navy);
+  border-color: var(--ts-navy);
+  color: var(--ts-cream);
+}
+
+.dir-filter-warn {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--ts-space-2);
+  margin: var(--ts-space-4) var(--ts-space-5) 0;
+  padding: var(--ts-space-3);
+  border-radius: var(--ts-radius-input);
+  background: var(--ts-gold14);
+  color: var(--ts-gold-text);
+  font-size: 13.5px;
+  line-height: 1.4;
+}
+
+/* ── the stumble surface ───────────────────────────────────────────────── */
+
+.dir-stumble {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  padding-bottom: var(--ts-space-8);
+  background:
+    radial-gradient(ellipse at 50% 0%, color-mix(in srgb, var(--ts-navy) 16%, transparent), transparent 62%),
+    var(--ts-cream);
+}
+
+.dir-stumble-chrome {
+  display: flex;
+  align-items: center;
+  gap: var(--ts-space-3);
+  padding: var(--ts-space-4) var(--ts-space-4) 0;
+}
+
+.dir-stumble-eyebrow {
+  margin: 0 auto;
+  font-family: var(--ts-font-mono);
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ts-ink45);
+}
+
+.dir-stumble-spacer {
+  width: 44px;
+  height: 44px;
+  flex: none;
+}
+
+/*
+ * The deck. The next two cards are already drawn as edges behind this one, so
+ * turning it over reads as a card that was always there rather than a machine
+ * deciding something. No spin, no delay, no reveal.
+ */
+.dir-stumble-deck {
+  position: relative;
+  flex: 1;
+  margin: var(--ts-space-4) var(--ts-space-5) 0;
+}
+
+.dir-stumble-edge {
+  position: absolute;
+  left: 0;
+  right: 0;
+  border-radius: var(--ts-radius-card);
+  background: var(--ts-surface);
+  border: 1px solid var(--ts-hairline);
+}
+.dir-stumble-edge:nth-of-type(1) {
+  top: 10px;
+  bottom: -10px;
+  transform: scale(0.96) rotate(1.1deg);
+  opacity: 0.7;
+}
+.dir-stumble-edge:nth-of-type(2) {
+  top: 5px;
+  bottom: -5px;
+  transform: scale(0.98) rotate(-0.7deg);
+  opacity: 0.85;
+}
+
+.dir-stumble-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  border-radius: var(--ts-radius-card);
+  overflow: hidden;
+  background: var(--ts-surface);
+  border: 1px solid var(--ts-hairline);
+  box-shadow: var(--ts-shadow-lifted);
+  animation: dir-flip var(--ts-dur-3) var(--ts-ease-out);
+}
+
+@keyframes dir-flip {
+  from {
+    opacity: 0;
+    transform: rotate(-0.6deg) translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* A card that flies in is decoration, and decoration is the first thing to go. */
+@media (prefers-reduced-motion: reduce) {
+  .dir-stumble-card {
+    animation: none;
+  }
+  .dir-tile,
+  .dir-card,
+  .dir-serendipity {
+    transition: none;
+  }
+}
+
+.dir-stumble-plate {
+  /* Grid, not block: a grid item stretches to its track, which is what gives
+   * the plate inside a definite height to fill. */
+  display: grid;
+  flex: 1;
+  min-height: 220px;
+}
+
+.dir-stumble-body {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--ts-space-2);
+  padding: var(--ts-space-5);
+  border-top: 1px solid var(--ts-hairline);
+}
+
+.dir-stumble-cat {
+  font-family: var(--ts-font-mono);
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--ts-ink45);
+}
+
+.dir-stumble-name {
+  font-family: var(--ts-font-serif);
+  font-size: 27px;
+  font-weight: 500;
+  line-height: 1.12;
+  letter-spacing: -0.02em;
+  margin: 0;
+}
+
+.dir-stumble-actions {
+  display: grid;
+  grid-template-columns: 1fr 1.25fr;
+  gap: var(--ts-space-3);
+  padding: var(--ts-space-5) var(--ts-space-5) 0;
+}
+
+.dir-stumble-foot,
+.dir-stumble-seen {
+  text-align: center;
+  font-family: var(--ts-font-serif);
+  font-size: var(--ts-text-caption);
+  color: var(--ts-ink45);
+  margin: var(--ts-space-3) var(--ts-space-6) 0;
+}
+
+.dir-stumble-seen {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  margin-top: var(--ts-space-1);
+  color: var(--ts-ink26);
+}
+
+/* ── one listing, in a sheet ───────────────────────────────────────────── */
+
+.dir-sheet {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ts-space-4);
+}
+
+.dir-sheet-acts {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(96px, 1fr));
+  gap: var(--ts-space-2);
+}
+
+/*
+ * Call, directions and the website open three different apps, so they are three
+ * targets. Each names where it goes underneath the verb, so nobody taps Website
+ * expecting a phone number.
+ */
+.dir-act {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  min-height: 72px;
+  padding: var(--ts-space-3) var(--ts-space-2);
+  border: 1px solid var(--ts-hairline);
+  border-radius: var(--ts-radius-card);
+  background: var(--ts-surface);
+  color: var(--ts-terracotta-hover);
+  text-decoration: none;
+  text-align: center;
+}
+.dir-act:hover {
+  background: var(--ts-terracotta-tint);
+}
+.dir-act:focus-visible {
+  outline: none;
+  box-shadow: var(--ts-focus);
+}
+
+.dir-act-label {
+  font-family: var(--ts-font-sans);
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--ts-ink);
+}
+
+.dir-act-sub {
+  font-family: var(--ts-font-serif);
+  font-size: 12px;
+  color: var(--ts-ink45);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
+  white-space: nowrap;
+}
+
+/*
+ * The provenance block is what makes a scraped directory trustworthy rather
+ * than merely populated. It says the source and the date, and it is honest that
+ * we hold no photographs instead of quietly drawing a stock image of some other
+ * town's bookshop.
+ */
+.dir-prov {
+  padding: var(--ts-space-4);
+  border-radius: var(--ts-radius-card);
+  background: var(--ts-cream);
+  border: 1px solid var(--ts-hairline);
+}
+
+.dir-prov-h {
+  font-family: var(--ts-font-mono);
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ts-ink45);
+  margin: 0 0 var(--ts-space-3);
+}
+
+.dir-prov ul {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ts-space-3);
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.dir-prov li {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--ts-space-2);
+  font-family: var(--ts-font-serif);
+  font-size: 14.5px;
+  line-height: 1.45;
+  color: var(--ts-ink60);
+}
+
+.dir-prov li svg {
+  flex: none;
+  margin-top: 4px;
+  color: var(--ts-ink45);
+}
+
+.dir-prov b {
+  font-weight: 600;
+  color: var(--ts-ink);
+}

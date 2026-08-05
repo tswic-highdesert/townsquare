@@ -1,0 +1,922 @@
+/*
+ * Identity, vouching and moderation.
+ *
+ * Imported from the components rather than from `styles/index.css`, which six
+ * people write into. Everything here is prefixed `.id-` or `.mod-`: the shell
+ * is one document, and an unprefixed `.card` belongs to whoever loaded last.
+ *
+ * Three rules hold throughout, and two of them are the same ones `ui.css`
+ * states:
+ *
+ * **Not one hex literal.** Every colour is a `var(--ts-*)` or a `color-mix()`
+ * derived from one. This is the seam a second town reskins through.
+ *
+ * **`--ts-brick` appears nowhere in this file, on purpose.** It is the single
+ * alarm register and the temptation to spend it is highest exactly here: a
+ * blocked creation, a withdrawn vouch, a delete button. A resident who learns
+ * that red means "that handle is taken" has been taught to ignore it by the
+ * time the river is up. Refusals are terracotta, destructive controls are
+ * plain, and the alarm colour stays unspent.
+ *
+ * **Three voices of type.** Newsreader for anything editorial — headings,
+ * counts, attributions, timestamps. DM Mono only where it labels the page.
+ * DM Sans for everything a finger acts on. A byline set in mono reads as
+ * terminal output.
+ */
+
+/* ── local aliases ──────────────────────────────────────────────────────────
+ *
+ * Derived, so a reskin moves them together. They exist because "sage at 30%"
+ * shows up in five places and writing the mix five times is how two of them
+ * end up at 28.
+ */
+
+.id-screen,
+.mod-screen {
+  --id-line: color-mix(in srgb, var(--ts-ink) 12%, transparent);
+  --id-sage-line: color-mix(in srgb, var(--ts-sage) 34%, transparent);
+  --id-terra-line: color-mix(in srgb, var(--ts-terracotta) 30%, transparent);
+  --id-inset: color-mix(in srgb, var(--ts-ink) 3%, transparent);
+
+  max-width: 680px;
+  margin: 0 auto;
+  padding: var(--ts-space-8) var(--ts-space-5) var(--ts-space-16);
+}
+
+/* ── shared furniture ──────────────────────────────────────────────────── */
+
+.id-back {
+  margin-left: calc(var(--ts-space-3) * -1);
+  margin-bottom: var(--ts-space-5);
+}
+
+.id-h1 {
+  font-family: var(--ts-font-serif);
+  font-size: var(--ts-text-h1);
+  margin: 0 0 var(--ts-space-2);
+  display: flex;
+  align-items: center;
+  gap: var(--ts-space-2);
+}
+
+.id-h2 {
+  font-family: var(--ts-font-serif);
+  font-size: var(--ts-text-h2);
+  margin: var(--ts-space-10) 0 var(--ts-space-3);
+}
+
+.id-lede {
+  color: var(--ts-ink60);
+  max-width: 46ch;
+  margin: 0 0 var(--ts-space-5);
+}
+
+.id-note {
+  color: var(--ts-ink45);
+  font-size: var(--ts-text-label);
+  max-width: 46ch;
+}
+
+/* The quiet line under a thing, in the editorial voice: it is a remark, not a
+ * control label. */
+.id-fine {
+  font-family: var(--ts-font-serif);
+  font-size: 13.5px;
+  line-height: 1.55;
+  color: var(--ts-ink45);
+  max-width: 52ch;
+  margin: var(--ts-space-4) 0 0;
+  display: flex;
+  align-items: flex-start;
+  gap: var(--ts-space-2);
+}
+
+.id-fine > svg {
+  flex: none;
+  margin-top: 2px;
+}
+
+.id-eyebrow {
+  font-family: var(--ts-font-mono);
+  font-size: var(--ts-text-eyebrow);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--ts-ink45);
+  margin: 0 0 var(--ts-space-2);
+}
+
+.id-eyebrow-sep {
+  margin-top: var(--ts-space-6);
+}
+
+.id-form {
+  display: grid;
+  gap: var(--ts-space-5);
+  max-width: 46ch;
+  margin-top: var(--ts-space-6);
+}
+
+/* Stacked, not a row. The primary action is the wide one and the alternative
+ * sits under it, so a thumb reaching the bottom of a phone finds the safe
+ * choice last rather than first. */
+.id-actions {
+  display: grid;
+  gap: var(--ts-space-2);
+  margin-top: var(--ts-space-5);
+}
+
+@media (min-width: 560px) {
+  .id-actions {
+    grid-auto-flow: column;
+    justify-content: start;
+    gap: var(--ts-space-3);
+  }
+}
+
+.id-mark {
+  width: 48px;
+  height: 48px;
+  border-radius: var(--ts-radius-full);
+  display: grid;
+  place-items: center;
+  background: var(--ts-navy10);
+  color: var(--ts-navy);
+  margin-bottom: var(--ts-space-4);
+}
+
+.id-outcome {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--ts-space-2);
+  font-size: var(--ts-text-label);
+  color: var(--ts-sage);
+  background: var(--ts-sage14);
+  border-radius: var(--ts-radius-button);
+  padding: var(--ts-space-3) var(--ts-space-4);
+  margin: 0;
+}
+
+/* A duplicate is not a success. Same shape, no sage: pretending it counted
+ * would turn the queue into a tally. */
+.id-outcome[data-flat] {
+  color: var(--ts-ink60);
+  background: var(--id-inset);
+}
+
+.id-outcome > svg {
+  flex: none;
+  margin-top: 2px;
+}
+
+.id-quiet-note {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--ts-space-2);
+  font-size: var(--ts-text-caption);
+  color: var(--ts-ink60);
+  background: var(--id-inset);
+  border-radius: var(--ts-radius-button);
+  padding: var(--ts-space-3) var(--ts-space-4);
+  margin: var(--ts-space-5) 0 0;
+}
+
+.id-quiet-note > svg {
+  flex: none;
+  margin-top: 2px;
+  color: var(--ts-ink45);
+}
+
+/* ── sign in ───────────────────────────────────────────────────────────── */
+
+/*
+ * A dead link is a notice, not an alarm. Gold is the civic register: something
+ * timed out, nothing is wrong with you or with the town.
+ */
+.id-deadlink {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--ts-space-3);
+  background: var(--ts-gold14);
+  color: var(--ts-gold-text);
+  border-radius: var(--ts-radius-card);
+  padding: var(--ts-space-4);
+  margin-bottom: var(--ts-space-6);
+  font-size: var(--ts-text-label);
+  line-height: 1.5;
+}
+
+.id-deadlink > svg {
+  flex: none;
+  margin-top: 2px;
+}
+
+/*
+ * Only ever rendered against a development API, which refuses to echo a
+ * sign-in link the moment the shell origin is https. Dashed and monospaced so
+ * it reads as scaffolding rather than as part of the product.
+ */
+.id-devlink {
+  margin-top: var(--ts-space-6);
+  padding: var(--ts-space-4);
+  border: 1px dashed var(--ts-hairline);
+  border-radius: var(--ts-radius-button);
+  font-family: var(--ts-font-mono);
+  font-size: var(--ts-text-caption);
+  word-break: break-all;
+}
+
+.id-devlink a {
+  color: var(--ts-terracotta);
+}
+
+/* ── the profile head ──────────────────────────────────────────────────── */
+
+.id-profile {
+  display: flex;
+  align-items: center;
+  gap: var(--ts-space-4);
+  margin-bottom: var(--ts-space-6);
+}
+
+.id-avatar {
+  width: 48px;
+  height: 48px;
+  flex: none;
+  border-radius: var(--ts-radius-full);
+  display: grid;
+  place-items: center;
+  background: var(--ts-navy);
+  color: var(--ts-cream);
+  font-family: var(--ts-font-sans);
+  font-size: var(--ts-text-label);
+  font-weight: 600;
+  letter-spacing: 0.02em;
+}
+
+/*
+ * The verified ring, not a tick on the tile.
+ *
+ * A badge drawn on the avatar travels with the avatar into every list on the
+ * platform, and a two-tier town is what you get when standing is visible on
+ * every row a person appears in. Here it is one ring on one page.
+ */
+.id-avatar[data-verified] {
+  box-shadow: 0 0 0 2px var(--ts-cream), 0 0 0 4px var(--ts-sage);
+}
+
+.id-tick {
+  color: var(--ts-sage);
+}
+
+.id-profile-meta {
+  font-family: var(--ts-font-serif);
+  font-size: var(--ts-text-label);
+  color: var(--ts-ink60);
+  margin: 0;
+}
+
+/* ── the verification rung ─────────────────────────────────────────────── */
+
+.id-rung {
+  border: 1px solid var(--ts-hairline);
+  border-radius: var(--ts-radius-card);
+  background: var(--ts-surface);
+  padding: var(--ts-space-5);
+  box-shadow: var(--ts-shadow-flat);
+}
+
+/* Verified is a sage edge, not a sage card. One tinted surface per screen, and
+ * on this screen it is spent on the budget meter. */
+.id-rung[data-verified] {
+  border-left: 3px solid var(--ts-sage);
+}
+
+.id-rung-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--ts-space-3);
+  margin-bottom: var(--ts-space-3);
+}
+
+.id-rung-t {
+  font-family: var(--ts-font-serif);
+  font-size: var(--ts-text-card-title);
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: var(--ts-space-2);
+}
+
+.id-rung[data-verified] .id-rung-t > svg {
+  color: var(--ts-sage);
+}
+
+.id-rung-say {
+  margin: 0;
+  color: var(--ts-ink);
+  max-width: 52ch;
+}
+
+.id-rung-fine {
+  font-family: var(--ts-font-serif);
+  font-size: 13.5px;
+  line-height: 1.55;
+  color: var(--ts-ink45);
+  max-width: 52ch;
+  margin: var(--ts-space-3) 0 0;
+}
+
+/* ── what verified unlocks ─────────────────────────────────────────────── */
+
+/*
+ * Three columns fit on a 390px phone, and that is a constraint rather than a
+ * preference.
+ *
+ * The first draft let the table scroll at 460px, which is defensible for a
+ * comparison table right up until you look at it: on a phone the Verified
+ * column, the one thing this table exists to explain, was off the right edge
+ * and nothing on screen said so. A reader who does not scroll sideways learns
+ * that being verified is a gate with no stated reward, which is the exact
+ * failure the section is written to avoid. So the answer columns are narrow,
+ * the padding is tight, and the row labels wrap.
+ */
+.id-unlock {
+  overflow-x: auto;
+  border: 1px solid var(--ts-hairline);
+  border-radius: var(--ts-radius-card);
+  background: var(--ts-surface);
+}
+
+.id-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: var(--ts-text-caption);
+  min-width: 340px;
+}
+
+.id-table-cap {
+  caption-side: bottom;
+  text-align: left;
+  padding: var(--ts-space-3) var(--ts-space-4) var(--ts-space-4);
+  font-family: var(--ts-font-serif);
+  font-size: 13.5px;
+  color: var(--ts-ink45);
+}
+
+.id-table th,
+.id-table td {
+  padding: var(--ts-space-3) var(--ts-space-2);
+  border-bottom: 1px solid var(--id-line);
+  text-align: left;
+  vertical-align: top;
+}
+
+.id-table thead th {
+  font-family: var(--ts-font-mono);
+  font-size: var(--ts-text-eyebrow);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ts-ink45);
+  font-weight: 400;
+  white-space: nowrap;
+  /* 0.1em of tracking on an 11px label costs real width in a 54px column. */
+  letter-spacing: 0.06em;
+}
+
+.id-table tbody th {
+  font-family: var(--ts-font-sans);
+  font-size: var(--ts-text-caption);
+  font-weight: 400;
+  color: var(--ts-ink);
+  padding-left: var(--ts-space-3);
+  display: flex;
+  align-items: flex-start;
+  gap: var(--ts-space-2);
+}
+
+.id-table tbody th > svg {
+  flex: none;
+  margin-top: 1px;
+  color: var(--ts-ink26);
+}
+
+/*
+ * The row glyphs are decoration, and on a phone they are decoration paid for
+ * out of the label. Dropping them below 520px buys about a word per line in
+ * the only column that carries a sentence.
+ */
+@media (max-width: 520px) {
+  .id-table tbody th > svg {
+    display: none;
+  }
+}
+
+.id-table td {
+  text-align: center;
+  width: 54px;
+}
+
+.id-table td[data-yes] {
+  color: var(--ts-sage);
+}
+
+/* Never colour alone. The dash is a drawn glyph and the word sits beside it
+ * for a screen reader. */
+.id-dash {
+  display: inline-block;
+  width: 10px;
+  height: 1.5px;
+  background: var(--ts-ink26);
+  vertical-align: middle;
+}
+
+/* Where the reader is standing, as a tint rather than a border, so the column
+ * does not appear to be a different table. */
+.id-table [data-here] {
+  background: color-mix(in srgb, var(--ts-navy) 5%, transparent);
+}
+
+.id-table thead th[data-here] {
+  color: var(--ts-navy);
+}
+
+/* The line the four gated rows sit under. Terracotta, because it is the accent
+ * this app spends on "this one is different", and one row's worth of it. */
+.id-table tr[data-gate]:first-of-type th,
+.id-table tr[data-gate]:first-of-type td {
+  border-top: 1.5px solid var(--id-terra-line);
+}
+
+.id-table tr[data-role] th,
+.id-table tr[data-role] td {
+  border-bottom: none;
+}
+
+.id-role-cell {
+  text-align: left !important;
+  width: auto !important;
+  font-family: var(--ts-font-serif);
+  color: var(--ts-ink60);
+}
+
+/* ── the vouch budget ──────────────────────────────────────────────────── */
+
+.id-budget {
+  border-radius: var(--ts-radius-card);
+  background: var(--ts-sage14);
+  padding: var(--ts-space-5);
+}
+
+/* Out of vouches is not a failure state, so it loses the sage rather than
+ * gaining a warning colour. Nothing is wrong; the window has not turned over. */
+.id-budget[data-empty] {
+  background: var(--id-inset);
+}
+
+.id-budget-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--ts-space-3);
+}
+
+.id-budget-count {
+  font-family: var(--ts-font-serif);
+  font-size: var(--ts-text-card-title);
+  color: var(--ts-ink);
+}
+
+.id-budget-count b {
+  font-size: var(--ts-text-h2);
+  font-weight: 600;
+}
+
+.id-budget-sub {
+  font-size: var(--ts-text-caption);
+  color: var(--ts-ink60);
+}
+
+.id-budget-icon {
+  flex: none;
+  color: var(--ts-sage);
+}
+
+.id-budget[data-empty] .id-budget-icon {
+  color: var(--ts-ink45);
+}
+
+.id-budget-track {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin: var(--ts-space-4) 0;
+}
+
+.id-budget-cell {
+  flex: 1 1 14px;
+  min-width: 14px;
+  height: 8px;
+  border-radius: var(--ts-radius-full);
+  background: var(--ts-sage);
+}
+
+/* A spent vouch is out with somebody, not lost. Hollow rather than absent. */
+.id-budget-cell[data-spent] {
+  background: transparent;
+  box-shadow: inset 0 0 0 1.5px var(--id-sage-line);
+}
+
+.id-budget[data-empty] .id-budget-cell[data-spent] {
+  box-shadow: inset 0 0 0 1.5px var(--ts-ink26);
+}
+
+.id-budget-fine {
+  font-family: var(--ts-font-serif);
+  font-size: 13.5px;
+  line-height: 1.55;
+  color: var(--ts-ink60);
+  margin: 0;
+  max-width: 52ch;
+}
+
+/* The sentence that has to be read before the button under it. Terracotta rule
+ * on the left, the house shape for "this is the reason". */
+.id-consequence {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--ts-space-3);
+  border-left: 2px solid var(--ts-terracotta);
+  padding: var(--ts-space-1) 0 var(--ts-space-1) var(--ts-space-4);
+  font-size: var(--ts-text-caption);
+  color: var(--ts-ink60);
+  line-height: 1.5;
+}
+
+.id-consequence > svg {
+  flex: none;
+  margin-top: 2px;
+  color: var(--ts-terracotta);
+}
+
+/* ── what we hold ──────────────────────────────────────────────────────── */
+
+.id-hold-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: var(--ts-space-3);
+}
+
+.id-hold-list li {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--ts-space-3);
+  font-size: var(--ts-text-label);
+  line-height: 1.5;
+}
+
+.id-hold-list > li > svg {
+  flex: none;
+  margin-top: 3px;
+}
+
+.id-hold-list[data-have] > li > svg {
+  color: var(--ts-ink45);
+}
+
+/*
+ * The absences are sage, and that is the argument of this section.
+ * "We do not hold your address" is the good news, and rendering it in the
+ * warning colour would read as a list of things that went wrong.
+ */
+.id-hold-list[data-havent] > li > svg {
+  color: var(--ts-sage);
+}
+
+.id-leaving {
+  margin-top: var(--ts-space-10);
+  padding-top: var(--ts-space-6);
+  border-top: 1px solid var(--id-line);
+}
+
+/* ── the report form ───────────────────────────────────────────────────── */
+
+.id-report {
+  display: grid;
+  gap: var(--ts-space-4);
+  border: 1px solid var(--ts-hairline);
+  border-radius: var(--ts-radius-card);
+  background: var(--ts-surface);
+  padding: var(--ts-space-5);
+  max-width: 46ch;
+}
+
+.id-report-h {
+  font-family: var(--ts-font-serif);
+  font-size: var(--ts-text-card-title);
+  margin: 0;
+}
+
+.id-report-note {
+  margin: 0;
+  font-size: var(--ts-text-caption);
+  color: var(--ts-ink60);
+}
+
+/* ── the moderator's screens ───────────────────────────────────────────── */
+
+.mod-tabs {
+  display: flex;
+  gap: var(--ts-space-1);
+  border-bottom: 1px solid var(--id-line);
+  margin-bottom: var(--ts-space-6);
+  overflow-x: auto;
+}
+
+.mod-tabs button {
+  appearance: none;
+  background: none;
+  border: none;
+  border-bottom: 2px solid transparent;
+  padding: var(--ts-space-3) var(--ts-space-3);
+  /* 44px of target on a control that only looks 38px tall. */
+  min-height: 44px;
+  font-family: var(--ts-font-sans);
+  font-size: var(--ts-text-label);
+  color: var(--ts-ink60);
+  white-space: nowrap;
+}
+
+.mod-tabs button[aria-current='true'] {
+  color: var(--ts-ink);
+  border-bottom-color: var(--ts-terracotta);
+}
+
+.mod-tabs button:focus-visible {
+  outline: none;
+  box-shadow: var(--ts-focus);
+  border-radius: var(--ts-radius-input);
+}
+
+.mod-queue {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: var(--ts-space-3);
+}
+
+.mod-row {
+  display: grid;
+  gap: var(--ts-space-2);
+  width: 100%;
+  text-align: left;
+  appearance: none;
+  border: 1px solid var(--ts-hairline);
+  border-radius: var(--ts-radius-card);
+  background: var(--ts-surface);
+  padding: var(--ts-space-4);
+  color: inherit;
+}
+
+button.mod-row:hover {
+  border-color: var(--ts-ink26);
+}
+
+button.mod-row:focus-visible {
+  outline: none;
+  box-shadow: var(--ts-focus);
+}
+
+.mod-row-name {
+  font-family: var(--ts-font-serif);
+  font-size: var(--ts-text-card-title);
+}
+
+/* The metadata line is editorial, not terminal output. Mono here would make a
+ * neighbour's handle read as a log entry. */
+.mod-row-detail {
+  font-family: var(--ts-font-serif);
+  font-size: 13.5px;
+  color: var(--ts-ink60);
+}
+
+.mod-row-say {
+  margin: 0;
+  font-size: var(--ts-text-label);
+  color: var(--ts-ink);
+}
+
+.mod-flags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--ts-space-2);
+}
+
+/*
+ * The one thing on a moderation screen that earns colour.
+ *
+ * An update asking for a permission it did not have before is the whole
+ * browser-extension play — ship something innocuous, build an audience, then
+ * push the real payload. Everything else in this queue is deliberately plain
+ * so that this is the thing the eye lands on.
+ */
+.mod-diff {
+  border: 1px solid var(--ts-hairline);
+  border-left: 3px solid var(--ts-ink26);
+  border-radius: var(--ts-radius-card);
+  background: var(--ts-surface);
+  padding: var(--ts-space-4);
+  margin: var(--ts-space-5) 0;
+}
+
+.mod-diff[data-escalates] {
+  border-left-color: var(--ts-terracotta);
+  background: var(--ts-terracotta10);
+}
+
+.mod-diff-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--ts-space-3);
+  margin-bottom: var(--ts-space-3);
+}
+
+.mod-diff-head h3 {
+  font-family: var(--ts-font-mono);
+  font-size: var(--ts-text-eyebrow);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  font-weight: 400;
+  color: var(--ts-ink45);
+  margin: 0;
+}
+
+.mod-diff p {
+  margin: 0 0 var(--ts-space-2);
+  font-size: var(--ts-text-label);
+}
+
+.mod-diff p:last-child {
+  margin-bottom: 0;
+}
+
+.mod-diff [data-add] b {
+  color: var(--ts-terracotta);
+}
+
+.mod-diff [data-drop] {
+  color: var(--ts-ink60);
+}
+
+.mod-diff code,
+.mod-code code {
+  font-family: var(--ts-font-mono);
+  font-size: 0.92em;
+}
+
+.mod-warnings {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: var(--ts-space-2);
+  font-size: var(--ts-text-caption);
+  color: var(--ts-ink60);
+}
+
+.mod-warnings code {
+  font-family: var(--ts-font-mono);
+  color: var(--ts-ink);
+}
+
+.mod-source details {
+  border-bottom: 1px solid var(--id-line);
+  padding: var(--ts-space-2) 0;
+}
+
+.mod-source summary {
+  cursor: pointer;
+  font-family: var(--ts-font-mono);
+  font-size: var(--ts-text-caption);
+  color: var(--ts-ink60);
+  min-height: 32px;
+  display: flex;
+  align-items: center;
+}
+
+.mod-source summary:focus-visible {
+  outline: none;
+  box-shadow: var(--ts-focus);
+  border-radius: var(--ts-radius-input);
+}
+
+.mod-code {
+  font-family: var(--ts-font-mono);
+  font-size: var(--ts-text-caption);
+  line-height: 1.6;
+  background: var(--id-inset);
+  border-radius: var(--ts-radius-button);
+  padding: var(--ts-space-4);
+  overflow-x: auto;
+  margin: var(--ts-space-2) 0 var(--ts-space-3);
+}
+
+.mod-decide {
+  border-top: 1px solid var(--id-line);
+  margin-top: var(--ts-space-8);
+  padding-top: var(--ts-space-5);
+  display: grid;
+  gap: var(--ts-space-4);
+}
+
+.mod-versions {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: var(--ts-space-3);
+}
+
+.mod-version {
+  border: 1px solid var(--ts-hairline);
+  border-radius: var(--ts-radius-card);
+  background: var(--ts-surface);
+  padding: var(--ts-space-4);
+  display: grid;
+  gap: var(--ts-space-2);
+}
+
+.mod-version[data-live] {
+  border-left: 3px solid var(--ts-sage);
+}
+
+.mod-version-head {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--ts-space-2);
+}
+
+.mod-version-n {
+  font-family: var(--ts-font-serif);
+  font-size: var(--ts-text-card-title);
+}
+
+.mod-version-when {
+  font-family: var(--ts-font-serif);
+  font-size: 13.5px;
+  color: var(--ts-ink45);
+  margin-left: auto;
+}
+
+/* Both authors on every version, side by side. A creation that starts writing
+ * nonsense can be cut off without punishing the residents who used it. */
+.mod-attrib {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--ts-space-3);
+  font-family: var(--ts-font-serif);
+  font-size: 13.5px;
+  color: var(--ts-ink60);
+}
+
+.mod-attrib span {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--ts-space-1);
+}
+
+.mod-attrib span > svg {
+  color: var(--ts-ink26);
+}
+
+.mod-log {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: var(--ts-space-3);
+}
+
+.mod-log li {
+  border-left: 2px solid var(--id-line);
+  padding-left: var(--ts-space-4);
+  font-size: var(--ts-text-caption);
+  color: var(--ts-ink60);
+}
+
+.mod-log b {
+  font-family: var(--ts-font-serif);
+  font-size: var(--ts-text-label);
+  color: var(--ts-ink);
+  font-weight: 600;
+}
+
+.mod-log-note {
+  color: var(--ts-ink);
+  margin: var(--ts-space-1) 0 0;
+}
