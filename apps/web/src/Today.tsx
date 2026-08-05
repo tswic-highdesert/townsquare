@@ -135,6 +135,13 @@ export function Today(props: TodayProps) {
             // section is the door to the rest of it, the same as "All news".
             onAction={props.onOpenEvents}
           />
+          {/*
+            Not `Row`. An event row leads with two stacked blocks — the time,
+            then a category icon — and `Row` has one leading slot, fixed square,
+            because a column of titles has to start on one x. Two leads is a
+            different component, not a variant of this one, and one screen
+            wanting it is not enough to build it.
+          */}
           <ul className="event-list">
             {today.events.items.map((event) => (
               <EventRow key={event.id} event={event} />
@@ -195,6 +202,12 @@ export function Today(props: TodayProps) {
       {(today.cityHall.notice || today.cityHall.items.length > 0) && (
         <section className="today-section">
           <SectionHead label="From city hall" />
+          {/*
+            Not `Card tone="civic"`. This one switches on `data-severity` and is
+            the single place the alarm register is allowed out; the tinted card
+            in `ui` is the ordinary civic case and has no emergency state.
+            Folding this into it would put brick one prop away from every screen.
+          */}
           {today.cityHall.notice && (
             <Outside
               href={today.cityHall.notice.url}
@@ -231,6 +244,16 @@ export function Today(props: TodayProps) {
       {today.directory.length > 0 && (
         <section className="today-section">
           <SectionHead label="In the directory" />
+          {/*
+            Not `Card`. Call and Directions are deliberately separate targets
+            from the card itself — a resident ringing a shop should not have to
+            open its page first — so this is one container holding three
+            independent destinations. `Card` with `href` makes the whole thing
+            one target, and nesting anchors inside an anchor is invalid.
+
+            This is the fourth surface to want a primary target plus small
+            independent ones. See the note on the saved list in `Yours.tsx`.
+          */}
           <div className="directory-strip">
             {today.directory.map((business) => (
               <div key={business.id} className="directory-card">
