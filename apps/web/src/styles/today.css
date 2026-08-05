@@ -812,3 +812,23 @@
 
 
 
+
+/* ── the aside, once it is a column ──────────────────────────────────────
+ *
+ * At 1040px `nav/nav.css` moves `.today-aside` out of the reading column and
+ * into a ~300px third one. A city hall row keeps its 44px leading tile there,
+ * which left 144px for the title and broke "Board of Adjustment Meeting" over
+ * three lines.
+ *
+ * This is what the density variables are for: the container says how dense it
+ * needs its rows to be and the component obeys, so there is no narrow variant
+ * of `Row` and nothing here reaches inside one. The gutter is already zero:
+ * this list is unframed, and unframed rows default to no inline gutter.
+ */
+@media (min-width: 1040px) {
+  .today-aside .ts-rows {
+    --ts-row-lead: 26px;
+    --ts-row-gap: var(--ts-space-2);
+    --ts-row-title: var(--ts-text-label);
+  }
+}

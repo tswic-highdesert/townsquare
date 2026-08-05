@@ -1631,9 +1631,32 @@ button.ts-card:focus-visible { outline: none; box-shadow: var(--ts-focus); }
   color: var(--ts-quiet);
 }
 
-.ts-rows { list-style: none; margin: 0; padding: 0; }
+/*
+ * The gutter follows the frame, and that is a default rather than a rule.
+ *
+ * A framed list draws its own surface, so the inline gutter belongs to the row:
+ * nothing else is going to supply it. An unframed list draws nothing and is
+ * therefore sitting directly inside whatever placed it, and that container
+ * almost always supplies the gutter already — so a row adding its own put
+ * every headline 16px right of the section label it sat under. That happened
+ * on the news feed and then again on Today, which is the screen that settled
+ * it: it has both cases at once, an unframed story list and a framed event
+ * card, and they want opposite answers.
+ *
+ * `framed={false}` and "no gutter" are still two different claims, which is why
+ * `--ts-row-x` exists and still wins — a screen that genuinely wants an
+ * unframed list with a gutter sets it and gets it. What changed is only which
+ * way the default points, decided by the one thing that actually predicts it.
+ */
+.ts-rows {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  --ts-row-x: 0px;
+}
 
 .ts-rows[data-framed] {
+  --ts-row-x: var(--ts-space-4);
   background: var(--ts-surface);
   border: 1px solid var(--ts-hairline);
   border-radius: var(--ts-radius-card);
