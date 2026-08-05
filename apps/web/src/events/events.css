@@ -85,7 +85,8 @@
   margin: 0;
   font-family: var(--ts-font-serif);
   font-size: var(--ts-text-label);
-  color: var(--ts-ink60);
+  /* Text that recedes, which is the role rather than a shade of ink. */
+  color: var(--ts-quiet);
 }
 
 /* ── the week strip ───────────────────────────────────────────────────── */
@@ -214,7 +215,7 @@
   border: 1px dashed var(--ts-ink13);
   border-radius: var(--ts-radius-card);
   background: none;
-  color: var(--ts-ink60);
+  color: var(--ts-quiet);
   font-family: var(--ts-font-sans);
   font-size: var(--ts-text-caption);
   cursor: pointer;
@@ -227,36 +228,57 @@
 
 /* ── the agenda ───────────────────────────────────────────────────────── */
 
-.ev-list {
-  list-style: none;
-  margin: 0 0 var(--ts-space-3);
-  padding: 0;
-  background: var(--ts-surface);
-  border: 1px solid var(--ts-hairline);
-  border-radius: var(--ts-radius-sheet);
-  overflow: hidden;
+/*
+ * The row is `RowItem`. Everything here is the two things it does not know
+ * about: a leading slot carrying two blocks instead of one, and the category
+ * tint.
+ *
+ * `--ts-row-lead` is a documented container override and the inset divider is
+ * calculated from it, so widening it is the density mechanism working rather
+ * than a way around it. The height of `.ts-row-lead` comes off the same
+ * variable, which would give an 88px-tall row, so the box is released to size
+ * to its own content instead.
+ *
+ * Ordinary single-class selectors, because `ui.css` is in `@layer
+ * ts-primitives` and this file is unlayered: unlayered beats layered whatever
+ * the specificity, so a screen overrides a primitive by writing a normal rule.
+ * These used to be doubled to out-specify `.ts-rows[data-density='compact']`.
+ */
+.ev-agenda {
+  --ts-row-lead: 88px;
 }
 
-.ev-list li + li {
-  border-top: 1px solid var(--ts-ink13);
+/* Compact narrows the clock's breathing room, never the 44px tap target. */
+.ev-agenda[data-density='compact'] {
+  --ts-row-lead: 76px;
 }
 
-.ev-row {
-  display: flex;
-  align-items: center;
+.ev-agenda .ts-row-lead {
+  width: var(--ts-row-lead);
+  height: auto;
   gap: var(--ts-space-3);
-  width: 100%;
-  min-height: 60px;
-  padding: var(--ts-space-3);
-  border: 0;
-  background: none;
-  text-align: left;
-  color: inherit;
-  cursor: pointer;
+  justify-content: flex-start;
 }
 
-.ev-row:hover {
-  background: color-mix(in srgb, var(--ts-navy) 4%, transparent);
+/*
+ * One line for the venue, then stop.
+ *
+ * `.ts-row-meta` wraps freely, which is right for a byline and wrong here:
+ * scraped locations run to a full postal address, and "Lake Dardanelle State
+ * Park, 100 State Park Drive, Russellville, AR 72802, USA" took three lines and
+ * doubled the height of the row above the thing a resident came to read.
+ */
+.ev-agenda .ts-row-meta {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* `RowIcon` fills its lead box by default, and this lead box is now wide. */
+.ev-agenda .ts-row-icon {
+  flex: none;
+  width: 34px;
+  height: 34px;
 }
 
 /*
@@ -266,7 +288,7 @@
  */
 .ev-time {
   flex: none;
-  width: 46px;
+  width: 42px;
   text-align: center;
 }
 
@@ -318,87 +340,59 @@
   line-height: 1.15;
   text-transform: uppercase;
   letter-spacing: 0.06em;
-  color: var(--ts-ink60);
+  color: var(--ts-quiet);
 }
 
-.ev-icon {
-  display: grid;
-  place-items: center;
-  flex: none;
-  width: 34px;
-  height: 34px;
-  border-radius: var(--ts-radius-input);
-  background: var(--ts-stone);
-  color: var(--ts-ink60);
+/*
+ * The four category tints, on `RowIcon`'s tile.
+ *
+ * Civic takes the role token, because civic is a meaning — the town speaking —
+ * and not a shade of gold. The other three take the raw palette: sage here is
+ * not `--ts-verified`, it is the colour music happens to be, and spending a
+ * role token on it would say something about live music that is not true.
+ * `--ts-alarm` appears nowhere on this surface. Colour is never the only
+ * carrier either: every tile has its own glyph and every row has words.
+ */
+.ev-tile--civic {
+  background: color-mix(in srgb, var(--ts-civic) 18%, transparent);
+  color: var(--ts-civic-text);
 }
 
-.ev-icon[data-category='civic'] {
-  background: var(--ts-gold14);
-  color: var(--ts-gold-text);
-}
-
-.ev-icon[data-category='music'] {
+.ev-tile--music {
   background: var(--ts-sage14);
   color: var(--ts-sage);
 }
 
-.ev-icon[data-category='sport'] {
+.ev-tile--sport {
   background: var(--ts-terracotta14);
   color: var(--ts-terracotta-hover);
 }
 
-.ev-icon[data-category='community'] {
+.ev-tile--community {
   background: var(--ts-navy10);
   color: var(--ts-navy);
 }
 
-.ev-text {
-  min-width: 0;
-  flex: 1;
-}
-
-.ev-title {
-  display: block;
-  font-family: var(--ts-font-serif);
-  font-size: var(--ts-text-label);
-  line-height: 1.25;
-  color: var(--ts-ink);
-}
-
-.ev-detail {
-  display: block;
-  margin-top: 2px;
-  font-family: var(--ts-font-sans);
-  font-size: var(--ts-text-caption);
-  color: var(--ts-ink60);
-  /* Scraped locations run to a full postal address. One line, then stop. */
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+/* Tomorrow is a pointer at tomorrow, not a second agenda. */
+.ev-agenda--next .ts-row-title,
+.ev-agenda--next .ev-clock {
+  color: var(--ts-quiet);
 }
 
 /*
- * A row that has already happened is quieter and still legible. It is not
- * struck through: the title is the one part of a past event still true, and
- * making it the hardest thing on the row to read is backwards.
+ * The row's trailing slot, and the only thing in it.
+ *
+ * The chevron is suppressed on these rows: `design/hifi-v2` section 04 draws
+ * none, and with a status chip in the same corner the two compete for it. The
+ * primitive makes the same argument about a trailing thumbnail.
  */
-.ev-row[data-state='done'] .ev-title {
-  color: var(--ts-ink60);
-}
-
-.ev-row[data-state='done'] .ev-icon {
-  filter: saturate(0.4);
-}
-
 .ev-chip {
   display: inline-block;
-  margin-left: var(--ts-space-2);
   padding: 1px var(--ts-space-2);
   border-radius: var(--ts-radius-full);
   font-family: var(--ts-font-sans);
   font-size: 11px;
   white-space: nowrap;
-  vertical-align: 1px;
 }
 
 .ev-chip--soon {
@@ -406,9 +400,10 @@
   color: var(--ts-terracotta-hover);
 }
 
+/* "On now" is the one thing on this screen that is alive, which is the role. */
 .ev-chip--now {
   background: var(--ts-sage14);
-  color: var(--ts-sage);
+  color: var(--ts-verified);
 }
 
 /* ── the now line ─────────────────────────────────────────────────────── */
@@ -422,7 +417,7 @@
   display: flex;
   align-items: center;
   gap: var(--ts-space-2);
-  padding: 0 var(--ts-space-3);
+  padding: var(--ts-space-1) var(--ts-space-4);
 }
 
 .ev-nowline::after {
@@ -461,7 +456,7 @@
   font-family: var(--ts-font-serif);
   font-size: var(--ts-text-caption);
   font-style: italic;
-  color: var(--ts-ink60);
+  color: var(--ts-quiet);
 }
 
 .ev-gap-len {
@@ -501,18 +496,12 @@
   font-size: var(--ts-text-eyebrow);
   letter-spacing: 0.12em;
   text-transform: uppercase;
-  color: var(--ts-ink60);
+  color: var(--ts-quiet);
   cursor: pointer;
 }
 
 .ev-dayline button:hover {
   color: var(--ts-terracotta);
-}
-
-/* Tomorrow is a pointer at tomorrow, not a second agenda. */
-.ev-list--next .ev-title,
-.ev-list--next .ev-clock {
-  color: var(--ts-ink60);
 }
 
 .ev-tail {
@@ -701,10 +690,11 @@
   white-space: nowrap;
 }
 
+/* The role, not the shade. Same argument as `.ev-tile--civic`. */
 .ev-mchip[data-category='civic'] {
-  background: var(--ts-gold14);
-  border-left-color: var(--ts-gold);
-  color: var(--ts-gold-text);
+  background: color-mix(in srgb, var(--ts-civic) 18%, transparent);
+  border-left-color: var(--ts-civic);
+  color: var(--ts-civic-text);
 }
 
 .ev-mchip[data-category='music'] {
@@ -779,27 +769,28 @@
   margin: 0 0 var(--ts-space-3);
   font-family: var(--ts-font-serif);
   font-size: var(--ts-text-caption);
-  color: var(--ts-ink60);
+  color: var(--ts-quiet);
 }
 
-.ev-daypanel .ev-list {
-  border: 0;
-  border-radius: 0;
-  background: none;
-}
-
-.ev-daypanel .ev-row {
+/* Unframed already, so the rows only need their side padding taken back. */
+.ev-daypanel .ts-row {
   padding-left: 0;
   padding-right: 0;
+}
+
+.ev-daypanel .ts-row::before {
+  left: calc(var(--ts-row-lead) + var(--ts-row-gap, var(--ts-space-2)));
+  right: 0;
 }
 
 /* ── the detail ───────────────────────────────────────────────────────── */
 
 /*
- * `ev-detailscreen`, not `ev-detail`. The row's venue line is already
- * `.ev-detail`, and naming the whole screen the same thing gave every agenda
- * row a 100vh venue line. Caught by screenshotting it, which is how every bug
- * on this surface has been caught.
+ * `ev-detailscreen`, not `ev-detail`. When the agenda row had its own venue
+ * line class, `.ev-detail`, naming the whole screen the same thing gave every
+ * row in the list a 100vh venue line. The row is `RowItem` now and the venue
+ * line is `.ts-row-meta`, so the collision is gone, but the name stays: the
+ * screen was never the row's detail.
  */
 .ev-detailscreen {
   min-height: 100vh;
@@ -827,8 +818,8 @@
 }
 
 .ev-cat[data-category='civic'] {
-  background: var(--ts-gold14);
-  color: var(--ts-gold-text);
+  background: color-mix(in srgb, var(--ts-civic) 18%, transparent);
+  color: var(--ts-civic-text);
 }
 
 .ev-cat[data-category='music'] {
@@ -854,12 +845,10 @@
   line-height: 1.2;
 }
 
-/* Plain words first, exact times second, and neither has to be hunted for. */
-.ev-when {
-  padding: var(--ts-space-3);
-  background: var(--ts-surface);
-  border: 1px solid var(--ts-hairline);
-  border-radius: var(--ts-radius-card);
+/* Plain words first, exact times second, and neither has to be hunted for.
+   The surface, border and radius come from `Card`. */
+.ev-when .ts-card-body {
+  gap: 0;
 }
 
 .ev-when-plain {
@@ -876,7 +865,7 @@
   margin: var(--ts-space-2) 0 0;
   font-family: var(--ts-font-sans);
   font-size: var(--ts-text-caption);
-  color: var(--ts-ink60);
+  color: var(--ts-quiet);
 }
 
 .ev-when-note {
@@ -907,15 +896,12 @@
   color: var(--ts-ink45);
 }
 
-.ev-where {
+.ev-where .ts-card-body {
+  flex-direction: row;
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: var(--ts-space-3);
-  padding: var(--ts-space-3);
-  background: var(--ts-surface);
-  border: 1px solid var(--ts-hairline);
-  border-radius: var(--ts-radius-card);
 }
 
 .ev-where p {
@@ -1027,8 +1013,7 @@
 
 /* A resident who has asked for less motion gets less motion. */
 @media (prefers-reduced-motion: reduce) {
-  .ev-day,
-  .ev-row {
+  .ev-day {
     transition: none;
   }
 }

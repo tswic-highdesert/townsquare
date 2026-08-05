@@ -30,10 +30,20 @@
  *   there is nothing to draw the ring for. Changing that means changing Today.
  */
 
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { Fragment, useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { AppBar } from '../AppBar.js'
 import { Icon } from '../Icon.js'
-import { Button, EmptyState, ErrorState, IconButton, SegmentedControl, Skeleton } from '../ui/index.js'
+import {
+  Button,
+  EmptyState,
+  ErrorState,
+  IconButton,
+  RowIcon,
+  RowItem,
+  RowList,
+  SegmentedControl,
+  Skeleton,
+} from '../ui/index.js'
 import type { AccountView } from '../session.js'
 import {
   fetchDay,
@@ -241,13 +251,11 @@ function DayView(props: {
               <Icon name="chevron-right" size={14} />
             </button>
           </div>
-          <ul className="ev-list ev-list--next">
+          <RowList className="ev-agenda ev-agenda--next">
             {payload.next.rows.map((row) => (
-              <li key={row.id}>
-                <Row row={row} now={now} onOpen={props.onOpenEvent} />
-              </li>
+              <AgendaRow key={row.id} row={row} now={now} onOpen={props.onOpenEvent} />
             ))}
-          </ul>
+          </RowList>
         </>
       )}
 
@@ -316,80 +324,95 @@ function SegmentRows(props: {
   if (visible.length === 0) return null
 
   return (
-    <ul className="ev-list">
+    <RowList className="ev-agenda">
       {visible.map((row, i) => (
-        <li key={row.id}>
+        <Fragment key={row.id}>
+          {/*
+            The now line is a list item in document order, never an overlay, so
+            it is announced in reading order and can never land on top of a
+            title. It sits between two `RowItem`s rather than inside one.
+          */}
           {line !== null && line === i + from && (
-            <div className="ev-nowline" role="separator">
+            <li className="ev-nowline" role="separator">
               <span className="ev-nowline-label">now, {townClock(now, props.timezone)}</span>
-            </div>
+            </li>
           )}
-          <Row row={row} now={now} onOpen={props.onOpen} />
-        </li>
+          <AgendaRow row={row} now={now} onOpen={props.onOpen} />
+        </Fragment>
       ))}
-    </ul>
+    </RowList>
   )
 }
 
 /**
  * One agenda row, in every shape a scraped event actually arrives in.
  *
- * The time column is fixed width so titles start on the same vertical line
- * whatever the source published: a clock with a meridiem, a clock with an end,
- * a clock with nothing after it, and an all-day marker that is not a time at
- * all. That last one is the whole reason the column is a column: rendering a
- * midnight start as "12:00 AM" claims something happens at midnight.
+ * Built on `RowItem` rather than on its own markup: the 44px floor, the inset
+ * divider, the hover, the focus ring and the density variables all come from
+ * the primitive, and six people each rolling their own row is the specific way
+ * a design system stops being one.
+ *
+ * Two blocks share the leading slot, the clock and the category tile, which is
+ * one more than `Row` draws by default. `--ts-row-lead` is a documented
+ * container override and the divider inset reads it, so widening it here is
+ * the mechanism working rather than a way around it. See `events.css`.
+ *
+ * The clock stays on the left and stays a clock. The time column being fixed
+ * width is the whole argument for this row: titles start on the same vertical
+ * line whatever the source published — a clock with a meridiem, a clock with
+ * an end, a clock with nothing after it, and an all-day marker that is not a
+ * time at all. That last one is why the column has to be a column, because
+ * rendering a midnight start as "12:00 AM" claims something happens at
+ * midnight. `RowDate` is the date-flavoured sibling of this block and inverts
+ * the emphasis (small label over large number), which is right for `Mon 10`
+ * and wrong for `5:30 pm`.
  */
-function Row(props: { row: EventRow; now: number; onOpen: (id: string) => void }) {
+function AgendaRow(props: { row: EventRow; now: number; onOpen: (id: string) => void }) {
   const { row, now } = props
   const state = rowState(row, now)
   const chip = relativeLabel(row, now)
   const started = startedLabel(row, now)
 
   return (
-    <button
-      className="ev-row"
-      data-state={state}
+    <RowItem
+      className="ev-agenda-row"
       onClick={() => props.onOpen(row.id)}
-      aria-label={`${row.title}, ${row.allDay ? 'all day' : `${row.timeLabel} ${row.meridiem}`}`}
-    >
-      <span className="ev-time" data-allday={row.allDay || undefined}>
-        {row.allDay ? (
-          <span className="ev-allday">
-            all
-            <br />
-            day
-          </span>
-        ) : (
-          <>
-            <span className="ev-clock">{row.timeLabel}</span>
-            <span className="ev-meridiem">{row.meridiem}</span>
-            {row.endLabel ? (
-              <span className="ev-end">{row.endLabel}</span>
+      /* Section 04's agenda draws no chevron, and the trailing corner already
+         belongs to the status chip. Still a button, still one target. */
+      chevron={false}
+      lead={
+        <>
+          <span className="ev-time" data-allday={row.allDay || undefined}>
+            {row.allDay ? (
+              <span className="ev-allday">
+                all
+                <br />
+                day
+              </span>
             ) : (
-              /* No end time published, which is 40% of the feed. A short rule
-                 running off the bottom of the clock says "this keeps going"
-                 without inventing an hour. */
-              <span className="ev-open" title="No end time published" aria-hidden="true" />
+              <>
+                <span className="ev-clock">{row.timeLabel}</span>
+                <span className="ev-meridiem">{row.meridiem}</span>
+                {row.endLabel ? (
+                  <span className="ev-end">{row.endLabel}</span>
+                ) : (
+                  /* No end time published, which is 40% of the feed. A short
+                     rule running off the bottom of the clock says "this keeps
+                     going" without inventing an hour. */
+                  <span className="ev-open" title="No end time published" aria-hidden="true" />
+                )}
+              </>
             )}
-          </>
-        )}
-      </span>
-
-      <span className="ev-icon" data-category={row.category}>
-        <Icon name={CATEGORY_ICON[row.category]} size={16} />
-      </span>
-
-      <span className="ev-text">
-        <span className="ev-title">
-          {row.title}
-          {chip && <span className={`ev-chip ev-chip--${state}`}>{chip}</span>}
-        </span>
-        <span className="ev-detail">
-          {started ? `${row.detail}, ${started}` : row.detail}
-        </span>
-      </span>
-    </button>
+          </span>
+          <RowIcon name={CATEGORY_ICON[row.category]} className={`ev-tile ev-tile--${row.category}`} />
+        </>
+      }
+      title={row.title}
+      meta={started ? `${row.detail}, ${started}` : row.detail}
+      /* The chip is a status, which is what `trailing` is for. Inline after the
+         title it reflowed the headline every time the countdown ticked. */
+      trailing={chip ? <span className={`ev-chip ev-chip--${state}`}>{chip}</span> : undefined}
+    />
   )
 }
 
@@ -494,22 +517,25 @@ function DaySkeleton() {
         <Skeleton width="40%" />
         <Skeleton width="70%" height={28} />
       </div>
-      <ul className="ev-list" aria-hidden="true">
+      {/* The skeleton is the agenda row's own geometry, read off the same
+          primitive, so nothing reflows when the data lands. */}
+      <RowList className="ev-agenda">
         {['76%', '62%', '84%'].map((width) => (
-          <li key={width}>
-            <div className="ev-row">
-              <span className="ev-time">
-                <Skeleton width="34px" height={14} />
-              </span>
-              <Skeleton shape="block" width="34px" height={34} />
-              <span className="ev-text">
-                <Skeleton width={width} />
-                <Skeleton width="48%" height={11} />
-              </span>
-            </div>
-          </li>
+          <RowItem
+            key={width}
+            lead={
+              <>
+                <span className="ev-time">
+                  <Skeleton width="30px" height={14} />
+                </span>
+                <Skeleton shape="block" width="34px" height={34} />
+              </>
+            }
+            title={<Skeleton width={width} />}
+            meta={<Skeleton width="48%" height={11} />}
+          />
         ))}
-      </ul>
+      </RowList>
     </div>
   )
 }
@@ -756,13 +782,14 @@ function DayPanel(props: {
               ? 'Nothing on.'
               : `${countWord(payload.total)} ${payload.total === 1 ? 'thing' : 'things'} on.`}
           </p>
-          <ul className="ev-list">
+          {/* Compact, because it sits beside the grid rather than owning the
+              screen. Four variables change; the tap target still floors at
+              44px. */}
+          <RowList className="ev-agenda" density="compact" framed={false}>
             {rows.slice(0, 4).map((row) => (
-              <li key={row.id}>
-                <Row row={row} now={now} onOpen={props.onOpenEvent} />
-              </li>
+              <AgendaRow key={row.id} row={row} now={now} onOpen={props.onOpenEvent} />
             ))}
-          </ul>
+          </RowList>
           {payload.total > 4 && (
             <Button variant="quiet" onClick={() => props.onSeeDay(props.day)}>
               See all {payload.total}

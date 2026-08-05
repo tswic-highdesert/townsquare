@@ -26,7 +26,16 @@
 
 import { useEffect, useState } from 'react'
 import { Icon } from '../Icon.js'
-import { Button, EmptyState, Skeleton } from '../ui/index.js'
+import {
+  Button,
+  Card,
+  CardBody,
+  EmptyState,
+  RowIcon,
+  RowItem,
+  RowList,
+  Skeleton,
+} from '../ui/index.js'
 import { saveThing, unsaveThing, type SavedThing } from '../savesData.js'
 import type { AccountView } from '../session.js'
 import { CATEGORY_ICON, CATEGORY_WORD } from './categories.js'
@@ -146,19 +155,21 @@ function Loaded(props: EventDetailScreenProps & { event: EventDetailPayload }) {
 
       <h1 className="ev-detailscreen-title">{event.title}</h1>
 
-      <div className="ev-when">
-        <p className="ev-when-plain">{event.whenPlain}</p>
-        <p className="ev-when-exact">
-          <Icon name="clock" size={14} />
-          {event.whenExact}
-        </p>
-        {!event.allDay && !event.endsAt && (
-          /* Said out loud rather than left as a blank. "Until when" is the
-             second question anybody asks, and "the source did not say" is a
-             better answer than an end time we made up. */
-          <p className="ev-when-note">No end time published.</p>
-        )}
-      </div>
+      <Card className="ev-when">
+        <CardBody>
+          <p className="ev-when-plain">{event.whenPlain}</p>
+          <p className="ev-when-exact">
+            <Icon name="clock" size={14} />
+            {event.whenExact}
+          </p>
+          {!event.allDay && !event.endsAt && (
+            /* Said out loud rather than left as a blank. "Until when" is the
+               second question anybody asks, and "the source did not say" is a
+               better answer than an end time we made up. */
+            <p className="ev-when-note">No end time published.</p>
+          )}
+        </CardBody>
+      </Card>
 
       <div className="ev-actions">
         {props.account && (
@@ -183,20 +194,27 @@ function Loaded(props: EventDetailScreenProps & { event: EventDetailPayload }) {
 
       <section className="ev-block">
         <h2 className="ev-blocklabel">Where</h2>
-        <div className="ev-where">
-          <p>{event.location}</p>
-          {event.directionsUrl && (
-            <a
-              className="ev-directions"
-              href={event.directionsUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              <Icon name="directions" size={14} />
-              Directions
-            </a>
-          )}
-        </div>
+        {/*
+          A plain card, not a card-level target. Directions is its own action
+          and nesting a link inside a link is the thing `Card` warns about;
+          Nearby's Call and Directions buttons are the pattern.
+        */}
+        <Card className="ev-where">
+          <CardBody>
+            <p>{event.location}</p>
+            {event.directionsUrl && (
+              <a
+                className="ev-directions"
+                href={event.directionsUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <Icon name="directions" size={14} />
+                Directions
+              </a>
+            )}
+          </CardBody>
+        </Card>
       </section>
 
       {event.description && (
@@ -209,13 +227,11 @@ function Loaded(props: EventDetailScreenProps & { event: EventDetailPayload }) {
       {event.alsoThatDay.length > 0 && (
         <section className="ev-block">
           <h2 className="ev-blocklabel">Also that day</h2>
-          <ul className="ev-list">
+          <RowList className="ev-agenda" density="compact">
             {event.alsoThatDay.map((row) => (
-              <li key={row.id}>
-                <AlsoRow row={row} onOpen={props.onOpenEvent} />
-              </li>
+              <AlsoRow key={row.id} row={row} onOpen={props.onOpenEvent} />
             ))}
-          </ul>
+          </RowList>
           <button className="ev-link" onClick={() => props.onOpenDay(event.day)}>
             See the whole day
             <Icon name="chevron-right" size={14} />
@@ -253,28 +269,33 @@ function Loaded(props: EventDetailScreenProps & { event: EventDetailPayload }) {
 function AlsoRow(props: { row: EventRow; onOpen: (id: string) => void }) {
   const { row } = props
   return (
-    <button className="ev-row" onClick={() => props.onOpen(row.id)}>
-      <span className="ev-time" data-allday={row.allDay || undefined}>
-        {row.allDay ? (
-          <span className="ev-allday">
-            all
-            <br />
-            day
+    <RowItem
+      className="ev-agenda-row"
+      onClick={() => props.onOpen(row.id)}
+      /* Section 04's agenda draws no chevron, and the trailing corner already
+         belongs to the status chip. Still a button, still one target. */
+      chevron={false}
+      lead={
+        <>
+          <span className="ev-time" data-allday={row.allDay || undefined}>
+            {row.allDay ? (
+              <span className="ev-allday">
+                all
+                <br />
+                day
+              </span>
+            ) : (
+              <>
+                <span className="ev-clock">{row.timeLabel}</span>
+                <span className="ev-meridiem">{row.meridiem}</span>
+              </>
+            )}
           </span>
-        ) : (
-          <>
-            <span className="ev-clock">{row.timeLabel}</span>
-            <span className="ev-meridiem">{row.meridiem}</span>
-          </>
-        )}
-      </span>
-      <span className="ev-icon" data-category={row.category}>
-        <Icon name={CATEGORY_ICON[row.category]} size={16} />
-      </span>
-      <span className="ev-text">
-        <span className="ev-title">{row.title}</span>
-        <span className="ev-detail">{row.detail}</span>
-      </span>
-    </button>
+          <RowIcon name={CATEGORY_ICON[row.category]} className={`ev-tile ev-tile--${row.category}`} />
+        </>
+      }
+      title={row.title}
+      meta={row.detail}
+    />
   )
 }
