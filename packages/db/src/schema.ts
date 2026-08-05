@@ -509,6 +509,68 @@ export const creationStorage = pgTable(
   (t) => ({ pk: primaryKey({ columns: [t.creationId, t.userId, t.key] }) }),
 )
 
+/**
+ * What one resident has bookmarked. The only thing an account holds about the
+ * town, and visible to nobody else.
+ *
+ * **A save is a snapshot, not a pointer, and that is the whole design of this
+ * table.** `title`, `detail` and `url` are stored as they read at the moment
+ * the button was pressed. Resolving them live from the feed on every read is
+ * tidier and means a saved event disappears from your list the morning after it
+ * happened, which is a list that quietly deletes your things. A stale title is
+ * honest: it is what you saved.
+ *
+ * That is also why **`ref_id` is deliberately not a foreign key.** The feed is
+ * re-scraped and its ids come and go; this is how a save is recognised, not how
+ * it is resolved. A constraint here would delete a resident's bookmarks the
+ * first time a source changed its id scheme.
+ *
+ * Every query is scoped `(town_id, user_id)` first and there is no way to
+ * address a row without them, the same shape `creation_storage` above has. A
+ * `by_id(id)` that did not also take the owner would eventually be called with
+ * an id a client chose, and the scoping bug would be one careless route away
+ * rather than structurally impossible.
+ *
+ * **The 200 cap is enforced in code, not here**, the same way
+ * `creation_storage`'s quota is. It is a ceiling that stops one account turning
+ * a save button into an unbounded write loop, not a business rule, and a
+ * resident who reaches it is told plainly rather than having writes start
+ * failing at the driver. A `CHECK` could not express it anyway: it is a count
+ * across sibling rows, not a property of the row being written.
+ */
+export const saves = pgTable(
+  'saves',
+  {
+    id: uuid('id').primaryKey().defaultRandom(),
+    townId: text('town_id').notNull(),
+    userId: uuid('user_id').notNull(),
+    /** 'business' | 'event' | 'creation' | 'story'. Closed set, checked in code. */
+    kind: text('kind').notNull(),
+    /** The id in whatever this came from. See the note above on foreign keys. */
+    refId: text('ref_id').notNull(),
+    title: text('title').notNull(),
+    detail: text('detail'),
+    url: text('url'),
+    savedAt: timestamp('saved_at', { withTimezone: true }).notNull().defaultNow(),
+  },
+  (t) => ({
+    /**
+     * One save per resident per thing, which `MemorySaveStore.find` is the
+     * memory-side implementation of.
+     *
+     * Total rather than partial, unlike `reports_open_dup_uq`: a report can be
+     * filed again once the first is resolved, because that is a new complaint
+     * about a new situation. A bookmark has no such lifecycle. It is saved or
+     * it is not, and pressing the button twice is a person checking whether it
+     * worked, which is answered `200` with the original rather than a second
+     * row.
+     */
+    userTargetUq: uniqueIndex('saves_user_target_uq').on(t.townId, t.userId, t.kind, t.refId),
+    /** The only read: one resident's list, newest first. */
+    listIdx: index('saves_user_idx').on(t.townId, t.userId, t.savedAt),
+  }),
+)
+
 // ── contributing ────────────────────────────────────────────────────────────
 
 /**
@@ -768,6 +830,8 @@ export type CreationRow = typeof creations.$inferSelect
 export type CreationVersionRow = typeof creationVersions.$inferSelect
 export type RecordRow = typeof records.$inferSelect
 export type RecordVersionRow = typeof recordVersions.$inferSelect
+export type SaveRow = typeof saves.$inferSelect
+export type NewSave = typeof saves.$inferInsert
 export type ContributionRow = typeof contributions.$inferSelect
 export type NewContributionRow = typeof contributions.$inferInsert
 export type ContributionDraftRow = typeof contributionDrafts.$inferSelect

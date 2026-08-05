@@ -117,8 +117,21 @@ export async function serveBundleRequest(
   // 421 rather than 404: a request that arrived with the wrong Host reached the
   // wrong service, and saying so keeps a misrouted deploy from looking like a
   // missing file.
+  //
+  // The body names the service and the Host it rejected, because the status
+  // alone is not enough to act on. "Misdirected request" on a port you
+  // believed was the API reads as an outage, and it has cost two people time:
+  // the sandbox and the read API sit on adjacent ports, so the usual way to
+  // see this is to have reached the sandbox by mistake.
   const parsed = parseHost(req.host, cfg.origin)
-  if (!parsed) return text(421, 'Misdirected request')
+  if (!parsed) {
+    return text(
+      421,
+      `This is the creation sandbox, and it only answers for *.${cfg.origin.appsDomain}. ` +
+        `It received Host "${req.host}", which is not one of those, so nothing was served. ` +
+        `If you were looking for the read API, it is a different service on a different port.`,
+    )
+  }
 
   const resolved = await cfg.store.resolveOrigin(parsed.kind, parsed.key)
   if (!resolved) return text(404, 'No creation is served from this address.')

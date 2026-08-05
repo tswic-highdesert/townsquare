@@ -266,6 +266,21 @@ export const tokens = {
    */
   density: {
     rowY: '16px',
+    /**
+     * The row's inline gutter.
+     *
+     * Exposed for the same reason `rowY` is, and found the same way: an
+     * unframed list inside a padded screen double-pads, so its rows sat 16px
+     * right of the heading they belonged under, and every headline in the news
+     * feed was out of line with its own section label. Measured, not noticed.
+     *
+     * Dropping the padding whenever `framed` is false would have been the
+     * quick fix and the wrong one — "this list draws no surface" and "this
+     * list has no gutter" are two different claims, and a screen inside a
+     * padded container needs to make the second one without giving up the
+     * first. A variable lets it say which it means.
+     */
+    rowX: '16px',
     rowGap: '12px',
     /** The leading block, fixed, so every title in a list starts on one x. */
     rowLead: '44px',

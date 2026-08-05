@@ -83,6 +83,52 @@ describe('Saves', () => {
     await expect(saves.save(MAYA, { ...HARDWARE, kind: 'person' })).rejects.toThrow(SavesError)
   })
 
+  /**
+   * A story is the first kind pointing outside the town's own data.
+   *
+   * The snapshot rule carries more weight here than anywhere else: a saved
+   * business is still in the directory next week, and a saved story is a
+   * headline on a newspaper's site that may be behind a wall, moved, or gone.
+   * What is stored has to stand on its own.
+   */
+  it('saves a story, which is the one kind we do not host', async () => {
+    const { save } = await saves.save(MAYA, {
+      kind: 'story',
+      refId: 'courier-www-couriernews-com-news-pcso-responds-t-198ms42',
+      title: 'Chamber CEO graduates from CDI program',
+      detail: 'The Courier',
+      url: 'https://www.couriernews.com/news/chamber-ceo-graduates/article_x.html',
+    })
+    expect(save.kind).toBe('story')
+    expect(save.title).toBe('Chamber CEO graduates from CDI program')
+    expect(save.url).toBe('https://www.couriernews.com/news/chamber-ceo-graduates/article_x.html')
+  })
+
+  it('keeps a story and a business with the same refId apart', async () => {
+    // `refId` is scoped by kind, not globally unique, and the news ids come
+    // from a different generator than the directory's.
+    await saves.save(MAYA, { ...HARDWARE, refId: 'same-id' })
+    await saves.save(MAYA, { kind: 'story', refId: 'same-id', title: 'A headline', detail: 'The Courier' })
+    expect((await saves.list(MAYA)).map((s) => s.kind).sort()).toEqual(['business', 'story'])
+    expect(await saves.remove(MAYA, 'story', 'same-id')).toBe(true)
+    expect((await saves.list(MAYA)).map((s) => s.kind)).toEqual(['business'])
+  })
+
+  /**
+   * The reason the reader sends the source name as `detail` and not the summary.
+   *
+   * A third of the town's stories carry an RSS summary longer than 200
+   * characters, and `detail` refuses rather than truncates — correctly, for a
+   * field a person typed. A bookmark button that fails on a third of the feed
+   * would have been the bug; the source name is both short and the thing the
+   * saved list actually shows.
+   */
+  it('refuses an over-long detail rather than clipping it', async () => {
+    await expect(
+      saves.save(MAYA, { ...HARDWARE, kind: 'story', detail: 'x'.repeat(201) }),
+    ).rejects.toThrow(/longer than/)
+  })
+
   it('refuses a save with nothing to show for it', async () => {
     await expect(saves.save(MAYA, { ...HARDWARE, title: '   ' })).rejects.toThrow(/title/)
     await expect(saves.save(MAYA, { ...HARDWARE, refId: '' })).rejects.toThrow(/refId/)

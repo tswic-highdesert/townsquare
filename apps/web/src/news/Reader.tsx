@@ -19,14 +19,27 @@
 import { useEffect, useState } from 'react'
 import { Icon } from '../Icon.js'
 import { Card, RowItem, RowList, Skeleton } from '../ui/index.js'
+import { saveThing, unsaveThing, type SavedThing } from '../savesData.js'
+import type { AccountView } from '../session.js'
 import { Byline, Mark, SectionHead } from './News.js'
-import { fetchStory, type ReaderPayload } from './newsData.js'
+import { fetchStory, type NewsStory, type ReaderPayload } from './newsData.js'
 import './news.css'
 
 export interface ReaderProps {
   storyId: string
   onBack: () => void
   onOpenStory: (id: string) => void
+  /** Null when nobody is signed in. The save control says so rather than failing. */
+  account?: AccountView | null
+  /** Saving needs an account, so the control offers the way to get one. */
+  onSignIn?: () => void
+  /**
+   * The resident's saves, held by `App` so this screen and Yours cannot
+   * disagree about what is saved. Optional: without it the button still works
+   * and simply does not know about saves made before this screen opened.
+   */
+  saved?: SavedThing[]
+  onSavedChange?: (next: SavedThing[]) => void
 }
 
 type State = { kind: 'loading' } | { kind: 'gone' } | { kind: 'failed' } | { kind: 'ready'; data: ReaderPayload }
@@ -162,6 +175,15 @@ export function Reader(props: ReaderProps) {
           </div>
         )}
 
+        <SaveButton
+          story={story}
+          sourceName={source.name}
+          account={props.account ?? null}
+          onSignIn={props.onSignIn}
+          saved={props.saved}
+          onSavedChange={props.onSavedChange}
+        />
+
         {/*
           The exit. Named for the publisher, saying the domain out loud so
           nobody taps blind, and the only terracotta on the page.
@@ -252,6 +274,130 @@ export function Reader(props: ReaderProps) {
         )}
       </article>
     </div>
+  )
+}
+
+/**
+ * Save, in every state it has.
+ *
+ * One control, one position, four states. The interesting one is the failure,
+ * because saving is optimistic and a phone losing signal halfway down a story
+ * is normal rather than exceptional — so the failed state keeps the story, says
+ * what happened in words a person can act on, and is itself the retry.
+ *
+ * It is terracotta, never `--ts-alarm`: a save that has not landed yet is not
+ * an emergency, and spending the brick register here spends the one colour
+ * still supposed to mean something at 6am when the river is up.
+ *
+ * The sheet describes the failure as keeping the story "in a local queue".
+ * This keeps it for as long as the screen is open and no longer. A queue that
+ * survives a reload needs somewhere to live, and the honest options are a
+ * storage key with its own eviction rules or a promise we do not keep — so the
+ * button says "tap to try again" and tapping genuinely tries again.
+ */
+function SaveButton({
+  story,
+  sourceName,
+  account,
+  onSignIn,
+  saved,
+  onSavedChange,
+}: {
+  story: NewsStory
+  sourceName: string
+  account: AccountView | null
+  onSignIn?: (() => void) | undefined
+  saved?: SavedThing[] | undefined
+  onSavedChange?: ((next: SavedThing[]) => void) | undefined
+}) {
+  const [busy, setBusy] = useState(false)
+  const [failed, setFailed] = useState(false)
+  /**
+   * What this screen saved, for the case where nobody handed us the list.
+   *
+   * When `saved` is passed it is the truth and this is ignored, so the two
+   * screens cannot disagree. Without it the button is still correct about
+   * anything done here, which is the part a person is watching.
+   */
+  const [local, setLocal] = useState<SavedThing | null>(null)
+
+  const row = saved
+    ? (saved.find((s) => s.kind === 'story' && s.refId === story.id) ?? null)
+    : local
+
+  // Reading the town never needs an account. This part does, and saying so
+  // before the tap beats a 401 the button would have to explain afterwards.
+  if (!account) {
+    if (!onSignIn) return null
+    return (
+      <button className="nw-save" onClick={onSignIn}>
+        <Icon name="bookmark" size={15} />
+        Sign in to save this
+      </button>
+    )
+  }
+
+  async function toggle() {
+    setBusy(true)
+    setFailed(false)
+    try {
+      await attempt()
+    } finally {
+      // Whatever happened, the button stops saying it is working. A control
+      // stuck on "Saving" is the one state a person cannot get out of.
+      setBusy(false)
+    }
+  }
+
+  async function attempt() {
+    if (row) {
+      const ok = await unsaveThing('story', story.id)
+      if (ok) {
+        setLocal(null)
+        onSavedChange?.((saved ?? []).filter((s) => s.id !== row.id))
+      } else setFailed(true)
+    } else {
+      const next = await saveThing({
+        kind: 'story',
+        refId: story.id,
+        title: story.title,
+        /*
+          The source, not the summary. A third of this town's stories carry an
+          RSS summary over the 200-character `detail` limit, and the service
+          refuses rather than truncates — so sending the summary would fail the
+          button on a third of the feed. The saved list shows the source name
+          anyway, which is also what a person searches their own bookmarks by.
+        */
+        detail: sourceName,
+        ...(story.url ? { url: story.url } : {}),
+      })
+      if (next) {
+        setLocal(next)
+        onSavedChange?.([next, ...(saved ?? [])])
+      } else setFailed(true)
+    }
+  }
+
+  if (failed) {
+    return (
+      <button className="nw-save" data-state="failed" onClick={() => void toggle()}>
+        <Icon name="alert-circle" size={15} />
+        <span className="nw-save-fail">Not saved yet. Tap to try again.</span>
+      </button>
+    )
+  }
+
+  return (
+    <button
+      className="nw-save"
+      data-state={busy ? 'busy' : row ? 'saved' : undefined}
+      aria-pressed={row ? true : false}
+      disabled={busy}
+      onClick={() => void toggle()}
+    >
+      <Icon name={busy ? 'loader' : row ? 'bookmark-filled' : 'bookmark'} size={15} className={busy ? 'nw-spin' : undefined} />
+      {busy ? (row ? 'Removing' : 'Saving') : row ? 'Saved' : 'Save this story'}
+    </button>
   )
 }
 

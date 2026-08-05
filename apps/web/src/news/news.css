@@ -564,6 +564,73 @@
   color: var(--ts-ink45);
 }
 
+/* ── save ───────────────────────────────────────────────────────────────────
+ *
+ * One control, one position, four states. Secondary to the exit button, which
+ * is the only terracotta fill on this page: saving is something a reader may
+ * do, leaving is what the page is for.
+ */
+
+.nw-save {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 44px;
+  padding: 0 var(--ts-space-4);
+  border: 1px solid var(--ts-hairline);
+  border-radius: var(--ts-radius-button);
+  background: var(--ts-surface);
+  color: var(--ts-ink);
+  font-family: var(--ts-font-sans);
+  font-size: var(--ts-text-caption);
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.nw-save:hover:not(:disabled) {
+  border-color: var(--ts-ink26);
+}
+
+/* Saved is the sage register: vouched, open, kept. Never the brand accent. */
+.nw-save[data-state='saved'] {
+  background: var(--ts-sage14);
+  border-color: transparent;
+  color: var(--ts-verified);
+}
+
+.nw-save[data-state='busy'] {
+  color: var(--ts-quiet);
+  cursor: default;
+}
+
+/*
+ * The failure is terracotta, not `--ts-alarm`. A save that has not landed yet
+ * is not an emergency, and spending the brick register on one spends the only
+ * colour still supposed to mean something at 6am when the river is up.
+ */
+.nw-save[data-state='failed'] {
+  background: var(--ts-terracotta-tint);
+  border-color: color-mix(in srgb, var(--ts-action) 30%, transparent);
+  color: var(--ts-action-hover);
+  text-align: left;
+}
+
+.nw-save-fail {
+  line-height: 1.35;
+}
+
+.nw-spin {
+  animation: nw-spin 900ms linear infinite;
+}
+
+@keyframes nw-spin {
+  to { transform: rotate(360deg); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .nw-spin { animation-duration: 2.4s; }
+}
+
 /* ── the exit action ────────────────────────────────────────────────────────
  *
  * The one prominent control on the reader page, named for the publisher rather

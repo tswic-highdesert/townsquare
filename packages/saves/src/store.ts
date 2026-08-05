@@ -8,7 +8,18 @@
  * rather than structurally impossible.
  */
 
-export const SAVE_KINDS = ['business', 'event', 'creation'] as const
+/**
+ * The closed set, and it stays closed.
+ *
+ * `story` was added when the news reader got a bookmark. It is the first kind
+ * that points at something Town Square does not host: a business, an event and
+ * a creation all resolve to something in the town's own data, and a story
+ * resolves to a page on somebody else's website. That is exactly why the
+ * snapshot below matters more for this kind than for the others — a saved
+ * story outlives the feed it came from by design, and often outlives the
+ * publisher's URL too.
+ */
+export const SAVE_KINDS = ['business', 'event', 'creation', 'story'] as const
 export type SaveKind = (typeof SAVE_KINDS)[number]
 
 export interface Save {

@@ -65,6 +65,7 @@ describe('the token contract', () => {
       '--ts-structure',
       // Density. A container sets these; a row reads them with fallbacks.
       '--ts-row-y',
+      '--ts-row-x',
       '--ts-row-gap',
       '--ts-row-lead',
       '--ts-row-title',

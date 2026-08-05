@@ -1660,7 +1660,7 @@ button.ts-card:focus-visible { outline: none; box-shadow: var(--ts-focus); }
   width: 100%;
   /* Floors at 44px in every density. Compact buys space, never accessibility. */
   min-height: 44px;
-  padding: var(--ts-row-y, var(--ts-space-4)) var(--ts-space-4);
+  padding: var(--ts-row-y, var(--ts-space-4)) var(--ts-row-x, var(--ts-space-4));
   background: none;
   border: 0;
   color: var(--ts-ink);
@@ -1686,15 +1686,18 @@ button.ts-row:focus-visible { outline: none; box-shadow: var(--ts-focus); }
   content: '';
   position: absolute;
   top: 0;
-  left: var(--ts-space-4);
-  right: var(--ts-space-4);
+  left: var(--ts-row-x, var(--ts-space-4));
+  right: var(--ts-row-x, var(--ts-space-4));
   height: 1px;
   background: var(--ts-ink13);
 }
 
 /* Past the leading block, but only when there is one. */
 .ts-rows li + li .ts-row[data-lead]::before {
-  left: calc(var(--ts-space-4) + var(--ts-row-lead, 44px) + var(--ts-row-gap, var(--ts-space-3)));
+  left: calc(
+    var(--ts-row-x, var(--ts-space-4)) + var(--ts-row-lead, 44px) +
+      var(--ts-row-gap, var(--ts-space-3))
+  );
 }
 
 .ts-row-lead {

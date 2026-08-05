@@ -6,7 +6,9 @@
  * services, and the wire shape is a contract rather than a shared object.
  */
 
-export type SaveKind = 'business' | 'event' | 'creation'
+/** Mirrors `SAVE_KINDS` in `@townsquare/saves`. `story` is the one that
+ * points at a page we do not host. */
+export type SaveKind = 'business' | 'event' | 'creation' | 'story'
 
 export interface SavedThing {
   id: string
@@ -48,13 +50,27 @@ export interface SaveRequest {
   url?: string
 }
 
-async function post(body: unknown): Promise<Response> {
-  return fetch('/api/saves', {
-    method: 'POST',
-    credentials: 'same-origin',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(body),
-  })
+/**
+ * Null rather than a throw, and that includes the network being gone.
+ *
+ * `fetch` rejects on a dropped connection rather than resolving with a
+ * non-ok response, so the two functions below used to keep their "returns
+ * null on any refusal" promise for an HTTP refusal and break it for the one
+ * case a bookmark button is most likely to meet: a phone with no signal. The
+ * news reader's save control sat on "Removing" forever because of it, and
+ * Yours had the same unhandled rejection waiting in `unsave`.
+ */
+async function post(body: unknown): Promise<Response | null> {
+  try {
+    return await fetch('/api/saves', {
+      method: 'POST',
+      credentials: 'same-origin',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(body),
+    })
+  } catch {
+    return null
+  }
 }
 
 /**
@@ -67,11 +83,11 @@ async function post(body: unknown): Promise<Response> {
  */
 export async function saveThing(input: SaveRequest): Promise<SavedThing | null> {
   const res = await post(input)
-  if (!res.ok) return null
+  if (!res?.ok) return null
   return ((await res.json()) as { save: SavedThing }).save
 }
 
 export async function unsaveThing(kind: SaveKind, refId: string): Promise<boolean> {
   const res = await post({ remove: true, kind, refId })
-  return res.ok
+  return res?.ok === true
 }
