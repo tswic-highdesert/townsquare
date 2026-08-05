@@ -10,6 +10,7 @@
 import { useEffect, useMemo, useState } from 'react'
 import { describeManifest } from '@townsquare/host'
 import { AccountScreen } from './Account.js'
+import { ReportPanel } from './ReportPanel.js'
 import { ReviewScreen } from './Review.js'
 import { resolveInitialAccount, type AccountView } from './session.js'
 import { CreationFrame } from './CreationFrame.js'
@@ -28,6 +29,7 @@ export function App() {
   const [screen, setScreen] = useState<Screen>({ name: 'gallery' })
   const [liveTitle, setLiveTitle] = useState<string | null>(null)
   const [account, setAccount] = useState<AccountView | null>(null)
+  const [reporting, setReporting] = useState(false)
 
   useEffect(() => {
     void fetchCreations().then(setCreations)
@@ -174,6 +176,7 @@ export function App() {
           className="back"
           onClick={() => {
             setLiveTitle(null)
+            setReporting(false)
             setScreen({ name: 'trust', creation })
           }}
         >
@@ -202,8 +205,23 @@ export function App() {
 
       <div className="footer-chrome">
         <span>running on Town Square</span>
-        <button onClick={() => alert('Reporting arrives with the next phase.')}>Report</button>
+        <button onClick={() => setReporting((open) => !open)}>Report</button>
       </div>
+
+      {/*
+        Rendered under the chrome, outside the frame. A creation cannot draw
+        here, so a resident reporting one is always talking to Town Square and
+        never to the thing they are reporting.
+      */}
+      {reporting && (
+        <ReportPanel
+          slug={creation.slug}
+          name={creation.name}
+          version={creation.manifest.version}
+          account={actingUser}
+          onClose={() => setReporting(false)}
+        />
+      )}
     </div>
   )
 }

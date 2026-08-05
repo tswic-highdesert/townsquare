@@ -21,12 +21,20 @@
 import { useEffect, useState } from 'react'
 import {
   decide,
+  fetchCreationDetail,
+  fetchModeratedCreations,
   fetchQueue,
+  fetchReports,
   fetchSubmission,
   isError,
+  moderate,
+  resolveReport,
   type ManifestDiff,
+  type ModeratedCreation,
+  type ModerationDetail,
   type PermissionChange,
   type QueueItem,
+  type Report,
   type ReviewDetail,
 } from './reviewApi.js'
 
@@ -34,7 +42,41 @@ export interface ReviewScreenProps {
   onBack(): void
 }
 
+type Tab = 'submissions' | 'reports' | 'live'
+
+/**
+ * Three tabs, in the order the work happens: decide what may run, read what
+ * residents said about what already does, act on it.
+ *
+ * One screen rather than three entry points, because they are one job. A
+ * moderator who has to remember that reports live somewhere else is a moderator
+ * who reads them weekly.
+ */
 export function ReviewScreen(props: ReviewScreenProps) {
+  const [tab, setTab] = useState<Tab>('submissions')
+
+  const nav = (
+    <nav className="review-tabs">
+      {(
+        [
+          ['submissions', 'Submissions'],
+          ['reports', 'Reports'],
+          ['live', 'Live creations'],
+        ] as Array<[Tab, string]>
+      ).map(([value, label]) => (
+        <button key={value} aria-current={tab === value} onClick={() => setTab(value)}>
+          {label}
+        </button>
+      ))}
+    </nav>
+  )
+
+  if (tab === 'reports') return <ReportsTab onBack={props.onBack} nav={nav} />
+  if (tab === 'live') return <LiveTab onBack={props.onBack} nav={nav} />
+  return <SubmissionsTab onBack={props.onBack} nav={nav} />
+}
+
+function SubmissionsTab(props: { onBack(): void; nav: React.ReactNode }) {
   const [queue, setQueue] = useState<QueueItem[] | null>(null)
   const [open, setOpen] = useState<string | null>(null)
 
@@ -54,6 +96,7 @@ export function ReviewScreen(props: ReviewScreenProps) {
       <button className="back" onClick={props.onBack}>
         ← Back
       </button>
+      {props.nav}
       <h1>Review queue</h1>
 
       {queue === null && <p className="lede">Loading…</p>}
@@ -211,6 +254,331 @@ function Submission(props: { id: string; onBack(): void; onDone(): void }) {
           A later update comes back here.
         </p>
       </section>
+    </div>
+  )
+}
+
+/**
+ * The report queue.
+ *
+ * Deliberately unadorned. There is no count badge, no severity colour and no
+ * ranking: a report is one resident saying they looked at something and did not
+ * like what they saw, and dressing that up as a signal would make it one.
+ */
+function ReportsTab(props: { onBack(): void; nav: React.ReactNode }) {
+  const [reports, setReports] = useState<Report[] | null>(null)
+  const [open, setOpen] = useState<string | null>(null)
+
+  useEffect(() => {
+    void fetchReports().then(setReports)
+  }, [])
+
+  return (
+    <div className="shell">
+      <button className="back" onClick={props.onBack}>
+        ← Back
+      </button>
+      {props.nav}
+      <h1>Reports</h1>
+
+      {reports === null && <p className="lede">Loading…</p>}
+      {reports?.length === 0 && (
+        <p className="lede">
+          Nothing open. A queue nobody drains is worse than no queue, so these are meant to be read
+          and closed — including the many that are read and closed with nothing else happening.
+        </p>
+      )}
+
+      <ul className="queue">
+        {reports?.map((report) => (
+          <li key={report.id}>
+            <div className="queue-row static">
+              <span className="name">
+                {report.targetLabel}
+                {report.targetVersion ? ` · v${report.targetVersion}` : ''}
+              </span>
+              <span className="detail">
+                {report.reason} · reported by @{report.reporterHandle} ·{' '}
+                {new Date(report.createdAt).toLocaleDateString()}
+              </span>
+              {report.detail && <p className="report-detail">{report.detail}</p>}
+              {open === report.id ? (
+                <ResolveForm
+                  id={report.id}
+                  onDone={() => {
+                    setOpen(null)
+                    void fetchReports().then(setReports)
+                  }}
+                  onCancel={() => setOpen(null)}
+                />
+              ) : (
+                <div className="buttons">
+                  <button onClick={() => setOpen(report.id)}>Close this report</button>
+                </div>
+              )}
+            </div>
+          </li>
+        ))}
+      </ul>
+
+      <p className="note">
+        Acting on a creation — hiding it, blocking it, reverting it — closes the open reports
+        against it on its own. This is for the ones where the answer is that nothing needs to
+        happen.
+      </p>
+    </div>
+  )
+}
+
+function ResolveForm(props: { id: string; onDone(): void; onCancel(): void }) {
+  const [note, setNote] = useState('')
+  const [busy, setBusy] = useState(false)
+  const [problem, setProblem] = useState<string | null>(null)
+
+  async function submit(resolution: 'upheld' | 'dismissed') {
+    setBusy(true)
+    setProblem(null)
+    const result = await resolveReport(props.id, resolution, note)
+    setBusy(false)
+    if (isError(result)) setProblem(result.message)
+    else props.onDone()
+  }
+
+  return (
+    <div className="decide">
+      <textarea
+        value={note}
+        onChange={(e) => setNote(e.target.value)}
+        rows={2}
+        placeholder="What you concluded. Kept with the report."
+      />
+      <div className="buttons">
+        <button disabled={busy} onClick={() => void submit('dismissed')}>
+          Nothing to do
+        </button>
+        <button disabled={busy} onClick={() => void submit('upheld')}>
+          Fair, handled elsewhere
+        </button>
+        <button className="back" disabled={busy} onClick={props.onCancel}>
+          Cancel
+        </button>
+      </div>
+      {problem && <p className="problem">{problem}</p>}
+    </div>
+  )
+}
+
+/** Everything already running, with whatever is wrong with it at the top. */
+function LiveTab(props: { onBack(): void; nav: React.ReactNode }) {
+  const [rows, setRows] = useState<ModeratedCreation[] | null>(null)
+  const [open, setOpen] = useState<string | null>(null)
+
+  useEffect(() => {
+    void fetchModeratedCreations().then(setRows)
+  }, [])
+
+  if (open) {
+    return (
+      <LiveCreation
+        id={open}
+        onBack={() => {
+          setOpen(null)
+          void fetchModeratedCreations().then(setRows)
+        }}
+      />
+    )
+  }
+
+  return (
+    <div className="shell">
+      <button className="back" onClick={props.onBack}>
+        ← Back
+      </button>
+      {props.nav}
+      <h1>Live creations</h1>
+
+      {rows === null && <p className="lede">Loading…</p>}
+      {rows?.length === 0 && <p className="lede">Nothing has been approved yet.</p>}
+
+      <ul className="queue">
+        {rows?.map((row) => (
+          <li key={row.id}>
+            <button className="queue-row" onClick={() => setOpen(row.id)}>
+              <span className="name">{row.name}</span>
+              <span className="detail">
+                /{row.slug}
+                {row.activeVersion ? ` · v${row.activeVersion}` : ''} · {row.status}
+              </span>
+              <span className="flags">
+                {row.openReports > 0 && (
+                  <span className="flag escalates">
+                    {row.openReports} open report{row.openReports === 1 ? '' : 's'}
+                  </span>
+                )}
+                {row.status !== 'active' && <span className="flag">{row.status}</span>}
+              </span>
+            </button>
+          </li>
+        ))}
+      </ul>
+    </div>
+  )
+}
+
+const ACTION_LABEL: Record<string, string> = {
+  hide: 'Hide',
+  block: 'Block',
+  restore: 'Put back',
+  revert: 'Reverted',
+}
+
+/**
+ * One creation, and everything a moderator can do to it.
+ *
+ * The version list is the important part of this screen. Reverting is the
+ * cheapest useful action available — it puts a known-good version back without
+ * taking anything away from anybody — so it is shown as a list of versions to
+ * choose from rather than buried behind the two blunter buttons.
+ */
+function LiveCreation(props: { id: string; onBack(): void }) {
+  const [detail, setDetail] = useState<ModerationDetail | null>(null)
+  const [note, setNote] = useState('')
+  const [busy, setBusy] = useState(false)
+  const [problem, setProblem] = useState<string | null>(null)
+  const [outcome, setOutcome] = useState<string | null>(null)
+
+  function load() {
+    void fetchCreationDetail(props.id).then((result) => {
+      if (isError(result)) setProblem(result.message)
+      else setDetail(result)
+    })
+  }
+
+  useEffect(load, [props.id])
+
+  async function act(action: 'hide' | 'block' | 'restore' | 'revert', versionId?: string) {
+    setBusy(true)
+    setProblem(null)
+    setOutcome(null)
+    const result = await moderate(props.id, action, note, versionId)
+    setBusy(false)
+
+    if (isError(result)) {
+      setProblem(result.message)
+      return
+    }
+    const closed = result.resolvedReports.length
+    setOutcome(
+      `${ACTION_LABEL[action]}${action === 'revert' ? '' : 'd'}.` +
+        (closed ? ` ${closed} open report${closed === 1 ? '' : 's'} closed with it.` : ''),
+    )
+    setNote('')
+    load()
+  }
+
+  if (problem && !detail) return <p className="lede">{problem}</p>
+  if (!detail) return <p className="lede">Loading…</p>
+
+  const openReports = detail.reports.filter((r) => r.resolvedAt === null)
+
+  return (
+    <div className="shell">
+      <button className="back" onClick={props.onBack}>
+        ← Live creations
+      </button>
+
+      <h1>{detail.creation.name}</h1>
+      <p className="lede">
+        /{detail.creation.slug} · {detail.creation.status}
+      </p>
+
+      {openReports.length > 0 && (
+        <section className="diff escalates">
+          <h2>Open reports</h2>
+          {openReports.map((report) => (
+            <p key={report.id} className="added">
+              <strong>{report.reason}</strong>
+              {report.targetVersion ? ` · v${report.targetVersion}` : ''} — @{report.reporterHandle}
+              {report.detail ? `: ${report.detail}` : ''}
+            </p>
+          ))}
+        </section>
+      )}
+
+      <section className="decide">
+        <h2>Act</h2>
+        <textarea
+          value={note}
+          onChange={(e) => setNote(e.target.value)}
+          rows={3}
+          placeholder="Why. Required, and kept in the moderation log."
+        />
+        <div className="buttons">
+          {detail.creation.status === 'active' ? (
+            <>
+              <button disabled={busy} onClick={() => void act('hide')}>
+                Hide
+              </button>
+              <button disabled={busy} onClick={() => void act('block')}>
+                Block
+              </button>
+            </>
+          ) : (
+            <button disabled={busy} onClick={() => void act('restore')}>
+              Put it back
+            </button>
+          )}
+        </div>
+        {problem && <p className="problem">{problem}</p>}
+        {outcome && <p className="outcome">{outcome}</p>}
+        <p className="note">
+          Nothing here deletes anything. Hidden and blocked both stop the sandbox serving it, and
+          both are undone by putting it back.
+        </p>
+      </section>
+
+      <section>
+        <h2>Versions</h2>
+        <ul className="versions">
+          {detail.versions.map((version) => (
+            <li key={version.id}>
+              <span className="name">
+                v{version.version}
+                {version.live && <span className="flag">live</span>}
+                {version.revertedFromVersionId && <span className="flag">a revert</span>}
+              </span>
+              <span className="detail">
+                {version.status} · {new Date(version.createdAt).toLocaleDateString()} ·{' '}
+                <code>{version.bundleDigest.slice(0, 12)}</code>
+              </span>
+              {version.revertable && (
+                <button disabled={busy} onClick={() => void act('revert', version.id)}>
+                  Put this version back
+                </button>
+              )}
+            </li>
+          ))}
+        </ul>
+        <p className="note">
+          Reverting publishes these exact bytes again as a new version, and re-checks them against
+          the digest they were approved with. The version being replaced stays in this list.
+        </p>
+      </section>
+
+      {detail.log.length > 0 && (
+        <section>
+          <h2>Moderation log</h2>
+          <ul className="warnings">
+            {detail.log.map((entry) => (
+              <li key={entry.id}>
+                {ACTION_LABEL[entry.action] ?? entry.action} · @{entry.actorHandle} ·{' '}
+                {new Date(entry.createdAt).toLocaleDateString()}
+                {entry.note ? ` — ${entry.note}` : ''}
+              </li>
+            ))}
+          </ul>
+        </section>
+      )}
     </div>
   )
 }

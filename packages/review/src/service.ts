@@ -413,6 +413,8 @@ export class Review {
         reviewedBy: reviewer.userId,
         reviewedAt: now,
         reviewNotes: note || null,
+        // A submitted version came from a builder, never from a revert.
+        revertedFromVersionId: null,
       },
       now,
     )

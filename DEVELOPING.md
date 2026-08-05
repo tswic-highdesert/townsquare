@@ -2,7 +2,7 @@
 type: note
 title: Running Town Square locally
 status: active
-updated: 2026-08-03
+updated: 2026-08-05
 ---
 
 # Running it
@@ -254,6 +254,112 @@ In development each process holds its own memory copy, so a submission made
 through `pnpm dev:mcp` is not in the API's queue. In production all three read
 one database.
 
+## Reporting, and acting on something already live
+
+The review queue decides whether code may run at all. This is the other half:
+what happens once it is running and a resident says something about it.
+
+```
+POST /api/reports                              verified resident
+GET  /api/review/reports                       moderator
+POST /api/review/reports/:id/resolve           moderator
+GET  /api/review/creations                     moderator
+GET  /api/review/creations/:id                 moderator
+POST /api/review/creations/:id/moderate        moderator
+```
+
+A resident's entire surface is the first line. There is no way to read anyone
+else's report, no count of how many a creation has, and no notification of what
+came of one — all three would turn a report into a public signal, and a public
+signal is a thing worth manufacturing. The moderator routes sit behind the same
+gate as the review queue and answer an ordinary resident **404**: who reported
+what about which neighbour is the most sensitive thing this system holds.
+
+### Reporting is built to be hard to weaponise
+
+The moderation stance is light on purpose. Town Square is neutral substrate, it
+follows the law and stops there, and the committee is one person with a day job.
+So the design starts from a fact most report systems will not say out loud:
+**most reports are dismissed, and that is not a failure.**
+
+| Rule | Why |
+|---|---|
+| Verified residents only | A report is a claim by someone a moderator can go and talk to |
+| One open report per resident per target | The Report button is not a "send this again" button |
+| 10 per resident per rolling day | Stops one account filing against the whole gallery in an afternoon |
+| A closed set of reasons | Free text alone is untriageable |
+
+The duplicate rule is enforced in the memory store the way `reports_open_dup_uq`
+enforces it in Postgres — a partial unique index, so a resident *can* file again
+once the first one is resolved. That is a new complaint about a new situation,
+not a second copy of the old one. Filing a duplicate is answered `200` with
+`duplicate: true` and the original report, rather than a success message that
+quietly did nothing.
+
+Verification is read from the session's user on every call, so a vouch granted a
+minute ago counts and a revoked one stops counting immediately.
+
+### Three actions, and the differences between them are the design
+
+**hide** takes a creation out of circulation. Reversible, unremarkable, and the
+right first move for almost everything. **block** is the one that means
+something, for what the law forces. Both stop the sandbox serving and both get
+the explainer page in `packages/sandbox/src/serve.ts` — the blocked one says a
+moderator did it, because a blocked creation showing a blank frame reads as our
+bug rather than our decision. Neither deletes anything: a dead creation is still
+a record of what someone made.
+
+**revert** puts an earlier approved version back, and it is a **forward**
+operation. The old bytes are published again under a *new* version row that
+records where they came from (`reverted_from_version_id`), labelled with semver
+build metadata — `1.2.0+revert.1`, which compares equal to `1.2.0` so a
+builder's next release still sorts above it. The version being replaced stays in
+the history as `superseded`. Nothing is rewound and nothing is destroyed, and
+that is precisely what makes moderating cheap enough to do promptly: every call
+made here is undone by one more forward write.
+
+Two refusals in revert are load-bearing. A version that was never approved can
+never be reverted to, so a rejected submission cannot be laundered into
+production by a moderator picking it off a list. And the bytes are re-hashed
+against the digest on the version row, exactly as they are at approval, so what
+goes back live is what a human read.
+
+The origin key never moves — through a hide, a block, a revert, or all three. It
+is the storage partition, and a new one would silently empty every resident's
+saved state.
+
+### Two smaller decisions worth knowing
+
+**An action drains the reports it answered.** Hiding, blocking or reverting
+closes every open report against that creation, as `upheld` or `reverted`. A
+report queue nobody drains is worse than no queue because it implies a promise,
+and the usual reason one rots is that acting and closing are separate chores.
+`restore` closes nothing: putting something back is not an answer to the person
+who asked for it to be looked at.
+
+**Restricting and restoring write in opposite orders.** Hiding or blocking flips
+the serving path first and the row second; restoring writes the row first and the
+serving path last. Both directions fail closed, which is the only property worth
+having when the failure is silent.
+
+Every action needs a reason, including a restore, and it lands in an append-only
+`moderation_actions` row with the moderator's name on it. "Who blocked this,
+when, and what did they say" is what makes a committee-held role accountable to
+the residents it acts on.
+
+To try it locally, seed yourself as an admin and open **Review queue** in the
+shell: it now has three tabs — Submissions, Reports, and Live creations.
+
+```bash
+TOWNSQUARE_SEED_COHORT='tswic:tal@example.com:admin' pnpm dev:api
+```
+
+The Report button in the chrome under a running creation works against the
+examples, because reporting only needs a creation to exist. **Live creations**
+is empty until something is actually approved through the queue, since the
+examples never went through it — the same development seam as the queue itself,
+and it closes when all three processes read one database.
+
 ## Adding an example creation
 
 Drop a directory in `apps/sandbox/examples/`. It needs a `townsquare.json`, the
@@ -264,7 +370,7 @@ fails loudly at startup rather than working only here.
 ## Tests
 
 ```bash
-pnpm test        # 584 tests
+pnpm test        # 651 tests
 pnpm typecheck
 ```
 
@@ -302,7 +408,7 @@ in two jobs split by cost:
 
 | Job | Runs | Roughly |
 |---|---|---|
-| `checks` | typecheck, generated-docs drift, 584 unit tests | under a minute |
+| `checks` | typecheck, generated-docs drift, 651 unit tests | under a minute |
 | `boundary` | the Playwright suite, three origins in Chromium | two to three minutes |
 
 Neither is configured as a **required** status check, on purpose. This repo is

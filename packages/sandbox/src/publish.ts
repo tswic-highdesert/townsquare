@@ -84,4 +84,22 @@ export class BundleStorePublisher {
       cspHeader,
     }
   }
+
+  /**
+   * Hide or block a creation that is already live, without republishing it.
+   *
+   * A status is a decision about an origin, not a new version of it. Going
+   * through `publish` to change one would mint a version row that no builder
+   * submitted and no reviewer read, and the CSP would be recompiled from a
+   * manifest a human already approved a compiled form of.
+   */
+  setStatus(key: string, status: 'active' | 'hidden' | 'blocked'): void {
+    this.opts.store.setStatus(key, status)
+  }
+
+  /** The published bytes of one version, for a revert. Null if never published. */
+  async filesFor(versionId: string): Promise<ReadonlyMap<string, Uint8Array> | null> {
+    if (!this.opts.store.hasVersion(versionId)) return null
+    return this.opts.store.filesFor(versionId)
+  }
 }

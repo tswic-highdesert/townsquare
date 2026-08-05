@@ -337,6 +337,17 @@ export const creationVersions = pgTable(
     status: text('status').notNull().default('draft'),
     validationReport: jsonb('validation_report').$type<Record<string, unknown> | null>(),
 
+    /**
+     * Set when this row exists because a moderator reverted to an older one.
+     *
+     * Revert is a **forward** operation, exactly as it is for `record_versions`:
+     * it copies an approved version into a new row and moves the pointer, and
+     * nothing is ever destroyed. That is the mechanism that makes light-touch
+     * moderation viable — undoing a bad call costs one more forward write, so
+     * acting quickly is cheap rather than irreversible.
+     */
+    revertedFromVersionId: uuid('reverted_from_version_id'),
+
     submittedAt: timestamp('submitted_at', { withTimezone: true }),
     reviewedBy: uuid('reviewed_by'),
     reviewedAt: timestamp('reviewed_at', { withTimezone: true }),
@@ -492,17 +503,69 @@ export const reports = pgTable(
     /** 'creation' | 'record' | 'user' */
     targetType: text('target_type').notNull(),
     targetId: text('target_id').notNull(),
+    /**
+     * The version string the reporter was looking at, when they were looking at
+     * a creation. A creation is reviewed per version, so "it started doing this
+     * last week" is the difference between a moderator reading the right bytes
+     * and the wrong ones.
+     */
+    targetVersion: text('target_version'),
     reason: text('reason').notNull(),
     detail: text('detail'),
     /** 'upheld' | 'dismissed' | 'reverted' */
     resolution: text('resolution'),
     resolvedBy: uuid('resolved_by'),
     resolvedAt: timestamp('resolved_at', { withTimezone: true }),
+    resolutionNote: text('resolution_note'),
     createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
   },
   (t) => ({
     openIdx: index('reports_open_idx').on(t.townId, t.resolvedAt),
     targetIdx: index('reports_target_idx').on(t.targetType, t.targetId),
+    /**
+     * One open report per resident per target, enforced by the database rather
+     * than by the service being careful.
+     *
+     * Without it, the Report button is a "send this to a moderator again" button
+     * and twenty clicks are twenty rows a human has to read. Partial, so a
+     * resident can file again once the first one has been resolved — that is a
+     * new complaint about a new situation, not a second copy of the old one.
+     */
+    openDupUq: uniqueIndex('reports_open_dup_uq')
+      .on(t.reporterId, t.targetType, t.targetId)
+      .where(sql`resolved_at is null`),
+    reporterIdx: index('reports_reporter_idx').on(t.reporterId, t.createdAt),
+  }),
+)
+
+/**
+ * What a moderator did to something already live, and why.
+ *
+ * Separate from `reports` because the two answer different questions and only
+ * one of them always has the other. A report is a resident asking for a look; an
+ * action is the town's own record of a decision, and plenty of actions have no
+ * report behind them. Append-only: nothing here is ever updated, because "who
+ * blocked this, when, and what did they say" is the audit trail that makes a
+ * committee-held role accountable to the residents it acts on.
+ */
+export const moderationActions = pgTable(
+  'moderation_actions',
+  {
+    id: uuid('id').primaryKey().defaultRandom(),
+    townId: text('town_id').notNull(),
+    creationId: uuid('creation_id').notNull(),
+    /** 'hide' | 'block' | 'restore' | 'revert' */
+    action: text('action').notNull(),
+    actorId: uuid('actor_id').notNull(),
+    note: text('note'),
+    /** Set for a revert: what was live, and what it was reverted to. */
+    fromVersionId: uuid('from_version_id'),
+    toVersionId: uuid('to_version_id'),
+    createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+  },
+  (t) => ({
+    creationIdx: index('moderation_actions_creation_idx').on(t.creationId, t.createdAt),
+    townIdx: index('moderation_actions_town_idx').on(t.townId, t.createdAt),
   }),
 )
 
@@ -568,4 +631,5 @@ export type CreationVersionRow = typeof creationVersions.$inferSelect
 export type RecordRow = typeof records.$inferSelect
 export type RecordVersionRow = typeof recordVersions.$inferSelect
 export type ReportRow = typeof reports.$inferSelect
+export type ModerationActionRow = typeof moderationActions.$inferSelect
 export type McpTokenRow = typeof mcpTokens.$inferSelect

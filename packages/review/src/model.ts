@@ -84,6 +84,15 @@ export interface CreationVersion {
   reviewedBy: string | null
   reviewedAt: number | null
   reviewNotes: string | null
+  /**
+   * Set when a moderator reverted to an older version and this row is the copy.
+   *
+   * Revert is a forward operation. Nothing is deleted, un-approved, or rewound:
+   * the old bytes are published again under a new row, and the row says where
+   * they came from. Undoing a moderator's call therefore costs one more forward
+   * write, which is what makes acting on a report cheap enough to do promptly.
+   */
+  revertedFromVersionId: string | null
   createdAt: number
 }
 
@@ -119,6 +128,8 @@ export interface CreationStore {
   byId(id: string): Promise<Creation | null>
   bySlug(townId: string, slug: string): Promise<Creation | null>
   listForOwner(ownerId: string): Promise<Creation[]>
+  /** Every creation in a town, hidden and blocked included. Moderator surface. */
+  list(townId: string): Promise<Creation[]>
   create(
     input: Omit<Creation, 'createdAt' | 'updatedAt' | 'activeVersionId'>,
     now: number,
@@ -159,6 +170,25 @@ export interface CreationPublisher {
     slug?: string
     status?: 'active' | 'hidden' | 'blocked'
   }): { key: string; versionId: string; url: string; cspHeader: string }
+
+  /**
+   * Change what the serving path does with a creation, without touching bytes.
+   *
+   * Hiding and blocking are decisions about an origin, not new versions of it.
+   * Republishing to change a status would mint a version row nobody submitted
+   * and nobody reviewed, and the first thing anyone would ask about it is which
+   * human approved it.
+   */
+  setStatus(key: string, status: 'active' | 'hidden' | 'blocked'): void
+
+  /**
+   * The exact bytes of a version that was already published.
+   *
+   * This is what a revert republishes. Reading them back from the serving store
+   * rather than from a submission means a revert restores what residents were
+   * actually running, and the digest on the version row is there to prove it.
+   */
+  filesFor(versionId: string): Promise<ReadonlyMap<string, Uint8Array> | null>
 }
 
 /** Who is deciding. A role, held by a committee, never an owner account. */

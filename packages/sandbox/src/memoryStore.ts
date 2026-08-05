@@ -69,6 +69,26 @@ export class MemoryBundleStore implements BundleStore {
     }
   }
 
+  /**
+   * Flip the status served from one origin key.
+   *
+   * Only the version an origin key currently resolves to is touched, which is
+   * also the only one a request can reach. Superseded rows keep whatever status
+   * they had when they were live: they are history, and rewriting history to
+   * match a decision taken afterwards is how an audit trail stops being one.
+   */
+  setStatus(key: string, status: ResolvedVersion['creationStatus']): boolean {
+    const versionId = this.byKey.get(`creation:${key}`)
+    if (versionId === undefined) return false
+    const row = this.versions.get(versionId)
+    if (!row) return false
+
+    this.versions.set(versionId, { ...row, creationStatus: status })
+    const entry = this.catalogue.get(key)
+    if (entry) this.catalogue.set(key, { ...entry, status })
+    return true
+  }
+
   /** Origin keys with a catalogue entry, for the dev server banner. */
   keys(): string[] {
     return [...this.catalogue.keys()]
@@ -90,6 +110,11 @@ export class MemoryBundleStore implements BundleStore {
    * not on `BundleStore` — the serving path must stay unable to ask for
    * anything but one named file of one resolved version.
    */
+  /** Whether this version was ever published here, empty bundles included. */
+  hasVersion(versionId: string): boolean {
+    return this.files.has(versionId)
+  }
+
   async filesFor(versionId: string): Promise<Map<string, Uint8Array>> {
     const out = new Map<string, Uint8Array>()
     for (const [path, file] of this.files.get(versionId) ?? new Map<string, StoredFile>()) {

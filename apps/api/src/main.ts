@@ -27,12 +27,17 @@ import { loadExampleCreations } from '../../sandbox/src/examples.js'
 import { MemoryMcpTokenStore } from '@townsquare/mcp'
 import {
   MemoryCreationStore,
+  MemoryModerationLogStore,
   MemoryRecordTypeStore,
+  MemoryReportStore,
   MemorySubmissionStore,
+  Moderation,
+  Reports,
   Review,
 } from '@townsquare/review'
 import { BundleStorePublisher } from '@townsquare/sandbox'
 import { createConnectRoutes } from './connectRoutes.js'
+import { createReportRoutes } from './reportRoutes.js'
 import { createReviewRoutes } from './reviewRoutes.js'
 import { createIdentityRoutes } from './identityRoutes.js'
 
@@ -99,24 +104,65 @@ async function main(): Promise<void> {
   // The review queue. In development this process holds its own memory copy,
   // so a submission made through `pnpm dev:mcp` is not in this one — in
   // production all three services read the same database.
+  const creations = new MemoryCreationStore()
+  const publisher = new BundleStorePublisher({
+    store,
+    origin: {
+      appsDomain: APPS_DOMAIN,
+      scheme: IS_DEV ? 'http' : 'https',
+      ...(IS_DEV ? { port: SANDBOX_PORT } : {}),
+    },
+    shellOrigins: (process.env['SHELL_ORIGINS'] ?? SHELL_ORIGIN).split(',').map((o) => o.trim()),
+  })
+
   const review = new Review({
     submissions: new MemorySubmissionStore(),
-    creations: new MemoryCreationStore(),
+    creations,
     recordTypes: new MemoryRecordTypeStore(),
-    publisher: new BundleStorePublisher({
-      store,
-      origin: {
-        appsDomain: APPS_DOMAIN,
-        scheme: IS_DEV ? 'http' : 'https',
-        ...(IS_DEV ? { port: SANDBOX_PORT } : {}),
+    publisher,
+  })
+
+  const reportStore = new MemoryReportStore()
+
+  const reports = new Reports({
+    reports: reportStore,
+    targets: {
+      /**
+       * A creation is reportable if it is in the gallery, which in development
+       * means the approved ones *and* the examples loaded at boot. The examples
+       * never went through the queue, so they have no row in the creation store
+       * — the same seam as the queue itself, and it closes when all three
+       * processes read one database. Without the fallback the Report button is a
+       * demo of an error message.
+       */
+      async creationBySlug(_townId, slug) {
+        const approved = await creations.bySlug(TOWN.id, slug)
+        if (approved) return { id: approved.id, name: approved.name }
+        const example = store.get(slug)
+        return example ? { id: example.creationId, name: example.name } : null
       },
-      shellOrigins: (process.env['SHELL_ORIGINS'] ?? SHELL_ORIGIN).split(',').map((o) => o.trim()),
-    }),
+    },
+  })
+
+  const moderation = new Moderation({
+    creations,
+    publisher,
+    reports: reportStore,
+    log: new MemoryModerationLogStore(),
   })
 
   const reviewRoutes = createReviewRoutes({
     identity,
     review,
+    reports,
+    moderation,
+    shellOrigin: SHELL_ORIGIN,
+    townId: TOWN.id,
+  })
+
+  const reportRoutes = createReportRoutes({
+    identity,
+    reports,
     shellOrigin: SHELL_ORIGIN,
     townId: TOWN.id,
   })
@@ -174,6 +220,7 @@ async function main(): Promise<void> {
     void identityRoutes(req, res, url)
       .then((handled) => (handled ? true : connectRoutes(req, res, url)))
       .then((handled) => (handled ? true : reviewRoutes(req, res, url)))
+      .then((handled) => (handled ? true : reportRoutes(req, res, url)))
       .then((handled) => {
         if (!handled) readRoutes(url, store, json)
       })

@@ -9,6 +9,8 @@
 
 import { randomUUID } from 'node:crypto'
 import type { Manifest } from '@townsquare/manifest'
+import type { ModerationEntry, ModerationLogStore } from './moderation.js'
+import type { NewReport, Report, ReportResolution, ReportStore } from './reports.js'
 import type {
   Creation,
   CreationStore,
@@ -173,6 +175,115 @@ export class MemoryCreationStore implements CreationStore {
       (v) => v.id === creation.activeVersionId,
     )
     return version?.manifest ?? null
+  }
+}
+
+export class MemoryReportStore implements ReportStore {
+  private readonly rows = new Map<string, Report>()
+
+  async create(input: NewReport, now: number): Promise<Report> {
+    // Mirrors `reports_open_dup_uq`, the partial unique index. The service
+    // collapses duplicates before it gets here, so reaching this throw means a
+    // caller went round the service — which is exactly what the index is for.
+    for (const row of this.rows.values()) {
+      if (
+        row.resolvedAt === null &&
+        row.reporterId === input.reporterId &&
+        row.targetType === input.targetType &&
+        row.targetId === input.targetId
+      ) {
+        throw new Error('an open report by this resident against this target already exists')
+      }
+    }
+
+    const report: Report = {
+      ...input,
+      id: randomUUID(),
+      resolution: null,
+      resolvedBy: null,
+      resolvedAt: null,
+      resolutionNote: null,
+      createdAt: now,
+    }
+    this.rows.set(report.id, report)
+    return { ...report }
+  }
+
+  async byId(id: string): Promise<Report | null> {
+    const row = this.rows.get(id)
+    return row ? { ...row } : null
+  }
+
+  async open(townId: string): Promise<Report[]> {
+    return [...this.rows.values()]
+      .filter((r) => r.townId === townId && r.resolvedAt === null)
+      .sort((a, b) => a.createdAt - b.createdAt)
+      .map((r) => ({ ...r }))
+  }
+
+  async forTarget(targetType: 'creation', targetId: string): Promise<Report[]> {
+    return [...this.rows.values()]
+      .filter((r) => r.targetType === targetType && r.targetId === targetId)
+      .sort((a, b) => a.createdAt - b.createdAt)
+      .map((r) => ({ ...r }))
+  }
+
+  async openByReporterForTarget(
+    reporterId: string,
+    targetType: 'creation',
+    targetId: string,
+  ): Promise<Report | null> {
+    for (const row of this.rows.values()) {
+      if (
+        row.resolvedAt === null &&
+        row.reporterId === reporterId &&
+        row.targetType === targetType &&
+        row.targetId === targetId
+      ) {
+        return { ...row }
+      }
+    }
+    return null
+  }
+
+  async countByReporterSince(reporterId: string, since: number): Promise<number> {
+    return [...this.rows.values()].filter(
+      (r) => r.reporterId === reporterId && r.createdAt >= since,
+    ).length
+  }
+
+  async resolve(
+    id: string,
+    patch: {
+      resolution: ReportResolution
+      resolvedBy: string
+      resolvedAt: number
+      resolutionNote: string | null
+    },
+  ): Promise<Report> {
+    const row = this.rows.get(id)
+    if (!row) throw new Error(`no such report: ${id}`)
+    const next: Report = { ...row, ...patch }
+    this.rows.set(id, next)
+    return { ...next }
+  }
+}
+
+/** Append-only in fact, not by convention: there is no method that rewrites a row. */
+export class MemoryModerationLogStore implements ModerationLogStore {
+  private readonly rows: ModerationEntry[] = []
+
+  async append(entry: Omit<ModerationEntry, 'createdAt'>, now: number): Promise<ModerationEntry> {
+    const row: ModerationEntry = { ...entry, createdAt: now }
+    this.rows.push(row)
+    return { ...row }
+  }
+
+  async forCreation(creationId: string): Promise<ModerationEntry[]> {
+    return this.rows
+      .filter((r) => r.creationId === creationId)
+      .sort((a, b) => b.createdAt - a.createdAt)
+      .map((r) => ({ ...r }))
   }
 }
 
