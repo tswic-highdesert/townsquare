@@ -105,6 +105,8 @@ beforeEach(() => {
     loadItems: async () => items,
     sourceNames: { 'nws-weather': 'NWS Little Rock', 'city-russellville': 'City of Russellville' },
     authoredNotices: async () => authored,
+    noticeSources: ['NWS Little Rock', 'City of Russellville'],
+    townName: 'Russellville',
     // No cache in the suite: these tests are about how a notice decays, not
     // about how long a payload is reused. The cache has its own test below.
     cacheMs: 0,
@@ -148,7 +150,7 @@ async function signedIn(handle: string): Promise<string> {
 interface CivicBody {
   notices: Array<{ id: string; severity: string; presentation: string; digest: string; provenance: Record<string, unknown> }>
   meetings: { thisWeek: Array<{ bodyName: string }>; notCarried: string[] }
-  quiet: boolean
+  quiet: { line: string; sub: string; watching: string[]; action: string } | null
 }
 
 describe('the civic screen answers without a session', () => {
@@ -171,10 +173,22 @@ describe('the civic screen answers without a session', () => {
     expect(body.notices[0]!.presentation).toBe('takeover')
   })
 
-  it('says the town is quiet rather than looking like a failed fetch', async () => {
+  it('ships a designed silence rather than looking like a failed fetch', async () => {
     const body = (await (await get('/api/civic')).json()) as CivicBody
     expect(body.notices).toEqual([])
-    expect(body.quiet).toBe(true)
+    // Four slots from section 10's anatomy: a line that states the fact and
+    // never apologises, a sub-line naming what we actually checked, and an
+    // action only because there is genuinely somewhere better to be.
+    expect(body.quiet!.line).toBe('Nothing is going on in Russellville right now.')
+    expect(body.quiet!.sub).toContain('Nothing from City of Russellville or NWS Little Rock')
+    expect(body.quiet!.watching).toEqual(['City of Russellville', 'NWS Little Rock'])
+    expect(body.quiet!.action).toBe('What we check, and how often')
+  })
+
+  it('has no quiet state at all when something is actually happening', async () => {
+    items = [tornado()]
+    const body = (await (await get('/api/civic')).json()) as CivicBody
+    expect(body.quiet).toBeNull()
   })
 
   it('names what it does not carry, on the payload', async () => {
@@ -288,6 +302,8 @@ describe('the assembled payload is shared', () => {
       },
       sourceNames: { 'nws-weather': 'NWS Little Rock' },
       authoredNotices: async () => [],
+      noticeSources: ['NWS Little Rock'],
+      townName: 'Russellville',
       cacheMs: 60_000,
       shellOrigin: SHELL_ORIGIN,
       townId: TOWN,

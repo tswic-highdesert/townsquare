@@ -74,8 +74,16 @@ import {
   NoOrganisations,
   type CorrectionField,
 } from '@townsquare/contributions'
+import {
+  Alerts,
+  MemoryAlertPreferenceStore,
+  MemoryNoticeStateStore,
+  type AuthoredNotice,
+} from '@townsquare/civic'
+import { sources } from '../../../packages/feed/src/data/sources.js'
 import { createConnectRoutes } from './connectRoutes.js'
 import { createContributionRoutes } from './contributionRoutes.js'
+import { createCivicRoutes } from './civicRoutes.js'
 import { createReportRoutes } from './reportRoutes.js'
 import { createReviewRoutes } from './reviewRoutes.js'
 import { createIdentityRoutes } from './identityRoutes.js'
@@ -253,6 +261,43 @@ async function main(): Promise<void> {
     timezone: TOWN.timezone,
   })
 
+  /**
+   * Civic: the read side of notices, city hall, and the alert threshold.
+   *
+   * `sources` comes in by its deep path for the same reason `businesses` does:
+   * `@townsquare/feed`'s barrel re-exports the scrapers, and importing it here
+   * would drag them into this app's strict typecheck. The registry itself is a
+   * plain data file with one type import.
+   */
+  const civicRoutes = createCivicRoutes({
+    identity,
+    alerts: new Alerts({ store: new MemoryAlertPreferenceStore() }),
+    noticeStates: new MemoryNoticeStateStore(),
+    loadItems,
+    sourceNames: Object.fromEntries(sources.map((s) => [s.id, s.name])),
+    /**
+     * The sources that actually produce notices, named for the quiet state.
+     *
+     * Listed explicitly rather than derived from `sources`, which is every
+     * scraper in town including the library's event calendar. On a day with no
+     * alerts the screen says what we checked, and that sentence must name the
+     * things we genuinely poll for alerts and nothing else.
+     */
+    noticeSources: ['NWS Little Rock', 'City of Russellville'],
+    townName: TOWN.name,
+    /**
+     * Notices an organisation published through the composer.
+     *
+     * Empty in development and honestly so: posting one needs an organisation
+     * affiliation, and Town Square has no organisation model yet, so every
+     * resident meets the gate. The seam closes the day something grants one,
+     * and the civic screen inherits those notices without changing here.
+     */
+    authoredNotices: async (): Promise<readonly AuthoredNotice[]> => [],
+    shellOrigin: SHELL_ORIGIN,
+    townId: TOWN.id,
+  })
+
   const reviewRoutes = createReviewRoutes({
     identity,
     review,
@@ -374,6 +419,7 @@ async function main(): Promise<void> {
       .then((handled) => (handled ? true : reviewRoutes(req, res, url)))
       .then((handled) => (handled ? true : reportRoutes(req, res, url)))
       .then((handled) => (handled ? true : contributionRoutes(req, res, url)))
+      .then((handled) => (handled ? true : civicRoutes(req, res, url)))
       .then((handled) => (handled ? true : savesRoutes(req, res, url)))
       .then((handled) => (handled ? true : todayRoutes(req, res, url)))
       .then((handled) => (handled ? true : nearbyRoutes(req, res, url)))

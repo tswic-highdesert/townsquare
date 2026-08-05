@@ -32,6 +32,7 @@ import {
   assembleMeetings,
   assembleNotices,
   presentFor,
+  quietState,
   type AuthoredNotice,
   type IngestedEvent,
   type IngestedNotice,
@@ -52,6 +53,18 @@ export interface CivicRoutesConfig {
   loadItems: () => Promise<readonly unknown[]>
   /** Source id to printable name, from the feed's registry. */
   sourceNames: Readonly<Record<string, string>>
+  /**
+   * The sources that actually produce notices, by printable name.
+   *
+   * Passed in rather than derived from whatever happened to arrive, because the
+   * quiet state has to name what we checked on a day when nothing came back,
+   * and a list derived from an empty result is an empty list. This is the one
+   * place the surface asserts something on a screen with no data on it, so it
+   * must come from the registry rather than from the payload.
+   */
+  noticeSources: readonly string[]
+  /** What the town is called, for the sentence on a quiet day. */
+  townName: string
   /**
    * Notices residents' organisations published, from the contribution service.
    *
@@ -173,12 +186,22 @@ export function createCivicRoutes(cfg: CivicRoutesConfig) {
           notices: presentFor(town.notices, states, now),
           meetings: town.meetings,
           /**
-           * Said on the payload rather than left to the client: the screen is
-           * empty most days because nothing is happening, not because the
-           * fetch failed. Those are different sentences and only one of them
-           * is reassuring.
+           * The designed silence, not a null.
+           *
+           * A blank civic screen and a civic screen whose scrapers all died
+           * look identical to a resident, and telling those apart is the whole
+           * value of this surface on the morning somebody is wondering whether
+           * the water is safe. So a quiet day ships the sources we polled and
+           * when, which is the same provenance a notice would have carried.
            */
-          quiet: town.notices.length === 0,
+          quiet:
+            town.notices.length === 0
+              ? quietState({
+                  townName: cfg.townName,
+                  watching: cfg.noticeSources,
+                  checkedAt: town.fetchedAt,
+                })
+              : null,
           assembledAt: town.fetchedAt,
         })
         return true

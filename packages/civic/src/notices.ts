@@ -241,7 +241,30 @@ function severityRank(severity: Severity): number {
   return ['informational', 'advisory', 'urgent', 'emergency'].indexOf(severity)
 }
 
-/** One notice, as one resident should currently see it. */
+/**
+ * One notice, as one resident should currently see it.
+ *
+ * ## There is no field here for whether it applies to where you live
+ *
+ * Section 9's boil-order takeover reads "Your address is inside the affected
+ * zone", and that sentence is the one thing on that screen this system will
+ * never be able to say. Town Square stores no address for anybody. That is the
+ * identity model rather than a gap in it: verification is by vouch precisely so
+ * that being a verified resident never requires handing over where you sleep.
+ *
+ * The reason this note sits here, on the type somebody would extend, is that
+ * the feature arrives disguised as a kindness. "Only show me alerts near me" is
+ * a reasonable request, it is trivially implementable with one nullable column,
+ * and it is how a system that promised never to hold an address ends up holding
+ * one for everybody who ever wanted a more relevant boil order. A zone filter
+ * needs a location; a location that is accurate enough to be useful for a water
+ * main is accurate enough to identify a house.
+ *
+ * What is allowed instead: a resident may name zones they care about, by name,
+ * chosen by them, stored as a label and never as a coordinate. That is the
+ * promise section 9 prints at the bottom of the subscription screen, and it is
+ * a different thing from a location we derive.
+ */
 export interface PresentedNotice extends CivicNotice {
   presentation: Presentation
   seen: boolean
@@ -278,6 +301,63 @@ export function presentFor(
       }),
     }
   })
+}
+
+/**
+ * What the civic screen says when nothing is happening, which is most days.
+ *
+ * Section 10's empty-state anatomy is four slots: a mark, a line that states
+ * the fact and never apologises, a sub-line that says what else is true, and an
+ * action only if there is genuinely somewhere better to be. Its voice test is
+ * to read the line out loud to a neighbour, which "No active alerts" fails.
+ *
+ * The interesting part here is what the sub-line is made of. **Silence is a
+ * claim, and a claim needs provenance in the same way a notice does.** A blank
+ * civic screen and a civic screen whose scrapers all died look identical to a
+ * resident, and the difference is the whole value of the surface on the morning
+ * somebody is wondering whether the water is safe. So the quiet state is
+ * assembled from the sources we actually polled and the moment we polled them,
+ * exactly as a notice card would have been. Nothing in it is a fixed string
+ * about sources we merely intend to watch.
+ */
+export interface QuietState {
+  line: string
+  sub: string
+  /** The sources genuinely consulted, by printable name. Never a fixed list. */
+  watching: readonly string[]
+  checkedAt: number
+  /** Section 9 draws this as "What we check, and how often". Real, and short. */
+  action: string
+}
+
+export function quietState(input: {
+  townName: string
+  watching: readonly string[]
+  checkedAt: number
+}): QuietState {
+  const names = [...input.watching].sort()
+  return {
+    line: `Nothing is going on in ${input.townName} right now.`,
+    // Names the sources rather than counting them where a person could hold the
+    // names in their head, because "we checked the weather service and the
+    // city" is reassuring in a way that "we checked 2 sources" is not.
+    sub: `${nothingFrom(names)} Last checked just now.`,
+    watching: names,
+    checkedAt: input.checkedAt,
+    action: 'What we check, and how often',
+  }
+}
+
+function nothingFrom(names: readonly string[]): string {
+  if (names.length === 0) {
+    // The honest sentence when we are watching nothing at all. It reads as a
+    // problem because it is one, and dressing it as calm would be the exact
+    // lie this whole surface exists to avoid.
+    return 'We are not currently watching any alert source.'
+  }
+  if (names.length === 1) return `Nothing from ${names[0]}.`
+  if (names.length === 2) return `Nothing from ${names[0]} or ${names[1]}.`
+  return `Nothing from ${names[0]}, ${names[1]}, or the ${names.length - 2} other sources we watch.`
 }
 
 export class MemoryNoticeStateStore implements NoticeStateStore {

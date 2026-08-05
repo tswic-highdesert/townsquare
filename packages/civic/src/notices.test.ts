@@ -4,6 +4,7 @@ import {
   fromAuthored,
   noticeDigest,
   presentFor,
+  quietState,
   toCivicNotice,
   type IngestedNotice,
 } from './notices.js'
@@ -194,5 +195,43 @@ describe('one resident, one stream', () => {
     })
     // Hiding is not unsubscribing. Same notice, new words, straight back.
     expect(presentFor(updated, hidden, NOW - HOUR + 1000)[0]!.presentation).toBe('takeover')
+  })
+})
+
+describe('the designed silence', () => {
+  const quiet = (watching: string[]) =>
+    quietState({ townName: 'Russellville', watching, checkedAt: NOW })
+
+  it('states the fact and never apologises', () => {
+    // Section 10's voice test: read it out loud to a neighbour. "No active
+    // alerts" fails that; this is what a person would actually say.
+    expect(quiet(['NWS Little Rock']).line).toBe('Nothing is going on in Russellville right now.')
+  })
+
+  it('names what was checked, because silence is a claim too', () => {
+    // A blank screen and a screen whose scrapers all died look identical to a
+    // resident, and telling those apart is the whole value of this surface.
+    expect(quiet(['NWS Little Rock']).sub).toContain('Nothing from NWS Little Rock.')
+    expect(quiet(['NWS Little Rock', 'City of Russellville']).sub).toContain(
+      'Nothing from City of Russellville or NWS Little Rock.',
+    )
+  })
+
+  it('counts the tail once the list stops fitting in a person head', () => {
+    const sub = quiet(['A source', 'B source', 'C source', 'D source']).sub
+    expect(sub).toContain('Nothing from A source, B source, or the 2 other sources we watch.')
+  })
+
+  it('says plainly when it is watching nothing, rather than sounding calm', () => {
+    // This reads as a problem because it is one. Dressing it as calm is the
+    // exact lie this surface exists to avoid.
+    expect(quiet([]).sub).toContain('not currently watching any alert source')
+  })
+
+  it('carries the sources and the moment, so a client can show its working', () => {
+    const state = quiet(['NWS Little Rock', 'City of Russellville'])
+    expect(state.watching).toEqual(['City of Russellville', 'NWS Little Rock'])
+    expect(state.checkedAt).toBe(NOW)
+    expect(state.action).toBe('What we check, and how often')
   })
 })
