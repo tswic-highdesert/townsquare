@@ -626,21 +626,25 @@
 }
 
 /*
- * ## Every override of a `.ts-*` class below doubles its selector, and it has to
+ * ## Why the overrides below double their selector
  *
- * `styles/index.css` says `ui.css` loads first so a screen can override a
- * primitive. That is true of the screen sheets it imports and **false of a
- * stylesheet imported from a component**, which is what this file is: in a
- * production build `directory.css` lands at about 23 KB into the bundle and
- * `ui.css` at about 62 KB, so at equal specificity the primitive wins and the
- * override is silently dead.
+ * `ui.css` now opens with `@layer ts-base, ts-primitives`, and this file is
+ * unlayered, so its rules already beat every primitive regardless of order or
+ * specificity. The doubling is belt and braces and could be dropped.
  *
- * It is silent in the worst possible way. Vite's dev server injects in the
- * other order, so `pnpm dev` shows the override working and only the built app
- * is wrong — measured by building an entry that imports this screen and reading
- * the offsets, not by guessing. Doubling the selector (`.ts-card.dir-pin`)
- * takes order out of it entirely. Do not remove the doubled halves because they
- * look redundant; they are the whole reason these rules apply.
+ * It is kept because of what it survived. Before the layers landed, these rules
+ * were silently dead in production and working in development: `styles/
+ * index.css` promises `ui.css` loads first so a screen can override a
+ * primitive, and that is true of the screen sheets it imports and **false of a
+ * stylesheet imported from a component**, which is what this is. A build that
+ * imports this screen puts `directory.css` at about 13 KB into the bundle and
+ * `ui.css` at about 62 KB — measured by reading the offsets, not guessed — so
+ * the primitive won every equal-specificity tie, while Vite's dev server
+ * injected the other way round and showed the override working. `.dir-pin`
+ * lost `display: flex` and rendered vertically in the built app only.
+ *
+ * Doubling is the one form that is correct under both regimes, and layers are
+ * a young enough change to be worth not depending on alone.
  *
  * `Card` brings the surface, the border, the radius, the elevation and the
  * padding. All this adds is the stacking direction and a tighter pad, because a

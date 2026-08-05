@@ -362,6 +362,20 @@ async function main(): Promise<void> {
   // Nearby reads no cookie either, for a reason that is the screen's whole
   // design rather than an optimisation: it hands over the town and the browser
   // ranks it, so a resident's position is never sent anywhere. See `nearby.ts`.
+  /**
+   * Still mounted, and do not drop it without reading this.
+   *
+   * `Nearby` the screen is gone — discovery absorbed it, and its file says so at
+   * length. The obvious follow-up is to delete this route as a second copy of a
+   * payload nothing fetches, and that is wrong: the composer's place picker
+   * fetches `/api/nearby` deliberately, because `/api/businesses` caps at 200
+   * rows and a resident searching for the 300th listing would conclude it did
+   * not exist. Dropping this route breaks correcting a listing, silently, in a
+   * flow no test covers end to end.
+   *
+   * The real fix is moving that picker onto `/api/directory` and then deleting
+   * this. Until somebody does, it stays.
+   */
   const nearbyRoutes = createNearbyRoutes({ town: TOWN, loadItems })
 
   // News, events and the directory read no cookie and are the same for every
