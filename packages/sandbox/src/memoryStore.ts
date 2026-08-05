@@ -82,6 +82,23 @@ export class MemoryBundleStore implements BundleStore {
     return this.list().find((c) => c.slug === slug)
   }
 
+  /**
+   * A version's files, reassembled from the content-addressed blobs.
+   *
+   * Catalogue-side, like `list()` and `get()`: it is how the builder tooling
+   * shows a resident the source of a creation they want to fork. Deliberately
+   * not on `BundleStore` — the serving path must stay unable to ask for
+   * anything but one named file of one resolved version.
+   */
+  async filesFor(versionId: string): Promise<Map<string, Uint8Array>> {
+    const out = new Map<string, Uint8Array>()
+    for (const [path, file] of this.files.get(versionId) ?? new Map<string, StoredFile>()) {
+      const bytes = this.blobs.get(file.sha256)
+      if (bytes) out.set(path, bytes)
+    }
+    return out
+  }
+
   async resolveOrigin(kind: 'creation' | 'preview', key: string): Promise<ResolvedVersion | null> {
     const id = this.byKey.get(`${kind}:${key}`)
     if (id === undefined) return null

@@ -16,6 +16,7 @@ pnpm install
 pnpm dev:api        # read API      → http://localhost:3030/api
 pnpm dev:sandbox    # bundles       → http://<origin-key>.tsq-apps.localhost:3031
 pnpm dev:web        # the shell     → http://townsquare.localhost:5173
+pnpm dev:mcp        # builder door  → http://localhost:8770/mcp
 ```
 
 Open **http://townsquare.localhost:5173** — not `127.0.0.1:5173`. The name is
@@ -46,6 +47,7 @@ entry document at serve time.
 | `apps/api` | the session, the database, act tokens | — |
 | `apps/sandbox` | nothing | any cookie parser, session, or auth plugin |
 | `apps/web` | the shell, the bridge | a creation's code |
+| `apps/mcp` | bearer tokens, drafts | a cookie parser or any session |
 
 The sandbox process serves untrusted code from origins whose contents we do not
 control. It has no route that reads a user and no dependency that could grow
@@ -128,6 +130,69 @@ another app's, which is what makes cross-tenant access structurally impossible
 rather than carefully avoided. The example creation exercises the whole path:
 open it signed in and pin a favourite.
 
+## The builder door
+
+`pnpm dev:mcp` is how a resident builds a creation with their own AI tool. It
+speaks MCP over HTTP, authenticates a `ts_live_` bearer token, and exposes
+seventeen tools. The loop an agent follows is:
+
+```
+whoami → get_sdk_docs → list_record_types → scaffold
+       → begin_upload → POST the files → validate → preview → submit
+```
+
+Two things about it are load-bearing rather than convenient.
+
+**Bundles never pass through the model's context.** `begin_upload` takes an
+*inventory* — every path with its sha256 and byte length — and hands back a
+one-time ticket plus a ready-to-run shell loop. The agent POSTs the raw bytes,
+and the server rejects an undeclared path, a wrong length, or content that does
+not hash to what was declared. Asking a language model to reproduce 150KB of
+vendored Leaflet byte-exact is asking it to be a lossy file-copy utility on the
+one class of file where lossiness is a security bug. The inventory is also what
+makes "everything is vendored" enforceable: the set of files is fixed before a
+byte moves.
+
+**`validate` and `submit` run the same function.** Not an equivalent one. If
+the authoring-time check were advisory and the queue's were real, builders would
+learn that the advice is optional and Tal would review the difference.
+
+`preview` publishes into the same `MemoryBundleStore` the sandbox serves from,
+with a CSP compiled by the same compiler and frozen the same way, on a `p-`
+prefixed origin key that can never collide with an approved creation's. What
+works in preview works after approval, and what preview blocks would have been
+blocked in production.
+
+### Signing in to it
+
+Tokens are minted by the shell, at `POST /api/connect/tokens`, which needs a
+session cookie. The MCP service has no cookie parser and no session-reading
+route, exactly like the sandbox: a session can mint an MCP token, and an MCP
+token can never reach anything that reads a session.
+
+In development the three processes hold separate memory stores, so a token
+minted through the API is not one `pnpm dev:mcp` will accept. That process prints
+its own instead, the same way `pnpm dev:api` prints sign-in links:
+
+```bash
+TOWNSQUARE_SEED_COHORT='tswic:tal@example.com:admin' pnpm dev:mcp
+# → claude mcp add --transport http townsquare http://localhost:8770/mcp \
+#       --header "Authorization: Bearer ts_live_…"
+```
+
+Both echoes are gated on the same plain-http check and neither exists once
+`SHELL_ORIGIN` is https. In production all three read one database and the only
+mint is `/settings/connect`.
+
+### What refuses to start
+
+The docs artifact is a fail-closed boot dependency. If `packages/sdk`'s generated
+docs have been hand-edited, or they describe methods this build does not have,
+the process does not come up. This service's whole job is teaching an LLM the
+SDK, and a docs/SDK skew silently writes an entire generation of creations
+against a contract nobody implements — that is as dangerous as an unauthenticated
+endpoint, so it gets the same treatment.
+
 ## Adding an example creation
 
 Drop a directory in `apps/sandbox/examples/`. It needs a `townsquare.json`, the
@@ -138,7 +203,7 @@ fails loudly at startup rather than working only here.
 ## Tests
 
 ```bash
-pnpm test        # 465 tests
+pnpm test        # 542 tests
 pnpm typecheck
 ```
 
@@ -146,7 +211,13 @@ pnpm typecheck
 real guest SDK against the real host bridge over an actual `MessageChannel`, so
 it covers the half of the protocol that neither side's own unit tests can.
 
-`apps/api/src/identityRoutes.test.ts` is the second: it drives the auth routes
+`packages/mcp/src/service.test.ts` is worth reading second: it drives the MCP
+service over a real socket with the *real* MCP client, which is how it caught a
+typographic ellipsis in an auth message turning every 401 into an uncaught
+`ERR_INVALID_CHAR` and a hung socket. Nothing short of a real HTTP response
+would have found that.
+
+`apps/api/src/identityRoutes.test.ts` is the third: it drives the auth routes
 over a real socket rather than calling the handler, because the properties that
 matter there are HTTP properties — which routes read a cookie, what
 `Set-Cookie` actually says, whether a bridge call authenticated by a session
@@ -170,7 +241,7 @@ in two jobs split by cost:
 
 | Job | Runs | Roughly |
 |---|---|---|
-| `checks` | typecheck, generated-docs drift, 465 unit tests | under a minute |
+| `checks` | typecheck, generated-docs drift, 542 unit tests | under a minute |
 | `boundary` | the Playwright suite, three origins in Chromium | two to three minutes |
 
 Neither is configured as a **required** status check, on purpose. This repo is

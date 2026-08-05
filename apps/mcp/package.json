@@ -1,0 +1,17 @@
+{
+  "name": "@townsquare/mcp-service",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "tsx watch src/main.ts",
+    "start": "tsx src/main.ts"
+  },
+  "dependencies": {
+    "@townsquare/feed": "workspace:*",
+    "@townsquare/identity": "workspace:*",
+    "@townsquare/mcp": "workspace:*",
+    "@townsquare/sandbox": "workspace:*",
+    "@townsquare/shared": "workspace:*"
+  }
+}

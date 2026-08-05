@@ -12,6 +12,7 @@
     "packages/host/src/**/*",
     "packages/identity/src/**/*",
     "packages/storage/src/**/*",
+    "packages/mcp/src/**/*",
     "apps/*/src/**/*"
   ],
   "exclude": ["**/node_modules", "**/dist"],
@@ -31,7 +32,8 @@
       "@townsquare/feed": ["./packages/feed/src/index.ts"],
       "@townsquare/db": ["./packages/db/src/index.ts"],
       "@townsquare/identity": ["./packages/identity/src/index.ts"],
-      "@townsquare/storage": ["./packages/storage/src/index.ts"]
+      "@townsquare/storage": ["./packages/storage/src/index.ts"],
+      "@townsquare/mcp": ["./packages/mcp/src/index.ts"]
     }
   }
 }

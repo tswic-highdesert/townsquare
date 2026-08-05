@@ -12,6 +12,7 @@
     "@townsquare/feed": "workspace:*",
     "@townsquare/identity": "workspace:*",
     "@townsquare/manifest": "workspace:*",
+    "@townsquare/mcp": "workspace:*",
     "@townsquare/sandbox": "workspace:*",
     "@townsquare/sdk": "workspace:*",
     "@townsquare/shared": "workspace:*"

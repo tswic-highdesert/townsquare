@@ -24,12 +24,15 @@ import {
 import { CreationStorage, MemoryStorageStore } from '@townsquare/storage'
 import { businesses } from '../../../packages/feed/src/data/businesses.js'
 import { loadExampleCreations } from '../../sandbox/src/examples.js'
+import { MemoryMcpTokenStore } from '@townsquare/mcp'
+import { createConnectRoutes } from './connectRoutes.js'
 import { createIdentityRoutes } from './identityRoutes.js'
 
 const PORT = Number(process.env['API_PORT'] ?? 3030)
 const APPS_DOMAIN = process.env['APPS_DOMAIN'] ?? 'tsq-apps.localhost'
 const SANDBOX_PORT = Number(process.env['SANDBOX_PORT'] ?? 3031)
 const SHELL_ORIGIN = process.env['SHELL_ORIGIN'] ?? 'http://townsquare.localhost:5173'
+const MCP_URL = process.env['MCP_PUBLIC_URL'] ?? 'http://localhost:8770/mcp'
 
 const TOWN = { id: 'russellville-ar', name: 'Russellville', timezone: 'America/Chicago' }
 
@@ -73,6 +76,17 @@ async function main(): Promise<void> {
   // Drizzle one will, so nothing above it changes when storage moves to
   // Postgres. Restarting the API empties every creation's scratch space.
   const storage = new CreationStorage({ store: new MemoryStorageStore() })
+
+  // Minting an MCP token needs a session, and the MCP service deliberately has
+  // no way to read one. So the mint lives here and the MCP service only ever
+  // verifies. In development the two processes hold separate memory stores, so
+  // a token minted here is not the one `pnpm dev:mcp` prints — see apps/mcp.
+  const connectRoutes = createConnectRoutes({
+    identity,
+    tokens: new MemoryMcpTokenStore(),
+    shellOrigin: SHELL_ORIGIN,
+    mcpUrl: MCP_URL,
+  })
 
   const identityRoutes = createIdentityRoutes({
     identity,
@@ -124,9 +138,11 @@ async function main(): Promise<void> {
     }
 
     // Anything holding a credential is decided first, and owns its own 404s.
-    void identityRoutes(req, res, url).then((handled) => {
-      if (!handled) readRoutes(url, store, json)
-    })
+    void identityRoutes(req, res, url)
+      .then((handled) => (handled ? true : connectRoutes(req, res, url)))
+      .then((handled) => {
+        if (!handled) readRoutes(url, store, json)
+      })
   })
 
   server.listen(PORT, () => {
