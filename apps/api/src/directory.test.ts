@@ -346,6 +346,71 @@ describe('assembleDirectory', () => {
     expect(mixed.scrapedLabel).toBeNull()
   })
 
+  /**
+   * The half of Nearby this screen absorbed. Without the corridors and the
+   * framing box in this payload the map would need a second 240 KB fetch of the
+   * same 741 listings, which is the duplication the merge existed to remove.
+   */
+  it('carries the drawn map: corridors and a framing box', () => {
+    const payload = assembleDirectory({
+      now,
+      town: TOWN,
+      // Five addresses on one road is the floor a corridor has to clear; four
+      // can be a coincidence of buildings sharing a street name.
+      items: Array.from({ length: 6 }, (_, i) =>
+        business({
+          id: `b${i}`,
+          address: `${100 + i * 20} N Commerce Ave, Russellville, AR`,
+          geo: { lat: 35.27 + i * 0.002, lng: -93.13 },
+        }),
+      ),
+    })
+    expect(payload.streets.length).toBeGreaterThan(0)
+    expect(payload.bounds).not.toBeNull()
+  })
+
+  /**
+   * The map frames on real points only. A (0, 0) sentinel is the Gulf of
+   * Guinea, and framing on it opens the map on the Atlantic with Russellville
+   * somewhere off the top edge.
+   */
+  it('frames the map on placeable listings and ignores the sentinels', () => {
+    const withSentinel = assembleDirectory({
+      now,
+      town: TOWN,
+      items: [business({ id: 'real' }), business({ id: 'nowhere', geo: undefined })],
+    })
+    const withoutIt = assembleDirectory({ now, town: TOWN, items: [business({ id: 'real' })] })
+    expect(withSentinel.bounds).toEqual(withoutIt.bounds)
+    // …and the unplaceable listing is still in the directory, because browse
+    // does not need a map.
+    expect(withSentinel.places).toHaveLength(2)
+  })
+
+  it('draws no map control when nothing can be placed', () => {
+    const payload = assembleDirectory({
+      now,
+      town: TOWN,
+      items: [business({ geo: { lat: 0, lng: 0 } })],
+    })
+    expect(payload.bounds).toBeNull()
+    expect(payload.places).toHaveLength(1)
+  })
+
+  /**
+   * Two cuts of one category, both true. Fifteen doors for the browse grid,
+   * five glyphs for the map, because fifteen shapes at 12px is a legend.
+   */
+  it('carries both the fine group and the coarse map bucket', () => {
+    const payload = assembleDirectory({
+      now,
+      town: TOWN,
+      items: [business({ category: 'Nail salon' })],
+    })
+    expect(payload.places[0]?.group).toBe('beauty')
+    expect(payload.places[0]?.kind).toBe('service')
+  })
+
   it('carries no distance, no ranking and no position', () => {
     const payload = assembleDirectory({ now, town: TOWN, items: [business()] })
     expect(JSON.stringify(payload)).not.toContain('distance')

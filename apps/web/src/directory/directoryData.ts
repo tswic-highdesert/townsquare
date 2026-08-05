@@ -22,8 +22,13 @@
 import {
   formatDistance,
   milesBetween,
+  type PlaceKind,
   type Position,
+  type StreetCorridor,
+  type TownBounds,
 } from '../nearbyData.js'
+
+export type { PlaceKind, StreetCorridor, TownBounds }
 
 export type GroupId =
   | 'eat'
@@ -49,6 +54,8 @@ export interface DirectoryPlace {
   name: string
   category: string
   group: GroupId
+  /** The coarse bucket the map pin is drawn by. Five glyphs, not fifteen. */
+  kind: PlaceKind
   detail: string
   phase: OpenPhase
   openNow: boolean | null
@@ -80,6 +87,8 @@ export interface DirectoryPayload {
     withWebsite: number
     categories: number
   }
+  streets: StreetCorridor[]
+  bounds: TownBounds | null
   scrapedLabel: string | null
   updatedLabel: string
 }

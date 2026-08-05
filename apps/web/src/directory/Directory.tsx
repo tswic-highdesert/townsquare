@@ -18,6 +18,42 @@
  * behaviour a town directory is supposed to replace. There are 741 places in
  * here and nobody has been inside more than a few dozen of them.
  *
+ * ## This screen absorbed Nearby, and why
+ *
+ * Nearby and discovery were one screen wearing two hats. Both read the same 741
+ * listings, both compute open/closed through the same `openState`, both hand
+ * the whole town to the browser and rank it against a position that never
+ * leaves the device, and both fall back to "what is open" when a resident
+ * refuses location. The only thing that differed was which question led —
+ * "what is near me" against "what is in town" — and that is a **sort control**,
+ * not a second tab.
+ *
+ * The visible symptom was two search fields stacked at desktop: the app bar's,
+ * which searches the town, and Nearby's own, which filtered the directory.
+ * Naming the scope in a placeholder would have made the duplicate legible
+ * rather than gone — two search affordances on one screen and a resident still
+ * working out which one they want. This screen's answer is that there is **no
+ * resting field at all**: search sits behind a quiet button under a heading
+ * naming it as the exception, because the directory's whole job is helping
+ * somebody find what they did not know to type. The second field is removed,
+ * not labelled.
+ *
+ * Six decisions from `Nearby.tsx` come across intact, and none of them may be
+ * undone here:
+ *
+ * 1. **No coordinates in either direction.** `/api/directory` takes no
+ *    parameters at all — no lat, no lng, no query, no category.
+ * 2. **The map talks to nobody.** No tile host, no key, no attribution beacon,
+ *    and the shell's CSP is unchanged by this screen. It is drawn from the
+ *    street corridors implied by the directory's own 741 addresses.
+ * 3. **The list is the default and stands alone.** The Map control is only
+ *    drawn when the payload carries `bounds`.
+ * 4. **Refusing location costs the distances and nothing else.**
+ * 5. **No events anywhere that claims a distance.** The calendar's coordinates
+ *    are a hardcoded town centre and a run of literal zeroes; `nearby.ts` has
+ *    the whole story and it is still worth reading.
+ * 6. **A creation's layer is omitted, not mocked.** It needs `records`.
+ *
  * ## Nothing leaves the device
  *
  * `GET /api/directory` takes no parameters. Filtering, searching, ranking and
@@ -46,6 +82,7 @@ import { useEffect, useMemo, useState } from 'react'
 import { AppBar } from '../AppBar.js'
 import { Icon } from '../Icon.js'
 import { TabBar, type TabName } from '../TabBar.js'
+import { TownMap } from '../TownMap.js'
 import {
   BottomSheet,
   Button,
@@ -69,7 +106,7 @@ import {
   type RankedPlace,
   type SortKey,
 } from './directoryData.js'
-import { BrowseCard, GROUP_ICON, GROUP_TONE, ListRow, MiniCard, PinCard, directionsUrl } from './parts.js'
+import { BrowseCard, GROUP_ICON, GROUP_TONE, KIND_ICON, ListRow, MiniCard, PinCard, directionsUrl } from './parts.js'
 import { Stumble } from './Stumble.js'
 import './directory.css'
 
@@ -130,6 +167,17 @@ export function Directory(props: DirectoryProps) {
    */
   const [layout, setLayout] = useState<Layout>('rows')
   const [selected, setSelected] = useState<RankedPlace | null>(null)
+  /**
+   * The map is a view of the list, not a screen of its own.
+   *
+   * Inherited from Nearby, where the switch lived beside the search field: the
+   * list half is the default and works on its own, and the Map control is only
+   * drawn when the payload carries bounds to draw. A Map button that opens an
+   * empty rectangle is worse than no Map button.
+   */
+  const [onMap, setOnMap] = useState(false)
+  /** The pin a finger landed on, which is a different thing from the sheet. */
+  const [pinned, setPinned] = useState<RankedPlace | null>(null)
 
   useEffect(() => {
     void fetchDirectory().then(setPayload, () => setFailed(true))
@@ -323,8 +371,21 @@ export function Directory(props: DirectoryProps) {
           onOpenOnly={setOpenOnly}
           onSort={setSort}
           onLayout={setLayout}
-          onBack={() => setView({ name: 'home' })}
+          onBack={() => {
+            setOnMap(false)
+            setPinned(null)
+            setView({ name: 'home' })
+          }}
           onCategory={(category) => setView({ name: 'category', category })}
+          bounds={payload.bounds}
+          streets={payload.streets}
+          onMap={onMap}
+          onToggleMap={() => {
+            setOnMap((on) => !on)
+            setPinned(null)
+          }}
+          pinned={pinned}
+          onPin={setPinned}
           savedRefs={savedRefs}
           canSave={props.account !== null}
           onToggleSave={(p) => void toggleSave(p)}
@@ -549,6 +610,12 @@ function GroupLanding({
   onLayout,
   onBack,
   onCategory,
+  bounds,
+  streets,
+  onMap,
+  onToggleMap,
+  pinned,
+  onPin,
   savedRefs,
   canSave,
   onToggleSave,
@@ -565,6 +632,12 @@ function GroupLanding({
   onOpenOnly: (on: boolean) => void
   onSort: (key: SortKey) => void
   onLayout: (layout: Layout) => void
+  bounds: DirectoryPayload['bounds']
+  streets: DirectoryPayload['streets']
+  onMap: boolean
+  onToggleMap: () => void
+  pinned: RankedPlace | null
+  onPin: (place: RankedPlace | null) => void
   onBack: () => void
   onCategory: (category: string) => void
   savedRefs: Set<string>
@@ -583,7 +656,14 @@ function GroupLanding({
 
   return (
     <>
-      <header className="dir-cathead">
+      {/*
+        The header collapses when the map is on. Screenshotting this the first
+        time showed the map starting eleven hundred pixels down a phone, under a
+        rollup blurb and ten category chips — a map nobody scrolls to is not a
+        map. What a resident wants from a map and what they want from a list of
+        chips are different questions, and only one of them can be at the top.
+      */}
+      <header className="dir-cathead" data-map={onMap || undefined}>
         <BackLink onBack={onBack} label="The directory" />
         <div className="dir-cathead-main">
           <span className="dir-cathead-icon">
@@ -603,7 +683,7 @@ function GroupLanding({
           a resident who disagrees with the rollup can see exactly what went
           into it rather than guessing at our taxonomy.
         */}
-        {view.name === 'group' && group && group.categories.length > 1 && (
+        {!onMap && view.name === 'group' && group && group.categories.length > 1 && (
           <p className="dir-cathead-blurb">
             Rolled up from {group.categories.length} categories, including{' '}
             {group.categories.slice(0, 4).map((c) => c.toLowerCase()).join(', ')}.
@@ -631,6 +711,16 @@ function GroupLanding({
             <Icon name={layout === 'rows' ? 'grid' : 'list'} size={14} />
             {layout === 'rows' ? 'Cards' : 'List'}
           </button>
+          {/*
+            Only drawn when there is something to draw. `bounds` needs placeable
+            listings, and this is the rule Nearby already had.
+          */}
+          {bounds && (
+            <button className="dir-tool" data-on={onMap || undefined} onClick={onToggleMap} aria-pressed={onMap}>
+              <Icon name={onMap ? 'list' : 'map'} size={14} />
+              {onMap ? 'List' : 'Map'}
+            </button>
+          )}
         </div>
 
         {/*
@@ -639,7 +729,7 @@ function GroupLanding({
           the one that has to say what it took out: it hides the places whose
           hours we could not read, and they may well be open.
         */}
-        {openOnly && (
+        {openOnly && !onMap && (
           <p className="dir-filter-warn">
             <Icon name="info" size={14} />
             <span>
@@ -654,7 +744,7 @@ function GroupLanding({
         The chips under a group are its own categories, so narrowing 127 shops
         to 11 clothing shops never goes back through the home screen.
       */}
-      {view.name === 'group' && group && group.categories.length > 1 && (
+      {!onMap && view.name === 'group' && group && group.categories.length > 1 && (
         <div className="dir-chips dir-chips-inset">
           {group.categories.slice(0, 10).map((category) => (
             <button key={category} className="dir-chip" onClick={() => onCategory(category)}>
@@ -664,6 +754,37 @@ function GroupLanding({
         </div>
       )}
 
+      {onMap && bounds ? (
+        <div className="dir-mapview" data-pinned={pinned ? '' : undefined}>
+          {/*
+            Every match gets a pin, not the first forty. A map is scanned rather
+            than read, 741 circles is nothing for an SVG, and the shape of the
+            place is the entire reason to look at one — a map limited to forty
+            was roads out to the edges with every pin in one downtown clot.
+          */}
+          <TownMap
+            bounds={bounds}
+            streets={streets}
+            places={places}
+            position={position}
+            selectedId={pinned?.id ?? null}
+            onSelect={(place) => onPin(place ? (places.find((p) => p.id === place.id) ?? null) : null)}
+            kindIcon={KIND_ICON}
+          />
+          {/*
+            One card, for the pin that was tapped, and it is the same `PinCard`
+            used loose elsewhere — the map is not a second design system. The
+            hi-fi also lists the nearest few under the map; that is the List
+            half, one press away, and two scrolling lists of the same rows on
+            one screen is a screen arguing with itself.
+          */}
+          {pinned && (
+            <div className="dir-mapcard">
+              <PinCard place={pinned} />
+            </div>
+          )}
+        </div>
+      ) : (
       <Results
         places={places}
         layout={layout}
@@ -677,6 +798,7 @@ function GroupLanding({
         onToggleSave={onToggleSave}
         onOpen={onOpen}
       />
+      )}
     </>
   )
 }

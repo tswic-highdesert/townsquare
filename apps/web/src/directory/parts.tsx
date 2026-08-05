@@ -29,7 +29,7 @@ import type { ReactNode } from 'react'
 import { Icon, type IconName } from '../Icon.js'
 import { Card, CardBody, CardMeta, CardTitle, Row } from '../ui/index.js'
 import { formatDistance } from '../nearbyData.js'
-import type { GroupId, OpenPhase, RankedPlace } from './directoryData.js'
+import type { GroupId, OpenPhase, PlaceKind, RankedPlace } from './directoryData.js'
 import { shortAddress } from './directoryData.js'
 
 /**
@@ -57,6 +57,23 @@ export const GROUP_ICON: Readonly<Record<GroupId, IconName>> = {
   fun: 'sport',
   civic: 'vote',
   serv: 'package',
+}
+
+/**
+ * The map's glyphs, which are a coarser question than the browse grid's.
+ *
+ * Five, not fifteen. A legend a resident has to learn is not a map, and at the
+ * 12px a pin is drawn at, fifteen shapes are indistinguishable — "Beauty and
+ * barber" and "Health and care" are the same smudge. `placeKind` on the server
+ * is the tested five-bucket cut and this is its icon table; the finer grouping
+ * still runs the browse grid, and both are true of the same listing.
+ */
+export const KIND_ICON: Readonly<Record<PlaceKind, IconName>> = {
+  eat: 'utensils',
+  shop: 'storefront',
+  care: 'heartbeat',
+  civic: 'vote',
+  service: 'wrench',
 }
 
 /**

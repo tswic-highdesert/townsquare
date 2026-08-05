@@ -36,6 +36,21 @@
 /** Deep path, not the barrel. Same reason as `today.ts` — see the note there. */
 import type { BusinessItem, TownSquareItem } from '../../../packages/feed/src/lib/types.js'
 import { clockParts, hoursToday, openState, rotate } from './today.js'
+/**
+ * The five-bucket map and the drawn town, both borrowed rather than rebuilt.
+ *
+ * This screen absorbed Nearby (see the note at the top of
+ * `apps/web/src/directory/Directory.tsx`), and absorbing it means taking its
+ * two tested pieces with it rather than growing parallel ones. `placeKind` is
+ * the coarse cut the **map pins** are drawn by — five glyphs a resident can
+ * tell apart at 12px, which is a different question from the fifteen doors the
+ * browse grid asks, and both are true of the same listing. `townMap` derives
+ * the street corridors from the same 741 addresses.
+ */
+import { placeKind, type PlaceKind } from './nearby.js'
+import { deriveStreets, townBounds, type StreetCorridor, type TownBounds } from './townMap.js'
+
+export type { PlaceKind }
 
 const isBusiness = (i: TownSquareItem): i is BusinessItem => i.type === 'business'
 
@@ -302,6 +317,11 @@ export interface DirectoryPlace {
   /** The scrape's own free-text category, kept verbatim. The long tail is real. */
   category: string
   group: GroupId
+  /**
+   * The coarse bucket, for the map pin's glyph. Fifteen shapes on a map is a
+   * legend a resident has to learn; five is a shape they can read.
+   */
+  kind: PlaceKind
   /** Open state first, then today's printed range, then the category. */
   detail: string
   phase: OpenPhase
@@ -345,6 +365,17 @@ export interface DirectoryPayload {
     withWebsite: number
     categories: number
   }
+  /**
+   * The map, such as it is: street corridors derived from the same addresses,
+   * and the rectangle to frame them in. About 4 KB, and it is the entire reason
+   * this screen needs no tile host. See `townMap.ts`.
+   *
+   * Null bounds means nothing in the directory can be placed, and the screen
+   * draws no Map control at all — a switch that opens an empty rectangle is
+   * worse than no switch.
+   */
+  streets: StreetCorridor[]
+  bounds: TownBounds | null
   /** When the directory was read, said the way a person would. One date, honestly. */
   scrapedLabel: string | null
   updatedLabel: string
@@ -398,6 +429,7 @@ export function assembleDirectory(input: AssembleDirectoryInput): DirectoryPaylo
       name: b.name,
       category: b.category,
       group: categoryGroup(b.category),
+      kind: placeKind(b.category),
       // Same ladder as the directory strip on Today and the rows on Nearby.
       detail: state.phase === 'unknown' ? state.label : state.label,
       phase: state.phase,
@@ -462,6 +494,12 @@ export function assembleDirectory(input: AssembleDirectoryInput): DirectoryPaylo
       withWebsite: places.filter((p) => p.url !== null).length,
       categories: byCategory.size,
     },
+    streets: deriveStreets(items),
+    // Framed on the listings that can actually be placed. Two listings in the
+    // directory are geocoded to the far side of the state and the (0, 0)
+    // sentinels are not points at all; framing on either opens the map on
+    // Arkansas with the town as a speck in it.
+    bounds: townBounds(places.filter((p) => !(p.lat === 0 && p.lng === 0))),
     scrapedLabel: scrapeDate(businesses, tz),
     updatedLabel: `${time}${meridiem.toLowerCase()}`,
   }

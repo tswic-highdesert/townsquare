@@ -17,6 +17,7 @@ function place(over: Partial<DirectoryPlace> = {}): DirectoryPlace {
     name: 'Hickory & Ash',
     category: 'Furniture store',
     group: 'shop',
+    kind: 'shop',
     detail: 'Open until 5 PM',
     phase: 'open',
     openNow: true,

@@ -204,7 +204,7 @@
  * `Card dark` supplies the navy fill, the navy shadow and the dark focus halo.
  * All that is left is the shape: a wide row inside the screen's gutter.
  */
-.dir-serendipity {
+.ts-card.dir-serendipity {
   display: flex;
   align-items: center;
   gap: var(--ts-space-3);
@@ -626,12 +626,28 @@
 }
 
 /*
+ * ## Every override of a `.ts-*` class below doubles its selector, and it has to
+ *
+ * `styles/index.css` says `ui.css` loads first so a screen can override a
+ * primitive. That is true of the screen sheets it imports and **false of a
+ * stylesheet imported from a component**, which is what this file is: in a
+ * production build `directory.css` lands at about 23 KB into the bundle and
+ * `ui.css` at about 62 KB, so at equal specificity the primitive wins and the
+ * override is silently dead.
+ *
+ * It is silent in the worst possible way. Vite's dev server injects in the
+ * other order, so `pnpm dev` shows the override working and only the built app
+ * is wrong — measured by building an entry that imports this screen and reading
+ * the offsets, not by guessing. Doubling the selector (`.ts-card.dir-pin`)
+ * takes order out of it entirely. Do not remove the doubled halves because they
+ * look redundant; they are the whole reason these rules apply.
+ *
  * `Card` brings the surface, the border, the radius, the elevation and the
  * padding. All this adds is the stacking direction and a tighter pad, because a
- * two-up grid inside a 480px column has 160px of card and space-4 all round
+ * two-up grid inside a 480px column has 160px of card, and space-4 all round
  * leaves 128px of content.
  */
-.dir-card {
+.ts-card.dir-card {
   display: flex;
   flex-direction: column;
   padding: var(--ts-space-2);
@@ -677,7 +693,7 @@
 }
 
 /* `CardBody` is the grid; this only tightens its gap and gives it room. */
-.dir-card-body {
+.ts-card-body.dir-card-body {
   gap: var(--ts-space-2);
   padding: var(--ts-space-2) var(--ts-space-2) var(--ts-space-1);
 }
@@ -747,7 +763,12 @@
  * for the plate, which at that size is a smudge rather than the thing that
  * makes a list of 127 scannable in the peripheral.
  */
-.dir-rows {
+/*
+ * `[data-density]` is in the selector for specificity, not for matching:
+ * `.ts-rows[data-density='compact']` sets `--ts-row-lead: 32px` and would
+ * outrank a plain `.dir-rows` even if the load order were the other way round.
+ */
+.ts-rows[data-density].dir-rows {
   --ts-row-lead: 48px;
   margin: var(--ts-space-4) var(--ts-space-3) 0;
 }
@@ -763,7 +784,7 @@
   align-items: center;
 }
 
-.dir-row-main {
+.ts-row.dir-row-main {
   flex: 1;
   min-width: 0;
   padding-right: var(--ts-space-2);
@@ -839,7 +860,7 @@
   .dir-row-main .ts-row-chev {
     display: none;
   }
-  .dir-row-main {
+  .ts-row.dir-row-main {
     padding-left: var(--ts-space-3);
     padding-right: var(--ts-space-1);
   }
@@ -848,7 +869,7 @@
 /* ── the pin card, loose or over a map ─────────────────────────────────── */
 
 /* `Card elevation="raised"` is the shell. This only turns it sideways. */
-.dir-pin {
+.ts-card.dir-pin {
   display: flex;
   align-items: center;
   gap: var(--ts-space-3);
@@ -972,6 +993,25 @@
   font-size: var(--ts-text-label);
   line-height: 1.45;
   color: var(--ts-ink60);
+}
+
+/*
+ * On the map, the header is the back link, the title line and the tools. The
+ * rollup blurb and the chip rail are hidden rather than scrolled past, and the
+ * title tightens up, because a map that begins below the fold is a list with a
+ * picture at the bottom.
+ */
+.dir-cathead[data-map] .dir-cathead-main {
+  padding-top: 0;
+}
+
+.dir-cathead[data-map] .dir-cathead-icon {
+  width: 34px;
+  height: 34px;
+}
+
+.dir-cathead[data-map] .dir-cathead-title {
+  font-size: var(--ts-text-h2);
 }
 
 .dir-tools {
@@ -1190,6 +1230,33 @@
   gap: 5px;
   margin-top: var(--ts-space-1);
   color: var(--ts-ink26);
+}
+
+/*
+ * The card under the map, for the pin that was tapped.
+ *
+ * It sits in the flow under the map rather than floating over it. A card
+ * overlaying the bottom of a 300px map on a phone covers the third of the town
+ * a resident is most likely to be looking at, and the sheet that would fix that
+ * is a second overlay competing with the listing sheet one tap later.
+ */
+/*
+ * The map gives up height once a pin is tapped.
+ *
+ * `map.css` floors `.map-wrap` at 420px, which is right when the map is the
+ * whole screen and wrong here: at 420px plus a tools row plus a header, the
+ * card for the pin a resident just pressed lands under the tab bar, and the
+ * press reads as having done nothing. Two classes, so this beats `.map-wrap`
+ * whichever way round the two sheets end up in the bundle — see the note on the
+ * load order above.
+ */
+.dir-mapview[data-pinned] .map-wrap {
+  min-height: 300px;
+  max-height: 44vh;
+}
+
+.dir-mapcard {
+  padding: var(--ts-space-4) var(--ts-space-4) 0;
 }
 
 /* ── one listing, in a sheet ───────────────────────────────────────────── */
