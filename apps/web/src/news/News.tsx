@@ -16,7 +16,7 @@
 import { useEffect, useState } from 'react'
 import { AppBar } from '../AppBar.js'
 import { Icon } from '../Icon.js'
-import { Card, Skeleton } from '../ui/index.js'
+import { Card, RowItem, RowList, Skeleton } from '../ui/index.js'
 import type { AccountView } from '../session.js'
 import {
   fetchNews,
@@ -221,11 +221,38 @@ export function News(props: NewsProps) {
           {payload.rows.length > 0 && (
             <section className="nw-sec">
               <SectionHead label="More from town" />
-              <div className="nw-list">
+              {/*
+                `RowList` from the primitives. The density here is the four
+                container variables rather than a variant, set by
+                `.nw-feed-rows`: the sheet specifies a 15px headline and
+                space-3 padding, which is between the two named densities.
+                Unframed, because these sit on cream under a section rule
+                rather than standing on their own as a card.
+              */}
+              <RowList framed={false} className="nw-rows nw-feed-rows" label="More from town">
                 {payload.rows.map((story) => (
-                  <Row key={story.id} story={story} onOpen={() => props.onOpenStory(story.id)} />
+                  <RowItem
+                    key={story.id}
+                    title={story.title}
+                    meta={<Byline story={story} small />}
+                    /*
+                      The thumbnail trails the headline and only exists when the
+                      source published one. Passing `undefined` rather than a
+                      placeholder is the section's whole rule: half the town's
+                      stories have art and none of the university's do, so a
+                      reserved grey square is a list that looks broken four days
+                      a week.
+                    */
+                    trailing={story.imageUrl ? <Art src={story.imageUrl} /> : undefined}
+                    /*
+                      No chevron. The photograph already says there is something
+                      here, and on the rows without one the headline is doing it.
+                    */
+                    chevron={false}
+                    onClick={() => props.onOpenStory(story.id)}
+                  />
                 ))}
-              </div>
+              </RowList>
             </section>
           )}
         </>
@@ -328,7 +355,7 @@ export function Byline({ story, small }: { story: NewsStory; small?: boolean }) 
  * the image fails to load the element removes itself and the surrounding
  * layout is the no-art one, which it was already designed to be.
  */
-function Art({ src, className }: { src: string; className: string }) {
+function Art({ src, className }: { src: string; className?: string }) {
   return (
     <span className={className}>
       <img
@@ -386,25 +413,6 @@ function Lead({ story, onOpen }: { story: NewsStory; onOpen: () => void }) {
 }
 
 /**
- * A row, where the thumbnail is an enhancement and never the layout.
- *
- * Pull the picture and the row reads the same, just narrower. No placeholder
- * square, no reserved gap. Ordering upstream is by recency and not by which
- * stories have art, for the same reason.
- */
-function Row({ story, onOpen }: { story: NewsStory; onOpen: () => void }) {
-  return (
-    <button className="nw-row" onClick={onOpen}>
-      <span className="nw-row-text">
-        <span className="nw-row-title">{story.title}</span>
-        <Byline story={story} small />
-      </span>
-      {story.imageUrl && <Art src={story.imageUrl} className="nw-photo nw-row-thumb" />}
-    </button>
-  )
-}
-
-/**
  * One event, more than one newsroom.
  *
  * This is the pattern local aggregation gets wrong most often, and the failure
@@ -423,13 +431,11 @@ function Row({ story, onOpen }: { story: NewsStory; onOpen: () => void }) {
 function Cluster({ cluster, onOpen }: { cluster: NewsCluster; onOpen: (id: string) => void }) {
   return (
     /*
-      `Card` supplies the surface, border, radius and raised shadow; the only
-      thing `.nw-cluster` adds is `padding: 0`, because this card's body is a
-      full-bleed list with its own dividers rather than padded copy. `Card` has
-      no unpadded variant, which is the one gap worth naming: a card whose
-      content is a `RowList` is a shape more than one section wants.
+      `Card padded={false}`, because this card's body is a full-bleed list with
+      its own dividers rather than padded copy. All `.nw-cluster` adds now is
+      the overflow clip, so a row's hover wash does not square off the corners.
     */
-    <Card elevation="raised" className="nw-cluster">
+    <Card elevation="raised" padded={false} className="nw-cluster">
       <div className="nw-cluster-head">
         <span className="nw-cluster-eyebrow">
           <Icon name="layers" size={13} />
@@ -490,7 +496,7 @@ function NewsSkeleton({ bar }: { bar: React.ReactNode }) {
       </div>
       <div className="nw-sec">
         <SectionHead label="More from town" />
-        <div className="nw-list">
+        <div className="nw-skel-list">
           {[true, false, true, false].map((withThumb, i) => (
             <div className="nw-skel-row" key={i}>
               <span className="nw-skel-col">

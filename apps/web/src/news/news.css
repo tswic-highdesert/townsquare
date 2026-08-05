@@ -426,104 +426,52 @@
   color: var(--ts-ink60);
 }
 
-/* ── story rows ─────────────────────────────────────────────────────────── */
+/* ── story rows ────────────────────────────────────────────────────────────
+ *
+ * `RowList` and `Row` draw these now. What remains is the density, set as the
+ * four container variables the primitive reads rather than as a third
+ * component: the sheet asks for a 15px headline and space-3 padding, which is
+ * between `comfortable` and `compact`. The tap target still floors at 44px in
+ * the primitive, so this buys vertical rhythm and never accessibility.
+ */
 
-.nw-list {
-  display: flex;
-  flex-direction: column;
+/*
+ * An unframed list inside a padded section must not pad again.
+ *
+ * `framed={false}` stops `RowList` drawing its own surface, but `.ts-row` still
+ * pads inline by space-4, and the section around it already supplies the
+ * gutter. Measured at 390px: every row headline started at x=36 while the lead
+ * headline, its byline and the section label all started at x=20, so the feed
+ * did not line up with its own heading. Invisible to a test, obvious in a
+ * screenshot. The divider follows the padding, so it is reset with it.
+ */
+.nw-rows .ts-row {
+  padding-inline: 0;
 }
 
-.nw-list > * + * {
-  border-top: 1px solid var(--ts-ink13);
-}
-
-.nw-row {
-  display: flex;
-  align-items: center;
-  gap: var(--ts-space-3);
-  width: 100%;
-  min-height: 44px;
-  padding: var(--ts-space-3) 2px;
-  border: 0;
-  background: none;
-  color: inherit;
-  text-align: left;
-  cursor: pointer;
-  transition: background var(--ts-dur-1) var(--ts-ease);
-}
-
-.nw-row:hover {
-  background: var(--ts-ink08);
-}
-
-.nw-row-text {
-  flex: 1;
-  min-width: 0;
-}
-
-.nw-row-title {
-  display: block;
-  font-family: var(--ts-font-serif);
-  font-size: var(--ts-text-label);
-  font-weight: 500;
-  line-height: 1.28;
-  letter-spacing: -0.008em;
-  text-wrap: pretty;
+.nw-rows li + li .ts-row::before {
+  left: 0;
+  right: 0;
 }
 
 /*
- * 68px square. Big enough to identify a place, small enough that the headline
- * still leads. It is an enhancement of a row that reads the same without one,
- * which is why nothing here reserves the space.
+ * The density the sheet asks for, set as the container variables the primitive
+ * reads rather than as a third component: a 15px headline and space-3 padding,
+ * which sits between `comfortable` and `compact`. The tap target still floors
+ * at 44px inside the primitive, so this buys rhythm and never accessibility.
  */
-.nw-row-thumb {
-  flex: none;
-  display: block;
-  overflow: hidden;
-  width: 68px;
-  height: 68px;
-  border-radius: var(--ts-radius-input);
-  background-color: var(--ts-stone);
-}
-
-.nw-row-thumb img {
-  display: block;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-
-/* Compact: the tail of a reader page, where the row is a pointer not a headline. */
-.nw-row[data-density='compact'] {
-  padding: var(--ts-space-2) 2px;
-}
-
-.nw-row[data-density='compact'] .nw-row-title {
-  font-size: 13.5px;
-  line-height: 1.3;
-}
-
-.nw-row[data-density='compact'] .nw-meta,
-.nw-row[data-density='compact'] .nw-source {
-  font-size: 12.5px;
+.nw-feed-rows {
+  --ts-row-y: var(--ts-space-3);
+  --ts-row-title: var(--ts-text-label);
 }
 
 /* ── the cluster ────────────────────────────────────────────────────────── */
 
 /*
- * The frame is `Card elevation="raised"`. All this adds is the padding reset:
- * the card's body is a full-bleed list with its own dividers, not padded copy,
- * so the rows have to reach the border.
- *
- * Written as `.ts-card.nw-cluster`, and the doubled selector is load-bearing.
- * A stylesheet imported from its own component is injected *before* the entry
- * imports `ui/ui.css`, so at equal specificity the primitive wins and this
- * reset silently does nothing. Measured, not assumed: the injected order in
- * dev is nav.css, news.css, ui.css, index.css. The extra class makes the
- * override independent of where the bundler decides to put us.
+ * `Card elevation="raised" padded={false}` is the frame. All this adds is the
+ * clip, so a row's hover wash does not square off the card's corners.
  */
-.ts-card.nw-cluster {
-  padding: 0;
+.nw-cluster {
   overflow: hidden;
 }
 
@@ -669,9 +617,9 @@
 /* ── source card ────────────────────────────────────────────────────────── */
 
 /* `Card` supplies the surface, border, radius, padding and shadow. This is the
- * arrangement of what is inside it and nothing else. Doubled selector for the
- * same load-order reason as `.ts-card.nw-cluster` above. */
-.ts-card.nw-src {
+ * arrangement of what is inside it and nothing else. A single class is enough
+ * now that `ts-primitives` is a cascade layer under the screens. */
+.nw-src {
   display: flex;
   gap: var(--ts-space-3);
 }
@@ -1001,6 +949,11 @@
   flex: none;
   width: 68px;
   border-radius: var(--ts-radius-input);
+}
+
+.nw-skel-list {
+  display: flex;
+  flex-direction: column;
 }
 
 .nw-skel-row {

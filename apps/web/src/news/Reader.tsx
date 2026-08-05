@@ -238,7 +238,7 @@ export function Reader(props: ReaderProps) {
               Unframed, because it sits inline under a section rule rather than
               standing on its own as a card.
             */}
-            <RowList density="compact" framed={false} label="Also covering this">
+            <RowList density="compact" framed={false} className="nw-rows" label="Also covering this">
               {alsoCovering.map((other) => (
                 <RowItem
                   key={other.id}
