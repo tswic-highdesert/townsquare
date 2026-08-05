@@ -177,8 +177,7 @@
 }
 
 .ts-appbar-search:focus-visible,
-.avatar-button:focus-visible,
-.ts-back:focus-visible {
+.avatar-button:focus-visible {
   outline: none;
   box-shadow: var(--ts-focus);
 }

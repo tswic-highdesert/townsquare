@@ -59,13 +59,15 @@ export function SignIn(props: SignInProps) {
   const [email, setEmail] = useState('')
   const [handle, setHandle] = useState('')
   const [busy, setBusy] = useState(false)
-  const [sent, setSent] = useState<{ email: string; devLink?: string } | null>(null)
+  const [sent, setSent] = useState<{ email: string; remembered: boolean; devLink?: string } | null>(
+    null,
+  )
   /** Kept apart so the server's handle message lands on the handle field. */
   const [problem, setProblem] = useState<string | null>(null)
   const [handleProblem, setHandleProblem] = useState<string | null>(null)
   const [deadLink, setDeadLink] = useState(signInLinkWasDead)
 
-  async function send(useEmail: string) {
+  async function send(useEmail: string, remembered = false) {
     setBusy(true)
     setProblem(null)
     setHandleProblem(null)
@@ -86,15 +88,20 @@ export function SignIn(props: SignInProps) {
       }
       return
     }
-    setSent({ email: useEmail, ...(result.devLink === undefined ? {} : { devLink: result.devLink }) })
+    setSent({
+      email: useEmail,
+      remembered,
+      ...(result.devLink === undefined ? {} : { devLink: result.devLink }),
+    })
   }
 
   if (sent) {
     return (
       <Sent
         email={sent.email}
+        remembered={sent.remembered}
         {...(sent.devLink === undefined ? {} : { devLink: sent.devLink })}
-        onResend={() => void send(sent.email)}
+        onResend={() => void send(sent.email, sent.remembered)}
         onWrongAddress={() => setSent(null)}
       />
     )
@@ -124,7 +131,7 @@ export function SignIn(props: SignInProps) {
             icon="mail"
             full
             loading={busy}
-            onClick={() => void send(device.email)}
+            onClick={() => void send(device.email, true)}
           >
             Send the link to {maskEmail(device.email)}
           </Button>
@@ -214,8 +221,21 @@ export function SignIn(props: SignInProps) {
   )
 }
 
+/**
+ * `remembered` is why this screen does not simply print the address.
+ *
+ * The returning screen masks what the device remembers, deliberately: a shared
+ * household laptop keeps the last resident's address in `localStorage` through
+ * a sign out, and only *sign out everywhere* clears it. Echoing it in full one
+ * click later undoes the mask for exactly the visitor it was hiding it from.
+ *
+ * A person who just typed their address already knows it, so masking there
+ * would be noise pretending to be caution. The distinction is who supplied the
+ * value, not who is looking at the screen.
+ */
 function Sent(props: {
   email: string
+  remembered: boolean
   devLink?: string
   onResend(): void
   onWrongAddress(): void
@@ -235,7 +255,9 @@ function Sent(props: {
       </div>
       <h1 className="id-h1">Check your email</h1>
       <p className="id-lede">
-        If there is an account for {props.email || 'that address'}, a sign-in link is on its way. It
+        If there is an account for{' '}
+        {props.email ? (props.remembered ? maskEmail(props.email) : props.email) : 'that address'}, a
+        sign-in link is on its way. It
         works once and expires in twenty minutes.
       </p>
       <p className="id-note">
