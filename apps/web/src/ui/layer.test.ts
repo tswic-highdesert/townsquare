@@ -59,6 +59,33 @@ describe('the cascade layer contract', () => {
     }
   })
 
+  /**
+   * The double-padding bug, pinned.
+   *
+   * An unframed list sits directly inside whatever placed it, and that
+   * container supplies the gutter; a row adding its own put every headline
+   * 16px right of the section label above it. It happened on the news feed and
+   * then again on Today, and it is invisible to every other test we have —
+   * both screens rendered, nothing threw, and it read as "the headlines look
+   * slightly indented". Which is exactly why it is asserted here.
+   */
+  it('gives an unframed list no inline gutter and a framed one the full gutter', () => {
+    const rows = ui.slice(ui.indexOf('.ts-rows {'))
+    expect(rows).toMatch(/\.ts-rows \{[^}]*--ts-row-x:\s*0px/)
+    expect(rows).toMatch(/\.ts-rows\[data-framed\] \{[^}]*--ts-row-x:\s*var\(--ts-space-4\)/)
+  })
+
+  /**
+   * The divider is inset past the leading block, so it has to be measured from
+   * the same gutter the row uses. Hard-coding `--ts-space-4` there would line
+   * up until the first screen changed the gutter, which is the worst kind of
+   * nearly-right.
+   */
+  it('measures the divider inset from the gutter rather than a fixed step', () => {
+    const before = ui.slice(ui.indexOf('.ts-rows li + li .ts-row::before'))
+    expect(before).toContain('var(--ts-row-x, var(--ts-space-4))')
+  })
+
   it('loads the stylesheets before the component tree in the entry', () => {
     const main = read('../main.tsx')
     expect(main.indexOf("import './ui/ui.css'")).toBeLessThan(main.indexOf("from './App.js'"))

@@ -4,6 +4,7 @@
 // separate memory store. Delete after screenshots.
 import { createServer } from 'node:http'
 import { bundleDigest, hashFiles } from '@townsquare/bundle'
+import { parseManifest } from '@townsquare/manifest'
 import { ConsoleDelivery, Identity, MemoryIdentityStore, parseSeedList, seedCohort } from '@townsquare/identity'
 import { BundleStorePublisher, MemoryBundleStore } from '@townsquare/sandbox'
 import {
@@ -46,28 +47,35 @@ function bundle(over: Record<string, unknown> = {}, version = '1.0.0') {
     permissions: { identity: 'none', read: [], write: [], network: [], storage: false, device: [] },
     ...over,
   }
+  // Through the real parser, not cast past it. Hand-building the object left
+  // `defines` undefined and crashed `diffManifests`, which looked like a
+  // product bug and was my fixture skipping the validator every real
+  // submission goes through — zod defaults `defines` to [].
+  const parsed = parseManifest(manifest)
+  if (!parsed.ok) throw new Error('fixture manifest is invalid: ' + JSON.stringify(parsed.errors ?? parsed).slice(0, 300))
+  const real = parsed.manifest
   const files = new Map<string, Uint8Array>([
-    ['townsquare.json', enc.encode(JSON.stringify(manifest, null, 2))],
+    ['townsquare.json', enc.encode(JSON.stringify(real, null, 2))],
     ['index.html', enc.encode('<!doctype html><title>River Level</title><main><h1>River Level</h1><p>Latest reading from the town feed.</p></main>')],
     ['icon.svg', enc.encode('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 14h18"/></svg>')],
   ])
   // The canonical tree digest, the same function the queue re-checks at
   // approval. My hand-rolled one was refused, which is that check working.
   const digest = bundleDigest(hashFiles([...files.entries()].map(([path, bytes]) => ({ path, bytes }))))
-  return { manifest, files, digest }
+  return { manifest: real, files, digest }
 }
 
 const base = { townId: TOWN.id, userId: builder.id, handle: builder.handle, proposedSlug: 'river-level', name: 'River Level', entry: 'index.html', warnings: [] }
 
 // v1: asks for nothing at all. Approved, so it is the thing v2 is diffed against.
 const one = bundle()
-const s1 = await review.submit({ ...base, creationId: null, version: '1.0.0', manifest: one.manifest as never, bundleDigest: one.digest, files: one.files })
+const s1 = await review.submit({ ...base, creationId: null, version: '1.0.0', manifest: one.manifest, bundleDigest: one.digest, files: one.files })
 const reviewer = { userId: (await idStore.userByHandle('modtal'))!.id, handle: 'modtal', role: 'admin' as const }
 await review.decide(reviewer, s1.id, 'approve', 'Reads the feed and nothing else. Fine.')
 
 // v2: the browser-extension play. Same app, now asking for the network.
 const two = bundle({ permissions: { identity: 'handle', read: ['stories'], write: [], network: ['collect.example.com'], storage: true, device: [] } }, '1.1.0')
-await review.submit({ ...base, creationId: null, version: '1.1.0', manifest: two.manifest as never, bundleDigest: two.digest, files: two.files })
+await review.submit({ ...base, creationId: null, version: '1.1.0', manifest: two.manifest, bundleDigest: two.digest, files: two.files })
 
 const reportStore = new MemoryReportStore()
 const reports = new Reports({ reports: reportStore, targets: { async creationBySlug(t, slug) { const c = await creations.bySlug(t, slug); return c ? { id: c.id, name: c.name } : null } } })
