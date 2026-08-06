@@ -40,7 +40,7 @@
     margin-bottom:10px}
   .sub{font-size:24px;color:var(--muted);line-height:1.5;max-width:1100px}
   p{font-size:23px;line-height:1.62;color:var(--ink);max-width:1080px}
-  .lead{font-size:31px;line-height:1.5}
+  .lead{font-size:31px;line-height:1.5;margin-bottom:34px}
   em{font-style:italic}
   .fill{flex:1}
 
@@ -48,6 +48,9 @@
     letter-spacing:.06em;position:absolute;left:96px;bottom:52px}
   .pg{font-family:var(--mono);font-size:15px;color:var(--line);
     position:absolute;right:96px;bottom:52px}
+  body{counter-reset:slide}
+  .slide{counter-increment:slide}
+  .pg:empty::after{content:counter(slide)}
 
   .figure{flex:1;display:flex;align-items:center;justify-content:center;
     min-height:0}
@@ -140,7 +143,7 @@
     font-family:var(--mono);font-size:17px;color:rgba(250,248,245,.6);
     letter-spacing:.09em}
 
-  .statement{background:var(--navy)}
+  .statement{background:var(--navy);justify-content:center}
   .statement h1{color:var(--paper)}
   .statement .accent{color:var(--gold)}
   .statement .sub{color:var(--cream);margin-top:34px;font-size:27px}
@@ -178,21 +181,46 @@
     <div class="q"><div class="t">&ldquo;People do not know what is happening.&rdquo;</div></div>
     <div class="q"><div class="t">&ldquo;It costs money just to send an email.&rdquo;</div></div>
   </div>
-  <div class="attrib">And ATU had already written it down. Summarizing the
-    AR-NETWORK needs-finding workshop: &ldquo;improved access to information,
-    stronger communication about available services, transportation
-    coordination, resource mapping, data collection.&rdquo;</div>
-  <div class="foot">TOWN SQUARE</div><div class="pg">2</div>
+  <div class="attrib">We have been hearing a version of this for a decade, and
+    louder every year since Covid. Ask the same question in any town in America
+    and you get these same answers back. ATU documented the same needs list
+    before we ever walked in.</div>
+  <div class="foot">TOWN SQUARE</div><div class="pg"></div>
 </section>
 
 <!-- 3 -->
 <section class="slide statement">
   <div class="eyebrow">The reframe</div>
-  <h1>That is not four problems.<br>It is one problem<br><span class="accent">wearing four coats.</span></h1>
+  <h1>That is not four problems.<br>It is one problem showing up<br><span class="accent">as different symptoms.</span></h1>
   <div class="sub">Russellville has no shared front door. So every organization
     rebuilds its own audience from scratch, forever, and every resident
     assembles their own patchwork and still misses most of it.</div>
-  <div class="pg" style="color:rgba(250,248,245,.35)">3</div>
+  <div class="pg" style="color:rgba(250,248,245,.35)"></div>
+</section>
+
+<!-- 4 -->
+<section class="slide">
+  <div class="eyebrow">How we got here</div>
+  <h2>A community's most valuable asset is its attention</h2>
+  <div class="sub">And for most of a century, that attention had somewhere to
+    live.</div>
+  <div class="cards c2" style="margin-top:40px">
+    <div class="card"><div class="k">What we had</div>
+      <h3>The paper on the porch.<br>The radio in the truck.</h3>
+      <p>Analog, physical, local, and imperfect. It worked. If something
+        mattered, it reached you, and the institution carrying it lived in the
+        same town you did.</p></div>
+    <div class="card dark"><div class="k">What we did</div>
+      <h3>We gave it away.</h3>
+      <p>Not to another local institution. We handed it to Zuckerberg and
+        friends, to companies two thousand miles from here that rent our
+        attention back to us and decide, day to day, who sees what.</p></div>
+  </div>
+  <div class="fill"></div>
+  <p class="lead" style="color:var(--navy)"><em>The old infrastructure did not
+    simply fade out. It was replaced by something that was never built to serve
+    a town in the first place.</em></p>
+  <div class="foot">TOWN SQUARE</div><div class="pg"></div>
 </section>
 
 <!-- 4 -->
@@ -220,7 +248,7 @@
   <p class="lead" style="color:var(--navy)"><em>And another app does not fix it
     either. Every community app so far is a product people consume, so it lives
     or dies on one organization feeding it forever.</em></p>
-  <div class="foot">TOWN SQUARE</div><div class="pg">5</div>
+  <div class="foot">TOWN SQUARE</div><div class="pg"></div>
 </section>
 
 <!-- 6 -->
@@ -239,7 +267,7 @@
     <figure><img src="../screens/resident-as-builder.png" alt="A resident as a builder"><figcaption>A RESIDENT WHO BUILT ONE</figcaption></figure>
     <figure><img src="../screens/today-with-pins.png" alt="Creations in the town feed"><figcaption>PINNED INTO THE TOWN</figcaption></figure>
   </div>
-  <div class="foot">TOWN SQUARE</div><div class="pg">7</div>
+  <div class="foot">TOWN SQUARE</div><div class="pg"></div>
 </section>
 
 <!-- 8 -->
@@ -264,7 +292,7 @@
       publishes structured records back into Town Square, so the next person's
       app starts with data the last person's app produced.</p>
   </div>
-  <div class="foot">TOWN SQUARE</div><div class="pg">8</div>
+  <div class="foot">TOWN SQUARE</div><div class="pg"></div>
 </section>
 
 <!-- 9 -->
@@ -289,7 +317,7 @@
         revertable, which is what lets it stay neutral.</p></div>
   </div>
   <div class="fill"></div>
-  <div class="foot">TOWN SQUARE</div><div class="pg">10</div>
+  <div class="foot">TOWN SQUARE</div><div class="pg"></div>
 </section>
 
 <!-- 11 -->
@@ -319,7 +347,7 @@
       <div class="what">Make something. <b>The tooling is live.</b> If you have
         an idea and an afternoon, you now have somewhere to put it.</div></div>
   </div>
-  <div class="foot">TOWN SQUARE</div><div class="pg">13</div>
+  <div class="foot">TOWN SQUARE</div><div class="pg"></div>
 </section>
 
 <!-- 14 -->
@@ -345,7 +373,7 @@
   <div class="fill"></div>
   <p class="lead" style="color:var(--navy)"><em>The platform is built. What it
     needs now is not code. It needs the town.</em></p>
-  <div class="foot">TOWN SQUARE &middot; tal@rvtownsquare.com</div><div class="pg">14</div>
+  <div class="foot">TOWN SQUARE &middot; tal@rvtownsquare.com</div><div class="pg"></div>
 </section>
 
 </body>

@@ -28,7 +28,27 @@ over, and pays for the privilege. And every resident assembles their own
 patchwork of Facebook groups, word of mouth, and luck, then still misses most of
 what is happening.
 
-That is not four problems. It is one problem wearing four coats.
+That is not four problems. It is one problem showing up as different symptoms.
+
+---
+
+## How we got here
+
+A community's most valuable asset is its attention. For most of a century that
+attention had somewhere to live. The paper landed on the porch. The radio was on
+in the truck. That infrastructure was analog, physical, local, and imperfect, and
+it worked. If something mattered, it reached you, and the institution that
+carried it lived in the same town you did.
+
+We gave that away.
+
+Not to another local institution. We handed it to Zuckerberg and friends, to
+companies two thousand miles from here that rent our attention back to us and
+decide, day to day, who sees what. A nonprofit in Russellville now has to buy
+access to people who already asked to hear from it.
+
+The old infrastructure did not simply fade out. It was replaced by something that
+was never built to serve a town in the first place.
 
 ---
 
@@ -40,18 +60,26 @@ technology might solve. Before Town Square was ever mentioned, people named:
 
 - People are not involved.
 - People do not know what is happening.
-- It costs money just to send an email.
+- It costs money just to send an email, and no organization here has the budget
+  to communicate effectively in the landscape we actually live in.
 
-Arkansas Tech University had already documented the same thing. Summarizing an
-earlier Community Health Needs-Finding Workshop sponsored by AR-NETWORK, ATU
-listed the needs its community partners identified:
+Arkansas Tech University has documented the same thing, summarizing an earlier
+AR-NETWORK needs-finding workshop: improved access to information, stronger
+communication about available services, transportation coordination, resource
+mapping, data collection.
 
-> improved access to information, stronger communication about available
-> services, transportation coordination, resource mapping, data collection
+---
 
-That list was written by a university, about this town, before we walked in. It
-is worth pausing on, because it means nobody has to be convinced the problem is
-real. It is already on the record.
+## And this is not new, and it is not just us
+
+We have been hearing a version of this for a decade, and louder every year since
+Covid. Ask the same question in any town in America and you will get these same
+answers back. That is not a coincidence, and it is not a Russellville failing. It
+is what happens everywhere when a community's information infrastructure gets
+replaced by something built for somebody else's business.
+
+Nobody needs convincing that the problem is real. We have all been living in it.
+What has been missing is a solution anyone has actually dialed in.
 
 ---
 
