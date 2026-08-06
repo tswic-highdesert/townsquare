@@ -1,0 +1,66 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 900" width="1600" height="900" font-kerning="normal">
+<defs>
+  <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7"
+          markerHeight="7" orient="auto-start-reverse">
+    <path d="M 0 1 L 9 5 L 0 9 z" fill="#1D1B16"/>
+  </marker>
+  <marker id="arrow-sage" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7"
+          markerHeight="7" orient="auto-start-reverse">
+    <path d="M 0 1 L 9 5 L 0 9 z" fill="#7D9B76"/>
+  </marker>
+  <marker id="arrow-terra" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7"
+          markerHeight="7" orient="auto-start-reverse">
+    <path d="M 0 1 L 9 5 L 0 9 z" fill="#C4714E"/>
+  </marker>
+  <marker id="arrow-muted" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7"
+          markerHeight="7" orient="auto-start-reverse">
+    <path d="M 0 1 L 9 5 L 0 9 z" fill="#6E6A61"/>
+  </marker>
+  <marker id="arrow-gold" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7"
+          markerHeight="7" orient="auto-start-reverse">
+    <path d="M 0 1 L 9 5 L 0 9 z" fill="#D4A853"/>
+  </marker>
+  <marker id="arrow-navy" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7"
+          markerHeight="7" orient="auto-start-reverse">
+    <path d="M 0 1 L 9 5 L 0 9 z" fill="#26405B"/>
+  </marker>
+</defs>
+<rect width="1600" height="900" fill="#FAF8F5"/>
+<text x="80" y="96" font-family="Newsreader, 'Libre Baskerville', Georgia, serif" font-size="46" font-weight="600" fill="#26405B" text-anchor="start">Why it compounds</text>
+<text x="80" y="138" font-family="'DM Sans', -apple-system, 'Helvetica Neue', Arial, sans-serif" font-size="21" font-weight="400" fill="#6E6A61" text-anchor="start">Each creation leaves structured data behind, so the next builder starts further along.</text>
+<circle cx="640" cy="512" r="232" fill="none" stroke="#CFC7B8" stroke-width="2.5" stroke-dasharray="4 10"/>
+<path d="M 752.3 309.0 A 232 232 0 0 1 843.0 399.7" fill="none" stroke="#D4A853" stroke-width="3" marker-end="url(#arrow-gold)"/>
+<path d="M 843.0 624.3 A 232 232 0 0 1 752.3 715.0" fill="none" stroke="#C4714E" stroke-width="3" marker-end="url(#arrow-terra)"/>
+<path d="M 527.7 715.0 A 232 232 0 0 1 437.0 624.3" fill="none" stroke="#7D9B76" stroke-width="3" marker-end="url(#arrow-sage)"/>
+<path d="M 437.0 399.7 A 232 232 0 0 1 527.7 309.0" fill="none" stroke="#26405B" stroke-width="3" marker-end="url(#arrow-navy)"/>
+<circle cx="640.0" cy="280.0" r="100" fill="#FAF8F5" stroke="#D4A853" stroke-width="3"/>
+<circle cx="640.0" cy="280.0" r="88" fill="#D4A853" stroke="none" stroke-width="2" opacity="0.1"/>
+<text x="640.0" y="278.0" font-family="'DM Sans', -apple-system, 'Helvetica Neue', Arial, sans-serif" font-size="17" font-weight="600" fill="#26405B" text-anchor="middle">A resident builds</text>
+<text x="640.0" y="301.0" font-family="'DM Sans', -apple-system, 'Helvetica Neue', Arial, sans-serif" font-size="17" font-weight="600" fill="#26405B" text-anchor="middle">a creation</text>
+<circle cx="872.0" cy="512.0" r="100" fill="#FAF8F5" stroke="#C4714E" stroke-width="3"/>
+<circle cx="872.0" cy="512.0" r="88" fill="#C4714E" stroke="none" stroke-width="2" opacity="0.1"/>
+<text x="872.0" y="510.0" font-family="'DM Sans', -apple-system, 'Helvetica Neue', Arial, sans-serif" font-size="17" font-weight="600" fill="#26405B" text-anchor="middle">It publishes typed</text>
+<text x="872.0" y="533.0" font-family="'DM Sans', -apple-system, 'Helvetica Neue', Arial, sans-serif" font-size="17" font-weight="600" fill="#26405B" text-anchor="middle">records back</text>
+<circle cx="640.0" cy="744.0" r="100" fill="#FAF8F5" stroke="#7D9B76" stroke-width="3"/>
+<circle cx="640.0" cy="744.0" r="88" fill="#7D9B76" stroke="none" stroke-width="2" opacity="0.1"/>
+<text x="640.0" y="742.0" font-family="'DM Sans', -apple-system, 'Helvetica Neue', Arial, sans-serif" font-size="17" font-weight="600" fill="#26405B" text-anchor="middle">Those records become</text>
+<text x="640.0" y="765.0" font-family="'DM Sans', -apple-system, 'Helvetica Neue', Arial, sans-serif" font-size="17" font-weight="600" fill="#26405B" text-anchor="middle">the next builder's input</text>
+<circle cx="408.0" cy="512.0" r="100" fill="#FAF8F5" stroke="#26405B" stroke-width="3"/>
+<circle cx="408.0" cy="512.0" r="88" fill="#26405B" stroke="none" stroke-width="2" opacity="0.1"/>
+<text x="408.0" y="510.0" font-family="'DM Sans', -apple-system, 'Helvetica Neue', Arial, sans-serif" font-size="17" font-weight="600" fill="#26405B" text-anchor="middle">More is discoverable,</text>
+<text x="408.0" y="533.0" font-family="'DM Sans', -apple-system, 'Helvetica Neue', Arial, sans-serif" font-size="17" font-weight="600" fill="#26405B" text-anchor="middle">so more people build</text>
+<text x="640" y="502" font-family="Newsreader, 'Libre Baskerville', Georgia, serif" font-size="24" font-weight="500" fill="#6E6A61" text-anchor="middle" font-style="italic">the loop</text>
+<text x="640" y="534" font-family="Newsreader, 'Libre Baskerville', Georgia, serif" font-size="24" font-weight="500" fill="#6E6A61" text-anchor="middle" font-style="italic">runs on its own</text>
+<rect x="1050" y="232" width="470" height="246" rx="18" fill="#FAF8F5" stroke="#CFC7B8" stroke-width="2"/>
+<text x="1082" y="278" font-family="Newsreader, 'Libre Baskerville', Georgia, serif" font-size="24" font-weight="600" fill="#C4714E" text-anchor="start">A normal community app</text>
+<text x="1082" y="320.0" font-family="'DM Sans', -apple-system, 'Helvetica Neue', Arial, sans-serif" font-size="19" font-weight="400" fill="#6E6A61" text-anchor="start">Gets more valuable the more people read it.</text>
+<text x="1082" y="347.55" font-family="'DM Sans', -apple-system, 'Helvetica Neue', Arial, sans-serif" font-size="19" font-weight="400" fill="#6E6A61" text-anchor="start">Needs one organization to feed it forever.</text>
+<text x="1082" y="375.1" font-family="'DM Sans', -apple-system, 'Helvetica Neue', Arial, sans-serif" font-size="19" font-weight="400" fill="#6E6A61" text-anchor="start">Dies when that organization gets tired.</text>
+<text x="1082" y="442" font-family="'DM Mono', ui-monospace, 'SF Mono', Menlo, monospace" font-size="18" font-weight="500" fill="#C4714E" text-anchor="start">linear, and fragile</text>
+<rect x="1050" y="508" width="470" height="268" rx="18" fill="#26405B" stroke="none" stroke-width="2"/>
+<text x="1082" y="556" font-family="Newsreader, 'Libre Baskerville', Georgia, serif" font-size="24" font-weight="600" fill="#D4A853" text-anchor="start">Town Square</text>
+<text x="1082" y="598.0" font-family="'DM Sans', -apple-system, 'Helvetica Neue', Arial, sans-serif" font-size="19" font-weight="400" fill="#EDE9E0" text-anchor="start">Gets more valuable the more people build.</text>
+<text x="1082" y="625.55" font-family="'DM Sans', -apple-system, 'Helvetica Neue', Arial, sans-serif" font-size="19" font-weight="400" fill="#EDE9E0" text-anchor="start">Ten builders make it useful.</text>
+<text x="1082" y="653.1" font-family="'DM Sans', -apple-system, 'Helvetica Neue', Arial, sans-serif" font-size="19" font-weight="400" fill="#EDE9E0" text-anchor="start">Fifty make it hard to replace.</text>
+<text x="1082" y="722" font-family="'DM Mono', ui-monospace, 'SF Mono', Menlo, monospace" font-size="18" font-weight="500" fill="#D4A853" text-anchor="start">compounding, and durable</text>
+</svg>

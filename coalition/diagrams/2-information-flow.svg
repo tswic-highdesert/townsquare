@@ -1,0 +1,174 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 900" width="1600" height="900" font-kerning="normal">
+<defs>
+  <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7"
+          markerHeight="7" orient="auto-start-reverse">
+    <path d="M 0 1 L 9 5 L 0 9 z" fill="#1D1B16"/>
+  </marker>
+  <marker id="arrow-sage" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7"
+          markerHeight="7" orient="auto-start-reverse">
+    <path d="M 0 1 L 9 5 L 0 9 z" fill="#7D9B76"/>
+  </marker>
+  <marker id="arrow-terra" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7"
+          markerHeight="7" orient="auto-start-reverse">
+    <path d="M 0 1 L 9 5 L 0 9 z" fill="#C4714E"/>
+  </marker>
+  <marker id="arrow-muted" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7"
+          markerHeight="7" orient="auto-start-reverse">
+    <path d="M 0 1 L 9 5 L 0 9 z" fill="#6E6A61"/>
+  </marker>
+  <marker id="arrow-gold" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7"
+          markerHeight="7" orient="auto-start-reverse">
+    <path d="M 0 1 L 9 5 L 0 9 z" fill="#D4A853"/>
+  </marker>
+  <marker id="arrow-navy" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7"
+          markerHeight="7" orient="auto-start-reverse">
+    <path d="M 0 1 L 9 5 L 0 9 z" fill="#26405B"/>
+  </marker>
+</defs>
+<rect width="1600" height="900" fill="#FAF8F5"/>
+<text x="80" y="96" font-family="Newsreader, 'Libre Baskerville', Georgia, serif" font-size="46" font-weight="600" fill="#26405B" text-anchor="start">Where information goes today, and where it could go</text>
+<text x="80" y="138" font-family="'DM Sans', -apple-system, 'Helvetica Neue', Arial, sans-serif" font-size="21" font-weight="400" fill="#6E6A61" text-anchor="start">Same organizations. Same residents. Different plumbing.</text>
+<line x1="800" y1="185" x2="800" y2="820" stroke="#CFC7B8" stroke-width="2" stroke-dasharray="6 8"/>
+<text x="80" y="208" font-family="'DM Mono', ui-monospace, 'SF Mono', Menlo, monospace" font-size="18" font-weight="600" fill="#C4714E" text-anchor="start" letter-spacing="3">TODAY</text>
+<text x="848" y="208" font-family="'DM Mono', ui-monospace, 'SF Mono', Menlo, monospace" font-size="18" font-weight="600" fill="#7D9B76" text-anchor="start" letter-spacing="3">WITH TOWN SQUARE</text>
+<rect x="96" y="268" width="150" height="54" rx="10" fill="#FAF8F5" stroke="#C4714E" stroke-width="2"/>
+<text x="171" y="302" font-family="'DM Sans', -apple-system, 'Helvetica Neue', Arial, sans-serif" font-size="19" font-weight="500" fill="#26405B" text-anchor="middle">Nonprofit</text>
+<path d="M 252 295 L 372 295" fill="none" stroke="#C4714E" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M 252 295 L 372 295" fill="none" stroke="#C4714E" stroke-width="1.6" marker-end="url(#arrow-terra)"/>
+<circle cx="410" cy="295" r="22" fill="none" stroke="#C4714E" stroke-width="2"/>
+<text x="410" y="301" font-family="'DM Mono', ui-monospace, 'SF Mono', Menlo, monospace" font-size="15" font-weight="500" fill="#C4714E" text-anchor="middle">3</text>
+<rect x="96" y="352" width="150" height="54" rx="10" fill="#FAF8F5" stroke="#C4714E" stroke-width="2"/>
+<text x="171" y="386" font-family="'DM Sans', -apple-system, 'Helvetica Neue', Arial, sans-serif" font-size="19" font-weight="500" fill="#26405B" text-anchor="middle">City</text>
+<path d="M 252 379 L 372 379" fill="none" stroke="#C4714E" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M 252 379 L 372 379" fill="none" stroke="#C4714E" stroke-width="1.6" marker-end="url(#arrow-terra)"/>
+<circle cx="410" cy="379" r="22" fill="none" stroke="#C4714E" stroke-width="2"/>
+<text x="410" y="385" font-family="'DM Mono', ui-monospace, 'SF Mono', Menlo, monospace" font-size="15" font-weight="500" fill="#C4714E" text-anchor="middle">4</text>
+<rect x="96" y="436" width="150" height="54" rx="10" fill="#FAF8F5" stroke="#C4714E" stroke-width="2"/>
+<text x="171" y="470" font-family="'DM Sans', -apple-system, 'Helvetica Neue', Arial, sans-serif" font-size="19" font-weight="500" fill="#26405B" text-anchor="middle">Business</text>
+<path d="M 252 463 L 372 463" fill="none" stroke="#C4714E" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M 252 463 L 372 463" fill="none" stroke="#C4714E" stroke-width="1.6" marker-end="url(#arrow-terra)"/>
+<circle cx="410" cy="463" r="22" fill="none" stroke="#C4714E" stroke-width="2"/>
+<text x="410" y="469" font-family="'DM Mono', ui-monospace, 'SF Mono', Menlo, monospace" font-size="15" font-weight="500" fill="#C4714E" text-anchor="middle">5</text>
+<rect x="96" y="520" width="150" height="54" rx="10" fill="#FAF8F5" stroke="#C4714E" stroke-width="2"/>
+<text x="171" y="554" font-family="'DM Sans', -apple-system, 'Helvetica Neue', Arial, sans-serif" font-size="19" font-weight="500" fill="#26405B" text-anchor="middle">School</text>
+<path d="M 252 547 L 372 547" fill="none" stroke="#C4714E" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M 252 547 L 372 547" fill="none" stroke="#C4714E" stroke-width="1.6" marker-end="url(#arrow-terra)"/>
+<circle cx="410" cy="547" r="22" fill="none" stroke="#C4714E" stroke-width="2"/>
+<text x="410" y="553" font-family="'DM Mono', ui-monospace, 'SF Mono', Menlo, monospace" font-size="15" font-weight="500" fill="#C4714E" text-anchor="middle">3</text>
+<rect x="96" y="604" width="150" height="54" rx="10" fill="#FAF8F5" stroke="#C4714E" stroke-width="2"/>
+<text x="171" y="638" font-family="'DM Sans', -apple-system, 'Helvetica Neue', Arial, sans-serif" font-size="19" font-weight="500" fill="#26405B" text-anchor="middle">Church</text>
+<path d="M 252 631 L 372 631" fill="none" stroke="#C4714E" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M 252 631 L 372 631" fill="none" stroke="#C4714E" stroke-width="1.6" marker-end="url(#arrow-terra)"/>
+<circle cx="410" cy="631" r="22" fill="none" stroke="#C4714E" stroke-width="2"/>
+<text x="410" y="637" font-family="'DM Mono', ui-monospace, 'SF Mono', Menlo, monospace" font-size="15" font-weight="500" fill="#C4714E" text-anchor="middle">4</text>
+<rect x="470" y="250" width="236" height="436" rx="16" fill="#FAF8F5" stroke="#CFC7B8" stroke-width="2" stroke-dasharray="7 7"/>
+<text x="588" y="286" font-family="'DM Sans', -apple-system, 'Helvetica Neue', Arial, sans-serif" font-size="20" font-weight="600" fill="#6E6A61" text-anchor="middle">Residents</text>
+<circle cx="508" cy="320" r="9" fill="none" stroke="#CFC7B8" stroke-width="2"/>
+<circle cx="550" cy="320" r="9" fill="none" stroke="#CFC7B8" stroke-width="2"/>
+<circle cx="592" cy="320" r="9" fill="#C4714E" stroke="none" stroke-width="2"/>
+<circle cx="634" cy="320" r="9" fill="none" stroke="#CFC7B8" stroke-width="2"/>
+<circle cx="676" cy="320" r="9" fill="none" stroke="#CFC7B8" stroke-width="2"/>
+<circle cx="508" cy="364" r="9" fill="none" stroke="#CFC7B8" stroke-width="2"/>
+<circle cx="550" cy="364" r="9" fill="none" stroke="#CFC7B8" stroke-width="2"/>
+<circle cx="592" cy="364" r="9" fill="#C4714E" stroke="none" stroke-width="2"/>
+<circle cx="634" cy="364" r="9" fill="none" stroke="#CFC7B8" stroke-width="2"/>
+<circle cx="676" cy="364" r="9" fill="none" stroke="#CFC7B8" stroke-width="2"/>
+<circle cx="508" cy="408" r="9" fill="none" stroke="#CFC7B8" stroke-width="2"/>
+<circle cx="550" cy="408" r="9" fill="#C4714E" stroke="none" stroke-width="2"/>
+<circle cx="592" cy="408" r="9" fill="none" stroke="#CFC7B8" stroke-width="2"/>
+<circle cx="634" cy="408" r="9" fill="none" stroke="#CFC7B8" stroke-width="2"/>
+<circle cx="676" cy="408" r="9" fill="none" stroke="#CFC7B8" stroke-width="2"/>
+<circle cx="508" cy="452" r="9" fill="none" stroke="#CFC7B8" stroke-width="2"/>
+<circle cx="550" cy="452" r="9" fill="none" stroke="#CFC7B8" stroke-width="2"/>
+<circle cx="592" cy="452" r="9" fill="none" stroke="#CFC7B8" stroke-width="2"/>
+<circle cx="634" cy="452" r="9" fill="#C4714E" stroke="none" stroke-width="2"/>
+<circle cx="676" cy="452" r="9" fill="none" stroke="#CFC7B8" stroke-width="2"/>
+<circle cx="508" cy="496" r="9" fill="none" stroke="#CFC7B8" stroke-width="2"/>
+<circle cx="550" cy="496" r="9" fill="none" stroke="#CFC7B8" stroke-width="2"/>
+<circle cx="592" cy="496" r="9" fill="none" stroke="#CFC7B8" stroke-width="2"/>
+<circle cx="634" cy="496" r="9" fill="#C4714E" stroke="none" stroke-width="2"/>
+<circle cx="676" cy="496" r="9" fill="none" stroke="#CFC7B8" stroke-width="2"/>
+<circle cx="508" cy="540" r="9" fill="none" stroke="#CFC7B8" stroke-width="2"/>
+<circle cx="550" cy="540" r="9" fill="none" stroke="#CFC7B8" stroke-width="2"/>
+<circle cx="592" cy="540" r="9" fill="#C4714E" stroke="none" stroke-width="2"/>
+<circle cx="634" cy="540" r="9" fill="none" stroke="#CFC7B8" stroke-width="2"/>
+<circle cx="676" cy="540" r="9" fill="none" stroke="#CFC7B8" stroke-width="2"/>
+<circle cx="508" cy="584" r="9" fill="none" stroke="#CFC7B8" stroke-width="2"/>
+<circle cx="550" cy="584" r="9" fill="#C4714E" stroke="none" stroke-width="2"/>
+<circle cx="592" cy="584" r="9" fill="none" stroke="#CFC7B8" stroke-width="2"/>
+<circle cx="634" cy="584" r="9" fill="none" stroke="#CFC7B8" stroke-width="2"/>
+<circle cx="676" cy="584" r="9" fill="none" stroke="#CFC7B8" stroke-width="2"/>
+<circle cx="508" cy="628" r="9" fill="none" stroke="#CFC7B8" stroke-width="2"/>
+<circle cx="550" cy="628" r="9" fill="none" stroke="#CFC7B8" stroke-width="2"/>
+<circle cx="592" cy="628" r="9" fill="none" stroke="#CFC7B8" stroke-width="2"/>
+<circle cx="634" cy="628" r="9" fill="none" stroke="#CFC7B8" stroke-width="2"/>
+<circle cx="676" cy="628" r="9" fill="none" stroke="#CFC7B8" stroke-width="2"/>
+<text x="588" y="712" font-family="'DM Sans', -apple-system, 'Helvetica Neue', Arial, sans-serif" font-size="17" font-weight="400" fill="#6E6A61" text-anchor="middle" font-style="italic">most are reached by none of it</text>
+<rect x="866" y="268" width="150" height="54" rx="10" fill="#FAF8F5" stroke="#7D9B76" stroke-width="2"/>
+<text x="941" y="302" font-family="'DM Sans', -apple-system, 'Helvetica Neue', Arial, sans-serif" font-size="19" font-weight="500" fill="#26405B" text-anchor="middle">Nonprofit</text>
+<path d="M 1022 295 C 1070 295, 1080 476, 1120 476" fill="none" stroke="#7D9B76" stroke-width="1.6" opacity="0.75" marker-end="url(#arrow-sage)"/>
+<rect x="866" y="352" width="150" height="54" rx="10" fill="#FAF8F5" stroke="#7D9B76" stroke-width="2"/>
+<text x="941" y="386" font-family="'DM Sans', -apple-system, 'Helvetica Neue', Arial, sans-serif" font-size="19" font-weight="500" fill="#26405B" text-anchor="middle">City</text>
+<path d="M 1022 379 C 1070 379, 1080 476, 1120 476" fill="none" stroke="#7D9B76" stroke-width="1.6" opacity="0.75" marker-end="url(#arrow-sage)"/>
+<rect x="866" y="436" width="150" height="54" rx="10" fill="#FAF8F5" stroke="#7D9B76" stroke-width="2"/>
+<text x="941" y="470" font-family="'DM Sans', -apple-system, 'Helvetica Neue', Arial, sans-serif" font-size="19" font-weight="500" fill="#26405B" text-anchor="middle">Business</text>
+<path d="M 1022 463 C 1070 463, 1080 476, 1120 476" fill="none" stroke="#7D9B76" stroke-width="1.6" opacity="0.75" marker-end="url(#arrow-sage)"/>
+<rect x="866" y="520" width="150" height="54" rx="10" fill="#FAF8F5" stroke="#7D9B76" stroke-width="2"/>
+<text x="941" y="554" font-family="'DM Sans', -apple-system, 'Helvetica Neue', Arial, sans-serif" font-size="19" font-weight="500" fill="#26405B" text-anchor="middle">School</text>
+<path d="M 1022 547 C 1070 547, 1080 476, 1120 476" fill="none" stroke="#7D9B76" stroke-width="1.6" opacity="0.75" marker-end="url(#arrow-sage)"/>
+<rect x="866" y="604" width="150" height="54" rx="10" fill="#FAF8F5" stroke="#7D9B76" stroke-width="2"/>
+<text x="941" y="638" font-family="'DM Sans', -apple-system, 'Helvetica Neue', Arial, sans-serif" font-size="19" font-weight="500" fill="#26405B" text-anchor="middle">Church</text>
+<path d="M 1022 631 C 1070 631, 1080 476, 1120 476" fill="none" stroke="#7D9B76" stroke-width="1.6" opacity="0.75" marker-end="url(#arrow-sage)"/>
+<rect x="1128" y="396" width="168" height="160" rx="18" fill="#26405B" stroke="none" stroke-width="2"/>
+<text x="1212" y="462" font-family="Newsreader, 'Libre Baskerville', Georgia, serif" font-size="25" font-weight="600" fill="#FAF8F5" text-anchor="middle">Town</text>
+<text x="1212" y="492" font-family="Newsreader, 'Libre Baskerville', Georgia, serif" font-size="25" font-weight="600" fill="#FAF8F5" text-anchor="middle">Square</text>
+<text x="1212" y="526" font-family="'DM Mono', ui-monospace, 'SF Mono', Menlo, monospace" font-size="15" font-weight="500" fill="#D4A853" text-anchor="middle">one substrate</text>
+<rect x="1300" y="250" width="236" height="436" rx="16" fill="#FAF8F5" stroke="#CFC7B8" stroke-width="2" stroke-dasharray="7 7"/>
+<text x="1418" y="286" font-family="'DM Sans', -apple-system, 'Helvetica Neue', Arial, sans-serif" font-size="20" font-weight="600" fill="#6E6A61" text-anchor="middle">Residents</text>
+<circle cx="1338" cy="320" r="9" fill="#7D9B76" stroke="none" stroke-width="2"/>
+<circle cx="1380" cy="320" r="9" fill="#7D9B76" stroke="none" stroke-width="2"/>
+<circle cx="1422" cy="320" r="9" fill="#7D9B76" stroke="none" stroke-width="2"/>
+<circle cx="1464" cy="320" r="9" fill="#7D9B76" stroke="none" stroke-width="2"/>
+<circle cx="1506" cy="320" r="9" fill="#7D9B76" stroke="none" stroke-width="2"/>
+<circle cx="1338" cy="364" r="9" fill="#7D9B76" stroke="none" stroke-width="2"/>
+<circle cx="1380" cy="364" r="9" fill="#7D9B76" stroke="none" stroke-width="2"/>
+<circle cx="1422" cy="364" r="9" fill="#7D9B76" stroke="none" stroke-width="2"/>
+<circle cx="1464" cy="364" r="9" fill="#7D9B76" stroke="none" stroke-width="2"/>
+<circle cx="1506" cy="364" r="9" fill="#7D9B76" stroke="none" stroke-width="2"/>
+<circle cx="1338" cy="408" r="9" fill="#7D9B76" stroke="none" stroke-width="2"/>
+<circle cx="1380" cy="408" r="9" fill="#7D9B76" stroke="none" stroke-width="2"/>
+<circle cx="1422" cy="408" r="9" fill="#7D9B76" stroke="none" stroke-width="2"/>
+<circle cx="1464" cy="408" r="9" fill="#7D9B76" stroke="none" stroke-width="2"/>
+<circle cx="1506" cy="408" r="9" fill="#7D9B76" stroke="none" stroke-width="2"/>
+<circle cx="1338" cy="452" r="9" fill="#7D9B76" stroke="none" stroke-width="2"/>
+<circle cx="1380" cy="452" r="9" fill="#7D9B76" stroke="none" stroke-width="2"/>
+<circle cx="1422" cy="452" r="9" fill="#7D9B76" stroke="none" stroke-width="2"/>
+<circle cx="1464" cy="452" r="9" fill="#7D9B76" stroke="none" stroke-width="2"/>
+<circle cx="1506" cy="452" r="9" fill="#7D9B76" stroke="none" stroke-width="2"/>
+<circle cx="1338" cy="496" r="9" fill="#7D9B76" stroke="none" stroke-width="2"/>
+<circle cx="1380" cy="496" r="9" fill="#7D9B76" stroke="none" stroke-width="2"/>
+<circle cx="1422" cy="496" r="9" fill="#7D9B76" stroke="none" stroke-width="2"/>
+<circle cx="1464" cy="496" r="9" fill="#7D9B76" stroke="none" stroke-width="2"/>
+<circle cx="1506" cy="496" r="9" fill="#7D9B76" stroke="none" stroke-width="2"/>
+<circle cx="1338" cy="540" r="9" fill="#7D9B76" stroke="none" stroke-width="2"/>
+<circle cx="1380" cy="540" r="9" fill="#7D9B76" stroke="none" stroke-width="2"/>
+<circle cx="1422" cy="540" r="9" fill="#7D9B76" stroke="none" stroke-width="2"/>
+<circle cx="1464" cy="540" r="9" fill="#7D9B76" stroke="none" stroke-width="2"/>
+<circle cx="1506" cy="540" r="9" fill="#7D9B76" stroke="none" stroke-width="2"/>
+<circle cx="1338" cy="584" r="9" fill="#7D9B76" stroke="none" stroke-width="2"/>
+<circle cx="1380" cy="584" r="9" fill="#7D9B76" stroke="none" stroke-width="2"/>
+<circle cx="1422" cy="584" r="9" fill="#7D9B76" stroke="none" stroke-width="2"/>
+<circle cx="1464" cy="584" r="9" fill="#7D9B76" stroke="none" stroke-width="2"/>
+<circle cx="1506" cy="584" r="9" fill="#7D9B76" stroke="none" stroke-width="2"/>
+<circle cx="1338" cy="628" r="9" fill="#7D9B76" stroke="none" stroke-width="2"/>
+<circle cx="1380" cy="628" r="9" fill="#7D9B76" stroke="none" stroke-width="2"/>
+<circle cx="1422" cy="628" r="9" fill="#7D9B76" stroke="none" stroke-width="2"/>
+<circle cx="1464" cy="628" r="9" fill="#7D9B76" stroke="none" stroke-width="2"/>
+<circle cx="1506" cy="628" r="9" fill="#7D9B76" stroke="none" stroke-width="2"/>
+<path d="M 1274 476 L 1292 476" fill="none" stroke="#7D9B76" stroke-width="2" marker-end="url(#arrow-sage)"/>
+<text x="1418" y="712" font-family="'DM Sans', -apple-system, 'Helvetica Neue', Arial, sans-serif" font-size="17" font-weight="400" fill="#7D9B76" text-anchor="middle" font-style="italic">everyone can find all of it</text>
+<text x="80" y="800" font-family="'DM Sans', -apple-system, 'Helvetica Neue', Arial, sans-serif" font-size="20" font-weight="400" fill="#6E6A61" text-anchor="start">Every organization pays to rebuild</text>
+<text x="80" y="832" font-family="'DM Sans', -apple-system, 'Helvetica Neue', Arial, sans-serif" font-size="20" font-weight="400" fill="#6E6A61" text-anchor="start">its own audience, over and over.</text>
+<text x="848" y="800" font-family="'DM Sans', -apple-system, 'Helvetica Neue', Arial, sans-serif" font-size="20" font-weight="400" fill="#26405B" text-anchor="start">Organizations publish once, into shared infrastructure.</text>
+<text x="848" y="832" font-family="'DM Sans', -apple-system, 'Helvetica Neue', Arial, sans-serif" font-size="20" font-weight="400" fill="#26405B" text-anchor="start">Residents discover across all of it.</text>
+</svg>
