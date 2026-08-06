@@ -151,11 +151,15 @@ plus what the room said, not from our vision doc.
 
 ### 3. Deck: "Town Square, Russellville"
 
-Fourteen slides, three acts, per the approved shape.
+Seventeen slides, three acts. Revised 2026-08-06 after Tal's critique:
+the attention giveaway is now the named root cause, the layers are reordered
+around what each asks of the town, ownership leads with "nobody should own a
+town square," and the harm gets its own slide plus a research ask.
 
 - **Act 1 (1-4), the problem is already agreed on.** Title. The room's words.
-  The reframe: not three problems but one, because the town has no shared front
-  door, so every org rebuilds a tiny audience forever. Why the alternatives fail:
+  The reframe: not four problems but one showing up as different symptoms,
+  because the town no longer has a town square, so every org rebuilds a tiny
+  audience forever. Why the alternatives fail:
   Facebook groups are rented land with an algorithm in between, local news is
   thinning, the city site is built for compliance not communication, email lists
   are expensive, one-way, and siloed.
@@ -179,7 +183,7 @@ behind it, not a pitch deck. That room was not evaluating a vendor.
 1. **Three layers.** Vertical stack. The anatomy.
 2. **Before and after information flow.** Before: many orgs broadcasting into
    fragmented pockets, most residents reached by none. After: orgs publish into
-   one substrate, residents discover across all of it.
+   one shared place, residents discover across all of it.
 3. **The compounding loop.** Resident builds a creation, the creation writes
    typed records back, those records become the next builder's input. This is
    the actual thesis and it currently exists only as prose.

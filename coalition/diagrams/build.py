@@ -124,24 +124,23 @@ def write(name, body, w=W, h=H):
 
 # ================================================================ 1. layers
 def d1_three_layers():
-    b = [title("Town Square has three layers",
-               "Aggregation and discovery are table stakes. The build layer is the idea.")]
+    b = [title("Three layers, and each asks more of the town",
+               "Useful before anyone participates. Useful and busy before anyone builds.")]
 
     rows = [
-        (GOLD, "3", "The build layer",
-         ["Residents build small apps on the foundation and plug them in.",
-          "Town Square does not build them. It is what they stand on,",
-          "and how the town finds them."],
-         "This is the part that is different"),
-        (SAGE, "2", "Directory and discovery",
-         ["Businesses, articles, podcasts, organizations. Built to surface",
-          "the thing you did not know to look for, not just the thing you",
-          "already knew to search."],
-         "741 Russellville listings loaded"),
-        (TERRA, "1", "Aggregation",
-         ["News, events, and notices for the town, pulled together in one",
-          "place instead of scattered across a dozen sites and feeds."],
-         "What is happening"),
+        (GOLD, "3", "Let anyone build on it",
+         ["Anyone with an idea can build something and plug it in. Tamale",
+          "rankings, plain-English council summaries, a marketplace, a",
+          "tracker for whatever is bearing down on this town next."],
+         "each one leaves something behind"),
+        (SAGE, "2", "Let the town add what only people can add",
+         ["Residents add what no scraper will ever find. What is actually",
+          "going on, what is worth going to, what a place is really like."],
+         "no ads, so nothing is hidden"),
+        (TERRA, "1", "Bring in what already exists",
+         ["Business listings, news, event calendars, notices, podcasts.",
+          "Already out there, already worth having, gathered in one place."],
+         "nobody changes what they do"),
     ]
 
     y = 200
@@ -159,8 +158,8 @@ def d1_three_layers():
         b.append(text(1380, y + 62, tag, 17, color, MONO, 500, "end"))
         y += h + 22
 
-    b.append(text(80, 862, "Value compounds with the number of people building, "
-                           "not the number of people reading.",
+    b.append(text(80, 862, "Discovery is not one of the layers. Finding what you "
+                           "did not know to look for is what all three are for.",
                   22, NAVY, SERIF, 500, style="italic"))
     return "\n".join(b)
 
@@ -208,7 +207,7 @@ def d2_flow():
     b.append(text(588, 712, "most are reached by none of it", 17, MUTED, SANS,
                   400, "middle", style="italic"))
 
-    # ---- RIGHT: substrate
+    # ---- RIGHT: one shared place
     for i, o in enumerate(orgs):
         y = oy + i * 84
         b.append(rect(866, y, 150, 54, PAPER, SAGE, rx=10, sw=2))
@@ -220,7 +219,7 @@ def d2_flow():
     b.append(rect(1128, 396, 168, 160, NAVY, "none", rx=18))
     b.append(text(1212, 462, "Town", 25, PAPER, SERIF, 600, "middle"))
     b.append(text(1212, 492, "Square", 25, PAPER, SERIF, 600, "middle"))
-    b.append(text(1212, 526, "one substrate", 15, GOLD, MONO, 500, "middle"))
+    b.append(text(1212, 526, "one shared place", 15, GOLD, MONO, 500, "middle"))
 
     b.append(rect(1300, 250, 236, 436, PAPER, LINE, rx=16, sw=2, dash="7 7"))
     b.append(text(1418, 286, "Residents", 20, MUTED, SANS, 600, "middle"))
@@ -334,7 +333,7 @@ def d4_org():
     # core
     b.append(rect(560, 340, 480, 92, PAPER, NAVY, rx=16, sw=3))
     b.append(text(800, 376, "Core platform", 24, NAVY, SERIF, 600, "middle"))
-    b.append(text(800, 404, "substrate, SDK, review queue  ·  Tal + AI",
+    b.append(text(800, 404, "the platform, SDK, review queue  ·  Tal + AI",
                   18, MUTED, SANS, 400, "middle"))
 
     # spine

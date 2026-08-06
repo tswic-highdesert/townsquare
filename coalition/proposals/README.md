@@ -28,6 +28,7 @@ play. Landing one is a win. Landing three is a program.
 | 4 | [Transportation Coordination](04-transportation-coordination.md) | Transportation coordination | High | Medium |
 | 5 | [Flock Camera Transparency Map](05-flock-transparency-map.md) | Data collection | Medium | **Political** |
 | 6 | [Builder CLI and Templates](06-builder-cli-and-templates.md) | (developer tooling, not a community need) | Medium-high | Low |
+| 7 | [Civic Information Harm Study](07-civic-information-harm-study.md) | All of them, by measuring the gap itself | High | Medium (IRB) |
 
 The "documented need" column maps to the AR-NETWORK Community Health
 Needs-Finding Workshop findings that ATU itself summarized: improved access to
@@ -37,9 +38,18 @@ list back to ATU is the cheapest credibility available.
 
 ## Recommended slate
 
-**Submit 1, 2, and 3.** They cover three different documented needs, span three
-different technical profiles so they suit different team strengths, and none of
-them carries political or schedule risk.
+**Submit 1, 2, 3, and 7.** The first three cover three different documented
+needs, span three different technical profiles so they suit different team
+strengths, and none carries political or schedule risk.
+
+**7 is the one to push hardest on**, even though it is the least like the
+others. It is the only proposal that produces evidence rather than software, and
+that evidence is what every other conversation depends on: grant applications,
+city buy-in, and whether anyone can say what the local information gap actually
+costs. It is also the natural home for the Mikles-Schluterman partnership, which
+turns "interdisciplinary" from a word in the brochure into an actual second
+department at the table. Send it to Cunningham, Ghosh, and Mikles-Schluterman
+together. Its one real risk is IRB timing, which has to start in the fall.
 
 **Hold 4** unless Donna Smith at Russellville Housing Authority is willing to
 co-sign as a second partner, which would make it the strongest proposal on the

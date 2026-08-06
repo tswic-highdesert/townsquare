@@ -19,7 +19,7 @@ await page.pdf({
   width: '1600px',
   height: '900px',
   printBackground: true,
-  pageRanges: '1-15',
+  pageRanges: '1-17',
   margin: { top: 0, right: 0, bottom: 0, left: 0 },
 })
 console.log('  ' + pdf.split('/').pop())
