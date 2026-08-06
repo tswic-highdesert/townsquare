@@ -1,0 +1,84 @@
+/* 11 ask — navy. The page has been building to this, so it is a plain
+   four-row roll call: who you are on the left, what we are asking on the
+   right. One visual idea, four times, so a viewer finds their own row in
+   about a second. */
+
+.s-ask{overflow:hidden}
+.s-ask-glow{
+  position:absolute;inset-block-start:-26%;inset-inline-start:-14%;
+  width:min(58rem,80vw);aspect-ratio:1;border-radius:50%;
+  background:radial-gradient(circle,
+    color-mix(in srgb,var(--ts-gold) 16%,transparent) 0%,
+    color-mix(in srgb,var(--ts-navy) 0%,transparent) 66%);
+  pointer-events:none;
+}
+.s-ask-in{position:relative}
+
+.s-ask-head{max-width:46ch}
+.s-ask-head .h2{max-width:24ch}
+.s-ask-head .lead{margin-bottom:0;max-width:34ch}
+
+/* ------------------------------------------------- the four rows */
+.s-ask-rows{
+  list-style:none;margin:clamp(3rem,5vw,4.6rem) 0 0;padding:0;
+  border-block-start:1px solid color-mix(in srgb,var(--ts-on-navy) 18%,transparent);
+}
+.s-ask-row{
+  display:grid;grid-template-columns:minmax(0,.92fr) minmax(0,1.3fr);
+  gap:clamp(1.6rem,4vw,4.5rem);align-items:start;
+  padding-block:clamp(2rem,3.4vw,3.1rem);
+  border-block-end:1px solid color-mix(in srgb,var(--ts-on-navy) 18%,transparent);
+  position:relative;
+}
+/* a thin accent tick that grows out of the left edge on hover */
+.s-ask-row::before{
+  content:"";position:absolute;inset-block-start:-1px;inset-inline-start:0;
+  width:0;height:2px;background:var(--ts-gold);
+  transition:width .45s var(--ts-ease);
+}
+.s-ask-row:hover::before{width:clamp(4rem,12vw,14rem)}
+.s-ask-row:nth-child(2)::before{background:var(--ts-terra)}
+.s-ask-row:nth-child(4)::before{background:var(--ts-terra)}
+
+.s-ask-row__who{display:flex;align-items:baseline;gap:clamp(.9rem,1.6vw,1.5rem)}
+.s-ask-row__n{
+  font-family:var(--ts-mono);font-size:var(--ts-t-label);
+  letter-spacing:.16em;line-height:1;flex:none;
+  color:color-mix(in srgb,var(--ts-gold) 78%,transparent);
+  padding-block-start:.55rem;
+}
+.s-ask-row:nth-child(2) .s-ask-row__n,
+.s-ask-row:nth-child(4) .s-ask-row__n{
+  color:color-mix(in srgb,var(--ts-terra) 92%,transparent);
+}
+.s-ask-row__label{
+  margin:0;font-family:var(--ts-serif);font-weight:600;
+  font-size:clamp(1.7rem,2.75vw,2.7rem);line-height:1.08;
+  letter-spacing:-.02em;color:var(--ts-paper);
+  max-width:14ch;text-wrap:balance;
+}
+
+.s-ask-row__ask{padding-block-start:.25rem}
+.s-ask-row__do{
+  margin:0 0 .75rem;font-family:var(--ts-serif);font-weight:500;
+  font-size:clamp(1.28rem,1.75vw,1.75rem);line-height:1.28;
+  letter-spacing:-.012em;color:var(--ts-gold);
+  max-width:30ch;text-wrap:balance;
+}
+.s-ask-row:nth-child(2) .s-ask-row__do,
+.s-ask-row:nth-child(4) .s-ask-row__do{
+  color:color-mix(in srgb,var(--ts-terra) 82%,var(--ts-cream));
+}
+.s-ask-row__why{
+  margin:0;font-size:var(--ts-t-body);line-height:1.62;
+  color:var(--ts-on-navy-muted);max-width:52ch;
+}
+
+/* ------------------------------------------------- narrower */
+@media(max-width:1100px){
+  .s-ask-row{grid-template-columns:minmax(0,1fr);gap:1rem}
+  .s-ask-row__label{max-width:none}
+}
+@media(prefers-reduced-motion:reduce){
+  .s-ask-row::before{transition:none}
+}

@@ -1,0 +1,239 @@
+/* 07 — Why it compounds, and community memory.
+   Movement one runs on paper. Movement two is a full-bleed navy band, so the
+   turn to memory reads as a second beginning rather than more of the same. */
+
+/* ---------------------------------------------------------- movement one */
+.s-compounds-head{max-width:70ch}
+.s-compounds-head .h2{max-width:22ch}
+
+.s-compounds-fig{margin-top:clamp(2.4rem,4vw,3.6rem)}
+
+.s-compounds-bet{
+  margin-top:clamp(2.6rem,4.5vw,4rem);
+  display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.25fr);
+  gap:clamp(1.8rem,4vw,4rem);align-items:start;
+}
+.s-compounds-bet__p{
+  margin:0;font-size:var(--ts-t-body);line-height:1.7;
+  color:var(--ts-text-muted);max-width:42ch;
+  padding-inline-start:1.4rem;
+  border-inline-start:2px solid var(--ts-line);
+}
+.s-compounds-bet__q{
+  margin:0;font-family:var(--ts-serif);font-weight:500;
+  font-size:clamp(1.3rem,1.85vw,1.85rem);line-height:1.4;
+  letter-spacing:-.012em;color:var(--ts-display);max-width:34ch;
+  text-wrap:balance;
+}
+@media(max-width:960px){
+  .s-compounds-bet{grid-template-columns:minmax(0,1fr)}
+}
+
+/* ---------------------------------------------------------- the navy band */
+.s-compounds-band{
+  position:relative;overflow:hidden;isolation:isolate;
+  background:var(--ts-navy);color:var(--ts-on-navy);
+  padding-block:clamp(4.5rem,8vw,8rem);
+  margin-block:clamp(4.5rem,8vw,8rem);
+}
+.s-compounds-band strong{color:var(--ts-on-navy);font-weight:600}
+.s-compounds-glow{
+  position:absolute;inset-block-start:-38%;inset-inline-start:-12%;
+  width:min(64rem,86vw);aspect-ratio:1;border-radius:50%;z-index:-1;
+  background:radial-gradient(circle,
+    color-mix(in srgb,var(--ts-gold) 17%,transparent) 0%,
+    color-mix(in srgb,var(--ts-navy) 0%,transparent) 66%);
+  pointer-events:none;
+}
+.s-compounds-band__in{position:relative}
+
+.s-compounds-turn{color:var(--ts-gold);margin-bottom:1.6rem}
+
+.s-compounds-band__h{
+  margin:0;font-family:var(--ts-serif);font-weight:600;
+  font-size:clamp(2rem,3.1vw,3.2rem);line-height:1.14;letter-spacing:-.018em;
+  color:var(--ts-paper);max-width:22ch;text-wrap:balance;
+}
+.s-compounds-band__h2{display:block;color:var(--ts-gold)}
+
+.s-compounds-band__p{
+  margin:clamp(2rem,3vw,2.8rem) 0 0;max-width:60ch;
+  font-size:var(--ts-t-body);line-height:1.72;color:var(--ts-on-navy-muted);
+}
+.s-compounds-band__p--tight{margin-top:clamp(1.8rem,2.4vw,2.4rem)}
+
+/* the things a town knows, fading out as they go */
+.s-compounds-knows{
+  list-style:none;margin:clamp(2.4rem,4vw,3.4rem) 0 0;padding:0;
+  max-width:62ch;
+  border-block-start:1px solid color-mix(in srgb,var(--ts-on-navy) 16%,transparent);
+}
+.s-compounds-knows li{
+  position:relative;padding:.85rem 0 .85rem 1.9rem;
+  border-block-end:1px solid color-mix(in srgb,var(--ts-on-navy) 12%,transparent);
+  font-family:var(--ts-serif);font-style:italic;font-weight:400;
+  font-size:clamp(1.12rem,1.4vw,1.42rem);line-height:1.45;
+  color:var(--ts-cream);
+}
+.s-compounds-knows li::before{
+  content:"";position:absolute;inset-inline-start:.1rem;
+  inset-block-start:calc(.85rem + .72em);
+  width:.5rem;height:.5rem;border-radius:50%;
+  background:var(--ts-gold);transform:translateY(-50%);
+}
+.s-compounds-knows li:nth-child(2){opacity:.92}
+.s-compounds-knows li:nth-child(3){opacity:.83}
+.s-compounds-knows li:nth-child(4){opacity:.74}
+.s-compounds-knows li:nth-child(5){opacity:.64}
+.s-compounds-knows li:nth-child(6){opacity:.54;border-block-end-color:transparent}
+
+.s-compounds-kicker{
+  margin:clamp(2.2rem,3.2vw,3rem) 0 0;max-width:34ch;
+  font-family:var(--ts-serif);font-weight:500;
+  font-size:clamp(1.25rem,1.7vw,1.7rem);line-height:1.38;
+  color:var(--ts-paper);text-wrap:balance;
+}
+
+/* here is what changes */
+.s-compounds-change{
+  margin-top:clamp(3rem,5vw,4.5rem);
+  padding:clamp(1.6rem,2.4vw,2.2rem) clamp(1.6rem,2.4vw,2.4rem);
+  border-radius:var(--ts-radius);
+  background:color-mix(in srgb,var(--ts-navy-deep) 70%,transparent);
+  border:1.5px solid color-mix(in srgb,var(--ts-gold) 28%,transparent);
+  max-width:68ch;
+}
+.s-compounds-change__k{
+  margin:0 0 .7rem;font-family:var(--ts-mono);font-size:var(--ts-t-label);
+  letter-spacing:.18em;text-transform:uppercase;color:var(--ts-gold);
+}
+.s-compounds-change__p{
+  margin:0;font-size:clamp(1.08rem,1.3vw,1.32rem);line-height:1.55;
+  color:var(--ts-on-navy-muted);
+}
+
+/* today -> later */
+.s-compounds-byp{
+  list-style:none;margin:clamp(2rem,3vw,2.6rem) 0 0;padding:0;max-width:76ch;
+}
+.s-compounds-byp__row{
+  display:grid;
+  grid-template-columns:minmax(0,15rem) 1.6rem minmax(0,1fr);
+  align-items:baseline;gap:0 1rem;
+  padding:1.05rem 0;
+  border-block-end:1px solid color-mix(in srgb,var(--ts-on-navy) 13%,transparent);
+}
+.s-compounds-byp__row:first-child{
+  border-block-start:1px solid color-mix(in srgb,var(--ts-on-navy) 13%,transparent);
+}
+.s-compounds-byp__now{
+  font-family:var(--ts-mono);font-size:var(--ts-t-small);
+  color:var(--ts-on-navy-muted);
+}
+.s-compounds-byp__arw{color:var(--ts-terra);font-size:1.05rem;text-align:center}
+.s-compounds-byp__then{
+  font-family:var(--ts-serif);font-size:clamp(1.05rem,1.3vw,1.3rem);
+  line-height:1.4;color:var(--ts-paper);
+}
+@media(max-width:900px){
+  .s-compounds-byp__row{grid-template-columns:minmax(0,1fr);gap:.35rem 0}
+  .s-compounds-byp__arw{display:none}
+}
+
+/* the line of the section */
+.s-compounds-quote{
+  margin:clamp(3.4rem,6vw,5.5rem) 0 0;padding:0;max-width:26ch;
+  font-family:var(--ts-serif);font-weight:600;
+  font-size:clamp(1.85rem,3.4vw,3.5rem);line-height:1.12;
+  letter-spacing:-.022em;color:var(--ts-paper);text-wrap:balance;
+}
+.s-compounds-quote__b{display:block;margin-top:.55em;color:var(--ts-gold)}
+
+/* ---------------------------------------------------- the acceleration chain */
+.s-compounds-accel{max-width:56ch}
+.s-compounds-accel__h{
+  margin:0;font-family:var(--ts-serif);font-weight:600;
+  font-size:clamp(1.5rem,2.1vw,2.1rem);line-height:1.25;letter-spacing:-.014em;
+  color:var(--ts-display);text-wrap:balance;
+}
+
+.s-compounds-chain{
+  list-style:none;margin:clamp(2.6rem,4vw,3.6rem) 0 0;padding:0;
+  --s-compounds-step:clamp(1.4rem,2.6vw,3rem);
+}
+.s-compounds-link{
+  position:relative;display:grid;
+  grid-template-columns:3.4rem minmax(0,1fr);
+  gap:0 1.3rem;padding-block:0 clamp(1.7rem,2.6vw,2.4rem);
+}
+.s-compounds-link:nth-child(2){margin-inline-start:calc(var(--s-compounds-step) * 1)}
+.s-compounds-link:nth-child(3){margin-inline-start:calc(var(--s-compounds-step) * 2)}
+.s-compounds-link:nth-child(4){margin-inline-start:calc(var(--s-compounds-step) * 3)}
+
+/* the connector: an elbow that drops out of one node and steps across into the
+   next, so the chain is visible rather than implied */
+.s-compounds-link::before{
+  content:"";position:absolute;inset-block-start:3.5rem;inset-block-end:0;
+  inset-inline-start:calc(1.7rem - 1px);width:2px;
+  background:linear-gradient(to bottom,
+    var(--ts-line),
+    color-mix(in srgb,var(--ts-line) 45%,transparent));
+}
+.s-compounds-link::after{
+  content:"";position:absolute;inset-block-end:0;
+  inset-inline-start:calc(1.7rem - 1px);
+  width:var(--s-compounds-step);height:2px;
+  background:color-mix(in srgb,var(--ts-line) 45%,transparent);
+}
+.s-compounds-link:last-child::before,
+.s-compounds-link:last-child::after{display:none}
+
+.s-compounds-link__n{
+  display:flex;align-items:center;justify-content:center;
+  width:3.4rem;height:3.4rem;border-radius:50%;
+  background:var(--ts-bg);border:2px solid var(--ts-line);
+  font-family:var(--ts-mono);font-size:var(--ts-t-label);font-weight:500;
+  letter-spacing:.06em;color:var(--ts-accent);
+  position:relative;z-index:1;
+}
+.s-compounds-link__body{padding-block-start:.35rem;max-width:56ch}
+.s-compounds-link__t{
+  margin:0 0 .35rem;font-family:var(--ts-serif);font-weight:600;
+  font-size:var(--ts-t-h3);line-height:1.25;color:var(--ts-display);
+}
+.s-compounds-link__d{
+  margin:0;font-size:var(--ts-t-body);line-height:1.66;
+  color:var(--ts-text-muted);
+}
+.s-compounds-link__i{
+  margin:.75rem 0 0;display:inline-block;
+  padding:.4rem .8rem;border-radius:999px;
+  background:var(--ts-bg-alt);
+  font-family:var(--ts-mono);font-size:var(--ts-t-label);
+  letter-spacing:.04em;color:var(--ts-text-muted);
+}
+@media(max-width:900px){
+  .s-compounds-chain{--s-compounds-step:0rem}
+  .s-compounds-link::after{display:none}
+}
+
+/* ---------------------------------------------------------------- close */
+.s-compounds-close{
+  margin-top:clamp(2.4rem,3.5vw,3.4rem);
+  padding-block-start:clamp(2rem,3vw,2.6rem);
+  border-block-start:2px solid var(--ts-line);
+  display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,1fr);
+  gap:clamp(1.6rem,4vw,4rem);align-items:start;
+}
+.s-compounds-close__p{
+  margin:0;font-size:var(--ts-t-body);line-height:1.7;
+  color:var(--ts-text-muted);max-width:54ch;
+}
+.s-compounds-close__k{
+  margin:0;font-family:var(--ts-serif);font-style:italic;font-weight:400;
+  font-size:clamp(1.2rem,1.6vw,1.6rem);line-height:1.42;
+  color:var(--ts-display);max-width:30ch;text-wrap:balance;
+}
+@media(max-width:960px){
+  .s-compounds-close{grid-template-columns:minmax(0,1fr)}
+}

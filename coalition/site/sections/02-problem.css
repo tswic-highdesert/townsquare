@@ -1,0 +1,166 @@
+/* 02 problem — first light section after the navy hero.
+   One visual idea: scattered fragments collapse into three plain sentences
+   somebody actually said in the room. */
+
+.s-problem-head{max-width:34ch}
+.s-problem-head .h2{max-width:22ch}
+.s-problem-head .lead{margin-bottom:0}
+
+/* ------------------------------------------------- the scatter */
+.s-problem-scatter{
+  list-style:none;margin:clamp(2.6rem,4vw,3.8rem) 0 0;padding:0;
+  display:grid;grid-template-columns:repeat(4,minmax(0,1fr));
+  gap:clamp(1rem,1.8vw,1.8rem);align-items:start;
+}
+.s-problem-frag{
+  border-inline-start:2px solid var(--ts-line);
+  padding:.15rem 0 .3rem 1.1rem;
+}
+/* deliberately unaligned: nothing here sits on the same line */
+.s-problem-frag:nth-child(1){margin-block-start:0}
+.s-problem-frag:nth-child(2){margin-block-start:2.4rem}
+.s-problem-frag:nth-child(3){margin-block-start:.9rem}
+.s-problem-frag:nth-child(4){margin-block-start:3.3rem}
+.s-problem-frag:nth-child(2){border-inline-start-color:
+  color-mix(in srgb,var(--ts-terra) 55%,transparent)}
+.s-problem-frag:nth-child(4){border-inline-start-color:
+  color-mix(in srgb,var(--ts-sage) 65%,transparent)}
+
+.s-problem-frag__src{
+  display:block;font-family:var(--ts-mono);font-size:var(--ts-t-label);
+  letter-spacing:.14em;text-transform:uppercase;color:var(--ts-text-muted);
+  margin-bottom:.5rem;
+}
+.s-problem-frag__txt{
+  display:block;font-family:var(--ts-serif);
+  font-size:clamp(1.05rem,1.25vw,1.28rem);line-height:1.35;
+  color:var(--ts-display);text-wrap:balance;
+}
+
+/* ------------------------------------------------- the collapse */
+.s-problem-collapse{
+  margin-block-start:clamp(3rem,5vw,4.6rem);
+  border-block-start:1px solid var(--ts-line-soft);
+  padding-block-start:clamp(1.6rem,2.4vw,2.4rem);
+}
+.s-problem-line{
+  font-family:var(--ts-serif);font-weight:600;
+  font-size:clamp(1.45rem,2.1vw,2.05rem);line-height:1.3;
+  letter-spacing:-.012em;color:var(--ts-display);
+  margin:0 0 .4rem;max-width:30ch;text-wrap:balance;
+}
+.s-problem-line--muted{font-weight:400;color:var(--ts-text-muted);margin-bottom:0}
+
+/* ------------------------------------------------- the pull quote */
+.s-problem-pull{
+  margin:clamp(3.4rem,5.5vw,5.2rem) 0 0;
+  padding-inline-start:clamp(1.4rem,2.6vw,2.6rem);
+  border-inline-start:5px solid var(--ts-gold);
+  max-width:44ch;
+}
+.s-problem-pull__q{
+  margin:0;font-family:var(--ts-serif);font-weight:500;
+  font-size:clamp(1.7rem,2.85vw,2.75rem);line-height:1.22;
+  letter-spacing:-.018em;color:var(--ts-display);text-wrap:balance;
+}
+.s-problem-pull__after{
+  margin:1.4rem 0 0;max-width:52ch;
+  font-size:var(--ts-t-body);line-height:1.6;color:var(--ts-text-muted);
+}
+
+.s-problem-turn{
+  margin:clamp(2.2rem,3.5vw,3rem) 0 0;max-width:46ch;
+  font-size:var(--ts-t-lead);line-height:1.5;color:var(--ts-text);
+}
+
+/* ------------------------------------------------- what people said */
+.s-problem-voices{
+  margin-block-start:clamp(4.5rem,8vw,7.5rem);
+  display:grid;grid-template-columns:minmax(0,.85fr) minmax(0,1.4fr);
+  gap:clamp(2rem,5vw,5rem);align-items:start;
+}
+.s-problem-voices__head{position:sticky;top:7rem}
+.s-problem-voices__intro{
+  margin:0;font-size:var(--ts-t-small);line-height:1.65;
+  color:var(--ts-text-muted);max-width:40ch;
+}
+
+.s-problem-quotes{list-style:none;margin:0;padding:0}
+.s-problem-quote{
+  position:relative;padding:clamp(1.5rem,2.4vw,2.2rem) 0
+    clamp(1.5rem,2.4vw,2.2rem) clamp(2.6rem,3.6vw,3.6rem);
+  border-block-end:1px solid var(--ts-line-soft);
+}
+.s-problem-quote:first-child{padding-block-start:0}
+.s-problem-quote:last-child{border-block-end:0;padding-block-end:0}
+.s-problem-quote__mark{
+  position:absolute;inset-inline-start:0;inset-block-start:clamp(.6rem,1vw,1.1rem);
+  font-family:var(--ts-serif);font-weight:600;line-height:1;
+  font-size:clamp(3rem,4.6vw,4.4rem);
+  color:color-mix(in srgb,var(--ts-terra) 38%,transparent);
+  pointer-events:none;
+}
+.s-problem-quote:first-child .s-problem-quote__mark{inset-block-start:-.4rem}
+.s-problem-quote__txt{
+  margin:0;font-family:var(--ts-serif);font-weight:500;
+  font-size:clamp(1.5rem,2.35vw,2.3rem);line-height:1.26;
+  letter-spacing:-.014em;color:var(--ts-display);
+  max-width:24ch;text-wrap:balance;
+}
+.s-problem-quote:last-child .s-problem-quote__txt{
+  font-size:clamp(1.32rem,1.85vw,1.82rem);line-height:1.34;max-width:30ch;
+}
+
+/* ------------------------------------------------- ATU corroboration */
+.s-problem-atu{
+  margin-block-start:clamp(3.5rem,6vw,5.5rem);
+  background:var(--ts-bg-alt);border-radius:var(--ts-radius);
+  padding:clamp(1.6rem,2.6vw,2.4rem) clamp(1.6rem,3vw,2.8rem);
+  display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.25fr);
+  gap:clamp(1.4rem,3vw,3rem);align-items:center;
+}
+.s-problem-atu__lede{
+  margin:0;font-size:var(--ts-t-small);line-height:1.6;
+  color:var(--ts-text);max-width:38ch;
+}
+.s-problem-atu__list{
+  list-style:none;margin:0;padding:0;
+  display:flex;flex-wrap:wrap;gap:.55rem;
+}
+.s-problem-atu__list li{
+  font-family:var(--ts-mono);font-size:var(--ts-t-label);
+  letter-spacing:.05em;color:var(--ts-text-muted);
+  border:1px solid var(--ts-line);border-radius:999px;
+  padding:.42rem .85rem;background:var(--ts-paper);
+}
+
+/* ------------------------------------------------- close */
+.s-problem-close{
+  margin-block-start:clamp(3.5rem,6vw,5.5rem);
+  display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);
+  gap:clamp(2rem,5vw,5rem);align-items:start;
+}
+.s-problem-close__p{
+  margin:0;color:var(--ts-text-muted);max-width:52ch;line-height:1.65;
+}
+.s-problem-close__kicker{
+  margin:0;font-family:var(--ts-serif);
+  font-size:clamp(1.2rem,1.55vw,1.55rem);line-height:1.42;
+  color:var(--ts-display);max-width:34ch;
+  padding-inline-start:clamp(1.1rem,1.8vw,1.6rem);
+  border-inline-start:2px solid var(--ts-terra);
+}
+
+/* ------------------------------------------------- narrower */
+@media(max-width:1100px){
+  .s-problem-voices,.s-problem-close{grid-template-columns:minmax(0,1fr)}
+  .s-problem-voices__head{position:static}
+}
+@media(max-width:900px){
+  .s-problem-scatter{grid-template-columns:repeat(2,minmax(0,1fr));
+    gap:1.6rem 1.4rem}
+  .s-problem-frag:nth-child(1),.s-problem-frag:nth-child(2),
+  .s-problem-frag:nth-child(3),.s-problem-frag:nth-child(4){margin-block-start:0}
+  .s-problem-frag:nth-child(2),.s-problem-frag:nth-child(4){margin-block-start:1.6rem}
+  .s-problem-atu{grid-template-columns:minmax(0,1fr)}
+}

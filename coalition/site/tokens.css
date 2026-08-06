@@ -1,0 +1,75 @@
+/* Town Square coalition site — design tokens.
+   THE CONTRACT: no section stylesheet may contain a raw hex, rgb(), hsl(), or
+   named colour. Every colour resolves through a --ts-* variable declared here.
+   check.mjs enforces this. */
+
+@font-face{font-family:'Newsreader';src:url('fonts/newsreader.woff2') format('woff2');
+  font-weight:200 800;font-style:normal;font-display:block}
+@font-face{font-family:'DM Sans';src:url('fonts/dm-sans.woff2') format('woff2');
+  font-weight:100 1000;font-style:normal;font-display:block}
+@font-face{font-family:'DM Mono';src:url('fonts/dm-mono-400.woff2') format('woff2');
+  font-weight:400;font-style:normal;font-display:block}
+@font-face{font-family:'DM Mono';src:url('fonts/dm-mono-500.woff2') format('woff2');
+  font-weight:500;font-style:normal;font-display:block}
+
+:root{
+  /* ---- core palette (app palette, tuned off the base brand) ---- */
+  --ts-navy:#26405B;
+  --ts-navy-deep:#1B2E42;
+  --ts-terra:#C4714E;
+  --ts-sage:#7D9B76;
+  --ts-gold:#D4A853;
+  --ts-cream:#EDE9E0;
+  --ts-paper:#FAF8F5;
+  --ts-ink:#1D1B16;
+  --ts-alarm:#7E1F0C;
+
+  /* ---- derived neutrals ---- */
+  --ts-muted:#6E6A61;
+  --ts-line:#CFC7B8;
+  --ts-line-soft:#E2DCD0;
+  --ts-on-navy:#FAF8F5;
+  --ts-on-navy-muted:#B9C4CF;
+
+  /* ---- semantic ---- */
+  --ts-bg:var(--ts-paper);
+  --ts-bg-alt:var(--ts-cream);
+  --ts-bg-invert:var(--ts-navy);
+  --ts-text:var(--ts-ink);
+  --ts-text-muted:var(--ts-muted);
+  --ts-display:var(--ts-navy);
+  --ts-accent:var(--ts-terra);
+  --ts-focus:var(--ts-gold);
+
+  /* ---- type ---- */
+  --ts-serif:'Newsreader',Georgia,'Times New Roman',serif;
+  --ts-sans:'DM Sans',-apple-system,BlinkMacSystemFont,'Helvetica Neue',Arial,sans-serif;
+  --ts-mono:'DM Mono',ui-monospace,'SF Mono',Menlo,monospace;
+
+  /* fluid display scale, tuned for 1280-1920 recording widths */
+  --ts-t-hero:clamp(3.4rem,6.2vw,6.6rem);
+  --ts-t-h1:clamp(2.6rem,4.4vw,4.4rem);
+  --ts-t-h2:clamp(1.9rem,2.7vw,2.9rem);
+  --ts-t-h3:clamp(1.25rem,1.5vw,1.6rem);
+  --ts-t-lead:clamp(1.2rem,1.45vw,1.6rem);
+  --ts-t-body:clamp(1.02rem,1.12vw,1.18rem);
+  --ts-t-small:0.95rem;
+  --ts-t-label:0.78rem;
+
+  /* ---- space ---- */
+  --ts-gutter:clamp(1.5rem,5vw,6rem);
+  --ts-section-y:clamp(5rem,10vw,10rem);
+  --ts-measure:64ch;
+  --ts-max:1440px;
+
+  /* ---- motion ---- */
+  --ts-ease:cubic-bezier(.2,.7,.3,1);
+  --ts-dur:.7s;
+
+  /* ---- elevation ---- */
+  --ts-shadow-sm:0 1px 2px rgba(29,27,22,.05),0 4px 12px rgba(29,27,22,.05);
+  --ts-shadow-md:0 6px 18px rgba(29,27,22,.08),0 18px 46px rgba(29,27,22,.08);
+  --ts-shadow-lg:0 20px 60px rgba(29,27,22,.16);
+  --ts-radius:18px;
+  --ts-radius-lg:28px;
+}

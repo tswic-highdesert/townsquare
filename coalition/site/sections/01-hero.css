@@ -1,0 +1,63 @@
+.s-hero{
+  background:var(--ts-navy);
+  color:var(--ts-on-navy);
+  min-height:min(100svh,58rem);
+  display:flex;align-items:center;
+  padding-block:clamp(7rem,14vh,11rem) var(--ts-section-y);
+  overflow:hidden;
+}
+.s-hero-glow{
+  position:absolute;inset-block-start:-30%;inset-inline-end:-18%;
+  width:min(70rem,90vw);aspect-ratio:1;border-radius:50%;
+  background:radial-gradient(circle,
+    color-mix(in srgb,var(--ts-terra) 30%,transparent) 0%,
+    color-mix(in srgb,var(--ts-navy) 0%,transparent) 68%);
+  pointer-events:none;
+}
+.s-hero-in{position:relative}
+
+.s-hero-mark{width:clamp(3.4rem,5vw,4.6rem);height:auto;margin-bottom:2.2rem}
+
+.s-hero-eyebrow{color:var(--ts-gold);margin-bottom:1.1rem}
+
+.s-hero-title{
+  font-family:var(--ts-serif);font-weight:600;
+  font-size:var(--ts-t-hero);line-height:.98;letter-spacing:-.03em;
+  color:var(--ts-paper);margin:0;
+}
+.s-hero-rule{
+  width:8.5rem;height:5px;background:var(--ts-gold);
+  border-radius:3px;margin:2.1rem 0 1.9rem;
+}
+.s-hero-sub{
+  font-family:var(--ts-serif);font-weight:400;
+  font-size:clamp(1.35rem,2.05vw,2.05rem);line-height:1.42;
+  color:var(--ts-cream);max-width:26ch;margin:0 0 3rem;text-wrap:balance;
+}
+.s-hero-meta{
+  display:flex;align-items:center;gap:.75rem;flex-wrap:wrap;
+  font-family:var(--ts-mono);font-size:var(--ts-t-label);
+  letter-spacing:.13em;text-transform:uppercase;
+  color:color-mix(in srgb,var(--ts-on-navy) 55%,transparent);
+}
+.s-hero-dot{opacity:.6}
+
+.s-hero-scroll{
+  display:inline-flex;align-items:center;gap:.7rem;margin-top:3.4rem;
+  font-family:var(--ts-mono);font-size:var(--ts-t-label);
+  letter-spacing:.13em;text-transform:uppercase;
+  color:var(--ts-gold);text-decoration:none;
+  padding:.85rem 1.35rem;border-radius:999px;
+  border:1.5px solid color-mix(in srgb,var(--ts-gold) 42%,transparent);
+  transition:background .25s var(--ts-ease),border-color .25s var(--ts-ease);
+}
+.s-hero-scroll:hover{
+  background:color-mix(in srgb,var(--ts-gold) 12%,transparent);
+  border-color:var(--ts-gold);
+}
+.s-hero-scroll svg{animation:s-hero-bob 2.4s var(--ts-ease) infinite}
+@keyframes s-hero-bob{
+  0%,100%{transform:translateY(0)}
+  50%{transform:translateY(3px)}
+}
+@media(prefers-reduced-motion:reduce){.s-hero-scroll svg{animation:none}}

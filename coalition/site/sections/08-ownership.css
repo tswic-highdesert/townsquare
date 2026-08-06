@@ -1,0 +1,224 @@
+/* 08 ownership — the second and final dark beat, and the heaviest.
+   Deeper navy than the hero so the page settles rather than repeats.
+   One visual idea: a claim, the harm it causes stated flat, and the
+   four things that hold this one differently. */
+
+.s-ownership{
+  background:var(--ts-navy-deep);
+  overflow:hidden;
+  padding-block:calc(var(--ts-section-y) * 1.15);
+}
+.s-ownership-veil{
+  position:absolute;inset:0;pointer-events:none;
+  background:
+    radial-gradient(120% 70% at 12% 0%,
+      color-mix(in srgb,var(--ts-navy) 70%,transparent) 0%,
+      color-mix(in srgb,var(--ts-navy) 0%,transparent) 62%);
+}
+.s-ownership-in{position:relative}
+
+/* ------------------------------------------------- movement one: the name */
+.s-ownership-open{max-width:34ch}
+.s-ownership-title{
+  font-family:var(--ts-serif);font-weight:600;
+  font-size:clamp(3rem,5.2vw,5.4rem);line-height:1.02;
+  letter-spacing:-.028em;color:var(--ts-paper);
+  margin:0;max-width:21ch;text-wrap:balance;
+}
+.s-ownership-kicker{
+  margin:1.6rem 0 0;font-family:var(--ts-mono);
+  font-size:var(--ts-t-small);letter-spacing:.02em;
+  color:var(--ts-on-navy-muted);
+}
+
+/* the rhetorical trap: setup, a held beat, then the turn on its own */
+.s-ownership-trap{
+  margin-block-start:clamp(3.6rem,6vw,5.6rem);
+  max-width:56ch;
+}
+.s-ownership-trap__setup{
+  margin:0;font-family:var(--ts-serif);font-weight:400;
+  font-size:clamp(1.28rem,1.85vw,1.72rem);line-height:1.45;
+  color:var(--ts-cream);
+}
+.s-ownership-trap__yield{
+  display:block;margin-block-start:.55rem;
+  color:color-mix(in srgb,var(--ts-on-navy) 62%,transparent);
+}
+.s-ownership-trap__turn{
+  position:relative;
+  margin:clamp(2.2rem,3.4vw,3.2rem) 0 0;
+  padding-block-start:clamp(2.2rem,3.4vw,3.2rem);
+  font-family:var(--ts-serif);font-weight:500;
+  font-size:clamp(1.75rem,3vw,2.9rem);line-height:1.2;
+  letter-spacing:-.018em;color:var(--ts-gold);
+  max-width:22ch;text-wrap:balance;
+}
+.s-ownership-trap__turn::before{
+  content:"";position:absolute;inset-block-start:0;inset-inline-start:0;
+  width:5.5rem;height:3px;background:var(--ts-gold);border-radius:2px;
+}
+
+.s-ownership-fair{
+  margin-block-start:clamp(3.2rem,5vw,4.6rem);
+  display:grid;grid-template-columns:minmax(0,.72fr) minmax(0,1.3fr);
+  gap:clamp(1.8rem,4vw,4.5rem);align-items:start;
+}
+.s-ownership-fair__aside{
+  margin:0;font-size:var(--ts-t-small);line-height:1.6;
+  color:var(--ts-on-navy-muted);max-width:30ch;
+  padding-inline-start:1.15rem;
+  border-inline-start:2px solid
+    color-mix(in srgb,var(--ts-on-navy) 24%,transparent);
+}
+.s-ownership-fair__p{
+  margin:0 0 1.1rem;max-width:56ch;line-height:1.62;
+  color:var(--ts-cream);
+}
+.s-ownership-fair__p--last{
+  margin-bottom:0;color:var(--ts-paper);
+  font-family:var(--ts-serif);
+  font-size:clamp(1.15rem,1.45vw,1.42rem);line-height:1.45;
+  max-width:42ch;
+}
+
+/* ------------------------------------------------- movement two: the harm */
+.s-ownership-cost{
+  margin-block-start:clamp(4.5rem,8vw,7.5rem);
+  padding-block-start:clamp(2.4rem,4vw,3.6rem);
+  border-block-start:1px solid
+    color-mix(in srgb,var(--ts-on-navy) 16%,transparent);
+}
+.s-ownership-h3{
+  font-family:var(--ts-serif);font-weight:600;
+  font-size:clamp(1.5rem,2.3vw,2.25rem);line-height:1.2;
+  letter-spacing:-.014em;color:var(--ts-paper);
+  margin:0;max-width:24ch;text-wrap:balance;
+}
+.s-ownership-h3--wide{max-width:30ch}
+
+.s-ownership-cost__head{margin-block-end:clamp(2rem,3.4vw,3rem)}
+.s-ownership-cost__lede{
+  margin:.85rem 0 0;font-family:var(--ts-mono);
+  font-size:var(--ts-t-small);color:var(--ts-on-navy-muted);
+}
+
+.s-ownership-squeeze{
+  display:grid;grid-template-columns:minmax(0,1.05fr) minmax(0,1fr);
+  gap:clamp(2rem,5vw,5rem);align-items:start;
+}
+.s-ownership-body{
+  margin:0 0 1.15rem;max-width:54ch;line-height:1.65;
+  color:var(--ts-on-navy-muted);
+}
+.s-ownership-body:last-child{margin-bottom:0}
+
+/* deliberately unadorned: no icons, no weights, no emphasis. */
+.s-ownership-list{
+  list-style:none;margin:0;padding:0;max-width:38ch;
+}
+.s-ownership-list li{
+  font-family:var(--ts-serif);
+  font-size:clamp(1.05rem,1.25vw,1.26rem);line-height:1.45;
+  color:var(--ts-cream);
+  padding-block:.72rem;
+  border-block-end:1px solid
+    color-mix(in srgb,var(--ts-on-navy) 14%,transparent);
+}
+.s-ownership-list li:first-child{padding-block-start:0}
+.s-ownership-list li:last-child{border-block-end:0;padding-block-end:0}
+
+.s-ownership-after{
+  margin-block-start:clamp(2.4rem,4vw,3.4rem);
+  display:grid;grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:clamp(1.6rem,4vw,4rem);align-items:start;
+}
+.s-ownership-after .s-ownership-body{margin-bottom:0}
+
+/* ------------------------------------------------- the ATU ask */
+.s-ownership-ask{
+  margin-block-start:clamp(3rem,5vw,4.5rem);
+  border:1.5px solid color-mix(in srgb,var(--ts-gold) 45%,transparent);
+  border-radius:var(--ts-radius-lg);
+  background:color-mix(in srgb,var(--ts-gold) 7%,transparent);
+  padding:clamp(1.8rem,3vw,2.9rem) clamp(1.8rem,3.4vw,3.2rem);
+  max-width:80ch;
+}
+.s-ownership-ask__tag{
+  margin:0 0 1.2rem;font-family:var(--ts-mono);
+  font-size:var(--ts-t-label);letter-spacing:.18em;text-transform:uppercase;
+  color:var(--ts-gold);display:flex;align-items:center;gap:.85rem;
+}
+.s-ownership-ask__tag::before{
+  content:"";width:1.9rem;height:2px;background:currentColor;flex:none;opacity:.8;
+}
+.s-ownership-ask__lead{
+  margin:0 0 1.1rem;font-family:var(--ts-serif);font-weight:500;
+  font-size:clamp(1.3rem,1.95vw,1.85rem);line-height:1.32;
+  letter-spacing:-.012em;color:var(--ts-paper);
+  max-width:34ch;text-wrap:balance;
+}
+.s-ownership-ask__body{
+  margin:0 0 1rem;max-width:60ch;line-height:1.62;color:var(--ts-cream);
+}
+.s-ownership-ask__close{
+  margin:0;max-width:60ch;font-size:var(--ts-t-small);line-height:1.62;
+  color:var(--ts-on-navy-muted);
+}
+
+/* ------------------------------------------------- movement three: held how */
+.s-ownership-held{
+  margin-block-start:clamp(4.5rem,8vw,7.5rem);
+  padding-block-start:clamp(2.4rem,4vw,3.6rem);
+  border-block-start:1px solid
+    color-mix(in srgb,var(--ts-on-navy) 16%,transparent);
+}
+.s-ownership-holds{
+  list-style:none;margin:clamp(2.2rem,3.6vw,3.2rem) 0 0;padding:0;
+  display:grid;grid-template-columns:repeat(4,minmax(0,1fr));
+  gap:clamp(1.4rem,2.6vw,2.6rem);
+}
+.s-ownership-hold{
+  padding-block-start:1.15rem;
+  border-block-start:2px solid
+    color-mix(in srgb,var(--ts-gold) 55%,transparent);
+}
+.s-ownership-hold__n{
+  display:block;font-family:var(--ts-mono);font-size:var(--ts-t-label);
+  letter-spacing:.14em;color:var(--ts-gold);margin-bottom:.9rem;
+}
+.s-ownership-hold__k{
+  display:block;font-family:var(--ts-serif);font-weight:600;
+  font-size:clamp(1.12rem,1.35vw,1.4rem);line-height:1.25;
+  color:var(--ts-paper);margin-bottom:.55rem;
+}
+.s-ownership-hold__p{
+  margin:0;font-size:var(--ts-t-small);line-height:1.6;
+  color:var(--ts-on-navy-muted);
+}
+
+.s-ownership-close{
+  margin:clamp(3rem,5vw,4.4rem) 0 0;
+  font-family:var(--ts-serif);font-weight:400;
+  font-size:clamp(1.3rem,2vw,1.95rem);line-height:1.34;
+  letter-spacing:-.012em;color:var(--ts-on-navy-muted);
+  max-width:40ch;text-wrap:balance;
+}
+.s-ownership-close__turn{
+  display:block;margin-block-start:.5rem;
+  font-weight:600;color:var(--ts-paper);
+}
+
+/* ------------------------------------------------- narrower */
+@media(max-width:1180px){
+  .s-ownership-holds{grid-template-columns:repeat(2,minmax(0,1fr));
+    gap:clamp(1.6rem,3vw,2.4rem) clamp(1.6rem,3vw,2.6rem)}
+}
+@media(max-width:1000px){
+  .s-ownership-fair,.s-ownership-squeeze,.s-ownership-after{
+    grid-template-columns:minmax(0,1fr)}
+  .s-ownership-list{max-width:46ch}
+}
+@media(max-width:900px){
+  .s-ownership-holds{grid-template-columns:minmax(0,1fr)}
+}
