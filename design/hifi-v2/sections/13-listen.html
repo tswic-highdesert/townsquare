@@ -1,0 +1,585 @@
+<section class="sheet-section" id="listen">
+  <svg style="display:none" aria-hidden="true">
+    <symbol id="i-ls-back15" viewBox="0 0 24 24">
+      <path d="M12 4a8 8 0 1 1-7.2 4.5"/>
+      <path d="M4.6 3.8v4.9h4.9"/>
+    </symbol>
+    <symbol id="i-ls-fwd30" viewBox="0 0 24 24">
+      <path d="M12 4a8 8 0 1 0 7.2 4.5"/>
+      <path d="M19.4 3.8v4.9h-4.9"/>
+    </symbol>
+    <symbol id="i-ls-speed" viewBox="0 0 24 24">
+      <path d="M4 15.5a8.3 8.3 0 1 1 16 0"/>
+      <path d="M12 15.5 16 9.8"/>
+      <circle cx="12" cy="15.5" r="1.4"/>
+    </symbol>
+    <symbol id="i-ls-rss" viewBox="0 0 24 24">
+      <path d="M5 11.5A7.5 7.5 0 0 1 12.5 19"/>
+      <path d="M5 6a13 13 0 0 1 13 13"/>
+      <circle cx="6.2" cy="17.8" r="1.5"/>
+    </symbol>
+  </svg>
+
+  <div class="sec-head"><span class="sec-num">13</span><h2>Listen</h2></div>
+  <p class="sec-note">Podcasts and local audio, from a row in a mixed feed to a full show
+  page. Section 05 already seats episodes in the directory; this section is everything that
+  happens after someone presses play. One rule governs all of it: playback belongs to the
+  shell, not to a screen, because people listen to a local podcast while doing something
+  else.</p>
+
+  <!-- ─────────────────────────────────────────────────────  1. EPISODE ROW -->
+
+  <div class="spec">
+    <div class="spec-label">Episode row in a mixed feed <em>an episode sits on the serif side of the split, with articles: something to listen to, not somewhere to go</em></div>
+    <div class="plate">
+      <div class="ls-rows">
+        <article class="ls-eprow" data-state="unread">
+          <div class="ls-cover ls-eprow-thumb" data-art="eleva" role="img" aria-label="Eleva cover art">
+            <button class="ls-coverplay" type="button" aria-label="Play episode 52">
+              <svg class="i" aria-hidden="true"><use href="#i-play"/></svg>
+            </button>
+          </div>
+          <div class="ls-eprow-body">
+            <span class="ls-eyebrow">Ep. 52 · Eleva</span>
+            <h3 class="ls-eprow-title">Real estate roundtable</h3>
+            <p class="ls-eprow-meta"><svg class="i i-sm" aria-hidden="true"><use href="#i-headphones"/></svg>47 min · this morning</p>
+          </div>
+          <span class="ls-pip" aria-label="Unplayed"></span>
+        </article>
+        <article class="ls-eprow">
+          <div class="ls-cover ls-eprow-thumb" data-art="rundown" role="img" aria-label="River Valley Rundown cover art">
+            <button class="ls-coverplay" type="button" aria-label="Play episode 48">
+              <svg class="i" aria-hidden="true"><use href="#i-play"/></svg>
+            </button>
+          </div>
+          <div class="ls-eprow-body">
+            <span class="ls-eyebrow">Ep. 48 · River Valley Rundown</span>
+            <h3 class="ls-eprow-title">The people who keep Lake Dardanelle's boat ramps open</h3>
+            <p class="ls-eprow-meta"><svg class="i i-sm" aria-hidden="true"><use href="#i-headphones"/></svg>41 min · 1 August</p>
+          </div>
+        </article>
+        <article class="ls-eprow" data-state="played">
+          <div class="ls-cover ls-eprow-thumb" data-art="none" role="img" aria-label="No cover art for Wonder Boy Weekly">
+            <svg class="i" aria-hidden="true"><use href="#i-headphones"/></svg>
+            <button class="ls-coverplay" type="button" aria-label="Play episode 3 again">
+              <svg class="i" aria-hidden="true"><use href="#i-play"/></svg>
+            </button>
+          </div>
+          <div class="ls-eprow-body">
+            <span class="ls-eyebrow">Ep. 3 · Wonder Boy Weekly</span>
+            <h3 class="ls-eprow-title">Tech's new season, and the thing nobody says about the schedule</h3>
+            <p class="ls-eprow-meta"><svg class="i i-sm" aria-hidden="true"><use href="#i-check"/></svg>Played · 19 July</p>
+          </div>
+        </article>
+      </div>
+    </div>
+    <p class="why">Three states and none of them shouts. Unplayed carries a pip and a
+    500 weight title, played drops to muted ink with a check in the meta line, and the title
+    never changes size. The play control rides the cover at 44&thinsp;px, same as the
+    directory cards in section 05, so the gesture is identical everywhere an episode
+    appears.</p>
+  </div>
+
+  <!-- ─────────────────────────────────────────────────  2. EPISODE CARDS -->
+
+  <div class="spec">
+    <div class="spec-label">Episode cards <em>the section 05 pod anatomy, kept verbatim, plus the one state 05 never drew: finished</em></div>
+    <div class="spec-grid">
+      <article class="ls-card">
+        <div class="ls-cover ls-card-cover" data-art="eleva" role="img" aria-label="Eleva cover art">
+          <button class="ls-coverplay" type="button" aria-label="Play episode 49">
+            <svg class="i i-lg" aria-hidden="true"><use href="#i-play"/></svg>
+          </button>
+        </div>
+        <div class="ls-card-body">
+          <span class="ls-eyebrow">Ep. 49</span>
+          <h3 class="ls-card-title">From friends to restaurant owners</h3>
+          <p class="ls-card-meta">Eleva · 52 min · 12 July</p>
+        </div>
+      </article>
+
+      <article class="ls-card" data-playing>
+        <div class="ls-cover ls-card-cover" data-art="eleva" role="img" aria-label="Eleva cover art">
+          <button class="ls-coverplay" type="button" aria-label="Pause episode 52">
+            <svg class="i i-lg" aria-hidden="true"><use href="#i-pause"/></svg>
+          </button>
+        </div>
+        <div class="ls-card-body">
+          <span class="ls-eyebrow">Ep. 52</span>
+          <h3 class="ls-card-title">Real estate roundtable</h3>
+          <p class="ls-card-meta">Eleva · 47 min · this morning</p>
+          <div class="ls-scrubline">
+            <span class="ls-scrubline-bar"><span class="ls-scrubline-fill"></span></span>
+            <span class="ls-scrubline-time">31:04 left</span>
+          </div>
+        </div>
+      </article>
+
+      <article class="ls-card" data-done>
+        <div class="ls-cover ls-card-cover" data-art="rundown" role="img" aria-label="River Valley Rundown cover art">
+          <button class="ls-coverplay" type="button" aria-label="Play episode 47 again">
+            <svg class="i i-lg" aria-hidden="true"><use href="#i-refresh"/></svg>
+          </button>
+        </div>
+        <div class="ls-card-body">
+          <span class="ls-eyebrow">Ep. 47</span>
+          <h3 class="ls-card-title">Who actually runs the farmers market</h3>
+          <p class="ls-card-meta">River Valley Rundown · 38 min · 25 July</p>
+          <p class="ls-card-done"><svg class="i i-sm" aria-hidden="true"><use href="#i-check-circle"/></svg>Finished on Tuesday</p>
+        </div>
+      </article>
+    </div>
+    <p class="why">The rest and playing states are section 05's <b>dr-pod</b> drawn with this
+    section's classes, on purpose: a resident meets episodes in the directory first, and the
+    card must not mutate when it reappears here. The finished state is new. It swaps the play
+    glyph for a start-over arrow and says when you finished in words, because a filled
+    progress bar at 100 percent reads as a bug, not a memory.</p>
+  </div>
+
+  <!-- ──────────────────────────────────────────  3. NOW PLAYING, THE SWAP -->
+
+  <div class="spec">
+    <div class="spec-label">Now playing takes the ask band <em>playback borrows the row the ask bar lives on, and Ask folds to a sparkle. Nothing new is stacked.</em></div>
+
+    <div class="ls-bands">
+      <div class="ls-band">
+        <div class="ls-bandcap">Idle, the band belongs to Ask</div>
+        <div class="ls-bandframe">
+          <button class="ls-askbar" type="button">
+            <svg class="i" aria-hidden="true"><use href="#i-sparkle"/></svg>
+            <span class="ls-askbar-hint">Ask your town</span>
+            <svg class="i i-sm" aria-hidden="true"><use href="#i-mic"/></svg>
+          </button>
+          <nav class="ls-tabs" aria-label="Main">
+            <span class="ls-tab" data-on><svg class="i" aria-hidden="true"><use href="#i-home"/></svg>Today</span>
+            <span class="ls-tab"><svg class="i" aria-hidden="true"><use href="#i-compass"/></svg>Nearby</span>
+            <span class="ls-tab"><svg class="i" aria-hidden="true"><use href="#i-calendar"/></svg>Calendar</span>
+            <span class="ls-tab"><svg class="i" aria-hidden="true"><use href="#i-puzzle"/></svg>Creations</span>
+            <span class="ls-tab"><svg class="i" aria-hidden="true"><use href="#i-user"/></svg>You</span>
+          </nav>
+        </div>
+      </div>
+
+      <div class="ls-band">
+        <div class="ls-bandcap">Playing</div>
+        <div class="ls-bandframe">
+          <div class="ls-bar" data-state="playing">
+            <span class="ls-bar-scrub" aria-hidden="true"><span class="ls-bar-fill"></span></span>
+            <div class="ls-cover ls-bar-cover" data-art="eleva" aria-hidden="true"></div>
+            <div class="ls-bar-body">
+              <span class="ls-bar-title">Real estate roundtable</span>
+              <span class="ls-bar-sub">Eleva · 31:04 left</span>
+            </div>
+            <button class="ls-bar-btn" type="button" aria-label="Pause">
+              <svg class="i i-lg" aria-hidden="true"><use href="#i-pause"/></svg>
+            </button>
+            <button class="ls-bar-ask" type="button" aria-label="Ask your town">
+              <svg class="i" aria-hidden="true"><use href="#i-sparkle"/></svg>
+            </button>
+          </div>
+          <nav class="ls-tabs" aria-label="Main">
+            <span class="ls-tab" data-on><svg class="i" aria-hidden="true"><use href="#i-home"/></svg>Today</span>
+            <span class="ls-tab"><svg class="i" aria-hidden="true"><use href="#i-compass"/></svg>Nearby</span>
+            <span class="ls-tab"><svg class="i" aria-hidden="true"><use href="#i-calendar"/></svg>Calendar</span>
+            <span class="ls-tab"><svg class="i" aria-hidden="true"><use href="#i-puzzle"/></svg>Creations</span>
+            <span class="ls-tab"><svg class="i" aria-hidden="true"><use href="#i-user"/></svg>You</span>
+          </nav>
+        </div>
+      </div>
+
+      <div class="ls-band">
+        <div class="ls-bandcap">Paused, and a title that will not fit</div>
+        <div class="ls-bandframe">
+          <div class="ls-bar" data-state="paused">
+            <span class="ls-bar-scrub" aria-hidden="true"><span class="ls-bar-fill"></span></span>
+            <div class="ls-cover ls-bar-cover" data-art="rundown" aria-hidden="true"></div>
+            <div class="ls-bar-body">
+              <span class="ls-bar-title">The people who keep Lake Dardanelle's boat ramps open all summer</span>
+              <span class="ls-bar-sub">River Valley Rundown · paused</span>
+            </div>
+            <button class="ls-bar-btn" type="button" aria-label="Play">
+              <svg class="i i-lg" aria-hidden="true"><use href="#i-play"/></svg>
+            </button>
+            <button class="ls-bar-ask" type="button" aria-label="Ask your town">
+              <svg class="i" aria-hidden="true"><use href="#i-sparkle"/></svg>
+            </button>
+          </div>
+          <nav class="ls-tabs" aria-label="Main">
+            <span class="ls-tab" data-on><svg class="i" aria-hidden="true"><use href="#i-home"/></svg>Today</span>
+            <span class="ls-tab"><svg class="i" aria-hidden="true"><use href="#i-compass"/></svg>Nearby</span>
+            <span class="ls-tab"><svg class="i" aria-hidden="true"><use href="#i-calendar"/></svg>Calendar</span>
+            <span class="ls-tab"><svg class="i" aria-hidden="true"><use href="#i-puzzle"/></svg>Creations</span>
+            <span class="ls-tab"><svg class="i" aria-hidden="true"><use href="#i-user"/></svg>You</span>
+          </nav>
+        </div>
+      </div>
+    </div>
+
+    <p class="why">The bottom of the phone already stacks the home indicator, the tab bar and
+    the ask bar. We considered docking a fourth strip above them and chose not to: four
+    layers of chrome reads as a control panel, and the design brief bans exactly that
+    energy. So playback <b>borrows</b> the ask band. Ask never disappears, it folds to its
+    sparkle and stays one tap away, and the whole band returns to it the moment audio stops.
+    The scrub is the strip's own top edge, three pixels of terracotta that survive at a
+    glance, and the title truncates rather than wrapping because the bar must never change
+    height.</p>
+    <p class="why">Same register as the dark mode note in section 11: <b>considered and not
+    chosen</b>, so the next designer does not relitigate it from scratch. If a town ever
+    runs without Ask, the swap degrades to the strip alone and nothing else moves.</p>
+  </div>
+
+  <!-- ─────────────────────────────────────────────────  4. THE SHEET PLAYER -->
+
+  <div class="spec">
+    <div class="spec-label">The expanded player <em>a sheet, not a destination: everything a thumb needs and nothing a screen wants</em></div>
+    <div class="spec-row">
+      <div class="ls-sheetwrap">
+        <div class="ls-player" role="dialog" aria-label="Now playing">
+          <span class="ls-player-grab" aria-hidden="true"></span>
+          <div class="ls-cover ls-player-cover" data-art="eleva" role="img" aria-label="Eleva cover art"></div>
+          <span class="ls-eyebrow">Ep. 52 · Eleva</span>
+          <h3 class="ls-player-title">Real estate roundtable</h3>
+          <p class="ls-player-show">with Obee Rosales</p>
+          <div class="ls-player-scrub">
+            <span class="ls-player-track"><span class="ls-player-fill"></span><span class="ls-player-knob"></span></span>
+            <div class="ls-player-times"><span>16:12</span><span>31:04 left</span></div>
+          </div>
+          <div class="ls-transport">
+            <button class="ls-tbtn" type="button" aria-label="Back 15 seconds">
+              <svg class="i i-lg" aria-hidden="true"><use href="#i-ls-back15"/></svg>
+              <span class="ls-tbtn-num" aria-hidden="true">15</span>
+            </button>
+            <button class="ls-playbig" type="button" aria-label="Pause">
+              <svg class="i i-xl" aria-hidden="true"><use href="#i-pause"/></svg>
+            </button>
+            <button class="ls-tbtn" type="button" aria-label="Forward 30 seconds">
+              <svg class="i i-lg" aria-hidden="true"><use href="#i-ls-fwd30"/></svg>
+              <span class="ls-tbtn-num" aria-hidden="true">30</span>
+            </button>
+          </div>
+          <div class="ls-player-foot">
+            <button class="ls-chip" type="button"><svg class="i i-sm" aria-hidden="true"><use href="#i-ls-speed"/></svg>1.4x</button>
+            <a class="ls-chip" href="#listen"><svg class="i i-sm" aria-hidden="true"><use href="#i-document"/></svg>Episode page</a>
+            <button class="ls-chip" type="button"><svg class="i i-sm" aria-hidden="true"><use href="#i-share"/></svg>Share</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <p class="why">The bar expands into a sheet and the sheet is deliberately underwhelming:
+    cover, scrub, three transport controls, three quiet chips. No queue, no up next, no
+    autoplay into a second episode. This is a town's podcast, not a retention surface, and
+    the listener chose one episode, not a session. The skip buttons carry their numerals
+    beside minted glyphs because fifteen back and thirty forward are conventions worth
+    keeping, not branding worth redrawing.</p>
+  </div>
+
+  <!-- ─────────────────────────────────────────────────  5. EPISODE DETAIL -->
+
+  <div class="spec">
+    <div class="spec-label">Episode detail <em>notes, people, and the one link that makes a local episode local: the place it is about</em></div>
+    <div class="spec-row">
+      <div class="phone">
+        <div class="phone-cap">Episode page</div>
+        <div class="phone-screen">
+          <div class="ls-detail">
+            <header class="ls-dethead">
+              <svg class="i" aria-hidden="true"><use href="#i-chevron-left"/></svg>
+              <span class="ls-eyebrow">Eleva</span>
+            </header>
+            <div class="ls-dethero">
+              <div class="ls-cover ls-dethero-cover" data-art="eleva" role="img" aria-label="Eleva cover art"></div>
+              <div class="ls-dethero-body">
+                <span class="ls-eyebrow">Ep. 49 · 12 July</span>
+                <h3 class="ls-dethero-title">From friends to restaurant owners</h3>
+                <p class="ls-dethero-meta">52 min · Spanish and English</p>
+              </div>
+            </div>
+            <div class="ls-detactions">
+              <button class="ls-playpill" type="button">
+                <svg class="i" aria-hidden="true"><use href="#i-play"/></svg>Play episode
+              </button>
+              <button class="ls-ghost" type="button">
+                <svg class="i i-sm" aria-hidden="true"><use href="#i-bookmark"/></svg>Save
+              </button>
+            </div>
+            <p class="ls-detnotes">Obee sits down with the family behind Toros Mexican Grill
+            about the jump from cooking for friends to signing a lease on Arkansas Avenue,
+            what the first empty Tuesday felt like, and why they almost called it off twice.</p>
+            <p class="ls-detguests">With Obee Rosales and the Toros family.</p>
+
+            <a class="ls-place" href="#listen">
+              <span class="ls-place-icon"><svg class="i" aria-hidden="true"><use href="#i-storefront"/></svg></span>
+              <span class="ls-place-body">
+                <span class="ls-eyebrow">About a place</span>
+                <span class="ls-place-name">Toros Mexican Grill</span>
+                <span class="ls-place-meta"><span class="ls-opendot" aria-hidden="true"></span>Open until 9 PM · Arkansas Avenue</span>
+              </span>
+              <svg class="i i-sm" aria-hidden="true"><use href="#i-chevron-right"/></svg>
+            </a>
+
+            <p class="ls-detsource"><svg class="i i-sm" aria-hidden="true"><use href="#i-ls-rss"/></svg>From the Eleva feed · fetched this morning</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="ls-sidenote">
+        <p class="why">The place card is the point of the whole page. An episode about Toros
+        links to the Toros listing, and the listing links back, which is the relationship no
+        feed source carries on its own and the reason podcasts live in the directory at all.
+        Guests are plain text, not profile chips: being interviewed on a podcast is not
+        consenting to an account on ours.</p>
+        <p class="why">The source line names the feed and when we last fetched it, same
+        honesty register as the directory's hours rule. If the feed goes stale the line says
+        so here, and the episode keeps playing, because a dead publisher should never brick
+        an archive.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ─────────────────────────────────────────────────────  6. SHOW PAGE -->
+
+  <div class="spec">
+    <div class="spec-label">Show page <em>a show is a publisher with a follow button, not an app with a skin: the shell renders every show the same way</em></div>
+    <div class="spec-row">
+      <div class="phone">
+        <div class="phone-cap">Show page, Eleva</div>
+        <div class="phone-screen">
+          <div class="ls-show">
+            <header class="ls-showhero">
+              <div class="ls-cover ls-showhero-cover" data-art="eleva" role="img" aria-label="Eleva cover art"></div>
+              <div class="ls-showhero-body">
+                <span class="ls-eyebrow">Podcast · Russellville</span>
+                <h3 class="ls-showhero-name">Eleva</h3>
+                <p class="ls-showhero-by">with Obee Rosales</p>
+              </div>
+              <button class="ls-follow" type="button">Follow</button>
+            </header>
+            <p class="ls-showdesc">Conversations with the people building the River Valley's
+            Hispanic community, in Spanish and English, usually over food.</p>
+
+            <div class="ls-chiprail" role="tablist" aria-label="Series">
+              <button class="ls-chip" type="button" role="tab" aria-selected="true" data-on>All episodes</button>
+              <button class="ls-chip" type="button" role="tab" aria-selected="false">Real estate roundtable</button>
+              <button class="ls-chip" type="button" role="tab" aria-selected="false">Devotionals</button>
+              <button class="ls-chip" type="button" role="tab" aria-selected="false">Events</button>
+            </div>
+
+            <div class="ls-rows ls-showrows">
+              <article class="ls-eprow" data-state="unread">
+                <div class="ls-cover ls-eprow-thumb" data-art="eleva" role="img" aria-label="Eleva cover art">
+                  <button class="ls-coverplay" type="button" aria-label="Play episode 52">
+                    <svg class="i" aria-hidden="true"><use href="#i-play"/></svg>
+                  </button>
+                </div>
+                <div class="ls-eprow-body">
+                  <span class="ls-eyebrow">Ep. 52 · this morning</span>
+                  <h3 class="ls-eprow-title">Real estate roundtable</h3>
+                  <p class="ls-eprow-meta"><svg class="i i-sm" aria-hidden="true"><use href="#i-headphones"/></svg>47 min</p>
+                </div>
+                <span class="ls-pip" aria-label="Unplayed"></span>
+              </article>
+              <article class="ls-eprow">
+                <div class="ls-cover ls-eprow-thumb" data-art="eleva" role="img" aria-label="Eleva cover art">
+                  <button class="ls-coverplay" type="button" aria-label="Play episode 51">
+                    <svg class="i" aria-hidden="true"><use href="#i-play"/></svg>
+                  </button>
+                </div>
+                <div class="ls-eprow-body">
+                  <span class="ls-eyebrow">Ep. 51 · 3 August</span>
+                  <h3 class="ls-eprow-title">Find your true peace</h3>
+                  <p class="ls-eprow-meta"><svg class="i i-sm" aria-hidden="true"><use href="#i-headphones"/></svg>11 min · Devotionals</p>
+                </div>
+              </article>
+              <article class="ls-eprow">
+                <div class="ls-cover ls-eprow-thumb" data-art="eleva" role="img" aria-label="Eleva cover art">
+                  <button class="ls-coverplay" type="button" aria-label="Play episode 50">
+                    <svg class="i" aria-hidden="true"><use href="#i-play"/></svg>
+                  </button>
+                </div>
+                <div class="ls-eprow-body">
+                  <span class="ls-eyebrow">Ep. 50 · 27 July</span>
+                  <h3 class="ls-eprow-title">A conversation with Mayor Fred Teague</h3>
+                  <p class="ls-eprow-meta"><svg class="i i-sm" aria-hidden="true"><use href="#i-headphones"/></svg>44 min</p>
+                </div>
+              </article>
+              <article class="ls-eprow">
+                <div class="ls-cover ls-eprow-thumb" data-art="eleva" role="img" aria-label="Eleva cover art">
+                  <button class="ls-coverplay" type="button" aria-label="Play episode 49">
+                    <svg class="i" aria-hidden="true"><use href="#i-play"/></svg>
+                  </button>
+                </div>
+                <div class="ls-eprow-body">
+                  <span class="ls-eyebrow">Ep. 49 · 12 July</span>
+                  <h3 class="ls-eprow-title">From friends to restaurant owners</h3>
+                  <p class="ls-eprow-meta"><svg class="i i-sm" aria-hidden="true"><use href="#i-headphones"/></svg>52 min</p>
+                </div>
+              </article>
+            </div>
+
+            <a class="ls-showcoll" href="#listen">
+              <svg class="i" aria-hidden="true"><use href="#i-list"/></svg>
+              <span>This show curates a collection: <b>Hispanic-owned Russellville</b>, 38 places</span>
+              <svg class="i i-sm" aria-hidden="true"><use href="#i-chevron-right"/></svg>
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <div class="ls-sidenote">
+        <p class="why">The series chips are grouping, not navigation: one feed, filtered in
+        place, because Eleva publishes a roundtable, devotionals and event coverage into one
+        stream and a resident should not need to know the org chart to find Tuesday's
+        episode. If a show never uses series, the rail simply never renders.</p>
+        <p class="why">Follow is the only verb on the hero. Following a show subscribes you
+        to its episodes in Today, exactly like following a business, and the collection link
+        at the foot is how a media brand extends into the directory without owning a single
+        pixel of shell chrome.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ──────────────────────────────────────────────  7. PARTNER SOURCE MARK -->
+
+  <div class="spec">
+    <div class="spec-label">How a show is identified in the shell <em>cover art in shell surfaces, initials when there is none, and never a logo in the chrome</em></div>
+    <div class="plate">
+      <div class="ls-marks">
+        <div class="ls-markrow">
+          <span class="ls-mark" data-art="eleva" aria-hidden="true"></span>
+          <span class="ls-markname">Eleva</span>
+          <span class="ls-markdesc">cover art as the mark, at 20 px, corners at the input radius</span>
+        </div>
+        <div class="ls-markrow">
+          <span class="ls-mark" data-initials aria-hidden="true">WW</span>
+          <span class="ls-markname">Wonder Boy Weekly</span>
+          <span class="ls-markdesc">no art, so initials on a tint, same as a news source in section 03</span>
+        </div>
+        <div class="ls-markrow ls-markrow-byline">
+          <p class="ls-bylinedemo"><span class="ls-mark" data-art="eleva" aria-hidden="true"></span>Eleva · Ep. 52 · 47 min · this morning</p>
+          <span class="ls-markdesc">in a byline the mark is a recognition aid; the name does the identifying</span>
+        </div>
+      </div>
+    </div>
+    <p class="why">A show gets exactly what a newspaper gets in section 03: a small mark, its
+    name in our typography, and no colour claim on the shell. Eleva's parallelogram sign
+    lives on its cover art and inside its creation, where it can be as loud as it likes. The
+    moment a partner logo enters shell chrome, every partner negotiates for chrome, and the
+    shell stops being the town's.</p>
+  </div>
+
+  <!-- ─────────────────────────────────  8. A COLLECTION AS A DIRECTORY LENS -->
+
+  <div class="spec">
+    <div class="spec-label">A show's collection as a directory lens <em>the Hispanic business directory is a curated view over the one true directory, never a second list</em></div>
+    <div class="spec-row">
+      <article class="ls-coll">
+        <div class="ls-coll-cover" aria-hidden="true">
+          <span class="ls-cover" data-art="plate"></span>
+          <span class="ls-cover" data-art="awning"></span>
+          <span class="ls-cover" data-art="counter"></span>
+          <span class="ls-cover" data-art="eleva"></span>
+          <span class="ls-coll-more">+34</span>
+        </div>
+        <div class="ls-coll-body">
+          <span class="ls-eyebrow">Collection</span>
+          <h3 class="ls-coll-title">Hispanic-owned Russellville</h3>
+          <p class="ls-coll-desc">Restaurants, shops and services owned by Hispanic
+          neighbours, from the taquerias on Arkansas Avenue to the detail shop on South
+          Knoxville.</p>
+          <div class="ls-coll-by">
+            <span class="ls-mark" data-art="eleva" aria-hidden="true"></span>
+            <span>Curated by <b>Eleva</b><svg class="i i-sm ls-verified" aria-hidden="true"><use href="#i-badge-check"/></svg></span>
+            <span class="ls-coll-count">38 places · updated 12 August</span>
+          </div>
+        </div>
+      </article>
+
+      <div class="ls-lens">
+        <div class="ls-lenscap">The same collection as an active filter</div>
+        <div class="ls-chiprail">
+          <button class="ls-chip" type="button" data-on>Hispanic-owned<svg class="i i-sm" aria-hidden="true"><use href="#i-close"/></svg></button>
+          <button class="ls-chip" type="button">Open now</button>
+          <button class="ls-chip" type="button">Eat and drink</button>
+        </div>
+        <p class="ls-honest">Showing <b>38 of 741</b>. One collection is doing the
+        filtering.</p>
+        <div class="ls-rows">
+          <article class="ls-bizrow">
+            <span class="ls-bizrow-name">Toros Mexican Grill</span>
+            <span class="ls-bizrow-meta">Restaurant · Arkansas Avenue</span>
+            <span class="ls-open" data-state="open"><span class="ls-opendot"></span>Until 9 PM</span>
+          </article>
+          <article class="ls-bizrow">
+            <span class="ls-bizrow-name">La Catrachita Taqueria</span>
+            <span class="ls-bizrow-meta">Restaurant · South Arkansas</span>
+            <span class="ls-open" data-state="open"><span class="ls-opendot"></span>Until 8 PM</span>
+          </article>
+          <article class="ls-bizrow">
+            <span class="ls-bizrow-name">Bonilla's Barber Shop</span>
+            <span class="ls-bizrow-meta">Barber · West Main</span>
+            <span class="ls-open" data-state="unknown"><svg class="i i-sm" aria-hidden="true"><use href="#i-clock"/></svg>Hours unknown</span>
+          </article>
+        </div>
+      </div>
+    </div>
+    <p class="why">One dataset, two doors. The collection card renders in the directory and
+    inside Eleva's creation from the same 38 rows, so a correction to Toros's hours lands in
+    both places at once. Membership is self-identified by the owner and curated by the
+    collection's maker, and the honest count sentence from section 05 applies unchanged: a
+    lens must always say it is a lens.</p>
+  </div>
+
+  <!-- ─────────────────────────────────  9. A CREATION IN ITS OWN SKIN -->
+
+  <div class="spec">
+    <div class="spec-label">A creation in its own skin <em>the guest may look like anything it wants; the frame is the part that may never change</em></div>
+    <div class="spec-row">
+      <div class="ls-hostwrap">
+        <div class="ls-host">
+          <div class="ls-hostbar">
+            <svg class="i" aria-hidden="true"><use href="#i-close"/></svg>
+            <div class="ls-hostbar-id">
+              <span class="ls-hostbar-app">Eleva</span>
+              <span class="ls-hostbar-by">by Obee Rosales · verified resident</span>
+            </div>
+            <span class="ls-sandbadge"><svg class="i i-sm" aria-hidden="true"><use href="#i-shield"/></svg>Sandboxed</span>
+          </div>
+          <div class="ls-guest">
+            <div class="ls-guest-sign">
+              <span class="ls-guest-word">ELEVA</span>
+              <span class="ls-guest-wedge" aria-hidden="true"></span>
+            </div>
+            <p class="ls-guest-tag">Elevando el River Valley</p>
+            <div class="ls-guest-row">
+              <span class="ls-guest-num">52</span>
+              <span class="ls-guest-ep">Real estate roundtable</span>
+              <span class="ls-guest-play"><svg class="i" aria-hidden="true"><use href="#i-play"/></svg></span>
+            </div>
+            <div class="ls-guest-row">
+              <span class="ls-guest-num">51</span>
+              <span class="ls-guest-ep">Find your true peace</span>
+              <span class="ls-guest-play"><svg class="i" aria-hidden="true"><use href="#i-play"/></svg></span>
+            </div>
+          </div>
+          <div class="ls-hostfoot">
+            <span>custom look, reviewed by the town committee · guidelines v1</span>
+            <span class="ls-hostfoot-report">Report</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="ls-sidenote">
+        <p class="why">Section 06 draws the seam and this specimen states the policy on top
+        of it: the host <b>offers</b> the town's tokens inside the frame and does not
+        enforce them. A builder who adopts them gets a native look for free; a brand like
+        Eleva can bring its whole visual world instead, and the review committee judges it
+        against the content guidelines, not against our palette. The specimen here is drawn
+        with token mixes because this sheet cannot carry foreign CSS, which is itself the
+        demonstration: only a real guest bundle can truly leave the system.</p>
+        <p class="why">What holds is the chrome. Host bar, sandbox badge, attribution and
+        the footer with Report belong to the shell in every skin, and the footer now names
+        the gate: a custom look passed review, and the version of the guidelines it passed.</p>
+      </div>
+    </div>
+  </div>
+</section>

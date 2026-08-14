@@ -29530,6 +29530,1279 @@ code {
   color: var(--ts-ink45);
 }
 
+
+/* ═══ 13-listen.html ═══ */
+/* ═══ 13. Listen ═══════════════════════════════════════════════════════════
+   Podcasts and local audio. Shares its anatomy with section 05's pod cards on
+   purpose; classes are still ls- because the sheet forbids cross-section
+   dependencies. Every colour is a token or a mix of tokens. */
+
+/* ── shared atoms ──────────────────────────────────────────────────────── */
+
+.ls-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-family: var(--ts-font-mono);
+  font-size: 9.5px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ts-ink45);
+}
+
+.ls-cover {
+  position: relative;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  background-color: var(--ts-stone);
+  color: var(--ts-ink26);
+}
+
+/* Eleva's cover: the teal ground and cream sign slab, drawn as a placeholder
+   the same way 05 draws storefronts. The real art ships in the feed. */
+.ls-cover[data-art='eleva'] {
+  background:
+    linear-gradient(
+      165deg,
+      color-mix(in srgb, var(--ts-navy) 42%, var(--ts-sage)) 0%,
+      color-mix(in srgb, var(--ts-navy) 60%, var(--ts-sage)) 100%
+    );
+}
+.ls-cover[data-art='eleva']::after {
+  content: '';
+  position: absolute;
+  inset: 32% 18% 38% 18%;
+  transform: skewY(-6deg);
+  border-radius: 2px;
+  background: var(--ts-cream);
+  border: 2px solid var(--ts-navy-dark);
+  box-shadow: 3px 4px 0 color-mix(in srgb, var(--ts-gold) 85%, transparent);
+}
+
+.ls-cover[data-art='rundown'] {
+  background:
+    linear-gradient(180deg, color-mix(in srgb, var(--ts-terracotta) 30%, var(--ts-stone)) 0%, var(--ts-stone) 62%),
+    linear-gradient(90deg, color-mix(in srgb, var(--ts-navy) 24%, transparent), transparent);
+}
+
+.ls-cover[data-art='plate'] {
+  background: radial-gradient(circle at 50% 42%, var(--ts-surface) 0 34%, color-mix(in srgb, var(--ts-terracotta) 36%, var(--ts-stone)) 35%);
+}
+.ls-cover[data-art='awning'] {
+  background: repeating-linear-gradient(
+    90deg,
+    color-mix(in srgb, var(--ts-navy) 34%, var(--ts-stone)) 0 10px,
+    var(--ts-cream) 10px 20px
+  );
+}
+.ls-cover[data-art='counter'] {
+  background: linear-gradient(180deg, var(--ts-cream) 0 55%, color-mix(in srgb, var(--ts-navy) 42%, var(--ts-stone)) 55%);
+}
+
+.ls-coverplay {
+  position: absolute;
+  inset: auto var(--ts-space-1) var(--ts-space-1) auto;
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border: none;
+  border-radius: var(--ts-radius-full);
+  background: color-mix(in srgb, var(--ts-surface) 92%, transparent);
+  color: var(--ts-terracotta-hover);
+  cursor: pointer;
+  backdrop-filter: blur(6px);
+  box-shadow: var(--ts-shadow-flat);
+}
+.ls-coverplay:hover {
+  background: var(--ts-surface);
+}
+.ls-coverplay:focus-visible {
+  outline: none;
+  box-shadow: var(--ts-focus);
+}
+
+.ls-rows {
+  border-radius: var(--ts-radius-card);
+  border: 1px solid var(--ts-hairline);
+  background: var(--ts-surface);
+  box-shadow: var(--ts-shadow-flat);
+  overflow: hidden;
+}
+.ls-rows > * + * {
+  border-top: 1px solid var(--ts-ink13);
+}
+
+.ls-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 14px;
+  border: 1px solid var(--ts-hairline);
+  border-radius: var(--ts-radius-chip);
+  background: var(--ts-surface);
+  font-family: var(--ts-font-sans);
+  font-size: 12.5px;
+  font-weight: 500;
+  color: var(--ts-ink);
+  cursor: pointer;
+  text-decoration: none;
+  white-space: nowrap;
+}
+.ls-chip[data-on] {
+  background: var(--ts-ink);
+  border-color: var(--ts-ink);
+  color: var(--ts-cream);
+}
+.ls-chip:focus-visible {
+  outline: none;
+  box-shadow: var(--ts-focus);
+}
+
+.ls-chiprail {
+  display: flex;
+  gap: var(--ts-space-2);
+  overflow-x: auto;
+  scrollbar-width: none;
+  padding-bottom: 2px;
+}
+
+.ls-pip {
+  flex: none;
+  width: 7px;
+  height: 7px;
+  margin-top: 7px;
+  border-radius: var(--ts-radius-full);
+  background: var(--ts-terracotta);
+}
+
+.ls-opendot {
+  display: inline-block;
+  width: 7px;
+  height: 7px;
+  border-radius: var(--ts-radius-full);
+  background: var(--ts-sage);
+}
+
+.ls-verified {
+  color: var(--ts-sage);
+}
+
+.ls-sidenote {
+  flex: 1 1 300px;
+  max-width: 420px;
+  align-self: center;
+}
+
+/* ── 1. episode row ────────────────────────────────────────────────────── */
+
+.ls-eprow {
+  display: flex;
+  gap: var(--ts-space-3);
+  padding: var(--ts-space-3) var(--ts-space-4);
+  background: var(--ts-surface);
+}
+
+.ls-eprow-thumb {
+  width: 56px;
+  height: 56px;
+  flex: none;
+  border-radius: var(--ts-radius-input);
+}
+.ls-eprow-thumb .ls-coverplay {
+  inset: auto 2px 2px auto;
+  width: 26px;
+  height: 26px;
+  backdrop-filter: none;
+}
+
+.ls-eprow-body {
+  min-width: 0;
+  flex: 1;
+}
+
+.ls-eprow-title {
+  font-family: var(--ts-font-serif);
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 1.25;
+  margin: 3px 0 4px;
+}
+.ls-eprow[data-state='unread'] .ls-eprow-title {
+  font-weight: 500;
+}
+.ls-eprow[data-state='played'] .ls-eprow-title {
+  color: var(--ts-ink60);
+}
+
+.ls-eprow-meta {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-family: var(--ts-font-serif);
+  font-size: 13px;
+  color: var(--ts-ink45);
+  margin: 0;
+}
+.ls-eprow[data-state='played'] .ls-eprow-meta {
+  color: var(--ts-sage);
+}
+
+/* ── 2. episode cards ──────────────────────────────────────────────────── */
+
+.ls-card {
+  display: flex;
+  gap: var(--ts-space-3);
+  padding: var(--ts-space-3);
+  border-radius: var(--ts-radius-card);
+  border: 1px solid var(--ts-hairline);
+  background: var(--ts-surface);
+  box-shadow: var(--ts-shadow-flat);
+}
+
+.ls-card[data-playing] {
+  border-color: color-mix(in srgb, var(--ts-terracotta) 40%, transparent);
+  background: var(--ts-terracotta-tint);
+}
+
+.ls-card[data-done] .ls-card-title {
+  color: var(--ts-ink60);
+}
+
+.ls-card-cover {
+  width: 92px;
+  height: 92px;
+  flex: none;
+  border-radius: var(--ts-radius-input);
+}
+
+.ls-card-body {
+  min-width: 0;
+  flex: 1;
+}
+
+.ls-card-title {
+  font-family: var(--ts-font-serif);
+  font-size: var(--ts-text-card-title);
+  font-weight: 500;
+  line-height: 1.22;
+  margin: 3px 0 var(--ts-space-1);
+}
+
+.ls-card-meta {
+  font-family: var(--ts-font-serif);
+  font-size: 13px;
+  color: var(--ts-ink45);
+  margin: 0;
+}
+
+.ls-card-done {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  margin: var(--ts-space-2) 0 0;
+  font-family: var(--ts-font-sans);
+  font-size: 11.5px;
+  font-weight: 500;
+  color: var(--ts-sage);
+}
+
+.ls-scrubline {
+  display: flex;
+  align-items: center;
+  gap: var(--ts-space-2);
+  margin-top: var(--ts-space-2);
+}
+
+.ls-scrubline-bar {
+  flex: 1;
+  height: 4px;
+  border-radius: var(--ts-radius-full);
+  background: color-mix(in srgb, var(--ts-terracotta) 24%, transparent);
+  overflow: hidden;
+}
+
+.ls-scrubline-fill {
+  display: block;
+  width: 34%;
+  height: 100%;
+  border-radius: var(--ts-radius-full);
+  background: var(--ts-terracotta);
+}
+
+.ls-scrubline-time {
+  font-family: var(--ts-font-sans);
+  font-size: 11.5px;
+  font-weight: 500;
+  color: var(--ts-terracotta-hover);
+  white-space: nowrap;
+}
+
+/* ── 3. now playing, the swap ──────────────────────────────────────────── */
+
+.ls-bands {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--ts-space-5);
+}
+
+.ls-band {
+  flex: 1 1 330px;
+  max-width: 390px;
+}
+
+.ls-bandcap {
+  font-family: var(--ts-font-mono);
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--ts-ink45);
+  margin-bottom: var(--ts-space-2);
+}
+
+.ls-bandframe {
+  border-radius: var(--ts-radius-card);
+  border: 1px solid var(--ts-hairline);
+  background: var(--ts-cream);
+  padding: var(--ts-space-3) var(--ts-space-3) var(--ts-space-2);
+  box-shadow: var(--ts-shadow-flat);
+}
+
+.ls-askbar {
+  display: flex;
+  align-items: center;
+  gap: var(--ts-space-2);
+  width: 100%;
+  padding: 12px var(--ts-space-4);
+  border: 1px solid var(--ts-hairline);
+  border-radius: var(--ts-radius-full);
+  background: var(--ts-surface);
+  box-shadow: var(--ts-shadow-raised);
+  color: var(--ts-terracotta);
+  cursor: pointer;
+}
+.ls-askbar-hint {
+  flex: 1;
+  text-align: left;
+  font-family: var(--ts-font-sans);
+  font-size: 14px;
+  color: var(--ts-ink45);
+}
+.ls-askbar .i-sm {
+  color: var(--ts-ink45);
+}
+
+.ls-bar {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: var(--ts-space-2);
+  padding: 8px var(--ts-space-2) 8px var(--ts-space-2);
+  border: 1px solid var(--ts-hairline);
+  border-radius: var(--ts-radius-card);
+  background: var(--ts-surface);
+  box-shadow: var(--ts-shadow-raised);
+  overflow: hidden;
+}
+
+.ls-bar-scrub {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: color-mix(in srgb, var(--ts-terracotta) 18%, transparent);
+}
+.ls-bar-fill {
+  display: block;
+  width: 34%;
+  height: 100%;
+  background: var(--ts-terracotta);
+}
+.ls-bar[data-state='paused'] .ls-bar-fill {
+  background: var(--ts-ink26);
+}
+
+.ls-bar-cover {
+  width: 40px;
+  height: 40px;
+  flex: none;
+  border-radius: var(--ts-radius-input);
+}
+
+.ls-bar-body {
+  min-width: 0;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+
+.ls-bar-title {
+  font-family: var(--ts-font-serif);
+  font-size: 14.5px;
+  font-weight: 500;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.ls-bar-sub {
+  font-family: var(--ts-font-sans);
+  font-size: 11px;
+  color: var(--ts-ink45);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.ls-bar-btn {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  flex: none;
+  border: none;
+  border-radius: var(--ts-radius-full);
+  background: transparent;
+  color: var(--ts-ink);
+  cursor: pointer;
+}
+.ls-bar-btn:hover {
+  background: var(--ts-ink08);
+}
+.ls-bar-btn:focus-visible {
+  outline: none;
+  box-shadow: var(--ts-focus);
+}
+
+.ls-bar-ask {
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  flex: none;
+  border: 1px solid var(--ts-hairline);
+  border-radius: var(--ts-radius-full);
+  background: var(--ts-cream);
+  color: var(--ts-terracotta);
+  cursor: pointer;
+}
+.ls-bar-ask:focus-visible {
+  outline: none;
+  box-shadow: var(--ts-focus);
+}
+
+.ls-tabs {
+  display: flex;
+  justify-content: space-around;
+  margin-top: var(--ts-space-2);
+  padding-top: var(--ts-space-2);
+  border-top: 1px solid var(--ts-ink13);
+}
+
+.ls-tab {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+  font-family: var(--ts-font-sans);
+  font-size: 10px;
+  font-weight: 500;
+  color: var(--ts-ink45);
+}
+.ls-tab[data-on] {
+  color: var(--ts-ink);
+}
+
+/* ── 4. the sheet player ───────────────────────────────────────────────── */
+
+.ls-sheetwrap {
+  flex: 1 1 340px;
+  max-width: 390px;
+}
+
+.ls-player {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: var(--ts-space-3) var(--ts-space-6) var(--ts-space-6);
+  border-radius: var(--ts-radius-sheet) var(--ts-radius-sheet) 0 0;
+  border: 1px solid var(--ts-hairline);
+  border-bottom: none;
+  background: var(--ts-surface);
+  box-shadow: var(--ts-shadow-overlay);
+}
+
+.ls-player-grab {
+  width: 36px;
+  height: 4px;
+  border-radius: var(--ts-radius-full);
+  background: var(--ts-ink26);
+  margin-bottom: var(--ts-space-5);
+}
+
+.ls-player-cover {
+  width: 200px;
+  height: 200px;
+  border-radius: var(--ts-radius-card);
+  box-shadow: var(--ts-shadow-lifted);
+  margin-bottom: var(--ts-space-5);
+}
+
+.ls-player-title {
+  font-family: var(--ts-font-serif);
+  font-size: var(--ts-text-h2);
+  font-weight: 500;
+  line-height: 1.2;
+  text-align: center;
+  margin: var(--ts-space-2) 0 2px;
+  text-wrap: balance;
+}
+
+.ls-player-show {
+  font-family: var(--ts-font-serif);
+  font-size: 14px;
+  color: var(--ts-ink45);
+  margin: 0 0 var(--ts-space-5);
+}
+
+.ls-player-scrub {
+  width: 100%;
+  margin-bottom: var(--ts-space-4);
+}
+
+.ls-player-track {
+  position: relative;
+  display: block;
+  height: 4px;
+  border-radius: var(--ts-radius-full);
+  background: color-mix(in srgb, var(--ts-terracotta) 20%, transparent);
+}
+
+.ls-player-fill {
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: 34%;
+  border-radius: var(--ts-radius-full);
+  background: var(--ts-terracotta);
+}
+
+.ls-player-knob {
+  position: absolute;
+  top: 50%;
+  left: 34%;
+  width: 14px;
+  height: 14px;
+  transform: translate(-50%, -50%);
+  border-radius: var(--ts-radius-full);
+  background: var(--ts-surface);
+  border: 2px solid var(--ts-terracotta);
+  box-shadow: var(--ts-shadow-flat);
+}
+
+.ls-player-times {
+  display: flex;
+  justify-content: space-between;
+  margin-top: var(--ts-space-2);
+  font-family: var(--ts-font-sans);
+  font-size: 11.5px;
+  color: var(--ts-ink45);
+  font-variant-numeric: tabular-nums;
+}
+
+.ls-transport {
+  display: flex;
+  align-items: center;
+  gap: var(--ts-space-8);
+  margin-bottom: var(--ts-space-5);
+}
+
+.ls-tbtn {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 52px;
+  height: 52px;
+  border: none;
+  border-radius: var(--ts-radius-full);
+  background: transparent;
+  color: var(--ts-ink);
+  cursor: pointer;
+}
+.ls-tbtn:hover {
+  background: var(--ts-ink08);
+}
+.ls-tbtn:focus-visible {
+  outline: none;
+  box-shadow: var(--ts-focus);
+}
+
+.ls-tbtn-num {
+  position: absolute;
+  bottom: 6px;
+  font-family: var(--ts-font-sans);
+  font-size: 8.5px;
+  font-weight: 700;
+  color: var(--ts-ink60);
+}
+
+.ls-playbig {
+  display: grid;
+  place-items: center;
+  width: 68px;
+  height: 68px;
+  border: none;
+  border-radius: var(--ts-radius-full);
+  background: var(--ts-ink);
+  color: var(--ts-cream);
+  cursor: pointer;
+  box-shadow: var(--ts-shadow-raised);
+}
+.ls-playbig:hover {
+  background: var(--ts-navy-dark);
+}
+.ls-playbig:focus-visible {
+  outline: none;
+  box-shadow: var(--ts-focus);
+}
+
+.ls-player-foot {
+  display: flex;
+  gap: var(--ts-space-2);
+}
+
+/* ── 5. episode detail ─────────────────────────────────────────────────── */
+
+.ls-detail {
+  padding: var(--ts-space-4) var(--ts-space-4) var(--ts-space-8);
+}
+
+.ls-dethead {
+  display: flex;
+  align-items: center;
+  gap: var(--ts-space-3);
+  margin-bottom: var(--ts-space-4);
+  color: var(--ts-ink);
+}
+
+.ls-dethero {
+  display: flex;
+  gap: var(--ts-space-4);
+  align-items: center;
+  margin-bottom: var(--ts-space-4);
+}
+
+.ls-dethero-cover {
+  width: 96px;
+  height: 96px;
+  flex: none;
+  border-radius: var(--ts-radius-card);
+  box-shadow: var(--ts-shadow-raised);
+}
+
+.ls-dethero-title {
+  font-family: var(--ts-font-serif);
+  font-size: var(--ts-text-h2);
+  font-weight: 500;
+  line-height: 1.15;
+  margin: 4px 0;
+  text-wrap: balance;
+}
+
+.ls-dethero-meta {
+  font-family: var(--ts-font-serif);
+  font-size: 13px;
+  color: var(--ts-ink45);
+  margin: 0;
+}
+
+.ls-detactions {
+  display: flex;
+  gap: var(--ts-space-2);
+  margin-bottom: var(--ts-space-4);
+}
+
+.ls-playpill {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--ts-space-2);
+  padding: 12px var(--ts-space-5);
+  border: none;
+  border-radius: var(--ts-radius-full);
+  background: var(--ts-ink);
+  color: var(--ts-cream);
+  font-family: var(--ts-font-sans);
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+}
+.ls-playpill:hover {
+  background: var(--ts-navy-dark);
+}
+.ls-playpill:focus-visible {
+  outline: none;
+  box-shadow: var(--ts-focus);
+}
+
+.ls-ghost {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 12px var(--ts-space-4);
+  border: 1px solid var(--ts-hairline);
+  border-radius: var(--ts-radius-full);
+  background: var(--ts-surface);
+  color: var(--ts-ink);
+  font-family: var(--ts-font-sans);
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+}
+.ls-ghost:focus-visible {
+  outline: none;
+  box-shadow: var(--ts-focus);
+}
+
+.ls-detnotes {
+  font-family: var(--ts-font-serif);
+  font-size: 15.5px;
+  line-height: 1.5;
+  margin: 0 0 var(--ts-space-2);
+}
+
+.ls-detguests {
+  font-family: var(--ts-font-serif);
+  font-size: 13.5px;
+  color: var(--ts-ink60);
+  margin: 0 0 var(--ts-space-4);
+}
+
+.ls-place {
+  display: flex;
+  align-items: center;
+  gap: var(--ts-space-3);
+  padding: var(--ts-space-3) var(--ts-space-4);
+  border-radius: var(--ts-radius-card);
+  border: 1px solid var(--ts-hairline);
+  background: var(--ts-surface);
+  box-shadow: var(--ts-shadow-flat);
+  text-decoration: none;
+  color: var(--ts-ink);
+  margin-bottom: var(--ts-space-4);
+}
+.ls-place:focus-visible {
+  outline: none;
+  box-shadow: var(--ts-focus);
+}
+
+.ls-place-icon {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  flex: none;
+  border-radius: var(--ts-radius-input);
+  background: var(--ts-cream);
+  color: var(--ts-navy);
+}
+
+.ls-place-body {
+  min-width: 0;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.ls-place-name {
+  font-family: var(--ts-font-sans);
+  font-size: 15px;
+  font-weight: 600;
+}
+
+.ls-place-meta {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--ts-font-sans);
+  font-size: 12px;
+  color: var(--ts-ink60);
+}
+
+.ls-detsource {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--ts-font-mono);
+  font-size: 9.5px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--ts-ink45);
+  margin: 0;
+}
+
+/* ── 6. show page ──────────────────────────────────────────────────────── */
+
+.ls-show {
+  padding: var(--ts-space-4) var(--ts-space-4) var(--ts-space-8);
+}
+
+.ls-showhero {
+  display: flex;
+  align-items: center;
+  gap: var(--ts-space-3);
+  margin-bottom: var(--ts-space-3);
+}
+
+.ls-showhero-cover {
+  width: 64px;
+  height: 64px;
+  flex: none;
+  border-radius: var(--ts-radius-card);
+  box-shadow: var(--ts-shadow-raised);
+}
+
+.ls-showhero-body {
+  min-width: 0;
+  flex: 1;
+}
+
+.ls-showhero-name {
+  font-family: var(--ts-font-serif);
+  font-size: var(--ts-text-h1);
+  font-weight: 500;
+  line-height: 1.05;
+  margin: 3px 0 2px;
+}
+
+.ls-showhero-by {
+  font-family: var(--ts-font-serif);
+  font-size: 13.5px;
+  color: var(--ts-ink60);
+  margin: 0;
+}
+
+.ls-follow {
+  flex: none;
+  padding: 10px var(--ts-space-5);
+  border: none;
+  border-radius: var(--ts-radius-full);
+  background: var(--ts-terracotta);
+  color: var(--ts-cream);
+  font-family: var(--ts-font-sans);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+}
+.ls-follow:hover {
+  background: var(--ts-terracotta-hover);
+}
+.ls-follow:focus-visible {
+  outline: none;
+  box-shadow: var(--ts-focus);
+}
+
+.ls-showdesc {
+  font-family: var(--ts-font-serif);
+  font-size: 14.5px;
+  line-height: 1.45;
+  color: var(--ts-ink60);
+  margin: 0 0 var(--ts-space-4);
+}
+
+.ls-showrows {
+  margin-top: var(--ts-space-4);
+}
+
+.ls-showcoll {
+  display: flex;
+  align-items: center;
+  gap: var(--ts-space-3);
+  margin-top: var(--ts-space-4);
+  padding: var(--ts-space-3) var(--ts-space-4);
+  border-radius: var(--ts-radius-card);
+  border: 1px solid var(--ts-hairline);
+  background: var(--ts-cream);
+  color: var(--ts-ink);
+  text-decoration: none;
+  font-family: var(--ts-font-sans);
+  font-size: 13px;
+  line-height: 1.35;
+}
+.ls-showcoll .i {
+  color: var(--ts-navy);
+  flex: none;
+}
+.ls-showcoll span {
+  flex: 1;
+}
+.ls-showcoll:focus-visible {
+  outline: none;
+  box-shadow: var(--ts-focus);
+}
+
+/* ── 7. partner source mark ────────────────────────────────────────────── */
+
+.ls-marks {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ts-space-4);
+}
+
+.ls-markrow {
+  display: flex;
+  align-items: center;
+  gap: var(--ts-space-3);
+}
+
+.ls-mark {
+  display: inline-grid;
+  place-items: center;
+  width: 20px;
+  height: 20px;
+  flex: none;
+  border-radius: 5px;
+  overflow: hidden;
+  background: var(--ts-stone);
+  font-family: var(--ts-font-sans);
+  font-size: 8px;
+  font-weight: 700;
+  color: var(--ts-navy);
+  vertical-align: -4px;
+}
+.ls-mark[data-art='eleva'] {
+  background: linear-gradient(
+    165deg,
+    color-mix(in srgb, var(--ts-navy) 42%, var(--ts-sage)),
+    color-mix(in srgb, var(--ts-navy) 60%, var(--ts-sage))
+  );
+}
+.ls-mark[data-initials] {
+  background: var(--ts-navy10);
+}
+
+.ls-markname {
+  font-family: var(--ts-font-serif);
+  font-size: 15px;
+  font-weight: 500;
+  min-width: 170px;
+}
+
+.ls-markdesc {
+  font-family: var(--ts-font-sans);
+  font-size: 12.5px;
+  color: var(--ts-ink60);
+}
+
+.ls-markrow-byline {
+  flex-wrap: wrap;
+  padding-top: var(--ts-space-3);
+  border-top: 1px solid var(--ts-ink13);
+}
+
+.ls-bylinedemo {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  margin: 0;
+  font-family: var(--ts-font-serif);
+  font-size: 13.5px;
+  color: var(--ts-ink60);
+  min-width: 280px;
+}
+
+/* ── 8. collection as a lens ───────────────────────────────────────────── */
+
+.ls-coll {
+  flex: 1 1 340px;
+  max-width: 440px;
+  border-radius: var(--ts-radius-card);
+  border: 1px solid var(--ts-hairline);
+  background: var(--ts-surface);
+  overflow: hidden;
+  box-shadow: var(--ts-shadow-raised);
+}
+
+.ls-coll-cover {
+  position: relative;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  height: 92px;
+}
+.ls-coll-cover .ls-cover {
+  height: 100%;
+}
+
+.ls-coll-more {
+  position: absolute;
+  right: var(--ts-space-2);
+  bottom: var(--ts-space-2);
+  padding: 3px 9px;
+  border-radius: var(--ts-radius-full);
+  background: color-mix(in srgb, var(--ts-ink) 78%, transparent);
+  color: var(--ts-cream);
+  font-family: var(--ts-font-sans);
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.ls-coll-body {
+  padding: var(--ts-space-4);
+}
+
+.ls-coll-title {
+  font-family: var(--ts-font-serif);
+  font-size: 20px;
+  font-weight: 500;
+  margin: var(--ts-space-2) 0;
+}
+
+.ls-coll-desc {
+  font-family: var(--ts-font-serif);
+  font-size: 14px;
+  line-height: 1.45;
+  color: var(--ts-ink60);
+  margin: 0 0 var(--ts-space-3);
+}
+
+.ls-coll-by {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font-family: var(--ts-font-sans);
+  font-size: 12.5px;
+  color: var(--ts-ink60);
+  flex-wrap: wrap;
+}
+
+.ls-coll-count {
+  margin-left: auto;
+  color: var(--ts-ink45);
+}
+
+.ls-lens {
+  flex: 1 1 320px;
+  max-width: 420px;
+}
+
+.ls-lenscap {
+  font-family: var(--ts-font-mono);
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--ts-ink45);
+  margin-bottom: var(--ts-space-2);
+}
+
+.ls-honest {
+  font-family: var(--ts-font-serif);
+  font-size: 13.5px;
+  color: var(--ts-ink60);
+  margin: var(--ts-space-2) 0 var(--ts-space-3);
+}
+
+.ls-bizrow {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  grid-template-rows: auto auto;
+  row-gap: 2px;
+  column-gap: var(--ts-space-3);
+  padding: var(--ts-space-3) var(--ts-space-4);
+  background: var(--ts-surface);
+}
+
+.ls-bizrow-name {
+  font-family: var(--ts-font-sans);
+  font-size: 14.5px;
+  font-weight: 600;
+}
+
+.ls-bizrow-meta {
+  grid-column: 1;
+  font-family: var(--ts-font-sans);
+  font-size: 12px;
+  color: var(--ts-ink60);
+}
+
+.ls-open {
+  grid-row: 1 / span 2;
+  grid-column: 2;
+  align-self: center;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--ts-font-sans);
+  font-size: 11.5px;
+  font-weight: 500;
+  color: var(--ts-sage);
+  white-space: nowrap;
+}
+.ls-open[data-state='unknown'] {
+  color: var(--ts-ink45);
+}
+
+/* ── 9. a creation in its own skin ─────────────────────────────────────── */
+
+.ls-hostwrap {
+  flex: 1 1 330px;
+  max-width: 390px;
+}
+
+.ls-host {
+  border-radius: var(--ts-radius-card);
+  overflow: hidden;
+  border: 1px solid var(--ts-hairline);
+  background: var(--ts-ink);
+  box-shadow: var(--ts-shadow-navy);
+}
+
+.ls-hostbar {
+  display: flex;
+  align-items: center;
+  gap: var(--ts-space-3);
+  padding: var(--ts-space-3) var(--ts-space-4);
+  color: var(--ts-cream);
+}
+
+.ls-hostbar-id {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.ls-hostbar-app {
+  font-family: var(--ts-font-sans);
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.ls-hostbar-by {
+  font-family: var(--ts-font-sans);
+  font-size: 11px;
+  color: var(--ts-cream-muted);
+}
+
+.ls-sandbadge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 5px 10px;
+  border-radius: var(--ts-radius-full);
+  border: 1px solid var(--ts-cream14);
+  font-family: var(--ts-font-mono);
+  font-size: 9px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ts-cream);
+}
+
+.ls-guest {
+  margin: 0 8px;
+  border-radius: var(--ts-radius-card);
+  background: linear-gradient(
+    170deg,
+    color-mix(in srgb, var(--ts-navy) 42%, var(--ts-sage)),
+    color-mix(in srgb, var(--ts-navy-dark) 70%, var(--ts-sage))
+  );
+  padding: var(--ts-space-6) var(--ts-space-5);
+}
+
+.ls-guest-sign {
+  position: relative;
+  width: fit-content;
+  transform: rotate(-2deg);
+}
+
+.ls-guest-word {
+  position: relative;
+  z-index: 1;
+  display: inline-block;
+  padding: 6px 18px;
+  background: var(--ts-cream);
+  border: 3px solid var(--ts-navy-dark);
+  border-radius: 3px;
+  transform: skewY(-4deg);
+  font-family: var(--ts-font-sans);
+  font-size: 30px;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  color: var(--ts-navy-dark);
+}
+
+.ls-guest-wedge {
+  position: absolute;
+  left: 10px;
+  right: -8px;
+  bottom: -7px;
+  height: 14px;
+  transform: skewY(-4deg);
+  background: var(--ts-gold);
+}
+
+.ls-guest-tag {
+  margin: var(--ts-space-4) 0 var(--ts-space-5);
+  font-family: var(--ts-font-sans);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--ts-gold);
+}
+
+.ls-guest-row {
+  display: flex;
+  align-items: center;
+  gap: var(--ts-space-3);
+  padding: var(--ts-space-3) 0;
+  border-top: 1px solid var(--ts-cream14);
+  color: var(--ts-cream);
+}
+
+.ls-guest-num {
+  font-family: var(--ts-font-sans);
+  font-size: 22px;
+  font-weight: 800;
+  color: var(--ts-gold);
+  min-width: 34px;
+}
+
+.ls-guest-ep {
+  flex: 1;
+  font-family: var(--ts-font-sans);
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.ls-guest-play {
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  border-radius: var(--ts-radius-full);
+  background: var(--ts-gold);
+  color: var(--ts-navy-dark);
+}
+
+.ls-hostfoot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--ts-space-3);
+  padding: var(--ts-space-3) var(--ts-space-4);
+  font-family: var(--ts-font-mono);
+  font-size: 9px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ts-cream-muted);
+}
+
+.ls-hostfoot-report {
+  color: var(--ts-cream);
+}
+
 </style>
 </head>
 <body>
@@ -29679,10 +30952,11 @@ code {
       <a href="#states"><span class="n">10</span>States, feedback, and motion</a>
       <a href="#system"><span class="n">11</span>The theming seam, and the system as a system</a>
       <a href="#contribute"><span class="n">12</span>Contribution, and the composer</a>
+      <a href="#listen"><span class="n">13</span>Listen</a>
   </nav>
   <main class="stack">
     <header class="masthead">
-      <div class="kicker">Component sheet &middot; 12 sections</div>
+      <div class="kicker">Component sheet &middot; 13 sections</div>
       <h1>The whole surface of a town, drawn once.</h1>
       <p>Every specimen below is built from the published <code>--ts-*</code> token
       contract in <code>packages/tokens</code>. Not one hex literal appears in a
@@ -45799,6 +47073,592 @@ and never a button.</span>
     <b>The whole section is one argument: a record you can fix cheaply does not need to be policed expensively.</b> Every design choice here leans on the same two lines in the data model. Because a version is never destroyed, a correction from a stranger is low stakes, so corrections can be open to any verified resident instead of to owners only. Because attribution is dual, a creation writing on a resident's behalf can be cut off without deleting the resident's work, so residents can safely let their apps write. Because revert is a forward operation, a moderator can undo something in one tap and the contributor can put it back, which is why the revert screen can be written kindly and mean it. Take versioning out and every one of those choices flips to the defensive version: locked fields, owner-only edits, a review queue in front of everything, and a product nobody bothers to contribute to.
   </div>
 
+</section>
+
+<section class="sheet-section" id="listen">
+  <svg style="display:none" aria-hidden="true">
+    <symbol id="i-ls-back15" viewBox="0 0 24 24">
+      <path d="M12 4a8 8 0 1 1-7.2 4.5"/>
+      <path d="M4.6 3.8v4.9h4.9"/>
+    </symbol>
+    <symbol id="i-ls-fwd30" viewBox="0 0 24 24">
+      <path d="M12 4a8 8 0 1 0 7.2 4.5"/>
+      <path d="M19.4 3.8v4.9h-4.9"/>
+    </symbol>
+    <symbol id="i-ls-speed" viewBox="0 0 24 24">
+      <path d="M4 15.5a8.3 8.3 0 1 1 16 0"/>
+      <path d="M12 15.5 16 9.8"/>
+      <circle cx="12" cy="15.5" r="1.4"/>
+    </symbol>
+    <symbol id="i-ls-rss" viewBox="0 0 24 24">
+      <path d="M5 11.5A7.5 7.5 0 0 1 12.5 19"/>
+      <path d="M5 6a13 13 0 0 1 13 13"/>
+      <circle cx="6.2" cy="17.8" r="1.5"/>
+    </symbol>
+  </svg>
+
+  <div class="sec-head"><span class="sec-num">13</span><h2>Listen</h2></div>
+  <p class="sec-note">Podcasts and local audio, from a row in a mixed feed to a full show
+  page. Section 05 already seats episodes in the directory; this section is everything that
+  happens after someone presses play. One rule governs all of it: playback belongs to the
+  shell, not to a screen, because people listen to a local podcast while doing something
+  else.</p>
+
+  <!-- ─────────────────────────────────────────────────────  1. EPISODE ROW -->
+
+  <div class="spec">
+    <div class="spec-label">Episode row in a mixed feed <em>an episode sits on the serif side of the split, with articles: something to listen to, not somewhere to go</em></div>
+    <div class="plate">
+      <div class="ls-rows">
+        <article class="ls-eprow" data-state="unread">
+          <div class="ls-cover ls-eprow-thumb" data-art="eleva" role="img" aria-label="Eleva cover art">
+            <button class="ls-coverplay" type="button" aria-label="Play episode 52">
+              <svg class="i" aria-hidden="true"><use href="#i-play"/></svg>
+            </button>
+          </div>
+          <div class="ls-eprow-body">
+            <span class="ls-eyebrow">Ep. 52 · Eleva</span>
+            <h3 class="ls-eprow-title">Real estate roundtable</h3>
+            <p class="ls-eprow-meta"><svg class="i i-sm" aria-hidden="true"><use href="#i-headphones"/></svg>47 min · this morning</p>
+          </div>
+          <span class="ls-pip" aria-label="Unplayed"></span>
+        </article>
+        <article class="ls-eprow">
+          <div class="ls-cover ls-eprow-thumb" data-art="rundown" role="img" aria-label="River Valley Rundown cover art">
+            <button class="ls-coverplay" type="button" aria-label="Play episode 48">
+              <svg class="i" aria-hidden="true"><use href="#i-play"/></svg>
+            </button>
+          </div>
+          <div class="ls-eprow-body">
+            <span class="ls-eyebrow">Ep. 48 · River Valley Rundown</span>
+            <h3 class="ls-eprow-title">The people who keep Lake Dardanelle's boat ramps open</h3>
+            <p class="ls-eprow-meta"><svg class="i i-sm" aria-hidden="true"><use href="#i-headphones"/></svg>41 min · 1 August</p>
+          </div>
+        </article>
+        <article class="ls-eprow" data-state="played">
+          <div class="ls-cover ls-eprow-thumb" data-art="none" role="img" aria-label="No cover art for Wonder Boy Weekly">
+            <svg class="i" aria-hidden="true"><use href="#i-headphones"/></svg>
+            <button class="ls-coverplay" type="button" aria-label="Play episode 3 again">
+              <svg class="i" aria-hidden="true"><use href="#i-play"/></svg>
+            </button>
+          </div>
+          <div class="ls-eprow-body">
+            <span class="ls-eyebrow">Ep. 3 · Wonder Boy Weekly</span>
+            <h3 class="ls-eprow-title">Tech's new season, and the thing nobody says about the schedule</h3>
+            <p class="ls-eprow-meta"><svg class="i i-sm" aria-hidden="true"><use href="#i-check"/></svg>Played · 19 July</p>
+          </div>
+        </article>
+      </div>
+    </div>
+    <p class="why">Three states and none of them shouts. Unplayed carries a pip and a
+    500 weight title, played drops to muted ink with a check in the meta line, and the title
+    never changes size. The play control rides the cover at 44&thinsp;px, same as the
+    directory cards in section 05, so the gesture is identical everywhere an episode
+    appears.</p>
+  </div>
+
+  <!-- ─────────────────────────────────────────────────  2. EPISODE CARDS -->
+
+  <div class="spec">
+    <div class="spec-label">Episode cards <em>the section 05 pod anatomy, kept verbatim, plus the one state 05 never drew: finished</em></div>
+    <div class="spec-grid">
+      <article class="ls-card">
+        <div class="ls-cover ls-card-cover" data-art="eleva" role="img" aria-label="Eleva cover art">
+          <button class="ls-coverplay" type="button" aria-label="Play episode 49">
+            <svg class="i i-lg" aria-hidden="true"><use href="#i-play"/></svg>
+          </button>
+        </div>
+        <div class="ls-card-body">
+          <span class="ls-eyebrow">Ep. 49</span>
+          <h3 class="ls-card-title">From friends to restaurant owners</h3>
+          <p class="ls-card-meta">Eleva · 52 min · 12 July</p>
+        </div>
+      </article>
+
+      <article class="ls-card" data-playing>
+        <div class="ls-cover ls-card-cover" data-art="eleva" role="img" aria-label="Eleva cover art">
+          <button class="ls-coverplay" type="button" aria-label="Pause episode 52">
+            <svg class="i i-lg" aria-hidden="true"><use href="#i-pause"/></svg>
+          </button>
+        </div>
+        <div class="ls-card-body">
+          <span class="ls-eyebrow">Ep. 52</span>
+          <h3 class="ls-card-title">Real estate roundtable</h3>
+          <p class="ls-card-meta">Eleva · 47 min · this morning</p>
+          <div class="ls-scrubline">
+            <span class="ls-scrubline-bar"><span class="ls-scrubline-fill"></span></span>
+            <span class="ls-scrubline-time">31:04 left</span>
+          </div>
+        </div>
+      </article>
+
+      <article class="ls-card" data-done>
+        <div class="ls-cover ls-card-cover" data-art="rundown" role="img" aria-label="River Valley Rundown cover art">
+          <button class="ls-coverplay" type="button" aria-label="Play episode 47 again">
+            <svg class="i i-lg" aria-hidden="true"><use href="#i-refresh"/></svg>
+          </button>
+        </div>
+        <div class="ls-card-body">
+          <span class="ls-eyebrow">Ep. 47</span>
+          <h3 class="ls-card-title">Who actually runs the farmers market</h3>
+          <p class="ls-card-meta">River Valley Rundown · 38 min · 25 July</p>
+          <p class="ls-card-done"><svg class="i i-sm" aria-hidden="true"><use href="#i-check-circle"/></svg>Finished on Tuesday</p>
+        </div>
+      </article>
+    </div>
+    <p class="why">The rest and playing states are section 05's <b>dr-pod</b> drawn with this
+    section's classes, on purpose: a resident meets episodes in the directory first, and the
+    card must not mutate when it reappears here. The finished state is new. It swaps the play
+    glyph for a start-over arrow and says when you finished in words, because a filled
+    progress bar at 100 percent reads as a bug, not a memory.</p>
+  </div>
+
+  <!-- ──────────────────────────────────────────  3. NOW PLAYING, THE SWAP -->
+
+  <div class="spec">
+    <div class="spec-label">Now playing takes the ask band <em>playback borrows the row the ask bar lives on, and Ask folds to a sparkle. Nothing new is stacked.</em></div>
+
+    <div class="ls-bands">
+      <div class="ls-band">
+        <div class="ls-bandcap">Idle, the band belongs to Ask</div>
+        <div class="ls-bandframe">
+          <button class="ls-askbar" type="button">
+            <svg class="i" aria-hidden="true"><use href="#i-sparkle"/></svg>
+            <span class="ls-askbar-hint">Ask your town</span>
+            <svg class="i i-sm" aria-hidden="true"><use href="#i-mic"/></svg>
+          </button>
+          <nav class="ls-tabs" aria-label="Main">
+            <span class="ls-tab" data-on><svg class="i" aria-hidden="true"><use href="#i-home"/></svg>Today</span>
+            <span class="ls-tab"><svg class="i" aria-hidden="true"><use href="#i-compass"/></svg>Nearby</span>
+            <span class="ls-tab"><svg class="i" aria-hidden="true"><use href="#i-calendar"/></svg>Calendar</span>
+            <span class="ls-tab"><svg class="i" aria-hidden="true"><use href="#i-puzzle"/></svg>Creations</span>
+            <span class="ls-tab"><svg class="i" aria-hidden="true"><use href="#i-user"/></svg>You</span>
+          </nav>
+        </div>
+      </div>
+
+      <div class="ls-band">
+        <div class="ls-bandcap">Playing</div>
+        <div class="ls-bandframe">
+          <div class="ls-bar" data-state="playing">
+            <span class="ls-bar-scrub" aria-hidden="true"><span class="ls-bar-fill"></span></span>
+            <div class="ls-cover ls-bar-cover" data-art="eleva" aria-hidden="true"></div>
+            <div class="ls-bar-body">
+              <span class="ls-bar-title">Real estate roundtable</span>
+              <span class="ls-bar-sub">Eleva · 31:04 left</span>
+            </div>
+            <button class="ls-bar-btn" type="button" aria-label="Pause">
+              <svg class="i i-lg" aria-hidden="true"><use href="#i-pause"/></svg>
+            </button>
+            <button class="ls-bar-ask" type="button" aria-label="Ask your town">
+              <svg class="i" aria-hidden="true"><use href="#i-sparkle"/></svg>
+            </button>
+          </div>
+          <nav class="ls-tabs" aria-label="Main">
+            <span class="ls-tab" data-on><svg class="i" aria-hidden="true"><use href="#i-home"/></svg>Today</span>
+            <span class="ls-tab"><svg class="i" aria-hidden="true"><use href="#i-compass"/></svg>Nearby</span>
+            <span class="ls-tab"><svg class="i" aria-hidden="true"><use href="#i-calendar"/></svg>Calendar</span>
+            <span class="ls-tab"><svg class="i" aria-hidden="true"><use href="#i-puzzle"/></svg>Creations</span>
+            <span class="ls-tab"><svg class="i" aria-hidden="true"><use href="#i-user"/></svg>You</span>
+          </nav>
+        </div>
+      </div>
+
+      <div class="ls-band">
+        <div class="ls-bandcap">Paused, and a title that will not fit</div>
+        <div class="ls-bandframe">
+          <div class="ls-bar" data-state="paused">
+            <span class="ls-bar-scrub" aria-hidden="true"><span class="ls-bar-fill"></span></span>
+            <div class="ls-cover ls-bar-cover" data-art="rundown" aria-hidden="true"></div>
+            <div class="ls-bar-body">
+              <span class="ls-bar-title">The people who keep Lake Dardanelle's boat ramps open all summer</span>
+              <span class="ls-bar-sub">River Valley Rundown · paused</span>
+            </div>
+            <button class="ls-bar-btn" type="button" aria-label="Play">
+              <svg class="i i-lg" aria-hidden="true"><use href="#i-play"/></svg>
+            </button>
+            <button class="ls-bar-ask" type="button" aria-label="Ask your town">
+              <svg class="i" aria-hidden="true"><use href="#i-sparkle"/></svg>
+            </button>
+          </div>
+          <nav class="ls-tabs" aria-label="Main">
+            <span class="ls-tab" data-on><svg class="i" aria-hidden="true"><use href="#i-home"/></svg>Today</span>
+            <span class="ls-tab"><svg class="i" aria-hidden="true"><use href="#i-compass"/></svg>Nearby</span>
+            <span class="ls-tab"><svg class="i" aria-hidden="true"><use href="#i-calendar"/></svg>Calendar</span>
+            <span class="ls-tab"><svg class="i" aria-hidden="true"><use href="#i-puzzle"/></svg>Creations</span>
+            <span class="ls-tab"><svg class="i" aria-hidden="true"><use href="#i-user"/></svg>You</span>
+          </nav>
+        </div>
+      </div>
+    </div>
+
+    <p class="why">The bottom of the phone already stacks the home indicator, the tab bar and
+    the ask bar. We considered docking a fourth strip above them and chose not to: four
+    layers of chrome reads as a control panel, and the design brief bans exactly that
+    energy. So playback <b>borrows</b> the ask band. Ask never disappears, it folds to its
+    sparkle and stays one tap away, and the whole band returns to it the moment audio stops.
+    The scrub is the strip's own top edge, three pixels of terracotta that survive at a
+    glance, and the title truncates rather than wrapping because the bar must never change
+    height.</p>
+    <p class="why">Same register as the dark mode note in section 11: <b>considered and not
+    chosen</b>, so the next designer does not relitigate it from scratch. If a town ever
+    runs without Ask, the swap degrades to the strip alone and nothing else moves.</p>
+  </div>
+
+  <!-- ─────────────────────────────────────────────────  4. THE SHEET PLAYER -->
+
+  <div class="spec">
+    <div class="spec-label">The expanded player <em>a sheet, not a destination: everything a thumb needs and nothing a screen wants</em></div>
+    <div class="spec-row">
+      <div class="ls-sheetwrap">
+        <div class="ls-player" role="dialog" aria-label="Now playing">
+          <span class="ls-player-grab" aria-hidden="true"></span>
+          <div class="ls-cover ls-player-cover" data-art="eleva" role="img" aria-label="Eleva cover art"></div>
+          <span class="ls-eyebrow">Ep. 52 · Eleva</span>
+          <h3 class="ls-player-title">Real estate roundtable</h3>
+          <p class="ls-player-show">with Obee Rosales</p>
+          <div class="ls-player-scrub">
+            <span class="ls-player-track"><span class="ls-player-fill"></span><span class="ls-player-knob"></span></span>
+            <div class="ls-player-times"><span>16:12</span><span>31:04 left</span></div>
+          </div>
+          <div class="ls-transport">
+            <button class="ls-tbtn" type="button" aria-label="Back 15 seconds">
+              <svg class="i i-lg" aria-hidden="true"><use href="#i-ls-back15"/></svg>
+              <span class="ls-tbtn-num" aria-hidden="true">15</span>
+            </button>
+            <button class="ls-playbig" type="button" aria-label="Pause">
+              <svg class="i i-xl" aria-hidden="true"><use href="#i-pause"/></svg>
+            </button>
+            <button class="ls-tbtn" type="button" aria-label="Forward 30 seconds">
+              <svg class="i i-lg" aria-hidden="true"><use href="#i-ls-fwd30"/></svg>
+              <span class="ls-tbtn-num" aria-hidden="true">30</span>
+            </button>
+          </div>
+          <div class="ls-player-foot">
+            <button class="ls-chip" type="button"><svg class="i i-sm" aria-hidden="true"><use href="#i-ls-speed"/></svg>1.4x</button>
+            <a class="ls-chip" href="#listen"><svg class="i i-sm" aria-hidden="true"><use href="#i-document"/></svg>Episode page</a>
+            <button class="ls-chip" type="button"><svg class="i i-sm" aria-hidden="true"><use href="#i-share"/></svg>Share</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <p class="why">The bar expands into a sheet and the sheet is deliberately underwhelming:
+    cover, scrub, three transport controls, three quiet chips. No queue, no up next, no
+    autoplay into a second episode. This is a town's podcast, not a retention surface, and
+    the listener chose one episode, not a session. The skip buttons carry their numerals
+    beside minted glyphs because fifteen back and thirty forward are conventions worth
+    keeping, not branding worth redrawing.</p>
+  </div>
+
+  <!-- ─────────────────────────────────────────────────  5. EPISODE DETAIL -->
+
+  <div class="spec">
+    <div class="spec-label">Episode detail <em>notes, people, and the one link that makes a local episode local: the place it is about</em></div>
+    <div class="spec-row">
+      <div class="phone">
+        <div class="phone-cap">Episode page</div>
+        <div class="phone-screen">
+          <div class="ls-detail">
+            <header class="ls-dethead">
+              <svg class="i" aria-hidden="true"><use href="#i-chevron-left"/></svg>
+              <span class="ls-eyebrow">Eleva</span>
+            </header>
+            <div class="ls-dethero">
+              <div class="ls-cover ls-dethero-cover" data-art="eleva" role="img" aria-label="Eleva cover art"></div>
+              <div class="ls-dethero-body">
+                <span class="ls-eyebrow">Ep. 49 · 12 July</span>
+                <h3 class="ls-dethero-title">From friends to restaurant owners</h3>
+                <p class="ls-dethero-meta">52 min · Spanish and English</p>
+              </div>
+            </div>
+            <div class="ls-detactions">
+              <button class="ls-playpill" type="button">
+                <svg class="i" aria-hidden="true"><use href="#i-play"/></svg>Play episode
+              </button>
+              <button class="ls-ghost" type="button">
+                <svg class="i i-sm" aria-hidden="true"><use href="#i-bookmark"/></svg>Save
+              </button>
+            </div>
+            <p class="ls-detnotes">Obee sits down with the family behind Toros Mexican Grill
+            about the jump from cooking for friends to signing a lease on Arkansas Avenue,
+            what the first empty Tuesday felt like, and why they almost called it off twice.</p>
+            <p class="ls-detguests">With Obee Rosales and the Toros family.</p>
+
+            <a class="ls-place" href="#listen">
+              <span class="ls-place-icon"><svg class="i" aria-hidden="true"><use href="#i-storefront"/></svg></span>
+              <span class="ls-place-body">
+                <span class="ls-eyebrow">About a place</span>
+                <span class="ls-place-name">Toros Mexican Grill</span>
+                <span class="ls-place-meta"><span class="ls-opendot" aria-hidden="true"></span>Open until 9 PM · Arkansas Avenue</span>
+              </span>
+              <svg class="i i-sm" aria-hidden="true"><use href="#i-chevron-right"/></svg>
+            </a>
+
+            <p class="ls-detsource"><svg class="i i-sm" aria-hidden="true"><use href="#i-ls-rss"/></svg>From the Eleva feed · fetched this morning</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="ls-sidenote">
+        <p class="why">The place card is the point of the whole page. An episode about Toros
+        links to the Toros listing, and the listing links back, which is the relationship no
+        feed source carries on its own and the reason podcasts live in the directory at all.
+        Guests are plain text, not profile chips: being interviewed on a podcast is not
+        consenting to an account on ours.</p>
+        <p class="why">The source line names the feed and when we last fetched it, same
+        honesty register as the directory's hours rule. If the feed goes stale the line says
+        so here, and the episode keeps playing, because a dead publisher should never brick
+        an archive.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ─────────────────────────────────────────────────────  6. SHOW PAGE -->
+
+  <div class="spec">
+    <div class="spec-label">Show page <em>a show is a publisher with a follow button, not an app with a skin: the shell renders every show the same way</em></div>
+    <div class="spec-row">
+      <div class="phone">
+        <div class="phone-cap">Show page, Eleva</div>
+        <div class="phone-screen">
+          <div class="ls-show">
+            <header class="ls-showhero">
+              <div class="ls-cover ls-showhero-cover" data-art="eleva" role="img" aria-label="Eleva cover art"></div>
+              <div class="ls-showhero-body">
+                <span class="ls-eyebrow">Podcast · Russellville</span>
+                <h3 class="ls-showhero-name">Eleva</h3>
+                <p class="ls-showhero-by">with Obee Rosales</p>
+              </div>
+              <button class="ls-follow" type="button">Follow</button>
+            </header>
+            <p class="ls-showdesc">Conversations with the people building the River Valley's
+            Hispanic community, in Spanish and English, usually over food.</p>
+
+            <div class="ls-chiprail" role="tablist" aria-label="Series">
+              <button class="ls-chip" type="button" role="tab" aria-selected="true" data-on>All episodes</button>
+              <button class="ls-chip" type="button" role="tab" aria-selected="false">Real estate roundtable</button>
+              <button class="ls-chip" type="button" role="tab" aria-selected="false">Devotionals</button>
+              <button class="ls-chip" type="button" role="tab" aria-selected="false">Events</button>
+            </div>
+
+            <div class="ls-rows ls-showrows">
+              <article class="ls-eprow" data-state="unread">
+                <div class="ls-cover ls-eprow-thumb" data-art="eleva" role="img" aria-label="Eleva cover art">
+                  <button class="ls-coverplay" type="button" aria-label="Play episode 52">
+                    <svg class="i" aria-hidden="true"><use href="#i-play"/></svg>
+                  </button>
+                </div>
+                <div class="ls-eprow-body">
+                  <span class="ls-eyebrow">Ep. 52 · this morning</span>
+                  <h3 class="ls-eprow-title">Real estate roundtable</h3>
+                  <p class="ls-eprow-meta"><svg class="i i-sm" aria-hidden="true"><use href="#i-headphones"/></svg>47 min</p>
+                </div>
+                <span class="ls-pip" aria-label="Unplayed"></span>
+              </article>
+              <article class="ls-eprow">
+                <div class="ls-cover ls-eprow-thumb" data-art="eleva" role="img" aria-label="Eleva cover art">
+                  <button class="ls-coverplay" type="button" aria-label="Play episode 51">
+                    <svg class="i" aria-hidden="true"><use href="#i-play"/></svg>
+                  </button>
+                </div>
+                <div class="ls-eprow-body">
+                  <span class="ls-eyebrow">Ep. 51 · 3 August</span>
+                  <h3 class="ls-eprow-title">Find your true peace</h3>
+                  <p class="ls-eprow-meta"><svg class="i i-sm" aria-hidden="true"><use href="#i-headphones"/></svg>11 min · Devotionals</p>
+                </div>
+              </article>
+              <article class="ls-eprow">
+                <div class="ls-cover ls-eprow-thumb" data-art="eleva" role="img" aria-label="Eleva cover art">
+                  <button class="ls-coverplay" type="button" aria-label="Play episode 50">
+                    <svg class="i" aria-hidden="true"><use href="#i-play"/></svg>
+                  </button>
+                </div>
+                <div class="ls-eprow-body">
+                  <span class="ls-eyebrow">Ep. 50 · 27 July</span>
+                  <h3 class="ls-eprow-title">A conversation with Mayor Fred Teague</h3>
+                  <p class="ls-eprow-meta"><svg class="i i-sm" aria-hidden="true"><use href="#i-headphones"/></svg>44 min</p>
+                </div>
+              </article>
+              <article class="ls-eprow">
+                <div class="ls-cover ls-eprow-thumb" data-art="eleva" role="img" aria-label="Eleva cover art">
+                  <button class="ls-coverplay" type="button" aria-label="Play episode 49">
+                    <svg class="i" aria-hidden="true"><use href="#i-play"/></svg>
+                  </button>
+                </div>
+                <div class="ls-eprow-body">
+                  <span class="ls-eyebrow">Ep. 49 · 12 July</span>
+                  <h3 class="ls-eprow-title">From friends to restaurant owners</h3>
+                  <p class="ls-eprow-meta"><svg class="i i-sm" aria-hidden="true"><use href="#i-headphones"/></svg>52 min</p>
+                </div>
+              </article>
+            </div>
+
+            <a class="ls-showcoll" href="#listen">
+              <svg class="i" aria-hidden="true"><use href="#i-list"/></svg>
+              <span>This show curates a collection: <b>Hispanic-owned Russellville</b>, 38 places</span>
+              <svg class="i i-sm" aria-hidden="true"><use href="#i-chevron-right"/></svg>
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <div class="ls-sidenote">
+        <p class="why">The series chips are grouping, not navigation: one feed, filtered in
+        place, because Eleva publishes a roundtable, devotionals and event coverage into one
+        stream and a resident should not need to know the org chart to find Tuesday's
+        episode. If a show never uses series, the rail simply never renders.</p>
+        <p class="why">Follow is the only verb on the hero. Following a show subscribes you
+        to its episodes in Today, exactly like following a business, and the collection link
+        at the foot is how a media brand extends into the directory without owning a single
+        pixel of shell chrome.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ──────────────────────────────────────────────  7. PARTNER SOURCE MARK -->
+
+  <div class="spec">
+    <div class="spec-label">How a show is identified in the shell <em>cover art in shell surfaces, initials when there is none, and never a logo in the chrome</em></div>
+    <div class="plate">
+      <div class="ls-marks">
+        <div class="ls-markrow">
+          <span class="ls-mark" data-art="eleva" aria-hidden="true"></span>
+          <span class="ls-markname">Eleva</span>
+          <span class="ls-markdesc">cover art as the mark, at 20 px, corners at the input radius</span>
+        </div>
+        <div class="ls-markrow">
+          <span class="ls-mark" data-initials aria-hidden="true">WW</span>
+          <span class="ls-markname">Wonder Boy Weekly</span>
+          <span class="ls-markdesc">no art, so initials on a tint, same as a news source in section 03</span>
+        </div>
+        <div class="ls-markrow ls-markrow-byline">
+          <p class="ls-bylinedemo"><span class="ls-mark" data-art="eleva" aria-hidden="true"></span>Eleva · Ep. 52 · 47 min · this morning</p>
+          <span class="ls-markdesc">in a byline the mark is a recognition aid; the name does the identifying</span>
+        </div>
+      </div>
+    </div>
+    <p class="why">A show gets exactly what a newspaper gets in section 03: a small mark, its
+    name in our typography, and no colour claim on the shell. Eleva's parallelogram sign
+    lives on its cover art and inside its creation, where it can be as loud as it likes. The
+    moment a partner logo enters shell chrome, every partner negotiates for chrome, and the
+    shell stops being the town's.</p>
+  </div>
+
+  <!-- ─────────────────────────────────  8. A COLLECTION AS A DIRECTORY LENS -->
+
+  <div class="spec">
+    <div class="spec-label">A show's collection as a directory lens <em>the Hispanic business directory is a curated view over the one true directory, never a second list</em></div>
+    <div class="spec-row">
+      <article class="ls-coll">
+        <div class="ls-coll-cover" aria-hidden="true">
+          <span class="ls-cover" data-art="plate"></span>
+          <span class="ls-cover" data-art="awning"></span>
+          <span class="ls-cover" data-art="counter"></span>
+          <span class="ls-cover" data-art="eleva"></span>
+          <span class="ls-coll-more">+34</span>
+        </div>
+        <div class="ls-coll-body">
+          <span class="ls-eyebrow">Collection</span>
+          <h3 class="ls-coll-title">Hispanic-owned Russellville</h3>
+          <p class="ls-coll-desc">Restaurants, shops and services owned by Hispanic
+          neighbours, from the taquerias on Arkansas Avenue to the detail shop on South
+          Knoxville.</p>
+          <div class="ls-coll-by">
+            <span class="ls-mark" data-art="eleva" aria-hidden="true"></span>
+            <span>Curated by <b>Eleva</b><svg class="i i-sm ls-verified" aria-hidden="true"><use href="#i-badge-check"/></svg></span>
+            <span class="ls-coll-count">38 places · updated 12 August</span>
+          </div>
+        </div>
+      </article>
+
+      <div class="ls-lens">
+        <div class="ls-lenscap">The same collection as an active filter</div>
+        <div class="ls-chiprail">
+          <button class="ls-chip" type="button" data-on>Hispanic-owned<svg class="i i-sm" aria-hidden="true"><use href="#i-close"/></svg></button>
+          <button class="ls-chip" type="button">Open now</button>
+          <button class="ls-chip" type="button">Eat and drink</button>
+        </div>
+        <p class="ls-honest">Showing <b>38 of 741</b>. One collection is doing the
+        filtering.</p>
+        <div class="ls-rows">
+          <article class="ls-bizrow">
+            <span class="ls-bizrow-name">Toros Mexican Grill</span>
+            <span class="ls-bizrow-meta">Restaurant · Arkansas Avenue</span>
+            <span class="ls-open" data-state="open"><span class="ls-opendot"></span>Until 9 PM</span>
+          </article>
+          <article class="ls-bizrow">
+            <span class="ls-bizrow-name">La Catrachita Taqueria</span>
+            <span class="ls-bizrow-meta">Restaurant · South Arkansas</span>
+            <span class="ls-open" data-state="open"><span class="ls-opendot"></span>Until 8 PM</span>
+          </article>
+          <article class="ls-bizrow">
+            <span class="ls-bizrow-name">Bonilla's Barber Shop</span>
+            <span class="ls-bizrow-meta">Barber · West Main</span>
+            <span class="ls-open" data-state="unknown"><svg class="i i-sm" aria-hidden="true"><use href="#i-clock"/></svg>Hours unknown</span>
+          </article>
+        </div>
+      </div>
+    </div>
+    <p class="why">One dataset, two doors. The collection card renders in the directory and
+    inside Eleva's creation from the same 38 rows, so a correction to Toros's hours lands in
+    both places at once. Membership is self-identified by the owner and curated by the
+    collection's maker, and the honest count sentence from section 05 applies unchanged: a
+    lens must always say it is a lens.</p>
+  </div>
+
+  <!-- ─────────────────────────────────  9. A CREATION IN ITS OWN SKIN -->
+
+  <div class="spec">
+    <div class="spec-label">A creation in its own skin <em>the guest may look like anything it wants; the frame is the part that may never change</em></div>
+    <div class="spec-row">
+      <div class="ls-hostwrap">
+        <div class="ls-host">
+          <div class="ls-hostbar">
+            <svg class="i" aria-hidden="true"><use href="#i-close"/></svg>
+            <div class="ls-hostbar-id">
+              <span class="ls-hostbar-app">Eleva</span>
+              <span class="ls-hostbar-by">by Obee Rosales · verified resident</span>
+            </div>
+            <span class="ls-sandbadge"><svg class="i i-sm" aria-hidden="true"><use href="#i-shield"/></svg>Sandboxed</span>
+          </div>
+          <div class="ls-guest">
+            <div class="ls-guest-sign">
+              <span class="ls-guest-word">ELEVA</span>
+              <span class="ls-guest-wedge" aria-hidden="true"></span>
+            </div>
+            <p class="ls-guest-tag">Elevando el River Valley</p>
+            <div class="ls-guest-row">
+              <span class="ls-guest-num">52</span>
+              <span class="ls-guest-ep">Real estate roundtable</span>
+              <span class="ls-guest-play"><svg class="i" aria-hidden="true"><use href="#i-play"/></svg></span>
+            </div>
+            <div class="ls-guest-row">
+              <span class="ls-guest-num">51</span>
+              <span class="ls-guest-ep">Find your true peace</span>
+              <span class="ls-guest-play"><svg class="i" aria-hidden="true"><use href="#i-play"/></svg></span>
+            </div>
+          </div>
+          <div class="ls-hostfoot">
+            <span>custom look, reviewed by the town committee · guidelines v1</span>
+            <span class="ls-hostfoot-report">Report</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="ls-sidenote">
+        <p class="why">Section 06 draws the seam and this specimen states the policy on top
+        of it: the host <b>offers</b> the town's tokens inside the frame and does not
+        enforce them. A builder who adopts them gets a native look for free; a brand like
+        Eleva can bring its whole visual world instead, and the review committee judges it
+        against the content guidelines, not against our palette. The specimen here is drawn
+        with token mixes because this sheet cannot carry foreign CSS, which is itself the
+        demonstration: only a real guest bundle can truly leave the system.</p>
+        <p class="why">What holds is the chrome. Host bar, sandbox badge, attribution and
+        the footer with Report belong to the shell in every skin, and the footer now names
+        the gate: a custom look passed review, and the version of the guidelines it passed.</p>
+      </div>
+    </div>
+  </div>
 </section>
   </main>
 </div>
