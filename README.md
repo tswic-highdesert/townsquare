@@ -27,7 +27,8 @@ reading.
 | [creation-authoring.md](creation-authoring.md) | How residents author creations (MCP) and the review flow |
 | [residency-verification.md](residency-verification.md) | Verifying a resident without harvesting personal data |
 | [build-layer-options.md](build-layer-options.md) | Prior art and why the build layer is shaped this way |
-| [design/](design/) | Implementation designs. Where a design and a spec disagree, the spec wins |
+| [design/system/](design/system/) | **Approved Daily visual system**, locked 2026-09-10: rules, tokens, and font reference |
+| [design/](design/) | Design hierarchy and historical screen references. Product/security specs still take precedence |
 | [brand/](brand/) | The approved identity, with a per-town lockup generator |
 
 ## Repository

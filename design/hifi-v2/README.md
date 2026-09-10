@@ -7,6 +7,9 @@ updated: 2026-08-05
 
 # Hi-fi v2
 
+> **Visual baseline updated 2026-09-10:** [The Daily design system](../system/README.md) is now authoritative for visual styling. This sheet remains a screen/behavior reference; older typography, colors, icons, and geometry are historical where they conflict with the approved system. Product and security contracts remain unchanged.
+
+
 The full surface of Town Square, drawn as one specimen sheet. Twelve sections,
 around 200 labelled specimens, every one built from the published `--ts-*` token
 contract in `packages/tokens`.

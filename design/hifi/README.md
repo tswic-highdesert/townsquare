@@ -7,10 +7,13 @@ updated: 2026-08-03
 
 # Town Square hi-fi (Claude Design import)
 
+> **Visual baseline updated 2026-09-10:** [The Daily design system](../system/README.md) is now authoritative for visual styling. This sheet remains a screen/behavior reference; older typography, colors, icons, and geometry are historical where they conflict with the approved system. Product and security contracts remain unchanged.
+
+
 Imported 2026-08-03 from the Claude Design project
 `7a1f14d9-e382-49e3-b4a5-544db43033fb` ("Town Square hi-fi"). This is the
-**visual source of truth** for the app: the design language Tal dialed in, at
-shipping fidelity. Build against it.
+**historical visual reference** for the app. Preserve its relevant behavioral
+requirements, but build new visual styling against `design/system/`.
 
 ## Files
 
