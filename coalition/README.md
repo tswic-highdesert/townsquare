@@ -27,8 +27,9 @@ reasoning.
 | `2026-08-06-atu-capstone-coalition-design.md` | The spec. Origin, the room, hard facts from ATU, strategy, sequencing. |
 | `problem-statement.md` | One page in the community's own words. Feeds the deck, the form, and grant applications. |
 | `proposals/` | Six capstone proposals, form-ready. |
-| `deck/town-square-russellville.pdf` | 14-slide coalition deck. |
+| `deck/town-square-russellville.pdf` | 8-slide deck, aimed at ATU capstone faculty. |
 | `deck/deck.html` | Deck source. Edit this, then re-render. |
+| `deck/_previous-17-slide-deck.{html,pdf}` | The earlier 17-slide coalition deck, kept for reference. |
 | `deck/slides/` | Per-slide PNGs, for dropping a single slide into an email. |
 | `diagrams/` | Five SVG diagrams plus PNG renders. |
 | `screens/` | App screens captured from `design/hifi-v2`, used in the deck. |

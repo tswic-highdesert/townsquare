@@ -14,41 +14,45 @@ standalone handout, or the body of a grant application.
 
 ## The short version
 
-**Russellville does not have a town square anymore.**
+**The life of a town should not be this hard to find.**
 
-Everything a resident might want to know about their town exists somewhere. The
-council decided something Tuesday. A nonprofit needs volunteers Saturday. A new
-business opened on Main Street. Someone recorded a podcast about the river.
+**Town Square is a return to local attention.** A place to find what you need,
+share what you offer, and take part in what happens here.
 
-None of it is in the same place. Most of it never reaches the person who would
-have cared.
+**Russellville has a lot to offer.**
 
-So every organization in town builds its own audience from scratch, over and
-over, and pays for the privilege. And every resident assembles their own
-patchwork of Facebook groups, word of mouth, and luck, then still misses most of
-what is happening.
+**It just does not have one place to find it.**
 
-That is not four problems. It is one problem showing up as different symptoms.
+The people, places, services, businesses, and ideas are here. They are just
+spread across feeds, flyers, group chats, calendars, inboxes, and word of
+mouth.
+
+All of it exists somewhere. Too often, it never reaches the person it was meant
+for.
+
+A group trying to reach people has to shout into different corners of the
+internet. A person looking for something has to know where to look.
+
+This does not work.
 
 ---
 
 ## How we got here
 
-A community's most valuable asset is its attention. For most of a century that
-attention had somewhere to live. The paper landed on the porch. The radio was on
-in the truck. That infrastructure was analog, physical, local, and imperfect, and
-it worked. If something mattered, it reached you, and the institution that
-carried it lived in the same town you did.
+**Local information isn't gone. It's scattered everywhere.**
 
-We gave that away.
+A new business opens. The farmers market is Saturday. A class is happening. A
+city meeting is coming up. Someone is trying to let people know about a service
+that could change their life.
 
-Not to another local institution. We handed it to Zuckerberg and friends, to
-companies two thousand miles from here that rent our attention back to us and
-decide, day to day, who sees what. A nonprofit in Russellville now has to buy
-access to people who already asked to hear from it.
+Each gets posted in a different place. Each is on its own.
 
-The old infrastructure did not simply fade out. It was replaced by something that
-was never built to serve a town in the first place.
+**It should not be harder to find out what is happening down the street than
+what is happening everywhere else.**
+
+**Big Tech should not stand between a town and itself.**
+
+Town Square is a place for local attention to come back together.
 
 ---
 
@@ -83,120 +87,44 @@ What has been missing is a solution anyone has actually dialed in.
 
 ---
 
-## Why the usual answers do not work
-
-**Facebook groups.** Rented land. There is an algorithm between an organization
-and the people who explicitly asked to hear from it, and the terms change
-whenever someone else decides they should. A group that took three years to
-build can lose its reach in a week.
-
-**Local news.** Thinning, here and everywhere. What remains cannot cover a
-school board, a quorum court, a planning commission, and forty nonprofits.
-
-**The city website.** Built to satisfy a legal requirement to publish, not to
-help a resident understand. A PDF posted on time is compliance. It is not
-communication.
-
-**Email lists.** Expensive, one-way, and siloed by design. Every organization
-pays separately to reach an overlapping set of the same people, and none of
-those lists ever help a resident discover an organization they had not already
-heard of.
-
-**Another app.** Every community app so far is a product people consume. It
-lives or dies on whether one organization can keep feeding it forever. Most die.
-
----
-
 ## What we think the answer is
 
-Not a better newsletter. **Something the whole community can build on.**
+**Town Square is a place built for the life of this town.**
 
-Town Square is built in three layers, and each one asks more of the town than
-the one before it. That order is deliberate. It has to be useful before anyone
-is asked to participate, and useful and busy before anyone is asked to build.
+It brings what is already happening into view, gives people a way to add what
+they know, and makes room for anyone to build what the town needs next.
 
-### 1. Bring in what already exists
+**Open it, and you find a town already in motion.**
+
+### Nobody has to change what they do
 
 We start by pulling the town's existing signals into one place. Business
 listings, news sites, event calendars, public notices, podcasts. Everything that
 is already out there and already worth having, gathered.
 
-The important part is what this does not require. **Nobody has to change what
-they do for this to work.** No organization has to adopt a new platform, learn a
-new tool, or move their calendar. We come to the information where it already
-lives. On day one, before a single resident signs up, there is already something
-worth walking up to.
+No organization has to adopt a new platform, learn a new tool, or move their
+calendar. We come to the information where it already lives. On day one, before
+a single resident signs up, there is already something worth walking up to.
 
-### 2. Let the town add what only people can add
+### Some things you only know if you live here
 
-Then residents show up, and they can add the things no scraper will ever find.
-What is actually going on. What is worth going to. What a place is really like.
-Reviews, recommendations, notices, corrections, answers, the stuff that lives in
-people's heads.
+Whether the event is actually worth going to. Which mechanic will not run you
+around. What a place is really like on a Saturday morning. Where to actually
+park. Who will take care of you and who will not.
 
-Here is the difference that matters, and it is the whole difference:
+None of that is written down anywhere. It lives in people's heads. This is a
+place to put it.
 
-**We do not sell ads, so we have no reason to hide anything from you.**
-
-That sounds small. It is not. An ad-funded feed makes money by controlling the
-slot in front of you, so it has to decide what you do not see in order to sell
-that space back to the people who made it. That is why the nonprofit you
-followed on purpose has to pay to reach you. It is not a bug in the system, it
-is the system.
-
-We have no ad business to protect. So we can do the thing that is obvious and
-that nobody with an ad business can afford to do: if you asked to see it, you
-see it. What the community engages with rises, everything stays findable, and
-nothing gets buried to create scarcity we can sell.
-
-Worth saying plainly, because it is the trap: ranking purely by engagement
-recreates the same problem even without ads, since outrage is engaging. Removing
-the ad motive is not enough on its own. So the rule is that discovery only ever
-*adds* to what you asked for. It never takes away.
-
-### 3. Let anyone build on it
-
-This is the part that makes it a different kind of thing.
-
-In 2026, a person with an idea and an afternoon can build a real working app.
-What they cannot do is give it a home, an audience, or any connection to
-anything else in their town. That is what this is.
+### Everything Town Square becomes starts with somebody here
 
 Someone wants to rank the best tamales in town. Someone wants to summarize what
 the council actually decided, in plain English. Someone wants to track the
 things bearing down on this community, the license plate readers, the data
 centers, whatever is next. Someone wants a marketplace to buy, sell, and trade.
-Someone wants to promote their podcast, or their idea, or their cause. Some of
-them want to make money doing it, and that is fine.
+Some of them want to make money doing it, and that is fine.
 
-We are not building those. We are building the foundation that makes them easy
-to build in the AI era, and the place where the town finds them.
-
-One rule: **every creation has to leave something behind.** Whatever it learns
-about the town gets contributed back, so the next person's app starts with
-everything the last person's app figured out.
-
-> **A note on the layers.** Discovery is not one of them. Finding the thing you
-> did not know to look for is what all three layers are for, not a step in the
-> middle. Whether this ends up as three layers or four is still open.
-
----
-
-## Why this compounds
-
-A normal community app gets more valuable the more people read it, which means
-it needs one organization to feed it forever, and it dies when that organization
-gets tired.
-
-Town Square gets more valuable **the more people build on it.**
-
-Ten builders make it useful. Fifty make it hard to replace. And because each
-creation leaves what it learned behind, the fiftieth builder starts from
-somewhere the first one could not have reached.
-
-That is the bet: that a town's information problem is not solved by one org
-publishing harder, but by giving everybody who already wants to help a place to
-plug in.
+We are not building those. We are building the ground they stand on, and the
+place the town finds them.
 
 ---
 
@@ -246,63 +174,48 @@ point.
 
 ---
 
-## Nobody should own a town square
+## This one belongs to the town
 
 We did not pick the name to be cute.
 
-In the early days, Facebook described itself as the digital town square. They
-were right about what they were building. They were just also the ones who owned
-it, and they sell it.
+In the early days, Facebook called itself the digital town square. They were
+right about what they were building. They were also the ones who owned it, and
+they sell it.
 
-This is not an argument against free enterprise. Businesses should make money.
-But a town square is not supposed to be a product. It is the one place where a
-community sees itself, and when that place has been bought and paid for by
-interests two thousand miles away, the community does not get to decide what
-happens in it anymore. Somebody else does, on a quarterly basis, for reasons
-that have nothing to do with this town.
+A town square is supposed to be a place for commerce. People sell things there.
+That is part of what one is for.
 
-### And this has already cost us something
+The difference is who decides. When the square is owned two thousand miles away,
+somebody else decides who gets a spot in it, who gets to sell, which services
+you hear about, which resources ever reach you. They decide on a quarterly
+basis, for reasons that have nothing to do with here.
 
-This part is not theoretical.
+### We are already paying for this
 
-When the only reliable way to reach your neighbors is a channel you have to pay
-for, the organizations that get squeezed out first are the ones with the
-smallest budgets. Those are often the ones doing the most urgent work. The
-crisis line. The shelter with beds open tonight. The clinic with a closing
-enrollment window. The warming center. The pantry.
+There is a person on the other end of every message that does not arrive, and
+some of them do not get another chance. People have been hurt by this. Some have
+died.
 
-A nonprofit that cannot get a message out is not merely inconvenienced. There is
-a person on the other end of that message who needed it, and consequences that
-follow when it never arrives. Everyone who works in this field has watched it
-happen and can name the case.
+Your neighbors follow the food pantry for a reason. They needed help. The pantry
+posts, and they do not see it unless the pantry pays. That is the machine
+working the way it was built to work.
 
-The wider damage is slower and harder to see. Civic participation thins. People
-stop knowing their neighbors, stop showing up, stop trusting institutions they
-no longer hear from directly. That is a real deterioration of civic fabric, and
-it has real costs.
+A machine that sells the space in front of you always has to hold some of it
+back, or there is nothing left to sell. The organizations squeezed out first are
+the ones with the smallest budgets, and they are often doing the most urgent
+work. The crisis line. The shelter with beds open tonight. The clinic with a
+closing enrollment window. The warming center. The pantry.
 
-**We cannot currently tell you what those costs are here, in numbers.** Nobody
-has measured it in this community. That is one of the things we would like ATU
-to help with: a study that quantifies what the loss of a shared local
-information channel has actually done to Russellville, and what could be done
-about it. Naming the harm precisely is the first step to fixing it, and it is
-exactly the kind of question a university could answer.
+And the wider damage is harder and slower to see. Civic participation thins.
+People stop knowing their neighbors. They stop showing up. They stop trusting
+institutions.
 
-### So here is how this one is held
+Nobody has or can put a number on what this has cost our towns, and we are not
+going to wait for one.
 
-Town Square is **open source**, so another town can take it, run it, and adapt
-it without asking anyone. Governance sits with a **local Town Square committee**,
-not a company and not a person, which is also what an adopting town stands up
-for itself.
+**So we are building one that nobody can buy.**
 
-Residency is verified by **vouching**: residents vouch for residents. We store
-that someone is verified and never store where they live.
-
-Moderation is light. This is a neutral place, not a publisher. Every record is
-versioned, attributed, and reversible, which is what lets it stay that way.
-
-None of that makes it un-ownable forever. It makes it owned by the town instead
-of by us.
+Open source, community-owned infrastructure.
 
 ---
 
