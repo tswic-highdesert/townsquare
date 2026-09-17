@@ -56,11 +56,11 @@
 <text x="1082" y="320.0" font-family="'DM Sans', -apple-system, 'Helvetica Neue', Arial, sans-serif" font-size="19" font-weight="400" fill="#6E6A61" text-anchor="start">Gets more valuable the more people read it.</text>
 <text x="1082" y="347.55" font-family="'DM Sans', -apple-system, 'Helvetica Neue', Arial, sans-serif" font-size="19" font-weight="400" fill="#6E6A61" text-anchor="start">Needs one organization to feed it forever.</text>
 <text x="1082" y="375.1" font-family="'DM Sans', -apple-system, 'Helvetica Neue', Arial, sans-serif" font-size="19" font-weight="400" fill="#6E6A61" text-anchor="start">Dies when that organization gets tired.</text>
-<text x="1082" y="442" font-family="'DM Mono', ui-monospace, 'SF Mono', Menlo, monospace" font-size="18" font-weight="500" fill="#C4714E" text-anchor="start">linear, and fragile</text>
+<text x="1082" y="442" font-family="'DM Sans', -apple-system, 'Helvetica Neue', Arial, sans-serif" font-size="18" font-weight="500" fill="#C4714E" text-anchor="start">linear, and fragile</text>
 <rect x="1050" y="508" width="470" height="268" rx="18" fill="#26405B" stroke="none" stroke-width="2"/>
 <text x="1082" y="556" font-family="Newsreader, 'Libre Baskerville', Georgia, serif" font-size="24" font-weight="600" fill="#D4A853" text-anchor="start">Town Square</text>
 <text x="1082" y="598.0" font-family="'DM Sans', -apple-system, 'Helvetica Neue', Arial, sans-serif" font-size="19" font-weight="400" fill="#EDE9E0" text-anchor="start">Gets more valuable the more people build.</text>
 <text x="1082" y="625.55" font-family="'DM Sans', -apple-system, 'Helvetica Neue', Arial, sans-serif" font-size="19" font-weight="400" fill="#EDE9E0" text-anchor="start">Ten builders make it useful.</text>
 <text x="1082" y="653.1" font-family="'DM Sans', -apple-system, 'Helvetica Neue', Arial, sans-serif" font-size="19" font-weight="400" fill="#EDE9E0" text-anchor="start">Fifty make it hard to replace.</text>
-<text x="1082" y="722" font-family="'DM Mono', ui-monospace, 'SF Mono', Menlo, monospace" font-size="18" font-weight="500" fill="#D4A853" text-anchor="start">compounding, and durable</text>
+<text x="1082" y="722" font-family="'DM Sans', -apple-system, 'Helvetica Neue', Arial, sans-serif" font-size="18" font-weight="500" fill="#D4A853" text-anchor="start">compounding, and durable</text>
 </svg>

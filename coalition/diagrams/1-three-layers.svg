@@ -37,7 +37,7 @@
 <text x="196" y="304.0" font-family="'DM Sans', -apple-system, 'Helvetica Neue', Arial, sans-serif" font-size="20" font-weight="400" fill="#1D1B16" text-anchor="start">Anyone with an idea can build something and plug it in. Tamale</text>
 <text x="196" y="333.0" font-family="'DM Sans', -apple-system, 'Helvetica Neue', Arial, sans-serif" font-size="20" font-weight="400" fill="#1D1B16" text-anchor="start">rankings, plain-English council summaries, a marketplace, a</text>
 <text x="196" y="362.0" font-family="'DM Sans', -apple-system, 'Helvetica Neue', Arial, sans-serif" font-size="20" font-weight="400" fill="#1D1B16" text-anchor="start">tracker for whatever is bearing down on this town next.</text>
-<text x="1380" y="262" font-family="'DM Mono', ui-monospace, 'SF Mono', Menlo, monospace" font-size="17" font-weight="500" fill="#D4A853" text-anchor="end">each one leaves something behind</text>
+<text x="1380" y="262" font-family="'DM Sans', -apple-system, 'Helvetica Neue', Arial, sans-serif" font-size="17" font-weight="500" fill="#D4A853" text-anchor="end">each one leaves something behind</text>
 <rect x="80" y="407" width="1330" height="185" rx="18" fill="#FAF8F5" stroke="#CFC7B8" stroke-width="2"/>
 <rect x="80" y="407" width="12" height="185" rx="0" fill="#7D9B76" stroke="none" stroke-width="2"/>
 <rect x="80" y="407" width="12" height="185" fill="#7D9B76"/>
@@ -46,7 +46,7 @@
 <text x="196" y="469" font-family="Newsreader, 'Libre Baskerville', Georgia, serif" font-size="32" font-weight="600" fill="#26405B" text-anchor="start">Let the town add what only people can add</text>
 <text x="196" y="511.0" font-family="'DM Sans', -apple-system, 'Helvetica Neue', Arial, sans-serif" font-size="20" font-weight="400" fill="#1D1B16" text-anchor="start">Residents add what no scraper will ever find. What is actually</text>
 <text x="196" y="540.0" font-family="'DM Sans', -apple-system, 'Helvetica Neue', Arial, sans-serif" font-size="20" font-weight="400" fill="#1D1B16" text-anchor="start">going on, what is worth going to, what a place is really like.</text>
-<text x="1380" y="469" font-family="'DM Mono', ui-monospace, 'SF Mono', Menlo, monospace" font-size="17" font-weight="500" fill="#7D9B76" text-anchor="end">no ads, so nothing is hidden</text>
+<text x="1380" y="469" font-family="'DM Sans', -apple-system, 'Helvetica Neue', Arial, sans-serif" font-size="17" font-weight="500" fill="#7D9B76" text-anchor="end">no ads, so nothing is hidden</text>
 <rect x="80" y="614" width="1330" height="185" rx="18" fill="#FAF8F5" stroke="#CFC7B8" stroke-width="2"/>
 <rect x="80" y="614" width="12" height="185" rx="0" fill="#C4714E" stroke="none" stroke-width="2"/>
 <rect x="80" y="614" width="12" height="185" fill="#C4714E"/>
@@ -55,6 +55,6 @@
 <text x="196" y="676" font-family="Newsreader, 'Libre Baskerville', Georgia, serif" font-size="32" font-weight="600" fill="#26405B" text-anchor="start">Bring in what already exists</text>
 <text x="196" y="718.0" font-family="'DM Sans', -apple-system, 'Helvetica Neue', Arial, sans-serif" font-size="20" font-weight="400" fill="#1D1B16" text-anchor="start">Business listings, news, event calendars, notices, podcasts.</text>
 <text x="196" y="747.0" font-family="'DM Sans', -apple-system, 'Helvetica Neue', Arial, sans-serif" font-size="20" font-weight="400" fill="#1D1B16" text-anchor="start">Already out there, already worth having, gathered in one place.</text>
-<text x="1380" y="676" font-family="'DM Mono', ui-monospace, 'SF Mono', Menlo, monospace" font-size="17" font-weight="500" fill="#C4714E" text-anchor="end">nobody changes what they do</text>
+<text x="1380" y="676" font-family="'DM Sans', -apple-system, 'Helvetica Neue', Arial, sans-serif" font-size="17" font-weight="500" fill="#C4714E" text-anchor="end">nobody changes what they do</text>
 <text x="80" y="862" font-family="Newsreader, 'Libre Baskerville', Georgia, serif" font-size="22" font-weight="500" fill="#26405B" text-anchor="start" font-style="italic">Discovery is not one of the layers. Finding what you did not know to look for is what all three are for.</text>
 </svg>

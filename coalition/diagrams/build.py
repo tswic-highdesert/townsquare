@@ -25,7 +25,9 @@ LINE = "#CFC7B8"
 
 SERIF = "Newsreader, 'Libre Baskerville', Georgia, serif"
 SANS = "'DM Sans', -apple-system, 'Helvetica Neue', Arial, sans-serif"
-MONO = "'DM Mono', ui-monospace, 'SF Mono', Menlo, monospace"
+# Label face. This was DM Mono; the typewriter look was rejected. Labels now
+# carry their weight through case, tracking, size and colour, not a mono face.
+MONO = SANS
 
 W, H = 1600, 900
 

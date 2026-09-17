@@ -31,7 +31,7 @@
 <rect x="560" y="190" width="480" height="96" rx="16" fill="#26405B" stroke="none" stroke-width="2"/>
 <text x="800" y="228" font-family="Newsreader, 'Libre Baskerville', Georgia, serif" font-size="26" font-weight="600" fill="#FAF8F5" text-anchor="middle">Town Square Committee</text>
 <text x="800" y="258" font-family="'DM Sans', -apple-system, 'Helvetica Neue', Arial, sans-serif" font-size="17" font-weight="400" fill="#D4A853" text-anchor="middle">governance, moderation, the revert button</text>
-<text x="800" y="278" font-family="'DM Mono', ui-monospace, 'SF Mono', Menlo, monospace" font-size="15" font-weight="400" fill="#EDE9E0" text-anchor="middle">Tal at launch, designed for three to five</text>
+<text x="800" y="278" font-family="'DM Sans', -apple-system, 'Helvetica Neue', Arial, sans-serif" font-size="15" font-weight="400" fill="#EDE9E0" text-anchor="middle">Tal at launch, designed for three to five</text>
 <path d="M 800 286 L 800 336" fill="none" stroke="#26405B" stroke-width="2.5" marker-end="url(#arrow)"/>
 <rect x="560" y="340" width="480" height="92" rx="16" fill="#FAF8F5" stroke="#26405B" stroke-width="3"/>
 <text x="800" y="376" font-family="Newsreader, 'Libre Baskerville', Georgia, serif" font-size="24" font-weight="600" fill="#26405B" text-anchor="middle">Core platform</text>
@@ -66,7 +66,7 @@
 <text x="1385" y="628.0" font-family="'DM Sans', -apple-system, 'Helvetica Neue', Arial, sans-serif" font-size="17" font-weight="400" fill="#6E6A61" text-anchor="middle">Anyone in town, via the</text>
 <text x="1385" y="652.65" font-family="'DM Sans', -apple-system, 'Helvetica Neue', Arial, sans-serif" font-size="17" font-weight="400" fill="#6E6A61" text-anchor="middle">builder tooling. Open</text>
 <text x="1385" y="677.3" font-family="'DM Sans', -apple-system, 'Helvetica Neue', Arial, sans-serif" font-size="17" font-weight="400" fill="#6E6A61" text-anchor="middle">by default.</text>
-<text x="800" y="762" font-family="'DM Mono', ui-monospace, 'SF Mono', Menlo, monospace" font-size="18" font-weight="400" fill="#6E6A61" text-anchor="middle">contributor lanes run parallel to core, never beneath it</text>
+<text x="800" y="762" font-family="'DM Sans', -apple-system, 'Helvetica Neue', Arial, sans-serif" font-size="18" font-weight="400" fill="#6E6A61" text-anchor="middle">contributor lanes run parallel to core, never beneath it</text>
 <rect x="430" y="794" width="740" height="62" rx="14" fill="#EDE9E0" stroke="#CFC7B8" stroke-width="2"/>
 <text x="800" y="822" font-family="'DM Sans', -apple-system, 'Helvetica Neue', Arial, sans-serif" font-size="18" font-weight="700" fill="#C4714E" text-anchor="middle">Connectors</text>
 <text x="800" y="844" font-family="'DM Sans', -apple-system, 'Helvetica Neue', Arial, sans-serif" font-size="16" font-weight="400" fill="#6E6A61" text-anchor="middle">Debra Fithen and the ATU Center for Community Engagement &amp; Academic Outreach</text>
