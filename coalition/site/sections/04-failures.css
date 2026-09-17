@@ -3,16 +3,16 @@
    the reasoning on the right. */
 
 .s-failures-ledger{
-  margin-top:clamp(2.2rem,4vw,3.4rem);
+  margin-top:clamp(2.2rem,4cqi,3.4rem);
   border-block-end:2px solid var(--ts-line);
 }
 
 .s-failures-row{
   display:grid;
   grid-template-columns:minmax(0,21rem) minmax(0,1fr);
-  gap:clamp(1.2rem,4vw,4rem);
+  gap:clamp(1.2rem,4cqi,4rem);
   align-items:start;
-  padding-block:clamp(1.6rem,2.5vw,2.5rem);
+  padding-block:clamp(1.6rem,2.5cqi,2.5rem);
   border-block-start:1px solid var(--ts-line);
 }
 .s-failures-row:first-child{border-block-start:2px solid var(--ts-line)}
@@ -33,14 +33,14 @@
 }
 .s-failures-name{
   font-family:var(--ts-serif);
-  font-size:clamp(1.3rem,1.75vw,1.8rem);
+  font-size:clamp(1.3rem,1.75cqi,1.8rem);
   font-weight:600;line-height:1.15;letter-spacing:-.012em;
   color:var(--ts-display);
   margin:0;
 }
 .s-failures-verdict{
   grid-column:2;
-  font-family:var(--ts-mono);
+  font-family:var(--ts-sans);
   font-size:var(--ts-t-label);
   font-weight:500;
   letter-spacing:.14em;
@@ -59,7 +59,7 @@
 /* the one line worth stopping on */
 .s-failures-sharp{
   font-family:var(--ts-serif);
-  font-size:clamp(1.35rem,2.05vw,1.95rem);
+  font-size:clamp(1.35rem,2.05cqi,1.95rem);
   font-weight:600;line-height:1.26;letter-spacing:-.014em;
   color:var(--ts-display);
   max-width:24ch;

@@ -1,0 +1,161 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Where it stands &middot; Town Square Russellville</title>
+<meta name="description" content="A town square the town actually owns. Prepared for the ATU CCEAO community coalition, August 2026.">
+<link rel="icon" href="assets/favicon.png">
+<link rel="stylesheet" href="tokens.css">
+<link rel="stylesheet" href="base.css">
+<link rel="stylesheet" href="sections.css">
+</head>
+<body data-page="close">
+
+<a class="skip" href="#top">Skip to content</a>
+
+<header class="topbar">
+  <a class="topbar__brand" href="index.html">
+    <img src="assets/mark.png" alt="">
+    <span>Town Square</span>
+  </a>
+  <button class="topbar__btn" type="button" id="sideToggle"
+          aria-controls="side" aria-expanded="false">
+    <span class="topbar__bars" aria-hidden="true"></span>
+    <span class="topbar__btntxt">Where it stands</span>
+  </button>
+</header>
+
+<aside class="side" id="side">
+  <a class="side__brand" href="index.html">
+    <img src="assets/mark.png" alt="">
+    <span class="side__brandtxt">Town&nbsp;Square</span>
+  </a>
+  <nav class="side__nav" aria-label="Sections">
+      <a class="side__link" href="index.html"><span class="side__t">Overview</span></a>
+      <p class="side__part">The case</p>
+      <a class="side__link" href="problem.html"><span class="side__n" aria-hidden="true">01</span><span class="side__t">The problem</span></a>
+      <a class="side__link" href="how-we-got-here.html"><span class="side__n" aria-hidden="true">02</span><span class="side__t">How we got here</span></a>
+      <p class="side__part">The answer</p>
+      <a class="side__link" href="answer.html"><span class="side__n" aria-hidden="true">03</span><span class="side__t">What it is</span></a>
+      <a class="side__link" href="build-layer.html"><span class="side__n" aria-hidden="true">04</span><span class="side__t">What people make of it</span></a>
+      <a class="side__link" href="ownership.html"><span class="side__n" aria-hidden="true">05</span><span class="side__t">Ownership</span></a>
+      <p class="side__part">The plan</p>
+      <a class="side__link" href="coalition.html"><span class="side__n" aria-hidden="true">06</span><span class="side__t">The coalition</span></a>
+      <a class="side__link" href="proposals.html"><span class="side__n" aria-hidden="true">07</span><span class="side__t">The projects</span></a>
+      <p class="side__part">The ask</p>
+      <a class="side__link" href="ask.html"><span class="side__n" aria-hidden="true">08</span><span class="side__t">The ask</span></a>
+      <a class="side__link is-on" href="close.html" aria-current="page"><span class="side__n" aria-hidden="true">09</span><span class="side__t">Where it stands</span></a>
+  </nav>
+  <div class="side__foot">
+    <span>Russellville, Arkansas</span>
+    <span>August 2026</span>
+  </div>
+</aside>
+
+<div class="side__scrim" id="sideScrim" hidden></div>
+
+<main class="page" id="top">
+
+<!-- 12-close.html -->
+<section class="section s-close" id="close">
+  <div class="wrap s-close-in">
+
+    <div class="s-close-state reveal">
+      <div class="s-close-state__say">
+        <p class="eyebrow">The state of it</p>
+        <p class="s-close-state__lede">
+          This is not a concept. As of August 2026 the platform runs.
+        </p>
+        <p class="s-close-state__town">Russellville is town one.</p>
+      </div>
+      <ul class="s-close-built">
+        <li>Identity</li>
+        <li>Vouching</li>
+        <li>The directory</li>
+        <li>The creation sandbox</li>
+        <li>The builder tooling</li>
+        <li>The review pipeline</li>
+      </ul>
+      <p class="s-close-built__note">Built and tested.</p>
+    </div>
+
+    <div class="s-close-final reveal">
+      <div class="s-close-rule" aria-hidden="true"></div>
+      <p class="s-close-final__up">What it needs now is not code.</p>
+      <p class="s-close-final__big">It needs the town.</p>
+    </div>
+
+    <div class="s-close-docs reveal">
+      <p class="s-close-docs__k">The documents behind this</p>
+      <ul class="s-close-docs__list">
+        <li>
+          <a class="s-close-docs__link" href="assets/town-square-russellville.pdf">
+            <span>The full deck</span>
+            <span class="s-close-docs__meta">17 slides, PDF</span>
+          </a>
+        </li>
+      </ul>
+      <p class="s-close-docs__rest">
+        The complete problem statement, all seven capstone proposals, the
+        coalition plan, and the source diagrams live alongside this page in the
+        project repository.
+      </p>
+      <p class="s-close-contact">
+        <a class="s-close-contact__link" href="mailto:tal@rvtownsquare.com">tal@rvtownsquare.com</a>
+      </p>
+    </div>
+
+    <footer class="s-close-foot">
+      <img class="s-close-foot__mark" src="assets/mark.png" alt="">
+      <span class="s-close-foot__txt">Town Square</span>
+      <span class="s-close-foot__dot" aria-hidden="true">&middot;</span>
+      <span class="s-close-foot__txt">Russellville, Arkansas</span>
+      <span class="s-close-foot__dot" aria-hidden="true">&middot;</span>
+      <span class="s-close-foot__txt">August 2026</span>
+    </footer>
+
+  </div>
+</section>
+
+  <nav class="pager pager--solo" aria-label="Page">
+    <a class="pager__a pager__a--prev" href="ask.html">
+      <span class="pager__k">Back</span>
+      <span class="pager__t">The ask</span>
+    </a>
+  </nav>
+
+</main>
+
+<script>
+// mobile drawer
+const btn = document.getElementById('sideToggle')
+const scrim = document.getElementById('sideScrim')
+const setOpen = (v) => {
+  document.body.classList.toggle('side-open', v)
+  btn.setAttribute('aria-expanded', String(v))
+  scrim.hidden = !v
+}
+btn.addEventListener('click', () => setOpen(!document.body.classList.contains('side-open')))
+scrim.addEventListener('click', () => setOpen(false))
+addEventListener('keydown', (e) => { if (e.key === 'Escape') setOpen(false) })
+
+// reveal on enter
+const io = new IntersectionObserver((es) => {
+  for (const e of es) if (e.isIntersecting) { e.target.classList.add('is-in'); io.unobserve(e.target) }
+}, { rootMargin: '0px 0px -8% 0px', threshold: 0.06 })
+document.querySelectorAll('.reveal').forEach((el) => io.observe(el))
+
+// left / right arrows walk the book
+const PREV = "ask.html"
+const NEXT = null
+addEventListener('keydown', (e) => {
+  if (e.metaKey || e.ctrlKey || e.altKey) return
+  const t = e.target
+  if (t && /^(INPUT|TEXTAREA|SELECT)$/.test(t.tagName)) return
+  if (e.key === 'ArrowLeft' && PREV) location.href = PREV
+  if (e.key === 'ArrowRight' && NEXT) location.href = NEXT
+})
+</script>
+</body>
+</html>

@@ -2,6 +2,8 @@
 // 1. no raw colour in any section stylesheet (everything via --ts-*)
 // 2. every class in a section stylesheet carries its section prefix
 // 3. no inline <style>, no external http(s) requests, no <script> in sections
+// 4. no vw units (fluid sizes track the content column via cqi, not the window)
+// 5. no monospace anywhere; the site has no mono face
 import { readdirSync, readFileSync, existsSync } from 'node:fs'
 import { dirname, join } from 'node:path'
 import { fileURLToPath } from 'node:url'
@@ -10,13 +12,15 @@ const here = dirname(fileURLToPath(import.meta.url))
 const secDir = join(here, 'sections')
 const SHARED = new Set(['wrap', 'wrap-narrow', 'section', 'section--alt',
   'section--invert', 'section--tight', 'eyebrow', 'eyebrow--plain', 'h1', 'h2',
-  'h3', 'lead', 'body', 'accent', 'gold', 'mono', 'rule', 'hairline', 'grid',
+  'h3', 'lead', 'body', 'accent', 'gold', 'rule', 'hairline', 'grid',
   'grid-2', 'grid-3', 'grid-4', 'split', 'card', 'card__k', 'card--invert',
   'figure', 'figure--bare', 'reveal', 'is-in'])
 
 const HEX = /#[0-9a-fA-F]{3,8}\b/g
 const FUNC = /\b(?:rgba?|hsla?|lab|lch|oklch|oklab)\s*\(/g
 const NAMED = /(?<![\w-])(?:white|black|red|blue|green|gray|grey|silver|navy|gold|teal|orange|purple|pink|brown|beige|ivory|tan|cyan|magenta|maroon|olive|lime|aqua|fuchsia)(?![\w-])\s*(?:;|,|\))/g
+const VW = /(?<![\w.-])[\d.]+vw(?![\w-])/g
+const MONO = /--ts-mono|monospace|DM Mono|ui-monospace|SF Mono|Menlo|Courier/gi
 
 let fail = 0
 const say = (m) => { console.log('  ' + m); fail++ }
@@ -31,6 +35,10 @@ for (const f of readdirSync(secDir).filter((f) => f.endsWith('.css')).sort()) {
     const hits = code.match(re)
     if (hits) say(`${f}: raw colour ${[...new Set(hits)].slice(0, 4).join(' ')} — use var(--ts-*)`)
   }
+  const vw = code.match(VW)
+  if (vw) say(`${f}: ${[...new Set(vw)].slice(0, 4).join(' ')} — the panel takes 17.5rem off the window, use cqi`)
+  const mono = code.match(MONO)
+  if (mono) say(`${f}: ${[...new Set(mono)].slice(0, 3).join(' ')} — there is no mono face, use var(--ts-sans)`)
   for (const m of code.matchAll(/\.(-?[A-Za-z_][\w-]*)/g)) {
     const cls = m[1]
     if (SHARED.has(cls)) continue

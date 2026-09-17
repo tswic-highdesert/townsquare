@@ -1,173 +1,72 @@
-/* 05 answer — the payoff. The diagram maps the shape, then the three layers
-   run down one continuous spine so the progression reads as a single thing.
-   Layer 2 carries the load: the no-ads claim is the loudest object here. */
+/* 05 answer — state what it is, then show it running before explaining
+   anything. The two claims underneath are headlines, not numbered layers. */
 
-.s-answer-map{
-  margin-top:clamp(2rem,3.5vw,3rem);
-  max-width:1180px;
-}
-.s-answer-map img{background:var(--ts-bg-alt)}
-
-/* ---------------------------------------------------------------- layers */
-.s-answer-layers{
-  position:relative;
-  margin-top:clamp(2.6rem,5vw,4.5rem);
-}
-/* the spine connecting all three */
-.s-answer-layers::before{
-  content:"";position:absolute;
-  inset-block:2.6rem 3rem;
-  inset-inline-start:calc(2.4rem - 1px);
-  width:2px;background:var(--ts-line-soft);
-}
-
-.s-answer-layer{
-  position:relative;
+/* ------------------------------------------------------------ show it */
+.s-answer-show{
+  margin-top:clamp(2.2rem,4cqi,3.6rem);
   display:grid;
-  grid-template-columns:4.8rem minmax(0,1fr);
-  gap:clamp(1.3rem,3vw,2.8rem);
-  padding-block:clamp(1.6rem,2.8vw,2.6rem);
-}
-.s-answer-layer--one{--s-answer-c:var(--ts-terra)}
-.s-answer-layer--two{--s-answer-c:var(--ts-sage)}
-.s-answer-layer--three{--s-answer-c:var(--ts-gold)}
-
-.s-answer-num{
-  position:relative;z-index:1;
-  width:4.8rem;height:4.8rem;border-radius:50%;
-  display:grid;place-items:center;
-  background:var(--ts-bg);
-  border:2.5px solid var(--s-answer-c);
-  color:var(--s-answer-c);
-  font-family:var(--ts-serif);font-weight:600;
-  font-size:2.2rem;line-height:1;
-}
-
-.s-answer-text{padding-block-start:.4rem}
-.s-answer-h{
-  font-family:var(--ts-serif);
-  font-size:clamp(1.55rem,2.3vw,2.15rem);
-  font-weight:600;line-height:1.14;letter-spacing:-.015em;
-  color:var(--ts-display);
-  margin:0 0 .9rem;
-  text-wrap:balance;
-}
-.s-answer-text .body{color:var(--ts-text-muted)}
-
-/* the quiet emphasis inside layer 1 */
-.s-answer-pull{
-  font-family:var(--ts-serif);
-  font-size:clamp(1.25rem,1.75vw,1.7rem);
-  font-weight:600;line-height:1.28;letter-spacing:-.012em;
-  color:var(--ts-display);
-  max-width:26ch;
-  margin:1.3rem 0 1.3rem;
-  padding-inline-start:1.15rem;
-  border-inline-start:4px solid var(--s-answer-c);
-}
-
-.s-answer-turn{
-  font-family:var(--ts-serif);
-  font-size:clamp(1.15rem,1.5vw,1.4rem);
-  font-style:italic;
-  line-height:1.4;
-  color:var(--ts-display);
-  max-width:46ch;
-  margin:1.5rem 0 0;
-}
-
-/* ---------------------------------------------------- the claim (layer 2) */
-.s-answer-claim{
-  position:relative;overflow:hidden;
-  background:var(--ts-navy);
+  grid-template-columns:minmax(0,20rem) minmax(0,1fr);
+  gap:clamp(1.8rem,4cqi,4rem);
+  align-items:center;
+  padding:clamp(1.6rem,3cqi,2.8rem);
   border-radius:var(--ts-radius-lg);
-  box-shadow:var(--ts-shadow-md);
-  margin:1.1rem 0 2.2rem;
+  background:var(--ts-bg-alt);
 }
-.s-answer-claim-glow{
-  position:absolute;inset-block-start:-70%;inset-inline-end:-10%;
-  width:38rem;aspect-ratio:1;border-radius:50%;pointer-events:none;
-  background:radial-gradient(circle,
-    color-mix(in srgb,var(--ts-sage) 34%,transparent) 0%,
-    color-mix(in srgb,var(--ts-navy) 0%,transparent) 70%);
+.s-answer-shot{margin:0}
+.s-answer-shot img{
+  display:block;width:100%;height:auto;
+  border-radius:var(--ts-radius);
+  box-shadow:var(--ts-shadow-lg);
 }
-.s-answer-claim-in{
-  position:relative;
-  padding:clamp(1.8rem,3.2vw,3rem) clamp(1.7rem,3.2vw,3.2rem);
-}
-.s-answer-claim-rule{
-  width:5.5rem;height:5px;border-radius:3px;
-  background:var(--ts-gold);
-  margin-bottom:1.5rem;
-}
-.s-answer-claim-t{
+.s-answer-motion{
   font-family:var(--ts-serif);font-weight:600;
-  font-size:clamp(1.75rem,3.05vw,2.75rem);
-  line-height:1.16;letter-spacing:-.022em;
-  color:var(--ts-paper);
-  max-width:20ch;margin:0;
+  font-size:clamp(1.9rem,3.4cqi,3.1rem);
+  line-height:1.14;letter-spacing:-.022em;
+  color:var(--ts-display);
+  max-width:18ch;margin:0;
   text-wrap:balance;
 }
-.s-answer-claim-s{
+.s-answer-motionsub{
   font-size:var(--ts-t-body);
-  color:var(--ts-on-navy-muted);
-  max-width:48ch;
+  color:var(--ts-text-muted);
+  max-width:40ch;
   margin:1.15rem 0 0;
 }
 
-/* ---------------------------------------------------- the two mechanics */
-.s-answer-mechs{margin-bottom:1.9rem}
-.s-answer-mech{
-  padding-inline-start:1.15rem;
-  border-inline-start:2px solid var(--ts-line);
+/* ------------------------------------------------------------- claims */
+.s-answer-blocks{
+  margin-top:clamp(2.6rem,5cqi,4.4rem);
+  display:grid;
+  gap:clamp(2rem,4cqi,3.4rem);
 }
-.s-answer-mech-k{
-  font-family:var(--ts-mono);font-size:var(--ts-t-label);font-weight:500;
-  letter-spacing:.13em;text-transform:uppercase;
-  color:var(--ts-accent);
-  margin:0 0 .7rem;
+.s-answer-block{
+  padding-inline-start:clamp(1.2rem,2cqi,1.8rem);
+  border-inline-start:4px solid var(--ts-line-soft);
+  max-width:var(--ts-measure);
 }
-.s-answer-mech-t{
-  font-size:var(--ts-t-small);line-height:1.62;
-  color:var(--ts-text-muted);
-  margin:0;
-}
+.s-answer-block:first-child{border-inline-start-color:var(--ts-terra)}
+.s-answer-block:last-child{border-inline-start-color:var(--ts-sage)}
 
-.s-answer-rulebox{
+.s-answer-h{
   font-family:var(--ts-serif);
-  font-size:clamp(1.25rem,1.7vw,1.6rem);line-height:1.38;
+  font-size:clamp(1.55rem,2.4cqi,2.25rem);
+  font-weight:600;line-height:1.14;letter-spacing:-.015em;
   color:var(--ts-display);
-  max-width:46ch;margin:0;
-  padding:1.3rem 1.6rem;
-  border-radius:var(--ts-radius);
-  background:color-mix(in srgb,var(--ts-sage) 16%,transparent);
-  border:1.5px solid color-mix(in srgb,var(--ts-sage) 42%,transparent);
+  margin:0 0 .95rem;
+  text-wrap:balance;
 }
-.s-answer-rulebox strong{color:var(--ts-accent)}
+.s-answer-block .body{color:var(--ts-text-muted)}
 
-/* ---------------------------------------------------------------- close */
-.s-answer-close{
-  margin-top:clamp(1.5rem,3vw,2.6rem);
-  padding:clamp(1.5rem,2.4vw,2.1rem) clamp(1.6rem,2.6vw,2.4rem);
-  border-radius:var(--ts-radius);
-  background:var(--ts-bg-alt);
-  border-inline-start:5px solid var(--ts-gold);
-}
-.s-answer-close-k{
-  font-family:var(--ts-mono);font-size:var(--ts-t-label);font-weight:500;
-  letter-spacing:.14em;text-transform:uppercase;
-  color:var(--ts-text-muted);
-  margin:0 0 .6rem;
-}
-.s-answer-close-t{
+.s-answer-only{
   font-family:var(--ts-serif);
-  font-size:clamp(1.2rem,1.65vw,1.55rem);
-  line-height:1.36;color:var(--ts-display);
-  max-width:56ch;margin:0;
+  font-size:clamp(1.2rem,1.7cqi,1.6rem);
+  line-height:1.42;
+  color:var(--ts-display);
+  max-width:52ch;
+  margin:0 0 1.2rem;
 }
 
 @media(max-width:960px){
-  .s-answer-layer{grid-template-columns:3.6rem minmax(0,1fr);gap:1.2rem}
-  .s-answer-num{width:3.6rem;height:3.6rem;font-size:1.6rem}
-  .s-answer-layers::before{inset-inline-start:calc(1.8rem - 1px);inset-block:2rem 2.4rem}
+  .s-answer-show{grid-template-columns:minmax(0,1fr);gap:1.6rem}
+  .s-answer-shot{max-width:17rem}
 }

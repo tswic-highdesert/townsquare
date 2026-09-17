@@ -1,10 +1,11 @@
-// Screenshot the assembled site for review.
-// node coalition/site/shot.mjs            -> per-section PNGs into site/_review/
-// node coalition/site/shot.mjs full       -> also one tall full-page PNG
+// Screenshot every page of the assembled site for review.
+// node coalition/site/shot.mjs            -> one full-page PNG per page
+// node coalition/site/shot.mjs fold       -> also the first 950px of each page
 import { chromium } from '@playwright/test'
 import { dirname, join } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { mkdirSync, rmSync } from 'node:fs'
+import { PAGES } from './build.mjs'
 
 const here = dirname(fileURLToPath(import.meta.url))
 const out = join(here, '_review')
@@ -16,30 +17,25 @@ const page = await browser.newPage({
   viewport: { width: 1600, height: 950 },
   deviceScaleFactor: 2,
 })
-await page.goto('file://' + join(here, 'index.html'), { waitUntil: 'networkidle' })
-await page.evaluate(() => document.fonts.ready)
-// force every reveal visible so screenshots are not blank
-await page.addStyleTag({ content: '.reveal{opacity:1!important;transform:none!important} .nav{display:none!important}' })
-await page.waitForTimeout(400)
-
-const secs = await page.$$eval('main > section', (els) =>
-  els.map((e) => ({ id: e.id, h: Math.round(e.getBoundingClientRect().height) })))
 
 let i = 0
-for (const s of secs) {
+for (const p of PAGES) {
   i++
-  const name = String(i).padStart(2, '0') + '-' + (s.id || 'unnamed')
-  await page.locator(`main > section#${s.id}`).screenshot({
-    path: join(out, name + '.png'),
+  const file = p.slug === 'index' ? 'index.html' : p.slug + '.html'
+  const name = String(i).padStart(2, '0') + '-' + p.slug
+  await page.goto('file://' + join(here, file), { waitUntil: 'networkidle' })
+  await page.evaluate(() => document.fonts.ready)
+  await page.addStyleTag({
+    content: '.reveal{opacity:1!important;transform:none!important}',
   })
-  console.log(`  ${name}  ${s.h}px`)
+  await page.waitForTimeout(300)
+  await page.screenshot({ path: join(out, name + '.png'), fullPage: true })
+  const h = await page.evaluate(() => document.documentElement.scrollHeight)
+  console.log(`  ${name}  ${h}px`)
+  if (process.argv[2] === 'fold') {
+    await page.screenshot({ path: join(out, name + '-fold.png') })
+  }
 }
 
-if (process.argv[2] === 'full') {
-  await page.screenshot({ path: join(out, '_full.png'), fullPage: true })
-  console.log('  _full.png')
-}
-
-const total = await page.evaluate(() => document.documentElement.scrollHeight)
-console.log(`\n  ${secs.length} sections, ${total}px tall`)
+console.log(`\n  ${PAGES.length} pages`)
 await browser.close()

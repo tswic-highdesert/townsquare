@@ -7,10 +7,10 @@
   font-weight:200 800;font-style:normal;font-display:block}
 @font-face{font-family:'DM Sans';src:url('fonts/dm-sans.woff2') format('woff2');
   font-weight:100 1000;font-style:normal;font-display:block}
-@font-face{font-family:'DM Mono';src:url('fonts/dm-mono-400.woff2') format('woff2');
-  font-weight:400;font-style:normal;font-display:block}
-@font-face{font-family:'DM Mono';src:url('fonts/dm-mono-500.woff2') format('woff2');
-  font-weight:500;font-style:normal;font-display:block}
+/* There is deliberately no monospace face. DM Mono was used for every eyebrow,
+   kicker, caption and badge on the site and the typewriter look was rejected.
+   Labels now carry their weight through case, tracking, size and colour.
+   check.mjs blocks monospace from coming back. */
 
 :root{
   /* ---- core palette (app palette, tuned off the base brand) ---- */
@@ -19,21 +19,32 @@
   --ts-terra:#C4714E;
   --ts-sage:#7D9B76;
   --ts-gold:#D4A853;
-  --ts-cream:#EDE9E0;
+  /* cream sits ~1.35:1 against paper. It was 1.14:1, which read as no step at
+     all, so the alternating section rhythm did nothing. Any change here must
+     keep --ts-line-soft DARKER than cream or every card border halos. */
+  --ts-cream:#DED7C8;
   --ts-paper:#FAF8F5;
   --ts-ink:#1D1B16;
   --ts-alarm:#7E1F0C;
 
   /* ---- derived neutrals ---- */
   --ts-muted:#6E6A61;
-  --ts-line:#CFC7B8;
-  --ts-line-soft:#E2DCD0;
+  --ts-line:#BEB4A0;
+  --ts-line-soft:#D2CAB8;
   --ts-on-navy:#FAF8F5;
   --ts-on-navy-muted:#B9C4CF;
+  /* body copy on the navy pages. This was --ts-cream until cream was darkened
+     to make the section rhythm register; the two roles are now separate. */
+  --ts-on-navy-soft:#EDE9E0;
 
   /* ---- semantic ---- */
   --ts-bg:var(--ts-paper);
   --ts-bg-alt:var(--ts-cream);
+  /* the left panel. Light, the original cream. It reads lighter than the alt
+     content pages and barely off the paper ones, which is the intended look.
+     Do not darken this to "separate" it from the alt pages; that was tried
+     and it looks awful. */
+  --ts-panel:#EDE9E0;
   --ts-bg-invert:var(--ts-navy);
   --ts-text:var(--ts-ink);
   --ts-text-muted:var(--ts-muted);
@@ -44,23 +55,24 @@
   /* ---- type ---- */
   --ts-serif:'Newsreader',Georgia,'Times New Roman',serif;
   --ts-sans:'DM Sans',-apple-system,BlinkMacSystemFont,'Helvetica Neue',Arial,sans-serif;
-  --ts-mono:'DM Mono',ui-monospace,'SF Mono',Menlo,monospace;
 
   /* fluid display scale, tuned for 1280-1920 recording widths */
-  --ts-t-hero:clamp(3.4rem,6.2vw,6.6rem);
-  --ts-t-h1:clamp(2.6rem,4.4vw,4.4rem);
-  --ts-t-h2:clamp(1.9rem,2.7vw,2.9rem);
-  --ts-t-h3:clamp(1.25rem,1.5vw,1.6rem);
-  --ts-t-lead:clamp(1.2rem,1.45vw,1.6rem);
-  --ts-t-body:clamp(1.02rem,1.12vw,1.18rem);
+  --ts-t-hero:clamp(3.4rem,6.2cqi,6.6rem);
+  --ts-t-h1:clamp(2.6rem,4.4cqi,4.4rem);
+  --ts-t-h2:clamp(1.9rem,2.7cqi,2.9rem);
+  --ts-t-h3:clamp(1.25rem,1.5cqi,1.6rem);
+  --ts-t-lead:clamp(1.2rem,1.45cqi,1.6rem);
+  --ts-t-body:clamp(1.02rem,1.12cqi,1.18rem);
   --ts-t-small:0.95rem;
   --ts-t-label:0.78rem;
 
   /* ---- space ---- */
-  --ts-gutter:clamp(1.5rem,5vw,6rem);
-  --ts-section-y:clamp(5rem,10vw,10rem);
+  --ts-gutter:clamp(1.5rem,5cqi,6rem);
+  --ts-section-y:clamp(5rem,10cqi,10rem);
   --ts-measure:64ch;
   --ts-max:1440px;
+  --ts-side:17.5rem;      /* left panel width */
+  --ts-topbar:3.8rem;     /* collapsed nav bar height, under 1100px */
 
   /* ---- motion ---- */
   --ts-ease:cubic-bezier(.2,.7,.3,1);

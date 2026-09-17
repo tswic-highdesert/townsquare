@@ -1,0 +1,475 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>The projects &middot; Town Square Russellville</title>
+<meta name="description" content="A town square the town actually owns. Prepared for the ATU CCEAO community coalition, August 2026.">
+<link rel="icon" href="assets/favicon.png">
+<link rel="stylesheet" href="tokens.css">
+<link rel="stylesheet" href="base.css">
+<link rel="stylesheet" href="sections.css">
+</head>
+<body data-page="proposals">
+
+<a class="skip" href="#top">Skip to content</a>
+
+<header class="topbar">
+  <a class="topbar__brand" href="index.html">
+    <img src="assets/mark.png" alt="">
+    <span>Town Square</span>
+  </a>
+  <button class="topbar__btn" type="button" id="sideToggle"
+          aria-controls="side" aria-expanded="false">
+    <span class="topbar__bars" aria-hidden="true"></span>
+    <span class="topbar__btntxt">The projects</span>
+  </button>
+</header>
+
+<aside class="side" id="side">
+  <a class="side__brand" href="index.html">
+    <img src="assets/mark.png" alt="">
+    <span class="side__brandtxt">Town&nbsp;Square</span>
+  </a>
+  <nav class="side__nav" aria-label="Sections">
+      <a class="side__link" href="index.html"><span class="side__t">Overview</span></a>
+      <p class="side__part">The case</p>
+      <a class="side__link" href="problem.html"><span class="side__n" aria-hidden="true">01</span><span class="side__t">The problem</span></a>
+      <a class="side__link" href="how-we-got-here.html"><span class="side__n" aria-hidden="true">02</span><span class="side__t">How we got here</span></a>
+      <p class="side__part">The answer</p>
+      <a class="side__link" href="answer.html"><span class="side__n" aria-hidden="true">03</span><span class="side__t">What it is</span></a>
+      <a class="side__link" href="build-layer.html"><span class="side__n" aria-hidden="true">04</span><span class="side__t">What people make of it</span></a>
+      <a class="side__link" href="ownership.html"><span class="side__n" aria-hidden="true">05</span><span class="side__t">Ownership</span></a>
+      <p class="side__part">The plan</p>
+      <a class="side__link" href="coalition.html"><span class="side__n" aria-hidden="true">06</span><span class="side__t">The coalition</span></a>
+      <a class="side__link is-on" href="proposals.html" aria-current="page"><span class="side__n" aria-hidden="true">07</span><span class="side__t">The projects</span></a>
+      <p class="side__part">The ask</p>
+      <a class="side__link" href="ask.html"><span class="side__n" aria-hidden="true">08</span><span class="side__t">The ask</span></a>
+      <a class="side__link" href="close.html"><span class="side__n" aria-hidden="true">09</span><span class="side__t">Where it stands</span></a>
+  </nav>
+  <div class="side__foot">
+    <span>Russellville, Arkansas</span>
+    <span>August 2026</span>
+  </div>
+</aside>
+
+<div class="side__scrim" id="sideScrim" hidden></div>
+
+<main class="page" id="top">
+
+<!-- 10-proposals.html -->
+<section class="section" id="proposals">
+  <div class="wrap">
+
+    <div class="s-proposals-head reveal">
+      <p class="eyebrow">The capstone slate</p>
+      <h2 class="h2">Seven projects, and none of them start from zero.</h2>
+      <p class="lead">
+        Each one answers a need Arkansas Tech documented itself, and each one is
+        already written as a complete submission. Four we recommend sending.
+        Three depend on a decision that is not ours alone to make.
+      </p>
+    </div>
+
+    <div class="s-proposals-group reveal">
+      <div class="s-proposals-grouphead">
+        <div class="s-proposals-grouphead__l">
+          <span class="s-proposals-dot s-proposals-dot--rec" aria-hidden="true"></span>
+          <h3 class="s-proposals-grouptitle">The recommended slate</h3>
+        </div>
+        <p class="s-proposals-groupnote">
+          Four submissions, three documented needs, three different technical
+          profiles. None carries political or schedule risk.
+        </p>
+      </div>
+
+      <ol class="s-proposals-grid">
+
+        <li class="s-proposals-card">
+          <div class="s-proposals-card__top">
+            <span class="s-proposals-num">01</span>
+            <span class="s-proposals-pill s-proposals-pill--rec">Recommended</span>
+          </div>
+          <h4 class="s-proposals-title">Civic Meeting Tracker</h4>
+          <p class="s-proposals-prob">
+            City Council, the School Board, the Pope County Quorum Court, and the
+            Planning Commission each post agendas on their own site, on their own
+            schedule, usually as PDFs. Decisions are effectively invisible until
+            after they are made.
+          </p>
+          <p class="s-proposals-build">
+            <span class="s-proposals-k">Students build</span>
+            Automated ingest from at least four governing bodies, a normalization
+            layer that turns inconsistent PDFs into typed records, full-text and
+            topic search, subscriptions that notify a resident when a subject
+            they follow reaches any agenda, and plain-language summaries.
+          </p>
+          <dl class="s-proposals-meta">
+            <div class="s-proposals-metarow">
+              <dt>Documented need</dt>
+              <dd>Improved access to information</dd>
+            </div>
+            <div class="s-proposals-metarow">
+              <dt>Technical profile</dt>
+              <dd>
+                Medium ceiling, low risk. Resilient ingest against sources that
+                change without notice, document parsing, and deciding how a
+                summary should behave when it is not confident.
+              </dd>
+            </div>
+          </dl>
+        </li>
+
+        <li class="s-proposals-card">
+          <div class="s-proposals-card__top">
+            <span class="s-proposals-num">02</span>
+            <span class="s-proposals-pill s-proposals-pill--rec">Recommended</span>
+          </div>
+          <h4 class="s-proposals-title">Community Services and Volunteer Board</h4>
+          <p class="s-proposals-prob">
+            Every nonprofit in town keeps its own mailing list, its own calendar,
+            and its own social presence, and pays in money or volunteer hours to
+            rebuild an audience from scratch. A resident looking for help, or for
+            somewhere to volunteer Saturday, has no single place to look.
+          </p>
+          <p class="s-proposals-build">
+            <span class="s-proposals-k">Students build</span>
+            Verified organization profiles, posting for services, events, and
+            volunteer needs, browse and filter, resident saves and reminders, and
+            a posting flow simple enough that nonprofit staff need no
+            intermediary. Target is eight to ten real organizations posting by
+            the April showcase.
+          </p>
+          <dl class="s-proposals-meta">
+            <div class="s-proposals-metarow">
+              <dt>Documented need</dt>
+              <dd>Communication about services. Resource mapping.</dd>
+            </div>
+            <div class="s-proposals-metarow">
+              <dt>Technical profile</dt>
+              <dd>
+                Medium ceiling, lowest risk. Multi-tenant modeling,
+                authorization, and real user research. The heaviest risk here is
+                adoption rather than engineering.
+              </dd>
+            </div>
+          </dl>
+        </li>
+
+        <li class="s-proposals-card">
+          <div class="s-proposals-card__top">
+            <span class="s-proposals-num">03</span>
+            <span class="s-proposals-pill s-proposals-pill--rec">Recommended</span>
+          </div>
+          <h4 class="s-proposals-title">Community Discovery Engine</h4>
+          <p class="s-proposals-prob">
+            Search only helps a resident who already knows what to type, so the
+            entire long tail of local life stays invisible to anyone not already
+            connected to it. Newcomers feel that hardest.
+          </p>
+          <p class="s-proposals-build">
+            <span class="s-proposals-k">Students build</span>
+            Unified search across businesses, articles, podcasts, and events in
+            one ranked set, semantic search in a resident's own words, automatic
+            tagging, a related-items engine, a recommendation surface for
+            browsing with no query at all, and an evaluation harness with a
+            labeled relevance set.
+          </p>
+          <dl class="s-proposals-meta">
+            <div class="s-proposals-metarow">
+              <dt>Documented need</dt>
+              <dd>Resource mapping. Data collection.</dd>
+            </div>
+            <div class="s-proposals-metarow">
+              <dt>Technical profile</dt>
+              <dd>
+                High ceiling, low risk. The most technically ambitious on the
+                list. Retrieval and ranking across types, embeddings, cold start,
+                and defending a metric rather than asserting one.
+              </dd>
+            </div>
+          </dl>
+        </li>
+
+        <li class="s-proposals-card">
+          <div class="s-proposals-card__top">
+            <span class="s-proposals-num">07</span>
+            <span class="s-proposals-pill s-proposals-pill--rec">Recommended</span>
+          </div>
+          <h4 class="s-proposals-title">Measuring the Local Information Gap and What It Costs</h4>
+          <p class="s-proposals-prob">
+            Everyone doing community work here can describe the information gap
+            anecdotally. Nobody has measured it. Without a local baseline, every
+            intervention including this one is a guess, and no funder can be
+            shown a number.
+          </p>
+          <p class="s-proposals-build">
+            <span class="s-proposals-k">Students build</span>
+            A collection platform where web, assisted phone, and paper all land
+            in one dataset, a reporting tool where nonprofits log what they tried
+            to communicate and what it cost, a record linkage and analysis
+            pipeline that never stores identifying information, and a published
+            instrument the town can run again in two years.
+          </p>
+          <p class="s-proposals-flag">
+            The only proposal that produces evidence rather than software, and
+            the one to push hardest. It is interdisciplinary, pairing computing
+            with sociology. IRB review is a hard dependency and a real schedule
+            risk, so it has to start in the fall.
+          </p>
+          <dl class="s-proposals-meta">
+            <div class="s-proposals-metarow">
+              <dt>Documented need</dt>
+              <dd>All of them, by measuring the gap itself.</dd>
+            </div>
+            <div class="s-proposals-metarow">
+              <dt>Technical profile</dt>
+              <dd>
+                High ceiling. Multi-modal collection, record linkage with no
+                shared identifier, and privacy engineering defended to a real
+                ethics review.
+              </dd>
+            </div>
+          </dl>
+        </li>
+
+      </ol>
+    </div>
+
+    <div class="s-proposals-group reveal">
+      <div class="s-proposals-grouphead">
+        <div class="s-proposals-grouphead__l">
+          <span class="s-proposals-dot s-proposals-dot--cond" aria-hidden="true"></span>
+          <h3 class="s-proposals-grouptitle">Conditional, and why</h3>
+        </div>
+        <p class="s-proposals-groupnote">
+          Three good projects held back by something other than the code. Each
+          one is written and ready if the condition clears.
+        </p>
+      </div>
+
+      <ol class="s-proposals-strips">
+
+        <li class="s-proposals-strip">
+          <div class="s-proposals-strip__id">
+            <span class="s-proposals-num">04</span>
+            <span class="s-proposals-pill s-proposals-pill--hold">On hold</span>
+            <h4 class="s-proposals-title s-proposals-title--strip">
+              Community Transportation Coordination
+            </h4>
+            <dl class="s-proposals-meta">
+              <div class="s-proposals-metarow">
+                <dt>Documented need</dt>
+                <dd>Transportation coordination</dd>
+              </div>
+              <div class="s-proposals-metarow">
+                <dt>Technical profile</dt>
+                <dd>High ceiling, medium risk</dd>
+              </div>
+            </dl>
+          </div>
+          <div class="s-proposals-strip__body">
+            <p class="s-proposals-prob">
+              Senior services, medical transport, volunteer driver networks, and
+              social service programs each handle a slice of local
+              transportation, each with its own eligibility rules, hours, and
+              request process. None of it is visible in one place, and the people
+              most affected are the least equipped to navigate it.
+            </p>
+            <p class="s-proposals-build">
+              <span class="s-proposals-k">Students build</span>
+              A provider directory, an eligibility engine that returns only the
+              options a resident actually qualifies for, a request and routing
+              flow, proxy requests so caseworkers and family can act on
+              someone's behalf, accessibility as a hard requirement, and
+              de-identified demand reporting that shows funders unmet need.
+            </p>
+            <p class="s-proposals-flag s-proposals-flag--hold">
+              Held unless Russellville Housing Authority co-signs as a second
+              partner. With that co-signature it is the strongest proposal on the
+              list. Without it, we would be describing a problem we have not
+              verified from the inside.
+            </p>
+          </div>
+        </li>
+
+        <li class="s-proposals-strip">
+          <div class="s-proposals-strip__id">
+            <span class="s-proposals-num">05</span>
+            <span class="s-proposals-pill s-proposals-pill--call">Judgment call</span>
+            <h4 class="s-proposals-title s-proposals-title--strip">
+              Public Surveillance Infrastructure Transparency Map
+            </h4>
+            <dl class="s-proposals-meta">
+              <div class="s-proposals-metarow">
+                <dt>Documented need</dt>
+                <dd>Data collection</dd>
+              </div>
+              <div class="s-proposals-metarow">
+                <dt>Technical profile</dt>
+                <dd>Medium ceiling</dd>
+              </div>
+            </dl>
+          </div>
+          <div class="s-proposals-strip__body">
+            <p class="s-proposals-prob">
+              Automated license plate reader cameras operate throughout
+              Russellville. Their locations, retention periods, and data-sharing
+              arrangements are all public record, but nobody has ever assembled
+              them anywhere a resident could read them.
+            </p>
+            <p class="s-proposals-build">
+              <span class="s-proposals-k">Students build</span>
+              A records-request workflow tool, a document repository with
+              structured extraction from scanned records, an interactive map
+              where every entry links to the record supporting it, a
+              plain-language policy layer, and a provenance model that makes it
+              architecturally impossible to display an unverified claim as
+              verified.
+            </p>
+            <p class="s-proposals-flag s-proposals-flag--call">
+              Politically warm, and the call is a judgment call rather than a
+              technical one. It attaches a surveillance story to Town Square's
+              launch and to ATU's. The framing is deliberately neutral, about
+              public records rather than a position on the technology, and the
+              critical path runs through government response times rather than
+              through the code.
+            </p>
+          </div>
+        </li>
+
+        <li class="s-proposals-strip">
+          <div class="s-proposals-strip__id">
+            <span class="s-proposals-num">06</span>
+            <span class="s-proposals-pill s-proposals-pill--opt">Optional</span>
+            <h4 class="s-proposals-title s-proposals-title--strip">
+              Community Builder Toolkit
+            </h4>
+            <dl class="s-proposals-meta">
+              <div class="s-proposals-metarow">
+                <dt>Documented need</dt>
+                <dd>Developer tooling, not a community need</dd>
+              </div>
+              <div class="s-proposals-metarow">
+                <dt>Technical profile</dt>
+                <dd>Medium to high ceiling, low risk</dd>
+              </div>
+            </dl>
+          </div>
+          <div class="s-proposals-strip__body">
+            <p class="s-proposals-prob">
+              The machinery that lets a resident publish their own application
+              onto Town Square already works. The on-ramp does not. Today a
+              first-time builder has to assemble their own project structure and
+              learn the manifest format by reading a specification.
+            </p>
+            <p class="s-proposals-build">
+              <span class="s-proposals-k">Students build</span>
+              A command-line tool that scaffolds a project, runs it locally,
+              validates it against the platform contract, and submits it for
+              publication, plus three or four starter templates, error messages
+              written for a novice, and a test suite for a tool whose output is
+              other projects.
+            </p>
+            <p class="s-proposals-flag s-proposals-flag--opt">
+              Optional, and the weakest fit for a program framed around community
+              needs, because the users are developers rather than residents. It
+              is the best pure software engineering project on the list, and the
+              only one that touches core platform code. That work is purely
+              additive, so late delivery breaks nothing that exists today.
+            </p>
+          </div>
+        </li>
+
+      </ol>
+    </div>
+
+    <div class="s-proposals-shared reveal">
+      <p class="eyebrow">What every one of them says</p>
+      <div class="s-proposals-shared__grid">
+        <div class="s-proposals-panel">
+          <span class="s-proposals-panel__k">01</span>
+          <h4 class="s-proposals-panel__t">Students build on a running platform, not from zero.</h4>
+          <p class="s-proposals-panel__p">
+            Town Square supplies hosting, authentication, a documented SDK, a
+            design system, and a code review pipeline on day one, along with real
+            data: a directory of 741 verified Russellville listings, plus
+            aggregated local articles, events, and notices. Teams spend two
+            semesters on their actual problem instead of spending the fall
+            building scaffolding.
+          </p>
+        </div>
+        <div class="s-proposals-panel">
+          <span class="s-proposals-panel__k">02</span>
+          <h4 class="s-proposals-panel__t">Nothing becomes an orphan.</h4>
+          <p class="s-proposals-panel__p">
+            ATU's partner guide is explicit that students and faculty own nothing
+            after the course ends. Every project here is a sandboxed creation on
+            infrastructure that is already maintained, and the partner owns
+            hosting during the course and after it. There is no abandoned system
+            in April, which answers the availability of resources criterion
+            directly.
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <div class="s-proposals-close reveal">
+      <p class="s-proposals-close__p">
+        None of these are sketches. All seven exist as finished documents with
+        form-ready answers for every question the Project Idea Form asks: the
+        problem, the users, the outcomes, the feature set, the technical
+        challenges, the resources supplied, and an honest account of what could
+        go wrong.
+      </p>
+      <p class="s-proposals-close__k">Ready to submit as written.</p>
+    </div>
+
+  </div>
+</section>
+
+  <nav class="pager" aria-label="Page">
+    <a class="pager__a pager__a--prev" href="coalition.html">
+      <span class="pager__k">Back</span>
+      <span class="pager__t">The coalition</span>
+    </a>
+    <a class="pager__a pager__a--next" href="ask.html">
+      <span class="pager__k">Next</span>
+      <span class="pager__t">The ask</span>
+    </a>
+  </nav>
+
+</main>
+
+<script>
+// mobile drawer
+const btn = document.getElementById('sideToggle')
+const scrim = document.getElementById('sideScrim')
+const setOpen = (v) => {
+  document.body.classList.toggle('side-open', v)
+  btn.setAttribute('aria-expanded', String(v))
+  scrim.hidden = !v
+}
+btn.addEventListener('click', () => setOpen(!document.body.classList.contains('side-open')))
+scrim.addEventListener('click', () => setOpen(false))
+addEventListener('keydown', (e) => { if (e.key === 'Escape') setOpen(false) })
+
+// reveal on enter
+const io = new IntersectionObserver((es) => {
+  for (const e of es) if (e.isIntersecting) { e.target.classList.add('is-in'); io.unobserve(e.target) }
+}, { rootMargin: '0px 0px -8% 0px', threshold: 0.06 })
+document.querySelectorAll('.reveal').forEach((el) => io.observe(el))
+
+// left / right arrows walk the book
+const PREV = "coalition.html"
+const NEXT = "ask.html"
+addEventListener('keydown', (e) => {
+  if (e.metaKey || e.ctrlKey || e.altKey) return
+  const t = e.target
+  if (t && /^(INPUT|TEXTAREA|SELECT)$/.test(t.tagName)) return
+  if (e.key === 'ArrowLeft' && PREV) location.href = PREV
+  if (e.key === 'ArrowRight' && NEXT) location.href = NEXT
+})
+</script>
+</body>
+</html>

@@ -1,10 +1,19 @@
 # Section authoring contract
 
 You own exactly two files: `sections/NN-<id>.html` and `sections/NN-<id>.css`.
-Do not touch `tokens.css`, `base.css`, `build.mjs`, `check.mjs`, `index.html`,
-or anyone else's section. `index.html` is generated; editing it does nothing.
+Do not touch `tokens.css`, `base.css`, `build.mjs`, `check.mjs`, the generated
+pages at the top of `site/`, or anyone else's section. Every `*.html` beside
+`build.mjs` is generated; editing one does nothing.
 
-## The five hard rules
+The site is twelve pages behind a fixed left panel, one section per page. Your
+section is the whole page, so it opens cold and has to stand on its own. Do not
+write a transition into the next section; the reader may have jumped here from
+the panel. The build adds the panel and the Back/Next pager around you.
+
+Your working width is the content column, not the window: about 1320px at a
+1600px recording width.
+
+## The seven hard rules
 
 `check.mjs` enforces these and the build fails if you break them.
 
@@ -17,7 +26,12 @@ or anyone else's section. `index.html` is generated; editing it does nothing.
 3. **No `<style>` and no `<script>` in your HTML.** CSS goes in your `.css`.
 4. **No external requests.** No Google Fonts, no CDNs, no remote images. This
    site must render perfectly with the network off.
-5. **Your root element carries the section id**, because the nav links to it.
+5. **Your root element carries the section id.** It is the page anchor.
+6. **Fluid sizes use `cqi`, never `vw`.** The panel takes 17.5rem off the
+   window, so `vw` overshoots. `5cqi` is 5% of the content column.
+7. **No monospace.** There is no mono face on this site. Labels, eyebrows,
+   kickers and captions are `var(--ts-sans)`, uppercase, tracked out. They earn
+   their place through case, size, tracking and colour, not a typewriter face.
 
 ## Your HTML shape
 
@@ -42,12 +56,12 @@ Layout: `.wrap` `.wrap-narrow` `.section` `.section--alt` `.section--invert`
 `.section--tight` `.grid` `.grid-2` `.grid-3` `.grid-4` `.split`
 
 Type: `.eyebrow` `.eyebrow--plain` `.h1` `.h2` `.h3` `.lead` `.body` `.accent`
-`.gold` `.mono` `.rule` `.hairline`
+`.gold` `.rule` `.hairline`
 
 Components: `.card` `.card__k` `.card--invert` `.figure` `.figure--bare`
 `.reveal`
 
-Useful tokens beyond colour: `--ts-serif` `--ts-sans` `--ts-mono`,
+Useful tokens beyond colour: `--ts-serif` `--ts-sans`,
 `--ts-t-hero|h1|h2|h3|lead|body|small|label`, `--ts-gutter` `--ts-section-y`
 `--ts-measure` `--ts-max`, `--ts-radius` `--ts-radius-lg`,
 `--ts-shadow-sm|md|lg`, `--ts-ease` `--ts-dur`.
