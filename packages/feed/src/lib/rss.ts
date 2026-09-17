@@ -76,9 +76,37 @@ const parser = new XMLParser({
   attributeNamePrefix: "@_",
 });
 
+/**
+ * Decode HTML entities left in text.
+ *
+ * Some sources double-encode, so the XML parser hands back a literal
+ * `&#8217;` rather than the apostrophe it stands for. That reaches the screen
+ * as `ATU&#8217;s`, so text is decoded once more after parsing.
+ */
+const NAMED_ENTITIES: Record<string, string> = {
+  amp: "&",
+  lt: "<",
+  gt: ">",
+  quot: '"',
+  apos: "'",
+  nbsp: " ",
+};
+
+function decodeEntities(text: string): string {
+  return text
+    .replace(/&#x([0-9a-f]+);/gi, (_, hex) =>
+      String.fromCodePoint(parseInt(hex, 16)),
+    )
+    .replace(/&#(\d+);/g, (_, dec) => String.fromCodePoint(parseInt(dec, 10)))
+    .replace(/&([a-z]+);/gi, (whole, name) => {
+      const decoded = NAMED_ENTITIES[name.toLowerCase()];
+      return decoded === undefined ? whole : decoded;
+    });
+}
+
 /** Strip HTML tags from a string */
 function stripHtml(html: string): string {
-  return html.replace(/<[^>]*>/g, "").trim();
+  return decodeEntities(html.replace(/<[^>]*>/g, "")).trim();
 }
 
 /** Generate a deterministic ID from a URL or title */
@@ -118,7 +146,7 @@ async function parseFeed(config: FeedConfig): Promise<StoryItem[]> {
 
     return rawItems
       .map((item): StoryItem | null => {
-        const title = item.title?.toString().trim();
+        const title = decodeEntities(item.title?.toString() ?? "").trim();
         const link = item.link?.toString().trim();
         if (!title) return null;
 
@@ -184,7 +212,7 @@ async function parseGenericFeed(config: RSSFeedConfig): Promise<StoryItem[]> {
 
     return rawItems
       .map((item): StoryItem | null => {
-        const title = item.title?.toString().trim();
+        const title = decodeEntities(item.title?.toString() ?? "").trim();
         const link = item.link?.toString().trim();
         if (!title) return null;
 
