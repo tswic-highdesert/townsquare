@@ -1,6 +1,7 @@
 {
   "name": "townsquare",
   "private": true,
+  "license": "MIT",
   "type": "module",
   "packageManager": "pnpm@11.0.9",
   "engines": {
