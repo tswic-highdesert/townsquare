@@ -57,6 +57,12 @@ importers:
       '@townsquare/bundle':
         specifier: workspace:*
         version: link:../../packages/bundle
+      '@townsquare/civic':
+        specifier: workspace:*
+        version: link:../../packages/civic
+      '@townsquare/contributions':
+        specifier: workspace:*
+        version: link:../../packages/contributions
       '@townsquare/feed':
         specifier: workspace:*
         version: link:../../packages/feed
@@ -160,11 +166,15 @@ importers:
         specifier: ^3.23.0
         version: 3.25.76
 
+  packages/civic: {}
+
   packages/content:
     dependencies:
       zod:
         specifier: ^3.23.0
         version: 3.25.76
+
+  packages/contributions: {}
 
   packages/db:
     dependencies:
