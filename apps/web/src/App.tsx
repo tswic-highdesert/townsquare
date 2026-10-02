@@ -563,10 +563,9 @@ export function App() {
           <button className="secondary" onClick={() => setScreen({ name: 'gallery' })}>Back to creations</button>
           <h1>What would make town better?</h1>
           <p className="cr-lede">A guide to your favorite trail. A way to find a local table. A little tool that helps a neighbor.</p>
-          <p>Town Square is open source. The starter example shows how a small app can use the public directory while keeping resident information private.</p>
+          <p>The starter example shows how a small app can use the public directory while keeping resident information private.</p>
           <p>Publishing new creations is not open in this preview yet. You can contribute now by helping correct a place listing.</p>
           <button className="primary" onClick={() => setScreen({ name: 'contribute', startOpen: true })}>Suggest a correction</button>
-          <p><a href="https://github.com/tswic-highdesert/townsquare" target="_blank" rel="noopener noreferrer">Explore the open-source project</a></p>
         </main>
       )
     }
