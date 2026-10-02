@@ -4,6 +4,7 @@
 // ============================================================
 
 import type { EventItem } from "./types.js";
+import { parseICalDate } from "./ical-date.js";
 import { stableId } from "../ids";
 
 const CHAMBER_URL = "https://www.russellvillechamber.com";
@@ -33,7 +34,10 @@ function parseICalFromBase64(dataUri: string): {
     for (const line of unfolded.split(/\r?\n/)) {
       const colonIdx = line.indexOf(":");
       if (colonIdx === -1) continue;
-      const rawKey = line.slice(0, colonIdx).split(";")[0].toUpperCase();
+      const header = line.slice(0, colonIdx);
+      const rawKey = header.split(";")[0].toUpperCase();
+      const timeZone = header.match(/;TZID=([^;]+)/i)?.[1]?.replace(/^"|"$/g, "");
+      if (timeZone) result[`${rawKey}_TZID`] = timeZone;
       const value = line.slice(colonIdx + 1).trim();
 
       if (["DTSTART", "DTEND", "SUMMARY", "LOCATION", "UID"].includes(rawKey)) {
@@ -42,8 +46,8 @@ function parseICalFromBase64(dataUri: string): {
     }
 
     return {
-      start: result.DTSTART ? parseICalDate(result.DTSTART) : undefined,
-      end: result.DTEND ? parseICalDate(result.DTEND) : undefined,
+      start: result.DTSTART ? parseICalDate(result.DTSTART, result.DTSTART_TZID) : undefined,
+      end: result.DTEND ? parseICalDate(result.DTEND, result.DTEND_TZID) : undefined,
       summary: result.SUMMARY,
       location: result.LOCATION,
       uid: result.UID,
@@ -51,30 +55,6 @@ function parseICalFromBase64(dataUri: string): {
   } catch {
     return {};
   }
-}
-
-/** Parse an iCal datetime (YYYYMMDDTHHMMSSZ or YYYYMMDD) to ISO string */
-function parseICalDate(dateStr: string): string {
-  const match = dateStr.match(
-    /^(\d{4})(\d{2})(\d{2})T(\d{2})(\d{2})(\d{2})(Z?)$/
-  );
-  if (match) {
-    const [, yr, mo, dy, hr, mn, sc, z] = match;
-    if (z) {
-      return new Date(`${yr}-${mo}-${dy}T${hr}:${mn}:${sc}Z`).toISOString();
-    }
-    return `${yr}-${mo}-${dy}T${hr}:${mn}:${sc}-05:00`;
-  }
-
-  // All-day format: YYYYMMDD
-  if (/^\d{8}$/.test(dateStr)) {
-    const yr = dateStr.slice(0, 4);
-    const mo = dateStr.slice(4, 6);
-    const dy = dateStr.slice(6, 8);
-    return `${yr}-${mo}-${dy}T00:00:00-05:00`;
-  }
-
-  return new Date(dateStr).toISOString();
 }
 
 /** Generate a deterministic ID from a Glue Up event URL */
