@@ -3,6 +3,7 @@
 // ============================================================
 
 import type { EventItem } from "./types.js";
+import { namedLocalDate } from "./local-date.js";
 
 const BASE_URL = "https://www.arkansasstateparks.com";
 const EVENTS_URL = `${BASE_URL}/events?f%5B0%5D=grid_events_park%3A1806`;
@@ -10,19 +11,6 @@ const EVENTS_URL = `${BASE_URL}/events?f%5B0%5D=grid_events_park%3A1806`;
 /** Generate a deterministic ID for a state parks event */
 function generateEventId(slug: string, eventId: string): string {
   return `state-parks-${slug}-${eventId}`;
-}
-
-/** Parse a date string like "Thursday, March 26, 2026" into an ISO date string */
-function parseEventDate(dateStr: string): string | null {
-  try {
-    // Strip day-of-week prefix: "Thursday, March 26, 2026" → "March 26, 2026"
-    const withoutDay = dateStr.replace(/^[A-Za-z]+,\s*/, "");
-    const parsed = new Date(withoutDay);
-    if (isNaN(parsed.getTime())) return null;
-    return parsed.toISOString();
-  } catch {
-    return null;
-  }
 }
 
 /** Parse time like "9 a.m." or "10:30 p.m." into hours and minutes */
@@ -43,17 +31,9 @@ function parseTime(timeStr: string): { hours: number; minutes: number } | null {
 }
 
 /** Combine a date string and optional time string into an ISO datetime */
-function combineDateAndTime(dateStr: string, timeStr?: string): string | null {
-  const baseDate = parseEventDate(dateStr);
-  if (!baseDate) return null;
-  if (!timeStr) return baseDate;
-
-  const time = parseTime(timeStr);
-  if (!time) return baseDate;
-
-  const d = new Date(baseDate);
-  d.setHours(time.hours, time.minutes, 0, 0);
-  return d.toISOString();
+export function combineDateAndTime(dateStr: string, timeStr?: string): string | null {
+  const time = timeStr ? parseTime(timeStr) : null;
+  return namedLocalDate(dateStr.trim(), time ?? undefined);
 }
 
 /** Slugify a title for use in IDs */
@@ -200,7 +180,7 @@ function parseEventsFromParkPage(html: string): EventItem[] {
       const title = match[4].trim();
       const dateStr = match[5].trim();
 
-      const startDate = parseEventDate(dateStr);
+      const startDate = namedLocalDate(dateStr);
       if (!startDate) continue;
       if (new Date(startDate) < now) continue;
 

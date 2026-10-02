@@ -7,6 +7,7 @@
 // ============================================================
 
 import type { EventItem } from "./types.js";
+import { localISO } from "./local-date.js";
 
 const API_URL =
   "https://discovery.evvnt.com/api/publisher/8509/home_page_events";
@@ -191,14 +192,10 @@ export async function fetchEvvntEvents(): Promise<EventItem[]> {
       if (!startDate) continue;
 
       // Ensure ISO format for date-only strings
-      const startIso = startDate.includes("T")
-        ? startDate
-        : `${startDate}T00:00:00-05:00`;
+      const startIso = localISO(startDate);
 
       const endIso = raw.end_time
-        ? raw.end_time.includes("T")
-          ? raw.end_time
-          : `${raw.end_time}T23:59:59-05:00`
+        ? localISO(raw.end_time, true)
         : undefined;
 
       // Skip past events

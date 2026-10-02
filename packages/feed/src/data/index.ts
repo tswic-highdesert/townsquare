@@ -1,6 +1,6 @@
 import { businesses } from "./businesses.js";
 import { sources } from "./sources.js";
-import { withTimeout } from "../timeout";
+import { cachedSource } from "../cached-source.js";
 import { fetchCourierStories, fetchRSSStories } from "../lib/rss";
 import { fetchICalEvents } from "../lib/ical";
 import { fetchThrillshareEvents } from "../lib/thrillshare";
@@ -28,307 +28,26 @@ export interface SourceStatus {
   lastFetched?: string;
 }
 
-/** Cache for fetched data (module-level, persists during build/request) */
-let cachedCourierStories: StoryItem[] | null = null;
-let cachedRSSStories: StoryItem[] | null = null;
-let cachedICalEvents: EventItem[] | null = null;
-let cachedThrillshareEvents: EventItem[] | null = null;
-let cachedCivicPlusEvents: EventItem[] | null = null;
-let cachedCivicAlerts: NoticeItem[] | null = null;
-let cachedChamberEvents: EventItem[] | null = null;
-let cachedDiscoverRussellvilleEvents: EventItem[] | null = null;
-let cachedStateParksEvents: EventItem[] | null = null;
-let cachedNWSAlerts: NoticeItem[] | null = null;
-let cachedLibraryEvents: EventItem[] | null = null;
-let cachedMainStreetEvents: EventItem[] | null = null;
-let cachedEvvntEvents: EventItem[] | null = null;
-let cachedFacebookEvents: EventItem[] | null = null;
-let cachedFacebookNotices: NoticeItem[] | null = null;
-let cachedCenterArtsEvents: EventItem[] | null = null;
-let cachedPopeCountyEvents: EventItem[] | null = null;
-let lastFetchTime = 0;
-let lastFacebookFetchTime = 0;
 const CACHE_TTL = 900_000; // 15 minutes
-const FACEBOOK_CACHE_TTL = 3_600_000; // 60 minutes — Apify runs cost money
+const FACEBOOK_CACHE_TTL = 3_600_000; // Bound paid discovery fetches to once an hour.
 
-const FETCH_TIMEOUT_MS = 12_000;
-/** Bound a source fetch; on timeout/error fall back to the empty list so one
- *  slow/hung upstream can't stall the cron run. */
-function bounded<T>(p: Promise<T[]>): Promise<T[]> {
-  return withTimeout(p, FETCH_TIMEOUT_MS).catch(() => [] as T[]);
-}
-
-/** Fetch live Courier stories with caching */
-async function getLiveCourierStories(): Promise<StoryItem[]> {
-  const now = Date.now();
-  if (cachedCourierStories && now - lastFetchTime < CACHE_TTL) {
-    return cachedCourierStories;
-  }
-  try {
-    cachedCourierStories = await fetchCourierStories();
-    lastFetchTime = now;
-    return cachedCourierStories;
-  } catch {
-    console.warn("[Data] Failed to fetch Courier stories, using cache or empty");
-    return cachedCourierStories || [];
-  }
-}
-
-/** Fetch live RSS stories (ATU News, etc.) with caching */
-async function getLiveRSSStories(): Promise<StoryItem[]> {
-  const now = Date.now();
-  if (cachedRSSStories && now - lastFetchTime < CACHE_TTL) {
-    return cachedRSSStories;
-  }
-  try {
-    cachedRSSStories = await fetchRSSStories();
-    lastFetchTime = now;
-    return cachedRSSStories;
-  } catch {
-    console.warn("[Data] Failed to fetch RSS stories, using cache or empty");
-    return cachedRSSStories || [];
-  }
-}
-
-/** Fetch live iCal events with caching */
-async function getLiveICalEvents(): Promise<EventItem[]> {
-  const now = Date.now();
-  if (cachedICalEvents && now - lastFetchTime < CACHE_TTL) {
-    return cachedICalEvents;
-  }
-  try {
-    cachedICalEvents = await fetchICalEvents();
-    lastFetchTime = now;
-    return cachedICalEvents;
-  } catch {
-    console.warn("[Data] Failed to fetch iCal events, using cache or empty");
-    return cachedICalEvents || [];
-  }
-}
-
-/** Fetch live Thrillshare events (Russellville SD) with caching */
-async function getLiveThrillshareEvents(): Promise<EventItem[]> {
-  const now = Date.now();
-  if (cachedThrillshareEvents && now - lastFetchTime < CACHE_TTL) {
-    return cachedThrillshareEvents;
-  }
-  try {
-    cachedThrillshareEvents = await fetchThrillshareEvents();
-    lastFetchTime = now;
-    return cachedThrillshareEvents;
-  } catch {
-    console.warn("[Data] Failed to fetch Thrillshare events, using cache or empty");
-    return cachedThrillshareEvents || [];
-  }
-}
-
-/** Fetch live CivicPlus events (City of Russellville) with caching */
-async function getLiveCivicPlusEvents(): Promise<EventItem[]> {
-  const now = Date.now();
-  if (cachedCivicPlusEvents && now - lastFetchTime < CACHE_TTL) {
-    return cachedCivicPlusEvents;
-  }
-  try {
-    cachedCivicPlusEvents = await fetchCivicPlusEvents();
-    lastFetchTime = now;
-    return cachedCivicPlusEvents;
-  } catch {
-    console.warn("[Data] Failed to fetch CivicPlus events, using cache or empty");
-    return cachedCivicPlusEvents || [];
-  }
-}
-
-/** Fetch live CivicPlus alerts (City of Russellville) with caching */
-async function getLiveCivicAlerts(): Promise<NoticeItem[]> {
-  const now = Date.now();
-  if (cachedCivicAlerts && now - lastFetchTime < CACHE_TTL) {
-    return cachedCivicAlerts;
-  }
-  try {
-    cachedCivicAlerts = await fetchCivicAlerts();
-    lastFetchTime = now;
-    return cachedCivicAlerts;
-  } catch {
-    console.warn("[Data] Failed to fetch CivicPlus alerts, using cache or empty");
-    return cachedCivicAlerts || [];
-  }
-}
-
-/** Fetch live Chamber of Commerce events with caching */
-async function getLiveChamberEvents(): Promise<EventItem[]> {
-  const now = Date.now();
-  if (cachedChamberEvents && now - lastFetchTime < CACHE_TTL) {
-    return cachedChamberEvents;
-  }
-  try {
-    cachedChamberEvents = await fetchChamberEvents();
-    lastFetchTime = now;
-    return cachedChamberEvents;
-  } catch {
-    console.warn("[Data] Failed to fetch Chamber events, using cache or empty");
-    return cachedChamberEvents || [];
-  }
-}
-
-/** Fetch live Discover Russellville events with caching */
-async function getLiveDiscoverRussellvilleEvents(): Promise<EventItem[]> {
-  const now = Date.now();
-  if (cachedDiscoverRussellvilleEvents && now - lastFetchTime < CACHE_TTL) {
-    return cachedDiscoverRussellvilleEvents;
-  }
-  try {
-    cachedDiscoverRussellvilleEvents = await fetchDiscoverRussellvilleEvents();
-    lastFetchTime = now;
-    return cachedDiscoverRussellvilleEvents;
-  } catch {
-    console.warn("[Data] Failed to fetch Discover Russellville events, using cache or empty");
-    return cachedDiscoverRussellvilleEvents || [];
-  }
-}
-
-/** Fetch live State Parks events (Lake Dardanelle) with caching */
-async function getLiveStateParksEvents(): Promise<EventItem[]> {
-  const now = Date.now();
-  if (cachedStateParksEvents && now - lastFetchTime < CACHE_TTL) {
-    return cachedStateParksEvents;
-  }
-  try {
-    cachedStateParksEvents = await fetchStateParksEvents();
-    lastFetchTime = now;
-    return cachedStateParksEvents;
-  } catch {
-    console.warn("[Data] Failed to fetch State Parks events, using cache or empty");
-    return cachedStateParksEvents || [];
-  }
-}
-
-/** Fetch live NWS weather alerts with caching */
-async function getLiveNWSAlerts(): Promise<NoticeItem[]> {
-  const now = Date.now();
-  if (cachedNWSAlerts && now - lastFetchTime < CACHE_TTL) {
-    return cachedNWSAlerts;
-  }
-  try {
-    cachedNWSAlerts = await fetchNWSAlerts();
-    lastFetchTime = now;
-    return cachedNWSAlerts;
-  } catch {
-    console.warn("[Data] Failed to fetch NWS alerts, using cache or empty");
-    return cachedNWSAlerts || [];
-  }
-}
-
-/** Fetch live Main Street Russellville events with caching */
-async function getLiveMainStreetEvents(): Promise<EventItem[]> {
-  const now = Date.now();
-  if (cachedMainStreetEvents && now - lastFetchTime < CACHE_TTL) {
-    return cachedMainStreetEvents;
-  }
-  try {
-    cachedMainStreetEvents = await fetchMainStreetEvents();
-    lastFetchTime = now;
-    return cachedMainStreetEvents;
-  } catch {
-    console.warn("[Data] Failed to fetch Main Street events, using cache or empty");
-    return cachedMainStreetEvents || [];
-  }
-}
-
-/** Fetch live Evvnt/Courier events with caching */
-async function getLiveEvvntEvents(): Promise<EventItem[]> {
-  const now = Date.now();
-  if (cachedEvvntEvents && now - lastFetchTime < CACHE_TTL) {
-    return cachedEvvntEvents;
-  }
-  try {
-    cachedEvvntEvents = await fetchEvvntEvents();
-    lastFetchTime = now;
-    return cachedEvvntEvents;
-  } catch {
-    console.warn("[Data] Failed to fetch Evvnt events, using cache or empty");
-    return cachedEvvntEvents || [];
-  }
-}
-
-/** Fetch live Facebook events with caching (60-min TTL) */
-async function getLiveFacebookEvents(): Promise<EventItem[]> {
-  const now = Date.now();
-  if (cachedFacebookEvents && now - lastFacebookFetchTime < FACEBOOK_CACHE_TTL) {
-    return cachedFacebookEvents;
-  }
-  try {
-    cachedFacebookEvents = await fetchFacebookEvents();
-    lastFacebookFetchTime = now;
-    return cachedFacebookEvents;
-  } catch {
-    console.warn("[Data] Failed to fetch Facebook events, using cache or empty");
-    return cachedFacebookEvents || [];
-  }
-}
-
-/** Fetch live Facebook notices with caching (60-min TTL) */
-async function getLiveFacebookNotices(): Promise<NoticeItem[]> {
-  const now = Date.now();
-  if (cachedFacebookNotices && now - lastFacebookFetchTime < FACEBOOK_CACHE_TTL) {
-    return cachedFacebookNotices;
-  }
-  try {
-    cachedFacebookNotices = await fetchFacebookNotices();
-    lastFacebookFetchTime = now;
-    return cachedFacebookNotices;
-  } catch {
-    console.warn("[Data] Failed to fetch Facebook notices, using cache or empty");
-    return cachedFacebookNotices || [];
-  }
-}
-
-/** Fetch live Pope County Library events with caching */
-async function getLiveLibraryEvents(): Promise<EventItem[]> {
-  const now = Date.now();
-  if (cachedLibraryEvents && now - lastFetchTime < CACHE_TTL) {
-    return cachedLibraryEvents;
-  }
-  try {
-    cachedLibraryEvents = await fetchLibraryEvents();
-    lastFetchTime = now;
-    return cachedLibraryEvents;
-  } catch {
-    console.warn("[Data] Failed to fetch Library events, using cache or empty");
-    return cachedLibraryEvents || [];
-  }
-}
-
-/** Fetch live Center for the Arts events with caching */
-async function getLiveCenterArtsEvents(): Promise<EventItem[]> {
-  const now = Date.now();
-  if (cachedCenterArtsEvents && now - lastFetchTime < CACHE_TTL) {
-    return cachedCenterArtsEvents;
-  }
-  try {
-    cachedCenterArtsEvents = await fetchCenterArtsEvents();
-    lastFetchTime = now;
-    return cachedCenterArtsEvents;
-  } catch {
-    console.warn("[Data] Failed to fetch Center for the Arts events, using cache or empty");
-    return cachedCenterArtsEvents || [];
-  }
-}
-
-/** Fetch live Pope County government meetings with caching */
-async function getLivePopeCountyEvents(): Promise<EventItem[]> {
-  const now = Date.now();
-  if (cachedPopeCountyEvents && now - lastFetchTime < CACHE_TTL) {
-    return cachedPopeCountyEvents;
-  }
-  try {
-    cachedPopeCountyEvents = await fetchPopeCountyEvents();
-    lastFetchTime = now;
-    return cachedPopeCountyEvents;
-  } catch {
-    console.warn("[Data] Failed to fetch Pope County events, using cache or empty");
-    return cachedPopeCountyEvents || [];
-  }
-}
+const getLiveCourierStories = cachedSource(fetchCourierStories, CACHE_TTL);
+const getLiveRSSStories = cachedSource(fetchRSSStories, CACHE_TTL);
+const getLiveICalEvents = cachedSource(fetchICalEvents, CACHE_TTL);
+const getLiveThrillshareEvents = cachedSource(fetchThrillshareEvents, CACHE_TTL);
+const getLiveCivicPlusEvents = cachedSource(fetchCivicPlusEvents, CACHE_TTL);
+const getLiveCivicAlerts = cachedSource(fetchCivicAlerts, CACHE_TTL);
+const getLiveChamberEvents = cachedSource(fetchChamberEvents, CACHE_TTL);
+const getLiveDiscoverRussellvilleEvents = cachedSource(fetchDiscoverRussellvilleEvents, CACHE_TTL);
+const getLiveStateParksEvents = cachedSource(fetchStateParksEvents, CACHE_TTL);
+const getLiveNWSAlerts = cachedSource(fetchNWSAlerts, CACHE_TTL);
+const getLiveMainStreetEvents = cachedSource(fetchMainStreetEvents, CACHE_TTL);
+const getLiveEvvntEvents = cachedSource(fetchEvvntEvents, CACHE_TTL);
+const getLiveFacebookEvents = cachedSource(fetchFacebookEvents, FACEBOOK_CACHE_TTL);
+const getLiveFacebookNotices = cachedSource(fetchFacebookNotices, FACEBOOK_CACHE_TTL);
+const getLiveLibraryEvents = cachedSource(fetchLibraryEvents, CACHE_TTL);
+const getLiveCenterArtsEvents = cachedSource(fetchCenterArtsEvents, CACHE_TTL);
+const getLivePopeCountyEvents = cachedSource(fetchPopeCountyEvents, CACHE_TTL);
 
 /** Deduplicate stories by title similarity */
 function deduplicateStories(items: StoryItem[]): StoryItem[] {
@@ -394,23 +113,23 @@ export async function getItemByIdAsync(id: string): Promise<TownSquareItem | und
 /** Get all items including live feeds, sorted by most recent first */
 export async function getAllItemsAsync(): Promise<TownSquareItem[]> {
   const [courierStories, rssStories, icalEvents, thrillshareEvents, civicPlusEvents, civicAlerts, chamberEvents, discoverRussellvilleEvents, stateParksEvents, nwsAlerts, mainStreetEvents, evvntEvents, facebookEvents, facebookNotices, libraryEvents, centerArtsEvents, popeCountyEvents] = await Promise.all([
-    bounded(getLiveCourierStories()),
-    bounded(getLiveRSSStories()),
-    bounded(getLiveICalEvents()),
-    bounded(getLiveThrillshareEvents()),
-    bounded(getLiveCivicPlusEvents()),
-    bounded(getLiveCivicAlerts()),
-    bounded(getLiveChamberEvents()),
-    bounded(getLiveDiscoverRussellvilleEvents()),
-    bounded(getLiveStateParksEvents()),
-    bounded(getLiveNWSAlerts()),
-    bounded(getLiveMainStreetEvents()),
-    bounded(getLiveEvvntEvents()),
-    bounded(getLiveFacebookEvents()),
-    bounded(getLiveFacebookNotices()),
-    bounded(getLiveLibraryEvents()),
-    bounded(getLiveCenterArtsEvents()),
-    bounded(getLivePopeCountyEvents()),
+    getLiveCourierStories(),
+    getLiveRSSStories(),
+    getLiveICalEvents(),
+    getLiveThrillshareEvents(),
+    getLiveCivicPlusEvents(),
+    getLiveCivicAlerts(),
+    getLiveChamberEvents(),
+    getLiveDiscoverRussellvilleEvents(),
+    getLiveStateParksEvents(),
+    getLiveNWSAlerts(),
+    getLiveMainStreetEvents(),
+    getLiveEvvntEvents(),
+    getLiveFacebookEvents(),
+    getLiveFacebookNotices(),
+    getLiveLibraryEvents(),
+    getLiveCenterArtsEvents(),
+    getLivePopeCountyEvents(),
   ]);
 
   const allStories = deduplicateStories([...courierStories, ...rssStories]);
@@ -462,7 +181,7 @@ export async function getSourceStatuses(): Promise<SourceStatus[]> {
       name: courierSource.name,
       type: "live",
       itemCount: courierStories.length,
-      lastFetched: new Date().toISOString(),
+      lastFetched: getLiveCourierStories.lastFetched(),
     });
   }
 
@@ -477,7 +196,7 @@ export async function getSourceStatuses(): Promise<SourceStatus[]> {
       name: atuSource.name,
       type: "live",
       itemCount: atuLiveCount,
-      lastFetched: new Date().toISOString(),
+      lastFetched: getLiveRSSStories.lastFetched(),
     });
   }
 
@@ -489,7 +208,7 @@ export async function getSourceStatuses(): Promise<SourceStatus[]> {
       name: rsdSource.name,
       type: "live",
       itemCount: thrillshareEvents.length,
-      lastFetched: new Date().toISOString(),
+      lastFetched: getLiveThrillshareEvents.lastFetched(),
     });
   }
 
@@ -502,7 +221,7 @@ export async function getSourceStatuses(): Promise<SourceStatus[]> {
       name: cityRvSource.name,
       type: "live",
       itemCount: cityRvLiveCount,
-      lastFetched: new Date().toISOString(),
+      lastFetched: getLiveCivicPlusEvents.lastFetched(),
     });
   }
 
@@ -514,7 +233,7 @@ export async function getSourceStatuses(): Promise<SourceStatus[]> {
       name: chamberSource.name,
       type: "live",
       itemCount: chamberEvents.length,
-      lastFetched: new Date().toISOString(),
+      lastFetched: getLiveChamberEvents.lastFetched(),
     });
   }
 
@@ -526,7 +245,7 @@ export async function getSourceStatuses(): Promise<SourceStatus[]> {
       name: discoverRvSource.name,
       type: "live",
       itemCount: discoverRvEvents.length,
-      lastFetched: new Date().toISOString(),
+      lastFetched: getLiveDiscoverRussellvilleEvents.lastFetched(),
     });
   }
 
@@ -538,7 +257,7 @@ export async function getSourceStatuses(): Promise<SourceStatus[]> {
       name: lakeDardanelleSource.name,
       type: "live",
       itemCount: stateParksEventsStatus.length,
-      lastFetched: new Date().toISOString(),
+      lastFetched: getLiveStateParksEvents.lastFetched(),
     });
   }
 
@@ -550,7 +269,7 @@ export async function getSourceStatuses(): Promise<SourceStatus[]> {
       name: nwsSource.name,
       type: "live",
       itemCount: nwsAlertsStatus.length,
-      lastFetched: new Date().toISOString(),
+      lastFetched: getLiveNWSAlerts.lastFetched(),
     });
   }
 
@@ -562,7 +281,7 @@ export async function getSourceStatuses(): Promise<SourceStatus[]> {
       name: mainStreetSource.name,
       type: "live",
       itemCount: mainStreetEventsStatus.length,
-      lastFetched: new Date().toISOString(),
+      lastFetched: getLiveMainStreetEvents.lastFetched(),
     });
   }
 
@@ -574,7 +293,7 @@ export async function getSourceStatuses(): Promise<SourceStatus[]> {
       name: courierEventsSource.name,
       type: "live",
       itemCount: evvntEventsStatus.length,
-      lastFetched: new Date().toISOString(),
+      lastFetched: getLiveEvvntEvents.lastFetched(),
     });
   }
 
@@ -587,7 +306,7 @@ export async function getSourceStatuses(): Promise<SourceStatus[]> {
       name: facebookSource.name,
       type: "live",
       itemCount: facebookLiveCount,
-      lastFetched: new Date().toISOString(),
+      lastFetched: getLiveFacebookEvents.lastFetched(),
     });
   }
 
@@ -599,7 +318,7 @@ export async function getSourceStatuses(): Promise<SourceStatus[]> {
       name: librarySource.name,
       type: "live",
       itemCount: libraryEventsStatus.length,
-      lastFetched: new Date().toISOString(),
+      lastFetched: getLiveLibraryEvents.lastFetched(),
     });
   }
 
@@ -611,7 +330,7 @@ export async function getSourceStatuses(): Promise<SourceStatus[]> {
       name: centerArtsSource.name,
       type: "live",
       itemCount: centerArtsEventsStatus.length,
-      lastFetched: new Date().toISOString(),
+      lastFetched: getLiveCenterArtsEvents.lastFetched(),
     });
   }
 
@@ -623,7 +342,7 @@ export async function getSourceStatuses(): Promise<SourceStatus[]> {
       name: popeCountySource.name,
       type: "live",
       itemCount: popeCountyEventsStatus.length,
-      lastFetched: new Date().toISOString(),
+      lastFetched: getLivePopeCountyEvents.lastFetched(),
     });
   }
 
@@ -636,7 +355,7 @@ export async function getSourceStatuses(): Promise<SourceStatus[]> {
       name: pottsvilleSource.name,
       type: "live",
       itemCount: pottsvilleEvents.length,
-      lastFetched: new Date().toISOString(),
+      lastFetched: getLiveThrillshareEvents.lastFetched(),
     });
   }
 

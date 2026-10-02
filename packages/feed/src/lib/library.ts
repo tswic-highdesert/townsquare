@@ -3,6 +3,7 @@
 // ============================================================
 
 import type { EventItem } from "./types.js";
+import { localDate } from "./local-date.js";
 
 const BASE_URL = "https://popecountyar.librarycalendar.com";
 const EVENTS_URL = `${BASE_URL}/events/`;
@@ -60,7 +61,7 @@ function parseTime(timeStr: string): { hours: number; minutes: number } | null {
 
 /**
  * Build an ISO date string from components.
- * Uses Central time offset (-05:00 or -06:00). We'll use -05:00 (CDT).
+ * Uses the community timezone, including daylight saving changes.
  */
 function buildISODate(
   year: number,
@@ -69,8 +70,7 @@ function buildISODate(
   hours = 0,
   minutes = 0
 ): string {
-  const d = new Date(year, month, day, hours, minutes);
-  return d.toISOString();
+  return localDate(year, month, day, hours, minutes);
 }
 
 /**
@@ -175,7 +175,7 @@ function parseFeaturedEvents(html: string, now: Date): EventItem[] {
  *   "Tuesday, March 24, 2026 at 1:00pm - 3:00pm"
  *   "Saturday, March 28, 2026"
  */
-function parseFeaturedDateString(
+export function parseFeaturedDateString(
   text: string
 ): { startDate: string; endDate?: string; isAllDay: boolean } | null {
   try {
