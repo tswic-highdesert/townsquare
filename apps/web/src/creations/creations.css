@@ -1495,3 +1495,36 @@
   display: flex;
   gap: var(--ts-space-2);
 }
+
+/* Daily: a useful creative invitation, with explicit starter attribution. */
+.cr-screen.shell { max-width: 1120px; padding: 40px 28px 72px; }
+.cr-screen .cr-eyebrow { font-size: .8125rem; text-transform: none; letter-spacing: 0; font-weight: 700; color: var(--ts-action); }
+.cr-screen .cr-h1 { font-size: clamp(2rem,4vw,3rem); font-weight: 800; line-height: 1.12; letter-spacing: -.035em; }
+.cr-screen .cr-lede { font-size: 1.0625rem; line-height: 1.6; max-width: 66ch; margin: 16px 0 32px; }
+.cr-local-tools { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 28px; margin: 32px 0 48px; }
+.cr-local-tool { display: block; padding: 0; text-align: left; color: var(--ts-ink); background: none; border: 0; min-width: 0; }
+.cr-tool-art { display: flex; align-items: center; justify-content: center; position: relative; height: 210px; border-radius: 16px; background: var(--ts-sage14); overflow: hidden; color: var(--ts-action); }
+.cr-tool-art-day { background: var(--ts-terracotta-tint); }
+.cr-tool-art-day > svg { color: var(--ts-gold-text); transform: translate(-68px,-25px); }
+.cr-tool-route { position: absolute; left: 30%; right: 17%; top: 58%; border-top: 2px dashed var(--ts-action); display: flex; justify-content: space-between; }
+.cr-tool-route i { width: 15px; height: 15px; border-radius: 50%; background: var(--ts-action); position: relative; top: -8px; border: 4px solid var(--ts-surface); box-shadow: 0 0 0 1px var(--ts-action); }
+.cr-tool-art-map > svg:last-child { position: absolute; margin-left: 55px; margin-top: -60px; }
+.cr-tool-body { display: flex; flex-direction: column; gap: 9px; padding-top: 18px; }
+.cr-tool-body small { color: var(--ts-action); font-size: .8125rem; font-weight: 750; }
+.cr-tool-body strong { font-size: 1.5rem; letter-spacing: -.02em; line-height: 1.25; }
+.cr-tool-body > span { font-size: 1rem; line-height: 1.55; color: var(--ts-quiet); max-width: 44ch; }
+.cr-tool-body b { display: flex; align-items: center; gap: 8px; margin-top: 5px; color: var(--ts-action); font-size: .875rem; }
+.cr-local-tool:hover .cr-tool-body strong { color: var(--ts-action); text-decoration: underline; text-underline-offset: 4px; }
+.cr-gallery-section h2 { font-size: 1.5rem; margin: 0 0 8px; }
+.cr-gallery-section p { color: var(--ts-quiet); font-size: .9375rem; margin: 0 0 24px; max-width: 66ch; }
+.cr-screen .cr-firsts { margin-top: 24px; }
+.cr-screen .cr-firsts-name { font-size: 1.25rem; font-weight: 800; }
+.cr-screen .cr-firsts-why { font-size: 1rem; line-height: 1.6; }
+.cr-screen .cr-firsts-by { color: var(--ts-action); font-family: var(--ts-font-sans); font-size: .8125rem; font-weight: 750; }
+.cr-screen .cr-firsts-n { color: var(--ts-quiet); font-size: 1rem; }
+.cr-screen .cr-invite-card { border-style: solid; border-color: var(--ts-hairline); border-radius: 16px; background: var(--ts-surface); padding: 28px; box-shadow: none; margin-top: 36px; }
+.cr-screen .cr-invite-name { font-size: 1.375rem; font-weight: 800; }
+.cr-screen .cr-invite-copy,.cr-screen .cr-invite-line { font-size: .9375rem; line-height: 1.6; }
+.cr-screen .cr-footnote { font-size: .8125rem; line-height: 1.6; }
+.cr-screen .cr-touch-item { font-size: .75rem; letter-spacing: 0; }
+@media (max-width: 620px) { .cr-screen.shell { padding: 28px 20px 48px; } .cr-local-tools { grid-template-columns: minmax(0,1fr); gap: 32px; } .cr-tool-art { height: 180px; } }

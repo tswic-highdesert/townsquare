@@ -12,7 +12,8 @@
  *
  * ## Where these values come from
  *
- * `design/hifi/`, which is the visual source of truth for app UI. The base
+ * `design/system/README.md`, the approved Daily visual foundation, with the
+ * September 27 composition direction selected for the October build. The base
  * brand in `brand/` still wins for the logo itself, and the two differ on
  * purpose: the brand palette is built for a mark on a page, this one is built
  * for a screen someone reads for a while.
@@ -24,37 +25,35 @@
  * removing a token is an SDK 1 break while changing what it resolves to is
  * routine. Adding is always safe.
  *
- * **Muted text is ink at alpha, not navy at alpha.** The hi-fi is consistent
- * about this and it is the difference between text that recedes and text that
- * looks like a faded link. `navy60` and friends still exist, and still mean
+ * **Muted text uses readable Daily values; hairlines and shadows derive from ink.** This keeps metadata readable while it remains quieter than a headline. `navy60` and friends still exist, and still mean
  * navy, because they are named navy.
  */
 
 export const tokens = {
   color: {
     /** The screen. Not `#EDE9E0` — that is the canvas behind the phone. */
-    cream: '#F8F6F1',
+    cream: '#F7F9F5',
     /** Cards and anything raised off the screen. */
     surface: '#FFFFFF',
-    stone: '#E5E1DA',
+    stone: '#EFF3EE',
 
     /** Body text, and the base every muted value is an alpha of. */
-    ink: '#1D1B16',
-    ink60: 'rgba(29,27,22,0.60)',
-    ink45: 'rgba(29,27,22,0.45)',
-    ink26: 'rgba(29,27,22,0.26)',
+    ink: '#263B32',
+    ink60: '#5E6E65',
+    ink45: '#64746B',
+    ink26: 'rgba(38,59,50,0.26)',
     /** The hi-fi's hairline divider, one step stronger than `hairline`. */
-    ink13: 'rgba(29,27,22,0.13)',
+    ink13: 'rgba(38,59,50,0.13)',
     /** Card lift. `ink26` at a small blur is a bruise; this is a shadow. */
-    ink08: 'rgba(29,27,22,0.08)',
+    ink08: 'rgba(38,59,50,0.08)',
 
-    navy: '#26405B',
-    navyDark: '#22384E',
-    navy80: 'rgba(38,64,91,0.80)',
-    navy60: 'rgba(38,64,91,0.60)',
-    navy40: 'rgba(38,64,91,0.40)',
-    navy10: 'rgba(38,64,91,0.10)',
-    hairline: 'rgba(29,27,22,0.11)',
+    navy: '#315B4C',
+    navyDark: '#24483B',
+    navy80: 'rgba(49,91,76,0.80)',
+    navy60: 'rgba(49,91,76,0.60)',
+    navy40: 'rgba(49,91,76,0.40)',
+    navy10: 'rgba(49,91,76,0.10)',
+    hairline: 'rgba(38,59,50,0.11)',
 
     /**
      * Text on a navy card. Cream at alpha, not ink at alpha — the muted rule
@@ -116,16 +115,16 @@ export const tokens = {
     16: 64,
   },
 
-  radius: { input: 10, button: 10, chip: 999, card: 16, sheet: 20, full: 999 },
+  radius: { input: 12, button: 999, chip: 999, card: 16, sheet: 20, full: 999 },
 
   font: {
-    serif: "'Newsreader', Georgia, 'Times New Roman', serif",
-    sans: "'DM Sans', system-ui, -apple-system, sans-serif",
-    mono: "'DM Mono', ui-monospace, SFMono-Regular, Menlo, monospace",
+    serif: "'Nunito Sans', system-ui, sans-serif",
+    sans: "'Nunito Sans', system-ui, -apple-system, sans-serif",
+    mono: "'Nunito Sans', system-ui, sans-serif",
   },
 
-  /** 17px body, from the hi-fi. Larger than the web default, and deliberately. */
-  type: { h1: 24, h2: 21, cardTitle: 18, body: 17, label: 15, caption: 13, eyebrow: 11 },
+  /** Daily type scale, emitted in rem so text enlargement remains useful. */
+  type: { h1: 32, h2: 22, cardTitle: 18, body: 16, label: 14, caption: 14, eyebrow: 12 },
 
   /**
    * Five steps, each naming a distance from the page rather than a mood.
@@ -228,11 +227,11 @@ export const tokens = {
    */
   semantic: {
     /** The one thing on this screen a finger is meant to press. */
-    action: 'var(--ts-terracotta)',
+    action: 'var(--ts-navy)',
     /** Pressed and hovered states of the above. */
-    actionHover: 'var(--ts-terracotta-hover)',
+    actionHover: 'var(--ts-navy-dark)',
     /** The wash behind a selected chip or an active tab. */
-    actionQuiet: 'var(--ts-terracotta14)',
+    actionQuiet: 'var(--ts-navy10)',
     /** The town speaking: notices, closures, official postings. */
     civic: 'var(--ts-gold)',
     /** Civic copy that has to pass on a light wash. Raw gold is unreadable. */
@@ -299,7 +298,7 @@ export function cssVariables(t: Tokens = tokens): Record<string, string> {
   for (const [k, v] of Object.entries(t.color)) out[`--ts-${kebab(k)}`] = v
   for (const [k, v] of Object.entries(t.space)) out[`--ts-space-${k}`] = `${v}px`
   for (const [k, v] of Object.entries(t.radius)) out[`--ts-radius-${kebab(k)}`] = `${v}px`
-  for (const [k, v] of Object.entries(t.type)) out[`--ts-text-${kebab(k)}`] = `${v}px`
+  for (const [k, v] of Object.entries(t.type)) out[`--ts-text-${kebab(k)}`] = `${v / 16}rem`
 
   for (const [k, v] of Object.entries(t.shadow)) out[`--ts-shadow-${kebab(k)}`] = v
 
@@ -351,10 +350,12 @@ function kebab(s: string): string {
  * `display: swap` so text is readable immediately on a slow connection. A
  * creation that renders nothing for 800ms reads as broken.
  */
-export const FONT_FILES = ['newsreader', 'dm-sans', 'dm-mono-400', 'dm-mono-500'] as const
+export const FONT_FILES = ['newsreader', 'dm-sans', 'dm-mono-400', 'dm-mono-500', 'nunito-sans', 'libre-baskerville'] as const
 
 export function fontFaceCss(baseHref = '/_ts/fonts'): string {
   return `
+@font-face {font-family: 'Nunito Sans';src: url('${baseHref}/nunito-sans.woff2') format('woff2');font-weight: 200 1000;font-style: normal;font-display: swap;}
+@font-face {font-family: 'Libre Baskerville';src: url('${baseHref}/libre-baskerville.woff2') format('woff2');font-weight: 400 700;font-style: normal;font-display: swap;}
 /* Self-hosted so \`font-src 'self'\` covers them and no creation declares a font host. */
 @font-face {
   font-family: 'Newsreader';

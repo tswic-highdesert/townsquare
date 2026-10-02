@@ -98,7 +98,7 @@ export function AppBar(props: AppBarProps) {
         <Mark size={22} className="ts-appbar-mark" />
 
         <div className="ts-appbar-brand">
-          <span className="today-wordmark">{props.label}</span>
+          <span className="today-wordmark">Town Square</span>
           <span className="today-place">{props.place}</span>
         </div>
 

@@ -101,7 +101,7 @@ describe('the token contract', () => {
    */
   it('keeps semantic tokens as references, so a reskin moves them too', () => {
     const vars = cssVariables()
-    expect(vars['--ts-action']).toBe('var(--ts-terracotta)')
+    expect(vars['--ts-action']).toBe('var(--ts-navy)')
     expect(vars['--ts-verified']).toBe('var(--ts-sage)')
     expect(vars['--ts-alarm']).toBe('var(--ts-brick)')
     for (const [name, value] of Object.entries(tokens.semantic)) {
@@ -153,25 +153,25 @@ describe('the token contract', () => {
   })
 })
 
-describe('the hi-fi palette', () => {
+describe('the approved Daily palette', () => {
   it('uses the app surface, not the canvas behind the phone', () => {
-    // #EDE9E0 is the body of the design document. #F8F6F1 is the screen.
-    expect(tokens.color.cream).toBe('#F8F6F1')
+    // #EDE9E0 is the body of the design document. #F7F9F5 is the screen.
+    expect(tokens.color.cream).toBe('#F7F9F5')
     expect(tokens.color.cream).not.toBe('#EDE9E0')
   })
 
-  it('carries the hi-fi hues exactly', () => {
-    expect(tokens.color.navy).toBe('#26405B')
+  it('carries the Daily hues and retains legacy accent tokens', () => {
+    expect(tokens.color.navy).toBe('#315B4C')
     expect(tokens.color.terracotta).toBe('#C4714E')
-    expect(tokens.color.ink).toBe('#1D1B16')
+    expect(tokens.color.ink).toBe('#263B32')
     expect(tokens.color.brick).toBe('#7E1F0C')
   })
 
-  it('derives muted text from ink, not from navy', () => {
+  it('uses readable muted text and ink-based hairlines', () => {
     // The hi-fi is consistent about this, and it is the difference between text
     // that recedes and text that looks like a faded link.
-    expect(tokens.color.ink60).toContain('29,27,22')
-    expect(tokens.color.hairline).toContain('29,27,22')
+    expect(tokens.color.ink60).toBe('#5E6E65')
+    expect(tokens.color.hairline).toContain('38,59,50')
   })
 })
 
@@ -203,7 +203,7 @@ describe('self-hosted typefaces', () => {
 describe('the guest stylesheet', () => {
   it('sets the variables and a minimal base, and does not dictate layout', () => {
     const css = guestThemeCss()
-    expect(css).toContain('--ts-navy: #26405B')
+    expect(css).toContain('--ts-navy: #315B4C')
     expect(css).toContain('@font-face')
     // A creation owns its own look. We supply the palette, not the grid.
     expect(css).not.toContain('display: grid')

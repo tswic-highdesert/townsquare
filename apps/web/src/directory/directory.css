@@ -1402,3 +1402,61 @@
   font-weight: 600;
   color: var(--ts-ink);
 }
+
+/* Daily directory: generous hierarchy, compact useful rows, no pretend photography. */
+.dir .dir-intro { padding-top: 36px; }
+.dir .dir-intro > p:first-child { font-size: clamp(1.75rem,3vw,2.5rem); font-weight: 800; line-height: 1.18; letter-spacing: -.03em; max-width: 32ch; text-wrap: pretty; }
+.dir .dir-intro .dir-intro-sub { font-size: .9375rem !important; max-width: 76ch; line-height: 1.6 !important; }
+.dir .ts-card.dir-serendipity { border: 0; box-shadow: none; border-radius: 16px; background: var(--ts-navy10); color: var(--ts-ink); min-height: 100px; padding: 22px; }
+.dir .dir-serendipity-title { font-size: 1.375rem; font-weight: 800; }
+.dir .dir-serendipity-sub,.dir .dir-serendipity-go { color: var(--ts-quiet); }
+.dir .dir-serendipity-icon { width: 52px; height: 52px; }
+.dir .dir-block { padding-top: 40px; }
+.dir .dir-block-title { font-size: 1.375rem; letter-spacing: -.02em; font-weight: 800; }
+.dir .dir-block-head { flex-wrap: wrap; }
+.dir .dir-block-note { font-size: .875rem; line-height: 1.55; margin-top: 8px; }
+.dir .dir-tile { min-height: 132px; border-radius: 12px; box-shadow: none; border-color: transparent; background: var(--ts-surface); }
+.dir .dir-tile-name { font-weight: 750; font-size: 1rem; }
+.dir .dir-tile-count { font-size: .8125rem; }
+.dir .dir-chip { font-size: .875rem; min-height: 44px; }
+.dir .dir-cathead-title { font-size: clamp(1.625rem,3vw,2.5rem); font-weight: 800; letter-spacing: -.025em; }
+.dir .dir-rows { box-shadow: none; border: 0; background: transparent; }
+.dir .dir-rows .ts-row-title { font-size: 1.0625rem; font-weight: 750; }
+.dir .dir-rows .ts-row-meta { font-size: .875rem; }
+.dir .dir-tool { font-size: .875rem; min-height: 44px; }
+.dir .dir-locate { background: transparent; border: 0; padding-inline: 0; }
+.dir-sheet-overlay .dir-prov { border: 0; border-radius: 0; padding: 20px 0 0; background: transparent; border-top: 1px solid var(--ts-hairline); }
+.dir-sheet-overlay .dir-prov-h { font-size: 1.125rem; text-transform: none; letter-spacing: -.01em; font-weight: 800; color: var(--ts-ink); }
+.dir-sheet-overlay .dir-prov li { font-size: .9375rem; line-height: 1.55; }
+.dir-sheet-overlay .dir-act { min-height: 92px; border-radius: 12px; }
+.dir-sheet-overlay .dir-act-label { font-size: .9375rem; font-weight: 750; }
+.dir-sheet-overlay .dir-act-sub { font-size: .8125rem; white-space: normal; overflow-wrap: anywhere; }
+.dir-sheet-overlay .dir-act:first-child { background: var(--ts-action); color: var(--ts-surface); border-color: var(--ts-action); }
+.dir-sheet-overlay .dir-act:first-child :is(.dir-act-label,.dir-act-sub) { color: var(--ts-surface); }
+@media(min-width:1040px) {
+ .ts-shell .dir > :is(.dir-intro,.dir-cathead,.dir-block,.dir-locate,.dir-loading) { margin-right: 40px; }
+ .ts-shell .dir > .dir-serendipity { width: calc(100% - 60px); }
+ .dir .dir-tiles { grid-template-columns: repeat(3,minmax(0,1fr)); }
+ .dir .dir-grid { grid-template-columns: repeat(3,minmax(0,1fr)); }
+ .dir .dir-block-last { padding-bottom: 64px; }
+}
+@media(max-width:480px) { .dir .dir-intro { padding-top: 24px; } .dir .dir-sheet-acts { grid-template-columns: minmax(0,1fr); } }
+.dir .dir-intro-title { font-size:clamp(2rem,4vw,3rem); line-height:1.12; font-weight:800; letter-spacing:-.035em; margin:0 0 14px; }
+.dir .dir-intro .dir-intro-dek { font-size:1.0625rem; line-height:1.6; color:var(--ts-quiet); letter-spacing:0; text-wrap:pretty; max-width:62ch; }
+.dir .dir-intro-search { display:flex; align-items:center; gap:12px; width:min(100%,520px); min-height:52px; border:1px solid var(--ts-hairline); border-radius:999px; background:var(--ts-surface); color:var(--ts-quiet); padding:12px 20px; margin-top:24px; font-size:1rem; text-align:left; }
+.dir .dir-intro-search > svg:last-child { margin-left:auto; color:var(--ts-action); }
+.dir .dir-intro .dir-intro-sub { font-size:.8125rem !important; margin-top:16px !important; }
+.dir-sheet-save { display:flex; flex-wrap:wrap; gap:12px; margin-top:4px; }
+.dir-sheet-save button { min-height:44px; font-size:.875rem; }
+.dir .dir-mini { border-radius:12px; box-shadow:none; }
+@media(max-width:480px) {
+ .dir-sheet-overlay .dir-sheet-acts { grid-template-columns:repeat(3,minmax(0,1fr)); gap:8px; }
+ .dir-sheet-overlay .dir-act { min-height:92px; padding:12px 6px; }
+ .dir-sheet-overlay .dir-act-sub { font-size:.75rem; }
+ .dir-sheet-overlay .dir-sheet-save { gap:8px; }
+}
+@media(max-width:600px) {
+ .dir-mapview[data-pinned] .map-wrap { flex:none; height:250px; min-height:250px; max-height:250px; }
+ .dir-mapview[data-pinned] .map { height:100%; }
+ .dir-mapview .dir-mapcard { padding-top:8px; }
+}
