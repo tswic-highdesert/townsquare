@@ -19,3 +19,5 @@ e2e/playwright-report/
 
 # Screenshot scratch scripts
 .shots/
+
+artifacts/

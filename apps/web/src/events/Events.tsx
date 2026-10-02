@@ -100,6 +100,7 @@ export interface EventsScreenProps {
   onBack: () => void
   onAccount: () => void
   onReview: () => void
+  onDayChange?: (day: string) => void
 }
 
 export function EventsScreen(props: EventsScreenProps) {
@@ -171,13 +172,14 @@ export function EventsScreen(props: EventsScreenProps) {
             setDay(picked)
             load(picked)
             setView('day')
+            props.onDayChange?.(picked)
           }}
           onOpenEvent={props.onOpenEvent}
         />
       ) : payload ? (
         <DayView
           payload={payload}
-          onPickDay={(picked) => load(picked)}
+          onPickDay={(picked) => { load(picked); props.onDayChange?.(picked) }}
           onOpenEvent={props.onOpenEvent}
           onSeeMonth={() => setView('month')}
         />

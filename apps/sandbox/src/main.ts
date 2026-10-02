@@ -21,8 +21,9 @@ import { serveBundleRequest, type SandboxConfig } from '@townsquare/sandbox'
 import { guestThemeCss, FONT_FILES } from '@townsquare/tokens'
 import { loadExampleCreations } from './examples.js'
 
-const PORT = Number(process.env['SANDBOX_PORT'] ?? 3031)
+const PORT = Number(process.env['PORT'] ?? process.env['SANDBOX_PORT'] ?? 3031)
 const APPS_DOMAIN = process.env['APPS_DOMAIN'] ?? 'tsq-apps.localhost'
+const HTTPS = process.env['NODE_ENV'] === 'production'
 
 const sdkPath = fileURLToPath(new URL('../../../packages/sdk/runtime/sdk.js', import.meta.url))
 const fontsDir = new URL('../../../packages/tokens/fonts/', import.meta.url)
@@ -49,7 +50,7 @@ async function main(): Promise<void> {
   const store = await loadExampleCreations()
 
   const config: SandboxConfig = {
-    origin: { appsDomain: APPS_DOMAIN, scheme: 'http', port: PORT },
+    origin: { appsDomain: APPS_DOMAIN, scheme: HTTPS ? 'https' : 'http', ...(HTTPS ? {} : { port: PORT }) },
     store,
     assets: {
       sdkJs,
@@ -61,6 +62,7 @@ async function main(): Promise<void> {
   }
 
   const server = createServer((req: IncomingMessage, res: ServerResponse) => {
+    if (req.url === '/healthz') { res.writeHead(200); res.end('ok'); return }
     void handle(req, res, config)
   })
 

@@ -25,6 +25,7 @@
  * manifest.
  */
 
+import { useState } from 'react'
 import { AppBar, initials, VerifiedChip } from './AppBar.js'
 import { Icon, type IconName } from './Icon.js'
 import { TabBar, type TabName } from './TabBar.js'
@@ -43,6 +44,8 @@ export interface YoursProps {
   onTab: (tab: TabName) => void
   onAccount: () => void
   onReview: () => void
+  onContribute?: () => void
+  onOpenSaved?: (save: SavedThing) => void
 }
 
 const SAVE_ICON: Record<SaveKind, IconName> = {
@@ -56,6 +59,8 @@ const SAVE_ICON: Record<SaveKind, IconName> = {
 
 export function Yours(props: YoursProps) {
   const { account } = props
+  const [saveError, setSaveError] = useState<string | null>(null)
+  const [removing, setRemoving] = useState<string | null>(null)
 
   const bar = (
     <AppBar
@@ -96,9 +101,15 @@ export function Yours(props: YoursProps) {
   }
 
   async function unsave(save: SavedThing) {
+    if (removing) return
+    setRemoving(save.id)
+    setSaveError(null)
+    try {
     if (await unsaveThing(save.kind, save.refId)) {
       props.onSavedChange(props.saved.filter((s) => s.id !== save.id))
-    }
+    } else setSaveError('Could not remove this save. Please try again.')
+    } catch { setSaveError('Could not remove this save. Please try again.') }
+    finally { setRemoving(null) }
   }
 
   return (
@@ -150,7 +161,9 @@ export function Yours(props: YoursProps) {
       )}
 
       <section className="today-section">
+        {props.onContribute && <button className="secondary" onClick={props.onContribute}>Your contributions</button>}
         <SectionHead label="Saved" count={props.saved.length} />
+        {saveError && <p className="problem" role="alert">{saveError}</p>}
         {/*
           Not `Row`, deliberately.
 
@@ -188,7 +201,9 @@ export function Yours(props: YoursProps) {
                     after it happened is a list that deletes your things.
                   */}
                   <span className="place-name">
-                    {save.url ? (
+                    {props.onOpenSaved ? (
+                      <button className="saved-title" onClick={() => props.onOpenSaved?.(save)}>{save.title}</button>
+                    ) : save.url ? (
                       <a href={save.url} target="_blank" rel="noopener noreferrer">
                         {save.title}
                       </a>
@@ -203,6 +218,7 @@ export function Yours(props: YoursProps) {
                 <button
                   className="place-save"
                   data-saved="true"
+                  disabled={removing !== null}
                   onClick={() => void unsave(save)}
                   aria-label={`Remove ${save.title} from your saved things`}
                   aria-pressed

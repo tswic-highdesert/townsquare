@@ -111,6 +111,11 @@ import { Stumble } from './Stumble.js'
 import './directory.css'
 
 export interface DirectoryProps {
+  selectedId?: string | undefined
+  initialMap?: boolean | undefined
+  onMapChange?: ((map: boolean | undefined) => void) | undefined
+  onSelectPlace?: (id: string | null) => void
+  onContribute?: () => void
   account: AccountView | null
   canReview: boolean
   saved: SavedThing[]
@@ -140,6 +145,7 @@ export type Layout = 'rows' | 'grid'
 
 type View =
   | { name: 'home' }
+  | { name: 'all' }
   | { name: 'group'; id: GroupId }
   | { name: 'category'; category: string }
   | { name: 'search' }
@@ -148,7 +154,7 @@ type View =
 export function Directory(props: DirectoryProps) {
   const [payload, setPayload] = useState<DirectoryPayload | null>(null)
   const [failed, setFailed] = useState(false)
-  const [view, setView] = useState<View>({ name: 'home' })
+  const [view, setView] = useState<View>(props.initialMap !== undefined ? { name: 'all' } : { name: 'home' })
   const [position, setPosition] = useState<Position | null>(null)
   /** Null before we have asked. False once a refusal or a timeout came back. */
   const [located, setLocated] = useState<boolean | null>(null)
@@ -166,7 +172,15 @@ export function Directory(props: DirectoryProps) {
    * rather than a width the shell never reaches.
    */
   const [layout, setLayout] = useState<Layout>('rows')
-  const [selected, setSelected] = useState<RankedPlace | null>(null)
+  const [selected, setSelectedState] = useState<RankedPlace | null>(null)
+  const setSelected = (place: RankedPlace | null) => {
+    setSelectedState(place)
+    props.onSelectPlace?.(place?.id ?? null)
+  }
+  useEffect(() => {
+    const place = payload?.places.find((item) => item.id === props.selectedId)
+    setSelectedState(place ? { ...place, miles: null } : null)
+  }, [props.selectedId, payload])
   /**
    * The map is a view of the list, not a screen of its own.
    *
@@ -175,7 +189,11 @@ export function Directory(props: DirectoryProps) {
    * drawn when the payload carries bounds to draw. A Map button that opens an
    * empty rectangle is worse than no Map button.
    */
-  const [onMap, setOnMap] = useState(false)
+  const [onMap, setOnMap] = useState(props.initialMap ?? false)
+  useEffect(() => {
+    setOnMap(props.initialMap ?? false)
+    if (props.initialMap !== undefined) setView(current => current.name === 'home' ? { name: 'all' } : current)
+  }, [props.initialMap])
   /** The pin a finger landed on, which is a different thing from the sheet. */
   const [pinned, setPinned] = useState<RankedPlace | null>(null)
 
@@ -203,13 +221,20 @@ export function Directory(props: DirectoryProps) {
     [props.saved],
   )
 
+  const [saveError, setSaveError] = useState<string | null>(null)
+  const [saving, setSaving] = useState(false)
   async function toggleSave(place: RankedPlace) {
+    if (saving) return
+    if (!props.account) { props.onAccount(); return }
+    setSaving(true)
+    setSaveError(null)
+    try {
     if (savedRefs.has(`business:${place.id}`)) {
       if (await unsaveThing('business', place.id)) {
         props.onSavedChange(
           props.saved.filter((s) => !(s.kind === 'business' && s.refId === place.id)),
         )
-      }
+      } else setSaveError('Could not remove this save. Please try again.')
       return
     }
     const saved = await saveThing({
@@ -222,6 +247,9 @@ export function Directory(props: DirectoryProps) {
       ...(place.url ? { url: place.url } : {}),
     })
     if (saved) props.onSavedChange([saved, ...props.saved])
+    else setSaveError('Could not save this place. Please try again.')
+    } catch { setSaveError('Could not update your saves. Please try again.') }
+    finally { setSaving(false) }
   }
 
   const scope = useMemo(
@@ -285,6 +313,14 @@ export function Directory(props: DirectoryProps) {
     )
   }
 
+  if (props.selectedId && !payload.places.some(place => place.id === props.selectedId)) {
+    return <div className="today dir">{bar}<div className="today-state">
+      <h1>This place is no longer in the directory</h1>
+      <p>The listing may have changed or been removed.</p>
+      <Button onClick={() => setSelected(null)}>Browse the directory</Button>
+    </div><TabBar current="nearby" onChange={props.onTab} /></div>
+  }
+
   if (view.name === 'stumble') {
     return (
       <Stumble
@@ -294,7 +330,7 @@ export function Directory(props: DirectoryProps) {
         saved={savedRefs}
         canSave={props.account !== null}
         onToggleSave={(p) => void toggleSave(p)}
-        onOpen={setSelected}
+        onOpen={(place) => { setView({ name: 'home' }); setSelected(place) }}
         onClose={() => setView({ name: 'home' })}
       />
     )
@@ -372,6 +408,7 @@ export function Directory(props: DirectoryProps) {
           onSort={setSort}
           onLayout={setLayout}
           onBack={() => {
+            props.onMapChange?.(undefined)
             setOnMap(false)
             setPinned(null)
             setView({ name: 'home' })
@@ -381,7 +418,8 @@ export function Directory(props: DirectoryProps) {
           streets={payload.streets}
           onMap={onMap}
           onToggleMap={() => {
-            setOnMap((on) => !on)
+            props.onMapChange?.(!onMap)
+            setOnMap(!onMap)
             setPinned(null)
           }}
           pinned={pinned}
@@ -393,10 +431,16 @@ export function Directory(props: DirectoryProps) {
         />
       )}
 
+      {saveError && !selected && <p role="alert" className="problem">{saveError}</p>}
       <PlaceSheet
         place={selected}
+        saving={saving}
+        error={saveError}
         scrapedLabel={payload.scrapedLabel}
         onClose={() => setSelected(null)}
+        saved={!!selected && savedRefs.has(`business:${selected.id}`)}
+        onSave={() => { if (!props.account) props.onAccount(); else if (selected) void toggleSave(selected) }}
+        onContribute={props.onContribute}
       />
 
       <TabBar current="nearby" onChange={props.onTab} />
@@ -447,13 +491,11 @@ function Home({
         second line states the gap in the data before a resident finds it.
       */}
       <div className="dir-intro">
-        <p>
-          There are {intro.total} places in this directory, and this screen is built for finding
-          the ones you did not know to look for.
-        </p>
+        <h1 className="dir-intro-title">Find a new favorite.</h1>
+        <p className="dir-intro-dek">{intro.total} places around Russellville. Browse, wander, or search for something specific.</p>
+        <button className="dir-intro-search" onClick={onSearch}><Icon name="search" size={20}/>Search places<Icon name="arrow-right" size={18}/></button>
         <p className="dir-intro-sub">
-          {intro.withHours} told us their hours. The other {intro.unknownHours} did not, and we do
-          not guess.
+          {intro.withHours} public listings include readable hours. Hours are unknown for {intro.unknownHours} others.
           {payload.scrapedLabel ? ` Read on ${payload.scrapedLabel}.` : ''}
         </p>
       </div>
@@ -479,13 +521,13 @@ function Home({
       {openRail.length > 0 && (
         <section className="dir-block">
           <div className="dir-block-head">
-            <h2 className="dir-block-title">Open right now</h2>
+            <h2 className="dir-block-title">Open by listed hours</h2>
             <span className="dir-block-count">{intro.openNow} places</span>
           </div>
           <p className="dir-block-note">
             {position
               ? 'Distance is worked out on your phone. We never receive your location.'
-              : 'Computed from the hours we could read, against the town clock.'}
+              : 'Based on published hours. Call ahead to confirm before making a special trip.'}
           </p>
           <div className="dir-rail">
             {openRail.map((place) => (
@@ -622,7 +664,7 @@ function GroupLanding({
   onOpen,
 }: {
   payload: DirectoryPayload
-  view: { name: 'group'; id: GroupId } | { name: 'category'; category: string }
+  view: { name: 'all' } | { name: 'group'; id: GroupId } | { name: 'category'; category: string }
   places: RankedPlace[]
   summary: { shown: number; total: number; hiddenUnknown: number }
   position: Position | null
@@ -648,9 +690,9 @@ function GroupLanding({
   const group =
     view.name === 'group'
       ? payload.groups.find((g) => g.id === view.id)
-      : payload.groups.find((g) => g.id === payload.tail.find((t) => t.category === view.category)?.group)
+      : view.name === 'category' ? payload.groups.find((g) => g.id === payload.tail.find((t) => t.category === view.category)?.group) : undefined
 
-  const title = view.name === 'group' ? (group?.label ?? 'Browse') : view.category
+  const title = view.name === 'all' ? 'Explore the town' : view.name === 'group' ? (group?.label ?? 'Browse') : view.category
   const icon = group ? GROUP_ICON[group.id] : 'storefront'
   const openHere = places.filter((p) => p.openNow === true).length
 
@@ -672,7 +714,7 @@ function GroupLanding({
           <div>
             <h2 className="dir-cathead-title">{title}</h2>
             <p className="dir-cathead-sub">
-              {summary.total} in {payload.town.name}. {openHere} open right now.
+              {summary.total} in {payload.town.name}. {openHere} open by listed hours.
             </p>
           </div>
         </div>
@@ -781,6 +823,7 @@ function GroupLanding({
           {pinned && (
             <div className="dir-mapcard">
               <PinCard place={pinned} />
+              <Button variant="primary" onClick={() => onOpen(pinned)}>View place &amp; save</Button>
             </div>
           )}
         </div>
@@ -879,10 +922,16 @@ function PlaceSheet({
   place,
   scrapedLabel,
   onClose,
+  onSave, saved, onContribute, saving, error,
 }: {
   place: RankedPlace | null
   scrapedLabel: string | null
   onClose: () => void
+  onSave: () => void
+  saved: boolean
+  saving: boolean
+  error: string | null
+  onContribute?: (() => void) | undefined
 }) {
   if (!place) return null
   const directions = directionsUrl(place.address)
@@ -891,6 +940,8 @@ function PlaceSheet({
     <BottomSheet open onClose={onClose} title={place.name} className="dir-sheet-overlay">
       <div className="dir-sheet">
         <PinCard place={place} />
+        {error && <p className="problem" role="alert">{error}</p>}
+        <div className="dir-sheet-save"><Button variant="primary" icon="bookmark" disabled={saving} onClick={onSave}>{saving ? 'Saving…' : saved ? 'Saved · remove' : 'Save this place'}</Button>{onContribute && <Button variant="quiet" onClick={onContribute}>Suggest a correction</Button>}</div>
 
         <div className="dir-sheet-acts">
           {place.phone && (
@@ -936,8 +987,7 @@ function PlaceSheet({
                   </>
                 ) : (
                   <>
-                    <b>Hours</b> from the same listing. A full week was published, so we compute{' '}
-                    {place.detail.toLowerCase()} rather than printing a range.
+                    <b>Listed hours</b> suggest it is {place.detail.toLowerCase()}. Hours can change; call the business to confirm.
                   </>
                 )}
               </span>

@@ -30,7 +30,6 @@ import { ReviewScreen } from './Review.js'
 import { resolveInitialAccount, type AccountView } from './session.js'
 import { ContributeScreen } from './contribute/Contribute.js'
 import {
-  BuilderDoor,
   CreationDetail,
   Gallery,
   RunningCreation,
@@ -42,6 +41,7 @@ import { EventsScreen } from './events/Events.js'
 import { News, Reader } from './news/index.js'
 import { Today } from './Today.js'
 import { Yours } from './Yours.js'
+import { Weekend } from './Weekend.js'
 import { TabBar, type TabName } from './TabBar.js'
 import { SearchOverlay } from './nav/Search.js'
 import { ShellContext } from './nav/shellContext.js'
@@ -59,10 +59,11 @@ import { fetchCreations, fetchTown, type CreationSummary } from './townData.js'
 
 type Screen =
   | { name: 'today' }
-  | { name: 'nearby' }
+  | { name: 'nearby'; id?: string; map?: boolean }
+  | { name: 'weekend' }
   | { name: 'yours' }
   | { name: 'gallery' }
-  | { name: 'account' }
+  | { name: 'account'; returnTo?: string }
   | { name: 'review' }
   /**
    * News, and one story. Reached from the head of "More from town" on Today,
@@ -140,7 +141,18 @@ const TAB_OF: Partial<Record<Screen['name'], TabName>> = {
 export function App() {
   const [creations, setCreations] = useState<CreationSummary[] | null>(null)
   const [town, setTown] = useState({ id: '', name: 'Town Square', timezone: 'America/Chicago' })
-  const [screen, setScreen] = useState<Screen>({ name: 'today' })
+  const [screen, setScreenState] = useState<Screen>(() => readScreen([]))
+  const setScreen = (next: Screen) => {
+    if (next.name === 'account' && !next.returnTo && screen.name !== 'account') {
+      next = { ...next, returnTo: screenPath(screen) }
+    }
+    const path = screenPath(next)
+    if (path !== window.location.pathname + window.location.search) {
+      window.history.pushState(null, '', path)
+    }
+    setScreenState(next)
+    window.scrollTo({ top: 0, behavior: 'instant' })
+  }
   const [liveTitle, setLiveTitle] = useState<string | null>(null)
   const [account, setAccount] = useState<AccountView | null>(null)
   const [reporting, setReporting] = useState(false)
@@ -158,6 +170,7 @@ export function App() {
    */
   const [places, setPlaces] = useState<NearbyPayload | null>(null)
   const [placesLoading, setPlacesLoading] = useState(false)
+  const [allSearchDocs, setAllSearchDocs] = useState<SearchDoc[]>([])
 
   /**
    * Saved things, held here rather than in Yours.
@@ -170,8 +183,20 @@ export function App() {
   const [built, setBuilt] = useState<BuiltCreation[]>([])
 
   useEffect(() => {
-    void fetchCreations().then(setCreations)
-    void fetchTown().then(setTown)
+    const restore = () => {
+      setSearchOpen(false)
+      setScreenState(readScreen(creations ?? []))
+    }
+    // Creation metadata arriving must not close a search the resident just opened.
+    // Only a direct creation URL needs rehydration when its manifest arrives.
+    if (creations && window.location.pathname.startsWith('/creations/')) setScreenState(readScreen(creations))
+    window.addEventListener('popstate', restore)
+    return () => window.removeEventListener('popstate', restore)
+  }, [creations])
+
+  useEffect(() => {
+    void fetchCreations().then(setCreations, () => setCreations([]))
+    void fetchTown().then(setTown, () => undefined)
 
     // A cold API assembles the whole town on first request, so this can take a
     // few seconds. It is the only fetch on the critical path for the home
@@ -182,7 +207,7 @@ export function App() {
     // It is redeemed on the way in and the resident carries on where they were
     // going: an interstitial "you are signed in" page would be a click that
     // tells them what the header already says.
-    void resolveInitialAccount().then(setAccount)
+    void resolveInitialAccount().then(setAccount, () => setAccount(null))
   }, [])
 
   // The directory arrives on first search and never again. A failure leaves the
@@ -190,6 +215,7 @@ export function App() {
   useEffect(() => {
     if (!searchOpen || places || placesLoading) return
     setPlacesLoading(true)
+    void fetch('/api/search-index').then((response) => response.ok ? response.json() : []).then(setAllSearchDocs, () => undefined)
     void fetchNearby().then(
       (payload) => {
         setPlaces(payload)
@@ -213,10 +239,13 @@ export function App() {
       setBuilt([])
       return
     }
+    let current = true
     void fetchYours().then((yours) => {
+      if (!current) return
       setSaved(yours?.saves ?? [])
       setBuilt(yours?.built ?? [])
     }, () => undefined)
+    return () => { current = false }
   }, [account?.handle])
 
   /**
@@ -240,11 +269,12 @@ export function App() {
   const searchDocs: SearchDoc[] = useMemo(
     () =>
       mergeDocs(
+        allSearchDocs,
         places ? docsFromNearby(places) : [],
         today ? docsFromToday(today) : [],
         creations ? docsFromCreations(creations) : [],
       ),
-    [places, today, creations],
+    [places, today, creations, allSearchDocs],
   )
 
   // Moderation is a role held by a committee, so the entry point is gated on
@@ -287,6 +317,12 @@ export function App() {
           loading={placesLoading}
           townName={town.name}
           onOpenCreation={(slug) => openBySlug(slug, TAB_OF[screen.name] ?? 'today')}
+          onOpenItem={(doc) => {
+            setSearchOpen(false)
+            if (doc.kind === 'story') setScreen({ name: 'story', id: doc.id })
+            if (doc.kind === 'event') setScreen({ name: 'event', id: doc.id })
+            if (doc.kind === 'place') setScreen({ name: 'nearby', id: doc.id })
+          }}
           /*
             The dead end becomes an invitation. The person who just searched
             for the missing thing is the best-qualified person in town to add
@@ -313,6 +349,11 @@ export function App() {
       */
       return (
         <Directory
+          onContribute={() => setScreen({ name: 'contribute', startOpen: true })}
+          selectedId={screen.id}
+          initialMap={screen.map}
+          onMapChange={(map) => setScreen({ name: 'nearby', ...(map !== undefined ? { map } : {}) })}
+          onSelectPlace={(id) => setScreen({ name: 'nearby', ...(id ? { id } : {}), ...(screen.map !== undefined ? { map: screen.map } : {}) })}
           account={account}
           canReview={canReview}
           saved={saved}
@@ -327,6 +368,13 @@ export function App() {
     if (screen.name === 'yours') {
       return (
         <Yours
+          onContribute={() => setScreen({ name: 'contribute', startOpen: false })}
+          onOpenSaved={(save) => {
+            if (save.kind === 'business') setScreen({ name: 'nearby', id: save.refId })
+            else if (save.kind === 'story') setScreen({ name: 'story', id: save.refId })
+            else if (save.kind === 'event') setScreen({ name: 'event', id: save.refId })
+            else openBySlug(save.refId, 'yours')
+          }}
           account={account}
           canReview={canReview}
           town={town}
@@ -363,11 +411,23 @@ export function App() {
           onBrowseCreations={() => setScreen({ name: 'gallery' })}
           onOpenNews={() => setScreen({ name: 'news' })}
           onOpenEvents={() => setScreen({ name: 'events' })}
+          onOpenStory={(id) => setScreen({ name: 'story', id })}
+          onOpenEvent={(id) => setScreen({ name: 'event', id })}
+          onOpenPlace={(id) => setScreen({ name: 'nearby', id })}
+          onOpenMap={() => setScreen({ name: 'nearby', map: true })}
+          onOpenPlan={() => setScreen({ name: 'weekend' })}
+          onContribute={() => setScreen({ name: 'contribute', startOpen: true })}
           onTab={goToTab}
           onAccount={() => setScreen({ name: 'account' })}
           onReview={() => setScreen({ name: 'review' })}
         />
       )
+    }
+
+    if (screen.name === 'weekend') {
+      return <Weekend account={account} saved={saved} onSavedChange={setSaved}
+        onBack={() => setScreen({ name: 'today' })} onAccount={() => setScreen({ name: 'account' })}
+        onEvent={(id) => setScreen({ name: 'event', id })} onPlace={(id) => setScreen({ name: 'nearby', id })} />
     }
 
     if (screen.name === 'news') {
@@ -410,6 +470,7 @@ export function App() {
     if (screen.name === 'events') {
       return (
         <EventsScreen
+          onDayChange={(day) => setScreen({ name: 'events', day })}
           account={account}
           canReview={canReview}
           {...(screen.day ? { day: screen.day } : {})}
@@ -424,6 +485,7 @@ export function App() {
     if (screen.name === 'event') {
       return (
         <EventDetailScreen
+          onSignIn={() => setScreen({ name: 'account' })}
           id={screen.id}
           account={account}
           saved={saved}
@@ -453,8 +515,11 @@ export function App() {
       return (
         <AccountScreen
           account={account}
-          onAccountChange={setAccount}
-          onBack={() => setScreen({ name: 'today' })}
+          onAccountChange={(next) => {
+            setAccount(next)
+            if (next && screen.returnTo) setScreen(readScreen(creations ?? [], screen.returnTo))
+          }}
+          onBack={() => setScreen(readScreen(creations ?? [], screen.returnTo ?? '/'))}
         />
       )
     }
@@ -479,6 +544,8 @@ export function App() {
           />
 
           <Gallery
+            onOpenPlan={() => setScreen({ name: 'weekend' })}
+            onOpenMap={() => setScreen({ name: 'nearby', map: true })}
             creations={creations}
             townName={town.name}
             onOpen={(creation) => setScreen({ name: 'trust', creation, from: 'creations' })}
@@ -492,17 +559,15 @@ export function App() {
 
     if (screen.name === 'builder') {
       return (
-        <BuilderDoor
-          account={actingUser}
-          onBack={() => setScreen({ name: 'gallery' })}
-          onSignIn={() => setScreen({ name: 'account' })}
-          /*
-            Omitted rather than guessed while the catalogue is in flight. A
-            count that starts at zero and jumps is a number the page was not
-            entitled to yet.
-          */
-          {...(creations ? { creationCount: creations.length } : {})}
-        />
+        <main className="shell cr-screen">
+          <button className="secondary" onClick={() => setScreen({ name: 'gallery' })}>Back to creations</button>
+          <h1>What would make town better?</h1>
+          <p className="cr-lede">A guide to your favorite trail. A way to find a local table. A little tool that helps a neighbor.</p>
+          <p>Town Square is open source. The starter example shows how a small app can use the public directory while keeping resident information private.</p>
+          <p>Publishing new creations is not open in this preview yet. You can contribute now by helping correct a place listing.</p>
+          <button className="primary" onClick={() => setScreen({ name: 'contribute', startOpen: true })}>Suggest a correction</button>
+          <p><a href="https://github.com/tswic-highdesert/townsquare" target="_blank" rel="noopener noreferrer">Explore the open-source project</a></p>
+        </main>
       )
     }
 
@@ -557,4 +622,52 @@ const BACK_LABEL: Record<BackDestination, string> = {
   nearby: 'Nearby',
   creations: 'Creations',
   yours: 'Yours',
+}
+
+/** Every resident destination has a shareable URL and survives refresh. */
+function screenPath(screen: Screen): string {
+  switch (screen.name) {
+    case 'today': return '/'
+    case 'nearby': return `/places${screen.id ? `/${encodeURIComponent(screen.id)}` : ''}${screen.map === true ? '?view=map' : screen.map === false ? '?view=list' : ''}`
+    case 'yours': return '/saved'
+    case 'gallery': return '/creations'
+    case 'story': return `/news/${encodeURIComponent(screen.id)}`
+    case 'event': return `/events/${encodeURIComponent(screen.id)}${screen.from ? `?from=${encodeURIComponent(screen.from)}` : ''}`
+    case 'events': return `/events${screen.day ? `?day=${encodeURIComponent(screen.day)}` : ''}`
+    case 'contribute': return `/contribute${screen.startOpen ? '?new=1' : ''}`
+    case 'account': return `/account${screen.returnTo ? `?next=${encodeURIComponent(screen.returnTo)}` : ''}`
+    case 'trust': return `/creations/${encodeURIComponent(screen.creation.slug)}`
+    case 'detail': return `/creations/${encodeURIComponent(screen.creation.slug)}/about`
+    case 'running': return `/creations/${encodeURIComponent(screen.creation.slug)}/open`
+    default: return `/${screen.name}`
+  }
+}
+
+function readScreen(creations: CreationSummary[], path = window.location.href): Screen {
+  const url = new URL(path, window.location.origin)
+  let segments: string[]
+  try { segments = url.pathname.split('/').filter(Boolean).map(decodeURIComponent) }
+  catch { return { name: 'today' } }
+  const [section, id, action] = segments
+  if (section === 'places') return { name: 'nearby', ...(id ? { id } : {}), ...(url.searchParams.get('view') === 'map' ? { map: true } : url.searchParams.get('view') === 'list' ? { map: false } : {}) }
+  if (section === 'weekend') return { name: 'weekend' }
+  if (section === 'saved') return { name: 'yours' }
+  if (section === 'news') return id ? { name: 'story', id } : { name: 'news' }
+  if (section === 'events') {
+    if (id) return { name: 'event', id, ...(url.searchParams.get('from') ? { from: url.searchParams.get('from')! } : {}) }
+    const day = url.searchParams.get('day')
+    return { name: 'events', ...(day ? { day } : {}) }
+  }
+  if (section === 'contribute') return { name: 'contribute', startOpen: url.searchParams.has('new') }
+  if (section === 'account') {
+    const next = url.searchParams.get('next')
+    return { name: 'account', ...(next?.startsWith('/') && !next.startsWith('//') && !next.startsWith('/account') ? { returnTo: next } : {}) }
+  }
+  if (section === 'review' || section === 'builder') return { name: section }
+  if (section === 'creations') {
+    const creation = creations.find((item) => item.slug === id)
+    if (!creation) return { name: 'gallery' }
+    return { name: action === 'open' ? 'running' : action === 'about' ? 'detail' : 'trust', creation, from: 'creations' }
+  }
+  return { name: 'today' }
 }

@@ -82,7 +82,7 @@ export interface TodayPayload {
   neighbors: { featured: TodayCreation | null; rest: TodayCreation[] }
   cityHall: { notice: TodayNotice | null; items: TodayCivicItem[] }
   directory: TodayBusiness[]
-  footer: { updatedLabel: string; sourceCount: number; creationCount: number }
+  footer: { updatedLabel: string; sourceCount: number; creationCount: number; sourceNote?: string; sourceCheckedLabel?: string }
 }
 
 export async function fetchToday(): Promise<TodayPayload> {

@@ -1,13 +1,19 @@
 {
   "manifest_version": 1,
   "sdk": 1,
-  "name": "The Burrito Index",
-  "tagline": "Fourteen taquerias, ranked by whoever shows up",
-  "description": "Reads the town business directory and ranks the taquerias. Built to prove the whole path works end to end: no build step, no npm install, no network access, and everything it can reach is declared right here in this file.",
+  "name": "Lunch around town",
+  "tagline": "Find a local table, one place at a time",
+  "description": "A Town Square starter example that reads real public restaurant listings. Filter the list to find a place to try. This is a directory tool, not a ranking or an endorsement. It uses no identity, location, or private storage.",
   "version": "1.0.0",
-  "tags": ["food", "directory"],
+  "tags": [
+    "food",
+    "directory"
+  ],
   "entry": "index.html",
   "icon": "icon.png",
-  "display": { "surface": "full", "height": "auto" },
-  "permissions": { "identity": "handle", "storage": true }
+  "display": {
+    "surface": "full",
+    "height": "auto"
+  },
+  "permissions": {}
 }

@@ -21,7 +21,7 @@ import { join } from 'node:path'
 
 const r = (p: string) => fileURLToPath(new URL(p, import.meta.url))
 
-const SHELL_PORT = 5173
+const SHELL_PORT = Number(process.env['SHELL_PORT'] ?? 5173)
 const FONTS_DIR = r('../../packages/tokens/fonts')
 const BRAND_DIR = r('../../brand/png')
 const SPRITE_FILE = r('../../design/hifi-v2/icons.svg')
@@ -40,10 +40,10 @@ function fonts(): Plugin {
     configureServer(server) {
       server.middlewares.use('/fonts', (req, res, next) => {
         const name = (req.url ?? '').replace(/^\//, '').split('?')[0] ?? ''
-        if (!/^[a-z0-9-]{1,40}\.woff2$/.test(name)) return next()
+        if (!/^[a-z0-9-]{1,40}\.(?:woff2|ttf)$/.test(name)) return next()
         readFile(join(FONTS_DIR, name)).then(
           (bytes) => {
-            res.setHeader('Content-Type', 'font/woff2')
+            res.setHeader('Content-Type', name.endsWith('.ttf') ? 'font/ttf' : 'font/woff2')
             res.setHeader('Cache-Control', 'public, max-age=31536000, immutable')
             res.end(bytes)
           },

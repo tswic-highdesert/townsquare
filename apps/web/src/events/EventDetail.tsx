@@ -51,18 +51,21 @@ export interface EventDetailScreenProps {
   onBack: () => void
   onOpenEvent: (id: string) => void
   onOpenDay: (day: string) => void
+  onSignIn?: () => void
 }
 
 export function EventDetailScreen(props: EventDetailScreenProps) {
-  const [event, setEvent] = useState<EventDetailPayload | null | 'missing'>(null)
+  const [event, setEvent] = useState<EventDetailPayload | null | 'missing' | 'failed'>(null)
 
   useEffect(() => {
     setEvent(null)
     void fetchEvent(props.id).then(
       (next) => setEvent(next ?? 'missing'),
-      () => setEvent('missing'),
+      () => setEvent('failed'),
     )
   }, [props.id])
+
+  if (event === 'failed') return <div className="ev-detailscreen"><Back onBack={props.onBack} /><EmptyState mark="calendar" line="This event could not be loaded" sub="Please try again in a moment." action={{label: 'Try again', onAct: () => window.location.reload()}} /></div>
 
   if (event === 'missing') {
     return (
@@ -118,14 +121,20 @@ function Loaded(props: EventDetailScreenProps & { event: EventDetailPayload }) {
 
   const isSaved = props.saved.some((s) => s.kind === 'event' && s.refId === event.id)
 
+  const [saving, setSaving] = useState(false)
+  const [saveError, setSaveError] = useState(false)
   const toggleSave = async () => {
+    if (saving) return
+    setSaving(true)
+    setSaveError(false)
+    try {
     if (isSaved) {
       // Optimistic, then rolled back if it is refused. Same shape as the
       // bookmark on a Nearby row: a person pressing it twice is checking
       // whether it worked, and the friendly answer is also the true one.
       const before = props.saved
       props.onSavedChange(before.filter((s) => !(s.kind === 'event' && s.refId === event.id)))
-      if (!(await unsaveThing('event', event.id))) props.onSavedChange(before)
+      if (!(await unsaveThing('event', event.id))) { props.onSavedChange(before); setSaveError(true) }
       return
     }
     const save = await saveThing({
@@ -138,6 +147,8 @@ function Loaded(props: EventDetailScreenProps & { event: EventDetailPayload }) {
       ...(event.url ? { url: event.url } : {}),
     })
     if (save) props.onSavedChange([save, ...props.saved])
+    else setSaveError(true)
+    } catch { setSaveError(true) } finally { setSaving(false) }
   }
 
   return (
@@ -171,14 +182,17 @@ function Loaded(props: EventDetailScreenProps & { event: EventDetailPayload }) {
         </CardBody>
       </Card>
 
+      {saveError && <p className="problem" role="alert">Could not update your saves. Please try again.</p>}
       <div className="ev-actions">
+        {!props.account && props.onSignIn && <Button icon="bookmark" onClick={props.onSignIn}>Sign in to save this</Button>}
         {props.account && (
           <Button
             variant={isSaved ? 'secondary' : 'primary'}
             icon={isSaved ? 'bookmark-filled' : 'bookmark'}
+            disabled={saving}
             onClick={() => void toggleSave()}
           >
-            {isSaved ? 'Saved' : 'Save this'}
+            {saving ? 'Saving…' : isSaved ? 'Saved' : 'Save this'}
           </Button>
         )}
         {event.url && (

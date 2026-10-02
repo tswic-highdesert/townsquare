@@ -4,7 +4,7 @@ The deployed account path uses a handle and password. It sends no email. A new a
 
 ## Runtime and deployment
 
-Use Node 22.13 or newer (Node 24 is recommended for the deployment). The API uses the built-in `node:sqlite` module without a database dependency. Set `TOWNSQUARE_DB_PATH=/data/townsquare.sqlite` and mount a persistent Railway volume at `/data`. Run exactly one API replica. Do not use the container's temporary filesystem for the deployed database.
+Use Node 22.13 or newer (Node 24 is recommended for the deployment). The API uses the built-in `node:sqlite` module without a database dependency. Set `TOWNSQUARE_DB_PATH=/data/residents.sqlite` and mount a persistent Railway volume at `/data`. Run exactly one API replica. Do not use the container's temporary filesystem for the deployed database.
 
 The database uses WAL journaling, full synchronous commits, a five-second busy timeout, and owner-only file permissions. Startup creates additive tables and indexes. It never resets existing data. The existing Postgres service is untouched.
 
@@ -27,7 +27,7 @@ A resident can suggest a directory correction while unverified. It enters the mo
 First create the reviewer account through the ordinary account form. A server operator with deployment shell access can then run:
 
 ```sh
-TOWNSQUARE_DB_PATH=/data/townsquare.sqlite pnpm exec tsx apps/api/src/provisionReviewer.ts chosen-handle moderator
+TOWNSQUARE_DB_PATH=/data/residents.sqlite pnpm exec tsx apps/api/src/provisionReviewer.ts chosen-handle moderator
 ```
 
 The command changes only the role. It never grants verified residency or creates a credential. `user` can be passed in place of `moderator` to revoke review access. There is no HTTP role-grant route, environment password, shared demo login, or admin bypass.

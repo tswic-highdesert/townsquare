@@ -15,15 +15,12 @@
 import { randomBytes } from 'node:crypto'
 import { createServer, type IncomingMessage, type ServerResponse } from 'node:http'
 import {
-  ConsoleDelivery,
   Identity,
-  MemoryIdentityStore,
   parseSeedList,
   seedCohort,
 } from '@townsquare/identity'
 import { CreationStorage, MemoryStorageStore } from '@townsquare/storage'
-import { MemorySaveStore, Saves } from '@townsquare/saves'
-import { businesses } from '../../../packages/feed/src/data/businesses.js'
+import { Saves } from '@townsquare/saves'
 import { createNearbyRoutes } from './nearbyRoutes.js'
 import { createNewsRoutes } from './newsRoutes.js'
 import { createEventsRoutes } from './eventsRoutes.js'
@@ -31,28 +28,13 @@ import { createDirectoryRoutes } from './directoryRoutes.js'
 import { createSavesRoutes } from './savesRoutes.js'
 import { createTodayRoutes } from './todayRoutes.js'
 import type { TownSquareItem } from './today.js'
+import { loadContent, contentStatus, imageRoute } from './contentSource.js'
+import { staticFiles } from './staticFiles.js'
+import { LocalDatabase, databasePathForEnvironment, SqliteIdentityStore, SqliteSaveStore, SqliteContributionStore,
+  SqliteRecordStore, SqliteDraftStore, SqliteAttemptLog } from './persistence.js'
+import { PasswordAccounts, createAccountRoutes } from './accountRoutes.js'
+import { withApprovedCorrections } from './correctionOverlay.js'
 
-/**
- * The scrapers, loaded at runtime and invisible to `tsc`.
- *
- * `packages/feed`'s scrapers are checked under `tsconfig.ported.json`, which
- * turns off `noUncheckedIndexedAccess` for ~149 sites of unguarded regex-match
- * indexing. A static import here would pull all of that into this app's strict
- * graph and the typecheck would fail on code nobody in this change touched.
- *
- * The specifier is a variable rather than a literal so TypeScript does not
- * follow it. That is the whole trick, and it is deliberate: the boundary is the
- * point, and it disappears the day the scrapers are fixed per the debt note in
- * `tsconfig.ported.json`.
- */
-const FEED_MODULE = '../../../packages/feed/src/data/index.js'
-
-async function loadItems(): Promise<readonly TownSquareItem[]> {
-  const mod = (await import(FEED_MODULE)) as {
-    getAllItemsAsync: () => Promise<TownSquareItem[]>
-  }
-  return mod.getAllItemsAsync()
-}
 import { loadExampleCreations } from '../../sandbox/src/examples.js'
 import { MemoryMcpTokenStore } from '@townsquare/mcp'
 import {
@@ -69,10 +51,6 @@ import { BundleStorePublisher } from '@townsquare/sandbox'
 import {
   Contributions,
   Drafts,
-  MemoryAttemptLog,
-  MemoryContributionStore,
-  MemoryDraftStore,
-  MemoryRecordStore,
   NoListingOwners,
   NoOrganisations,
   type CorrectionField,
@@ -91,7 +69,7 @@ import { createReportRoutes } from './reportRoutes.js'
 import { createReviewRoutes } from './reviewRoutes.js'
 import { createIdentityRoutes } from './identityRoutes.js'
 
-const PORT = Number(process.env['API_PORT'] ?? 3030)
+const PORT = Number(process.env['PORT'] ?? process.env['API_PORT'] ?? 3030)
 const APPS_DOMAIN = process.env['APPS_DOMAIN'] ?? 'tsq-apps.localhost'
 const SANDBOX_PORT = Number(process.env['SANDBOX_PORT'] ?? 3031)
 const SHELL_ORIGIN = process.env['SHELL_ORIGIN'] ?? 'http://townsquare.localhost:5173'
@@ -101,6 +79,7 @@ const TOWN = { id: 'russellville-ar', name: 'Russellville', timezone: 'America/C
 
 /** A plain-http shell is development, by definition. Nothing else may assume it. */
 const IS_DEV = !SHELL_ORIGIN.startsWith('https://')
+const creationUrl = (key: string) => `${IS_DEV ? 'http' : 'https'}://${key}.${APPS_DOMAIN}${IS_DEV ? `:${SANDBOX_PORT}` : ''}`
 
 /**
  * The act token signing key.
@@ -119,12 +98,15 @@ if (!process.env['ACT_TOKEN_SECRET'] && !IS_DEV) {
 async function main(): Promise<void> {
   const store = await loadExampleCreations()
 
-  // Identity runs on the memory store until the API is pointed at Postgres.
-  // The interface is the same one the Drizzle implementation lands on, so the
-  // rules above it do not change when the storage does.
-  const identityStore = new MemoryIdentityStore()
-  const delivery = new ConsoleDelivery({ shellOrigin: SHELL_ORIGIN })
-  const identity = new Identity({ store: identityStore, delivery })
+  // Accounts and resident interactions commit to the persistent volume.
+  const db = new LocalDatabase(databasePathForEnvironment())
+  const records = new SqliteRecordStore(db)
+  const loadItems = withApprovedCorrections(loadContent, records, TOWN.id)
+  const identityStore = new SqliteIdentityStore(db)
+  const identity = new Identity({ store: identityStore, delivery: {
+    async deliver() { throw new Error('Email authentication is disabled. Use handle and password.') },
+  } })
+  const accountRoutes = createAccountRoutes({ identity, accounts: new PasswordAccounts(db, identityStore), shellOrigin: SHELL_ORIGIN })
 
   const seeded = await seedCohort(
     identityStore,
@@ -217,9 +199,9 @@ async function main(): Promise<void> {
    * they stop being.
    */
   const contributions = new Contributions({
-    contributions: new MemoryContributionStore(),
-    records: new MemoryRecordStore(),
-    attempts: new MemoryAttemptLog(),
+    contributions: new SqliteContributionStore(db),
+    records,
+    attempts: new SqliteAttemptLog(db),
     orgs: new NoOrganisations(),
     ownership: new NoListingOwners(),
     listings: {
@@ -233,8 +215,9 @@ async function main(): Promise<void> {
        * the directory is refused rather than applied to nothing.
        */
       async current(_townId: string, listingId: string, field: CorrectionField) {
-        const listing = businesses.find((b) => b.id === listingId)
+        const listing = (await loadItems()).find((b) => b.type === 'business' && b.id === listingId)
         if (!listing) return null
+        if (listing.type !== 'business') return null
         const label = listing.name ?? listing.title ?? listingId
         // "Closed for good" has no column in the scrape, so the value it is
         // correcting is the absence of one. Empty rather than null, because
@@ -253,7 +236,7 @@ async function main(): Promise<void> {
     },
   })
 
-  const drafts = new Drafts({ store: new MemoryDraftStore() })
+  const drafts = new Drafts({ store: new SqliteDraftStore(db) })
 
   const contributionRoutes = createContributionRoutes({
     identity,
@@ -326,16 +309,6 @@ async function main(): Promise<void> {
     shellOrigin: SHELL_ORIGIN,
     townId: TOWN.id,
     actSecret: ACT_SECRET,
-    // Handing the sign-in link straight back is a total account takeover, so
-    // it exists only where there is no account worth taking.
-    ...(IS_DEV
-      ? {
-          echoChallenge: (email: string) => {
-            const echoed = delivery.latestFor(email)
-            return echoed ? { url: echoed.url } : null
-          },
-        }
-      : {}),
   })
 
   // Today reads no cookie and is the same for every resident, so it is the one
@@ -343,6 +316,7 @@ async function main(): Promise<void> {
   // before anybody asks for it.
   const todayRoutes = createTodayRoutes({
     town: TOWN,
+    contentStatus,
     loadItems,
     listCreations: () =>
       store.list().map((c) => ({
@@ -350,10 +324,10 @@ async function main(): Promise<void> {
         name: c.name,
         tagline: c.manifest.tagline,
         description: c.manifest.description,
-        icon: `http://${c.originKey}.${APPS_DOMAIN}:${SANDBOX_PORT}/${c.manifest.icon}`,
+        icon: `${creationUrl(c.originKey)}/${c.manifest.icon}`,
         // No author. A manifest may not claim one — see the `author` refusal in
         // `packages/manifest` — and nothing has been through the review queue
-        // here to be attributed by the platform. The screen says "a neighbor".
+        // here to be attributed by the platform. The screen labels it a starter example.
         author: null,
       })),
   })
@@ -392,7 +366,7 @@ async function main(): Promise<void> {
   // above it changes when that stops being true.
   const savesRoutes = createSavesRoutes({
     identity,
-    saves: new Saves({ store: new MemorySaveStore() }),
+    saves: new Saves({ store: new SqliteSaveStore(db) }),
     // Ownership is real — `Creation.ownerId` is set at approval — so this is a
     // query rather than a placeholder. It is empty in development because
     // nothing here has been through the review queue, which is the same seam
@@ -417,6 +391,11 @@ async function main(): Promise<void> {
     res.setHeader('Vary', 'Origin')
 
     const url = new URL(req.url ?? '/', 'http://localhost')
+    if (url.pathname === '/healthz') {
+      res.writeHead(200, { 'Content-Type': 'application/json', 'Cache-Control': 'no-store' })
+      res.end(JSON.stringify({ ok: true, content: contentStatus() }))
+      return
+    }
 
     // Cookies are for the shell's own routes. A bridge call carries an act
     // token and nothing else, so it is never granted credentialed CORS — a
@@ -439,7 +418,10 @@ async function main(): Promise<void> {
     }
 
     // Anything holding a credential is decided first, and owns its own 404s.
-    void identityRoutes(req, res, url)
+    void staticFiles(req, res, url)
+      .then((handled) => (handled ? true : imageRoute(req, res, url)))
+      .then((handled) => (handled ? true : accountRoutes(req, res, url)))
+      .then((handled) => (handled ? true : identityRoutes(req, res, url)))
       .then((handled) => (handled ? true : connectRoutes(req, res, url)))
       .then((handled) => (handled ? true : reviewRoutes(req, res, url)))
       .then((handled) => (handled ? true : reportRoutes(req, res, url)))
@@ -452,22 +434,65 @@ async function main(): Promise<void> {
       .then((handled) => (handled ? true : eventsRoutes(req, res, url)))
       .then((handled) => (handled ? true : directoryRoutes(req, res, url)))
       .then((handled) => {
-        if (!handled) readRoutes(url, store, json)
+        if (!handled) return readRoutes(url, store, json, loadItems)
+      })
+      .catch((error: unknown) => {
+        console.error('Request failed', error instanceof Error ? error.message : 'unknown error')
+        if (!res.headersSent) json({ error: 'unavailable', message: 'Please try again shortly.' }, 503)
+        else res.end()
       })
   })
 
+  let stopping = false
+  const shutdown = (signal: string) => {
+    if (stopping) return
+    stopping = true
+    console.log(`${signal}: draining requests before closing the resident database`)
+    const timeout = setTimeout(() => {
+      console.warn('Shutdown drain timed out; closing remaining connections')
+      server.closeAllConnections()
+      db.close()
+      process.exit(1)
+    }, 25_000)
+    timeout.unref()
+    server.close((error) => {
+      clearTimeout(timeout)
+      db.close()
+      process.exit(error ? 1 : 0)
+    })
+    server.closeIdleConnections()
+  }
+  process.once('SIGTERM', () => shutdown('SIGTERM'))
+  process.once('SIGINT', () => shutdown('SIGINT'))
+
   server.listen(PORT, () => {
     console.log(`read api listening on http://localhost:${PORT}/api`)
-    if (IS_DEV) console.log('development: sign-in links are printed here and echoed to the shell')
+    console.log('accounts: handle and password; email delivery is disabled')
   })
 }
 
-function readRoutes(
+async function readRoutes(
   url: URL,
   store: Awaited<ReturnType<typeof loadExampleCreations>>,
   json: (body: unknown, status?: number) => void,
-): void {
+  loadItems: () => Promise<readonly TownSquareItem[]>,
+): Promise<void> {
   if (url.pathname === '/api/town') return json(TOWN)
+  if (url.pathname === '/api/search-index') {
+    const now = Date.now()
+    const sourceNames = new Map(sources.map((source) => [source.id, source.name]))
+    return json((await loadItems()).filter((item) =>
+      item.type === 'business' ||
+      (item.type === 'story' && Date.parse(item.publishedAt) > now - 30 * 86400_000) ||
+      (item.type === 'event' && Date.parse(item.endDate ?? item.startDate) > now - 86400_000)
+    ).map((item) => ({
+      id: item.id, kind: item.type === 'business' ? 'place' : item.type,
+      title: item.type === 'business' ? item.name : item.title,
+      detail: item.type === 'business' ? `${item.category} · ${item.address}` :
+        item.type === 'event' ? `${item.location} · ${new Date(item.startDate).toLocaleDateString('en-US', { timeZone: TOWN.timezone, month: 'short', day: 'numeric' })}` : sourceNames.get(item.source) ?? item.source,
+      href: item.url ?? null,
+    })))
+  }
 
   if (url.pathname === '/api/creations') {
     return json(
@@ -479,7 +504,7 @@ function readRoutes(
         description: c.manifest.description,
         tags: c.manifest.tags,
         manifest: c.manifest,
-        origin: `http://${c.originKey}.${APPS_DOMAIN}:${SANDBOX_PORT}`,
+        origin: creationUrl(c.originKey),
       })),
     )
   }
@@ -487,7 +512,7 @@ function readRoutes(
   if (url.pathname === '/api/businesses') {
     const limit = Math.min(200, Number(url.searchParams.get('limit') ?? 50) || 50)
     const tag = url.searchParams.get('tag')?.toLowerCase()
-    const items = businesses
+    const items = (await loadItems()).filter((item) => item.type === 'business')
       .filter(
         (b) =>
           !tag ||

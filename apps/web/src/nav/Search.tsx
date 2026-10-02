@@ -56,6 +56,7 @@ export interface SearchOverlayProps {
   loading: boolean
   /** The one kind of hit the shell can navigate to itself. */
   onOpenCreation: (slug: string) => void
+  onOpenItem?: (doc: SearchDoc) => void
   /** The way out of a dead end: add the thing the town is missing. */
   onAddSomething: () => void
   townName: string
@@ -113,7 +114,8 @@ export function SearchOverlay(props: SearchOverlayProps) {
       props.onOpenCreation(doc.slug)
       return
     }
-    if (doc.href) window.open(doc.href, '_blank', 'noopener,noreferrer')
+    if (props.onOpenItem) props.onOpenItem(doc)
+    else if (doc.href) window.open(doc.href, '_blank', 'noopener,noreferrer')
     props.onClose()
   }
 
@@ -267,14 +269,14 @@ export function SearchOverlay(props: SearchOverlayProps) {
                 onClick={() => follow(doc)}
                 /* A row with nowhere to go still reads and still says why,
                    rather than being a control that silently does nothing. */
-                disabled={!doc.href && !doc.slug}
+                disabled={!props.onOpenItem && !doc.href && !doc.slug}
               >
                 <Icon name={GLYPH[doc.kind]} size={20} className="ts-omni-ico" />
                 <span className="ts-omni-txt">
                   <span className="ts-omni-t">{doc.title}</span>
                   {doc.detail && <span className="ts-omni-s">{doc.detail}</span>}
                 </span>
-                {doc.href && !doc.slug && <Icon name="external" size={16} className="ts-omni-out" />}
+                {!props.onOpenItem && doc.href && !doc.slug && <Icon name="external" size={16} className="ts-omni-out" />}
               </button>
             ))}
             {group.total > PER_GROUP && group.hits.length === PER_GROUP && (
