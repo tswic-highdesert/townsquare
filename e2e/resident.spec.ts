@@ -151,6 +151,7 @@ test('Today details, search, direct-link refresh, browser back and town map use 
   await screenshot(page, testInfo, 'place-detail')
   await page.reload()
   await expect(page.getByRole('dialog', { name: place.name, exact: true })).toBeVisible()
+  await expect(page.getByRole('dialog', { name: place.name, exact: true }).getByRole('heading', { name: place.name, exact: true })).toBeFocused()
   await page.keyboard.press('Escape')
   await expect(page.getByRole('dialog', { name: place.name, exact: true })).toBeHidden()
   await page.goto('/places?view=map')
