@@ -77,6 +77,25 @@ test('moderator reads a real correction and declines with a durable note, then l
     await expect(moderator.getByRole('heading', { name: 'Correction declined', exact: true })).toBeVisible()
     await expect(moderator.getByText(competingNote, { exact: true })).toBeVisible()
     await expect(moderator.getByRole('button', { name: 'Approve correction', exact: true })).toHaveCount(0)
+    if (process.env['TOWNSQUARE_REVIEW_MODE'] === 'local') {
+      // Exercise the approval-note UI on the isolated local database without
+      // publishing artificial activity to the real deployment.
+      const approval = await page.request.post('/api/contributions', { headers: { Origin: baseURL! }, data: { type: 'correction', content: { targetRef: place.id, targetLabel: place.name, field: 'name', beforeValue: place.name, newValue: place.name, reason: 'Local approval-note regression. The public value is unchanged.' } } })
+      expect(approval.ok()).toBe(true)
+      const approvalId = (await approval.json()).contribution.id
+      await moderator.goto('/review')
+      await moderator.getByRole('button').filter({ hasText: `@${resident}` }).click()
+      const approvedNote = 'The existing name is confirmed. This approval note must remain visible to its author.'
+      await moderator.getByRole('textbox', { name: 'Note to the neighbor', exact: true }).fill(approvedNote)
+      await moderator.getByRole('button', { name: 'Approve correction', exact: true }).click()
+      await expect(moderator.getByRole('heading', { name: 'Correction published', exact: true })).toBeVisible()
+      await page.goto('/contribute')
+      await expect(page.getByText(approvedNote, { exact: true })).toBeVisible()
+      await page.reload()
+      await expect(page.getByText(approvedNote, { exact: true })).toBeVisible()
+      expect((await (await page.request.get('/api/contributions')).json()).contributions.find((row: { id: string }) => row.id === approvalId)).toMatchObject({ status: 'published', decisionNote: approvedNote })
+    }
+
 
   } finally {
     if (promoted) {
