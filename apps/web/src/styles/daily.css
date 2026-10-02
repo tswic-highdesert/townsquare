@@ -178,3 +178,11 @@
  .ts-shell .today.today > .yours-signedout { margin: 0; padding: 64px 48px 64px 8px; }
  .ts-shell[data-view='yours'] .today.today > .today-section { max-width: 1000px; padding: 32px 40px 0 8px; }
 }
+
+.daily-plan-teaser { margin-top: 32px; padding: 28px; border-radius: 16px; background: var(--ts-navy); color: var(--ts-cream); }
+.daily-plan-teaser > svg { float: right; opacity: .65; margin-left: 14px; }
+.daily-plan-teaser .daily-kicker { color: var(--ts-mint, #cbe2d0); }
+.daily-plan-teaser h3 { margin: 10px 0; font-size: clamp(25px,2.2vw,32px); line-height: 1.15; letter-spacing: -.035em; }
+.daily-plan-teaser p { max-width: 29ch; margin: 12px 0 20px; color: inherit; opacity: .88; font-size: 15px; line-height: 1.6; }
+.daily-plan-teaser .daily-button { background: var(--ts-cream); color: var(--ts-navy); }
+.daily-plan-teaser .daily-text-button { display: flex; margin-top: 12px; color: var(--ts-cream); }

@@ -1,12 +1,12 @@
 # Town Square
 
-A community wide application for a town. It aggregates news, events and notices,
-makes the town's businesses, articles and podcasts discoverable, and lets any
-resident **build their own mini-app and link it into the infrastructure**.
+Town Square connects Russellville and the Arkansas River Valley through local stories, events, places and useful small apps.
 
-Open source, so any community can adopt it and adapt it.
+The live preview includes real local feeds, a town map, a day planner, handle/password accounts, persistent saves and reviewed directory corrections. The starter creation uses real public listings and is clearly labeled as an example. Resident app publishing is not open yet.
 
-Start with [VISION.md](VISION.md).
+**[Open the live preview](https://townsquare-live-production.up.railway.app)** · [Setup and deployment](docs/execution-2026-10-01/deployment.md) · [Accounts and persistence](docs/persistence-and-accounts.md) · [Design evidence](docs/execution-2026-10-01/design.md)
+
+The code is MIT-licensed; this repository is currently private. [VISION.md](VISION.md) describes the longer-term community platform, including capabilities beyond this preview.
 
 ## The idea in one paragraph
 
