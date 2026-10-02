@@ -1,9 +1,14 @@
+import sharp from 'sharp'
 import { mkdir, readFile, rename, writeFile } from 'node:fs/promises'
 import { join } from 'node:path'
 import type { IncomingMessage, ServerResponse } from 'node:http'
 import type { TownSquareItem } from './today.js'
 import { isLocalEvent } from './localEvents.js'
 import { retainMissingSources, summarizeContent, type FeedHealth } from './contentFreshness.js'
+
+// Image work stays small on the preview's shared CPU and memory budget.
+sharp.concurrency(1)
+sharp.cache({ memory: 16, files: 0, items: 20 })
 
 const FEED_MODULE = '../../../packages/feed/src/data/index.js'
 const CACHE_DIR = process.env['DATA_DIR'] ?? '/tmp/townsquare-data'
@@ -114,7 +119,9 @@ export async function imageRoute(req: IncomingMessage, res: ServerResponse, url:
   const source = upstreamImages.get(id)
   if (!source) { res.writeHead(404); res.end(); return true }
   try {
-    let photo = photoCache.get(source)
+    const width = url.searchParams.get('w') === '640' ? 640 : 1000
+    const cacheKey = `${source}:${width}`
+    let photo = photoCache.get(cacheKey)
     if (!photo) {
       const response = await fetch(source, { signal: AbortSignal.timeout(12000), redirect: 'error' })
       const type = response.headers.get('content-type')?.split(';')[0] ?? ''
@@ -131,9 +138,10 @@ export async function imageRoute(req: IncomingMessage, res: ServerResponse, url:
         if (length > 5_000_000) { await reader.cancel(); throw new Error('Photo too large') }
         chunks.push(chunk.value)
       }
-      photo = { bytes: Buffer.concat(chunks), type }
+      photo = { bytes: await sharp(Buffer.concat(chunks), { limitInputPixels: 20_000_000 })
+        .rotate().resize({ width, withoutEnlargement: true }).webp({ quality: 78 }).toBuffer(), type: 'image/webp' }
       if (photoCache.size >= 16) photoCache.delete(photoCache.keys().next().value ?? '')
-      photoCache.set(source, photo)
+      photoCache.set(cacheKey, photo)
     }
     res.writeHead(200, { 'Content-Type': photo.type, 'Cache-Control': 'public, max-age=3600', 'X-Content-Type-Options': 'nosniff' })
     res.end(photo.bytes)

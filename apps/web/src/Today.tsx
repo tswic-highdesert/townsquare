@@ -41,7 +41,7 @@ function StoryImage({ story, lead = false }: { story: TodayStory; lead?: boolean
   const [portrait, setPortrait] = useState(false)
   const show = story.imageUrl && !failed
   return <span className={`daily-media${lead ? ' daily-media-lead' : ''}`} data-portrait={portrait || undefined}>
-    {show ? <><img src={story.imageUrl!} alt="" loading={lead ? 'eager' : 'lazy'} onLoad={e => setPortrait(e.currentTarget.naturalWidth / e.currentTarget.naturalHeight < .9)} onError={() => setFailed(true)} /><span className="daily-credit">Photo: {story.source}</span></>
+    {show ? <><img src={story.imageUrl!} srcSet={`${story.imageUrl}?w=640 640w, ${story.imageUrl}?w=1000 1000w`} sizes={lead ? "(max-width: 700px) 100vw, 800px" : "(max-width: 700px) 100vw, 350px"} fetchPriority={lead ? "high" : "auto"} decoding="async" alt="" loading={lead ? 'eager' : 'lazy'} onLoad={e => setPortrait(e.currentTarget.naturalWidth / e.currentTarget.naturalHeight < .9)} onError={() => setFailed(true)} /><span className="daily-credit">Photo: {story.source}</span></>
       : <span className="daily-source-art"><Icon name="newspaper" size={30} /><span>{story.source}</span><small>From our local sources</small></span>}
   </span>
 }
