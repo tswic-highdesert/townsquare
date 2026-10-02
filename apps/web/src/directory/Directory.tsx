@@ -414,6 +414,7 @@ export function Directory(props: DirectoryProps) {
             setView({ name: 'home' })
           }}
           onCategory={(category) => setView({ name: 'category', category })}
+          onGroup={(id) => setView(id ? { name: 'group', id } : { name: 'all' })}
           bounds={payload.bounds}
           streets={payload.streets}
           onMap={onMap}
@@ -652,6 +653,7 @@ function GroupLanding({
   onLayout,
   onBack,
   onCategory,
+  onGroup,
   bounds,
   streets,
   onMap,
@@ -682,6 +684,7 @@ function GroupLanding({
   onPin: (place: RankedPlace | null) => void
   onBack: () => void
   onCategory: (category: string) => void
+  onGroup: (id: GroupId | null) => void
   savedRefs: Set<string>
   canSave: boolean
   onToggleSave: (place: RankedPlace) => void
@@ -796,6 +799,10 @@ function GroupLanding({
         </div>
       )}
 
+      {onMap && <div className="dir-chips dir-chips-inset" aria-label="Map place categories">
+        <button className="dir-chip" aria-pressed={view.name === 'all'} onClick={() => onGroup(null)}>All places</button>
+        {payload.groups.map(item => <button key={item.id} className="dir-chip" aria-pressed={view.name === 'group' && view.id === item.id} onClick={() => onGroup(item.id)}><Icon name={GROUP_ICON[item.id]} size={16} />{item.label}</button>)}
+      </div>}
       {onMap && bounds ? (
         <div className="dir-mapview" data-pinned={pinned ? '' : undefined}>
           {/*

@@ -1460,3 +1460,9 @@
  .dir-mapview[data-pinned] .map { height:100%; }
  .dir-mapview .dir-mapcard { padding-top:8px; }
 }
+
+.dir .dir-chip[aria-pressed='true'] {
+  background: var(--ts-navy);
+  color: var(--ts-cream);
+  border-color: var(--ts-navy);
+}
