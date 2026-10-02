@@ -1,0 +1,10 @@
+[out:json][timeout:90][bbox:35.20,-93.30,35.36,-93.03];
+(
+  way[highway~"^(motorway|motorway_link|trunk|trunk_link|primary|primary_link|secondary|secondary_link|tertiary|tertiary_link|residential|unclassified|living_street)$"];
+  way[waterway~"^(river|stream|canal)$"];
+  way[natural=water];
+  relation[natural=water];
+  way[leisure~"^(park|nature_reserve|recreation_ground)$"];
+  relation[leisure~"^(park|nature_reserve|recreation_ground)$"];
+);
+out tags geom;
