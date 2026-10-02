@@ -380,3 +380,165 @@ test('a delayed saves response cannot cross a sign-out and account switch', asyn
   await expect(page.getByRole('button', { name: place.name, exact: true })).toHaveCount(0)
   expect((await (await page.request.get('/api/yours')).json()).saves).toEqual([])
 })
+
+test('contribution network failures preserve text and never hide a confirmed submission', async ({ page, baseURL }, testInfo) => {
+  test.skip(!baseURL?.startsWith('http://127.0.0.1:'), 'Failure injection submits only to the isolated local database')
+  const errors: string[] = []
+  page.on('pageerror', error => errors.push(error.message))
+  const handle = `qa_${Date.now().toString(36)}_${randomBytes(2).toString('hex')}`
+  await page.goto('/account')
+  await page.getByRole('button', { name: 'New here? Create an account' }).click()
+  await page.getByLabel('Handle', { exact: true }).fill(handle)
+  await page.getByLabel('Password', { exact: true }).fill(randomBytes(24).toString('base64url'))
+  await page.getByRole('button', { name: 'Create my account' }).click()
+  await expect(page.getByRole('heading', { name: `@${handle}`, exact: true })).toBeVisible()
+  const directory = await (await page.request.get('/api/directory')).json()
+  const place = directory.places[0]
+  let failDraft = true
+  let failSubmit = true
+  let failDiscard = true
+  let failWithdraw = true
+  await page.route('**/api/drafts', route => failDraft ? route.abort('failed') : route.continue())
+  await page.route('**/api/contributions', route => failSubmit && route.request().method() === 'POST' ? route.abort('failed') : route.continue())
+  await page.route('**/api/drafts/*/discard', route => failDiscard ? route.abort('failed') : route.continue())
+  await page.route('**/api/contributions/*/withdraw', route => failWithdraw ? route.abort('failed') : route.continue())
+  await page.goto('/contribute?new=1')
+  await page.getByRole('button', { name: /A correction/ }).click()
+  await page.getByRole('combobox', { name: 'Which listing' }).fill(place.name)
+  await page.getByRole('option').filter({ hasText: place.name }).first().click()
+  await page.getByRole('button', { name: 'Name', exact: true }).click()
+  await page.getByLabel('Corrected value', { exact: true }).fill(place.name)
+  const reason = 'Local network-failure regression only; no changed public fact.'
+  await page.getByLabel('How do you know', { exact: true }).fill(reason)
+  await expect(page.getByRole('status').filter({ hasText: 'Not saved — keep this page open' })).toBeVisible()
+  await expect(page.getByText('Saved on this phone', { exact: true })).toHaveCount(0)
+  await page.getByRole('button', { name: 'Send correction', exact: true }).click()
+  await expect(page.getByRole('alert')).toContainText('We could not confirm your submission')
+  await expect(page.getByLabel('Corrected value', { exact: true })).toHaveValue(place.name)
+  await expect(page.getByLabel('How do you know', { exact: true })).toHaveValue(reason)
+  expect((await (await page.request.get('/api/contributions')).json()).contributions).toEqual([])
+  await screenshot(page, testInfo, 'unsaved-correction-retained')
+  failDraft = false
+  await page.getByRole('button', { name: 'Save draft', exact: true }).click()
+  await expect(page.locator('.cn-save')).toHaveText('Saved')
+  const before = await (await page.request.get('/api/contributions')).json()
+  expect(before.drafts).toHaveLength(1)
+  const draftId = before.drafts[0].id
+  failSubmit = false
+  await page.getByRole('button', { name: 'Send correction', exact: true }).click()
+  await expect(page.getByText('A moderator has this.', { exact: true })).toBeVisible()
+  await expect(page.getByRole('alert')).toContainText('Your submission was sent, but its draft could not be removed')
+  const submitted = await (await page.request.get('/api/contributions')).json()
+  expect(submitted.contributions).toHaveLength(1)
+  const contributionId = submitted.contributions[0].id
+  expect(submitted.contributions[0].status).toBe('queued')
+  expect(submitted.drafts.some((draft: { id: string }) => draft.id === draftId)).toBe(true)
+  await screenshot(page, testInfo, 'confirmed-submission-cleanup-failed')
+  await page.getByRole('button', { name: 'Back', exact: true }).last().click()
+  await page.getByRole('button', { name: 'Withdraw it', exact: true }).click()
+  await expect(page.getByRole('alert')).toContainText('We could not confirm the withdrawal')
+  await expect(page.getByText('Being read', { exact: true })).toBeVisible()
+  failWithdraw = false
+  await page.getByRole('button', { name: 'Withdraw it', exact: true }).click()
+  await expect(page.getByText('Withdrawn', { exact: true })).toBeVisible()
+  await page.getByRole('button', { name: /1 draft, not posted yet/ }).click()
+  await page.getByRole('button', { name: /^Throw away / }).click()
+  await page.getByRole('button', { name: 'Throw it away', exact: true }).click()
+  await expect(page.getByRole('alert')).toContainText('We could not confirm that the draft was removed')
+  await expect(page.getByRole('button', { name: /^Throw away / })).toHaveCount(1)
+  failDiscard = false
+  await page.getByRole('button', { name: /^Throw away / }).click()
+  await page.getByRole('button', { name: 'Throw it away', exact: true }).click()
+  await expect(page.getByRole('button', { name: /^Throw away / })).toHaveCount(0)
+  const after = await (await page.request.get('/api/contributions')).json()
+  expect(after.drafts).toEqual([])
+  expect(after.contributions.find((row: { id: string }) => row.id === contributionId).status).toBe('withdrawn')
+  expect(errors).toEqual([])
+})
+
+test('a delayed autosave cannot overwrite newer text or recreate a submitted draft', async ({ page, baseURL }) => {
+  test.skip(!baseURL?.startsWith('http://127.0.0.1:'), 'Submits only to the isolated local database')
+  const handle = `qa_${Date.now().toString(36)}_${randomBytes(2).toString('hex')}`
+  await page.goto('/account')
+  await page.getByRole('button', { name: 'New here? Create an account' }).click()
+  await page.getByLabel('Handle', { exact: true }).fill(handle)
+  await page.getByLabel('Password', { exact: true }).fill(randomBytes(24).toString('base64url'))
+  await page.getByRole('button', { name: 'Create my account' }).click()
+  await expect(page.getByRole('heading', { name: `@${handle}`, exact: true })).toBeVisible()
+  const directory = await (await page.request.get('/api/directory')).json()
+  const place = directory.places[0]
+  let release!: () => void
+  let captured!: () => void
+  const hold = new Promise<void>(resolve => { release = resolve })
+  const pending = new Promise<void>(resolve => { captured = resolve })
+  let first = true
+  let draftWrites = 0
+  await page.route('**/api/drafts', async route => {
+    draftWrites += 1
+    const response = await route.fetch()
+    if (first) {
+      first = false
+      captured()
+      await hold
+    }
+    await route.fulfill({ response })
+  })
+  await page.goto('/contribute?new=1')
+  await page.getByRole('button', { name: /A correction/ }).click()
+  await page.getByRole('combobox', { name: 'Which listing' }).fill(place.name)
+  await page.getByRole('option').filter({ hasText: place.name }).first().click()
+  await page.getByRole('button', { name: 'Name', exact: true }).click()
+  await page.getByLabel('Corrected value', { exact: true }).fill(place.name)
+  await page.getByLabel('How do you know', { exact: true }).fill('First local draft text; no data change.')
+  await pending
+  const latest = 'Latest local text must be submitted even while an older autosave is delayed.'
+  await page.getByLabel('How do you know', { exact: true }).fill(latest)
+  // Wait for the newer debounced save to queue behind the held server response.
+  await expect(page.locator('.cn-save')).toHaveText('Saving')
+  expect(draftWrites).toBe(1)
+  const submitted = page.waitForResponse(response => response.url().endsWith('/api/contributions') && response.request().method() === 'POST')
+  await page.getByRole('button', { name: 'Send correction', exact: true }).click()
+  const result = await (await submitted).json()
+  expect(result.contribution.content.reason).toBe(latest)
+  await expect(page.getByText('A moderator has this.', { exact: true })).toBeVisible()
+  release()
+  await expect.poll(async () => (await (await page.request.get('/api/contributions')).json()).drafts.length).toBe(0)
+  expect(draftWrites).toBe(1)
+  await page.request.post(`/api/contributions/${result.contribution.id}/withdraw`, { headers: { Origin: baseURL! }, data: {} })
+})
+
+test('aborted contribution requests show unsaved text without creating a public submission', async ({ page }, testInfo) => {
+  const errors: string[] = []
+  page.on('pageerror', error => errors.push(error.message))
+  const handle = `qa_${Date.now().toString(36)}_${randomBytes(2).toString('hex')}`
+  await page.goto('/account')
+  await page.getByRole('button', { name: 'New here? Create an account' }).click()
+  await page.getByLabel('Handle', { exact: true }).fill(handle)
+  await page.getByLabel('Password', { exact: true }).fill(randomBytes(24).toString('base64url'))
+  await page.getByRole('button', { name: 'Create my account' }).click()
+  await expect(page.getByRole('heading', { name: `@${handle}`, exact: true })).toBeVisible()
+  const directory = await (await page.request.get('/api/directory')).json()
+  const place = directory.places[0]
+  await page.route('**/api/drafts', route => route.abort('failed'))
+  await page.route('**/api/contributions', route => route.request().method() === 'POST' ? route.abort('failed') : route.continue())
+  await page.goto('/contribute?new=1')
+  await page.getByRole('button', { name: /A correction/ }).click()
+  await page.getByRole('combobox', { name: 'Which listing' }).fill(place.name)
+  await page.getByRole('option').filter({ hasText: place.name }).first().click()
+  await page.getByRole('button', { name: 'Name', exact: true }).click()
+  await page.getByLabel('Corrected value', { exact: true }).fill(place.name)
+  const reason = 'Network failure check. The browser blocks this submission before it reaches the service.'
+  await page.getByLabel('How do you know', { exact: true }).fill(reason)
+  await expect(page.locator('.cn-save')).toHaveText('Not saved — keep this page open')
+  await page.getByRole('button', { name: 'Send correction', exact: true }).click()
+  await expect(page.getByRole('alert')).toContainText('We could not confirm your submission')
+  await expect(page.getByLabel('How do you know', { exact: true })).toHaveValue(reason)
+  await expect(page.getByLabel('Corrected value', { exact: true })).toHaveValue(place.name)
+  await page.getByRole('button', { name: 'Save draft', exact: true }).click()
+  await expect(page.locator('.cn-save')).toHaveText('Not saved — keep this page open')
+  const mine = await (await page.request.get('/api/contributions')).json()
+  expect(mine.contributions).toEqual([])
+  expect(mine.drafts).toEqual([])
+  await screenshot(page, testInfo, 'network-failure-keeps-correction-text')
+  expect(errors).toEqual([])
+})

@@ -37,6 +37,7 @@ import {
   submit,
   withdraw,
   type ContributeOptions,
+  type ContributeError,
   type Contribution,
   type ContributionType,
   type Draft,
@@ -116,13 +117,19 @@ export function ContributeScreen(props: ContributeScreenProps) {
   const [view, setView] = useState<View>({ at: 'mine' })
   const [chooser, setChooser] = useState(props.startOpen ?? false)
   const [drafts, setDrafts] = useState<Drafts>(EMPTY_DRAFTS)
-  const [draftId, setDraftId] = useState<string | null>(null)
+  const draftId = useRef<string | null>(null)
+  const composerGeneration = useRef(0)
+  const pendingSave = useRef<Promise<Draft | ContributeError | null> | null>(null)
+  const publishingRef = useRef(false)
+  const [publishing, setPublishing] = useState(false)
+  const [actionProblem, setActionProblem] = useState<string | null>(null)
   const [save, setSave] = useState<SaveState>('idle')
+  const [saveAttempt, setSaveAttempt] = useState(0)
   const [problem, setProblem] = useState<string | null>(null)
   const [paused, setPaused] = useState<string | null>(null)
   const [discarding, setDiscarding] = useState<Draft | null>(null)
 
-  const reload = useCallback(async () => {
+  const reload = useCallback(async (initial = false) => {
     try {
       const [opts, list] = await Promise.all([fetchOptions(), fetchMine()])
       if (opts === null || list === null) {
@@ -132,12 +139,13 @@ export function ContributeScreen(props: ContributeScreenProps) {
       setOptions(opts)
       setMine(list)
     } catch {
-      setFailed(true)
+      if (initial) setFailed(true)
+      else setActionProblem('The latest status could not be loaded. Your confirmed submission is unchanged. Try again in a moment.')
     }
   }, [])
 
   useEffect(() => {
-    void reload()
+    void reload(true)
   }, [reload])
 
   const type = view.at === 'composing' ? view.type : null
@@ -152,23 +160,34 @@ export function ContributeScreen(props: ContributeScreenProps) {
    */
   const saveTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
   useEffect(() => {
-    if (type === null || content === null) return
+    if (type === null || content === null || publishing) return
+    let active = true
+    const generation = composerGeneration.current
+    setSave('idle')
     if (saveTimer.current) clearTimeout(saveTimer.current)
     saveTimer.current = setTimeout(() => {
       setSave('saving')
-      void saveDraft({ id: draftId, type, content }).then((result) => {
-        if (isError(result)) {
-          setSave('offline')
-          return
-        }
-        setDraftId(result.id)
-        setSave('saved')
-      })
+      const previous = pendingSave.current
+      // Serialize writes so a slower, older save cannot overwrite newer text.
+      const request = (async () => {
+        const previousResult = await previous?.catch(() => null)
+        if (!active || generation !== composerGeneration.current || publishingRef.current) return previousResult ?? null
+        const result = await saveDraft({ id: draftId.current, type, content })
+        // Keep an assigned ID even when newer typing superseded this response.
+        if (!isError(result) && generation === composerGeneration.current) draftId.current = result.id
+        return result
+      })()
+      pendingSave.current = request
+      void request.then((result) => {
+        if (!active || result === null) return
+        setSave(isError(result) ? 'offline' : 'saved')
+      }, () => { if (active) setSave('offline') })
     }, 1200)
     return () => {
+      active = false
       if (saveTimer.current) clearTimeout(saveTimer.current)
     }
-  }, [type, content, draftId])
+  }, [type, content, publishing, saveAttempt])
 
   if (signedOut) {
     return (
@@ -200,22 +219,28 @@ export function ContributeScreen(props: ContributeScreenProps) {
 
   function openComposer(next: ContributionType) {
     setChooser(false)
+    setActionProblem(null)
     setProblem(null)
     setPaused(null)
-    setDraftId(null)
+    composerGeneration.current += 1
+    draftId.current = null
     setSave('idle')
     setDrafts(EMPTY_DRAFTS)
     setView({ at: 'composing', type: next })
   }
 
   async function publish() {
-    if (type === null || content === null) return
+    if (type === null || content === null || publishingRef.current) return
     const missing = missingFor(type, drafts)
     if (missing) {
       setProblem(missing)
       return
     }
     setProblem(null)
+    setActionProblem(null)
+    publishingRef.current = true
+    setPublishing(true)
+    if (saveTimer.current) clearTimeout(saveTimer.current)
 
     /**
      * Publish what is on screen, never the last autosave.
@@ -232,26 +257,54 @@ export function ContributeScreen(props: ContributeScreenProps) {
      * The draft is scratch space; the composer is the truth. So the content
      * goes up as it stands and the draft is thrown away afterwards.
      */
+    const generation = composerGeneration.current
+    const savingDraft = pendingSave.current
+    const existingDraftId = draftId.current
     const result = await submit({ type, content })
     if (isError(result)) {
       // The pause is its own screen rather than an error line, because it is
       // not a refusal and should not read as one.
       if (result.error === 'paused') setPaused(result.message)
       else setProblem(result.message)
+      publishingRef.current = false
+      setPublishing(false)
       return
     }
-    // Only once the proposal exists: a draft deleted before the submit landed
-    // is work lost to a network blip. Awaited rather than fired off, because
-    // the reload underneath reads the drafts list and a racing discard leaves
-    // "1 draft, not posted yet" sitting under something that just went live.
-    if (draftId) await discardDraft(draftId)
-    setDraftId(null)
+    // Submission is already confirmed. Cleanup cannot turn it into a failure.
     setView({ at: 'outcome', result })
+    const savedResult = await savingDraft?.catch(() => null)
+    const savedDraft = (generation === composerGeneration.current ? draftId.current : null)
+      ?? (savedResult && !isError(savedResult) ? savedResult.id : existingDraftId)
+    if (generation === composerGeneration.current) draftId.current = null
+    if (savedDraft && !await discardDraft(savedDraft)) {
+      setActionProblem('Your submission was sent, but its draft could not be removed. Check Drafts before sending it again.')
+    }
+    publishingRef.current = false
+    setPublishing(false)
     void reload()
   }
 
+  async function withdrawContribution(id: string) {
+    setActionProblem(null)
+    const result = await withdraw(id)
+    if (isError(result)) setActionProblem(result.message)
+    else await reload()
+  }
+
+  async function discardSavedDraft(target: Draft) {
+    setActionProblem(null)
+    if (await discardDraft(target.id)) {
+      setDiscarding(null)
+      await reload()
+    } else {
+      setDiscarding(null)
+      setActionProblem('We could not confirm that the draft was removed. It is still shown here; try again.')
+    }
+  }
+
   async function resume(draft: Draft) {
-    setDraftId(draft.id)
+    composerGeneration.current += 1
+    draftId.current = draft.id
     setDrafts(resumeInto(draft, EMPTY_DRAFTS))
     setSave('saved')
     setView({ at: 'composing', type: draft.type })
@@ -262,6 +315,7 @@ export function ContributeScreen(props: ContributeScreenProps) {
 
   return (
     <Shell onBack={view.at === 'mine' ? props.onBack : () => setView({ at: 'mine' })}>
+      {actionProblem && <p className="cn-problem" role="alert">{actionProblem}</p>}
       {view.at === 'mine' ? (
         <>
           <div className="cn-mine-head-row">
@@ -293,7 +347,7 @@ export function ContributeScreen(props: ContributeScreenProps) {
                 <ContributionRow
                   key={c.id}
                   contribution={c}
-                  onWithdraw={(id) => void withdraw(id).then(() => void reload())}
+                  onWithdraw={(id) => void withdrawContribution(id)}
                   onHistory={(recordId) => setView({ at: 'history', recordId })}
                 />
               ))}
@@ -340,10 +394,12 @@ export function ContributeScreen(props: ContributeScreenProps) {
           attribution={attribution}
           handle={handle}
           save={save}
+          publishing={publishing}
           notice={mine.notice}
           problem={problem}
           onBack={() => setView({ at: 'mine' })}
           onPublish={() => void publish()}
+          onSaveDraft={() => setSaveAttempt(value => value + 1)}
           onPick={openComposer}
         />
       ) : null}
@@ -383,8 +439,7 @@ export function ContributeScreen(props: ContributeScreenProps) {
               variant="destructive"
               onClick={() => {
                 const target = discarding
-                setDiscarding(null)
-                if (target) void discardDraft(target.id).then(() => void reload())
+                if (target) void discardSavedDraft(target)
               }}
             >
               Throw it away
@@ -415,10 +470,12 @@ function Composer(props: {
   attribution: ReturnType<typeof handleOf> extends never ? never : Contribution['attribution'] | null
   handle: string | null
   save: SaveState
+  publishing: boolean
   notice: string | null
   problem: string | null
   onBack: () => void
   onPublish: () => void
+  onSaveDraft: () => void
   onPick: (type: ContributionType) => void
 }) {
   const gate = props.options.types.find((t) => t.type === props.type)
@@ -446,8 +503,10 @@ function Composer(props: {
       onBack={props.onBack}
       save={props.save}
       attribution={props.attribution}
-      publishLabel={meta.publish}
+      publishLabel={props.publishing ? 'Sending…' : meta.publish}
+      publishDisabled={props.publishing}
       onPublish={props.onPublish}
+      onSaveDraft={props.onSaveDraft}
       notice={props.notice}
       preview={
         props.type === 'event' ? (
