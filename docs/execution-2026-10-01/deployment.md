@@ -73,3 +73,9 @@ No lint script is configured; use `git diff --check` plus the type and test chec
 - Directory hours come from dated public listings. They are not a live business-availability feed. The app shows provenance and asks residents to confirm hours.
 - Empty upstream feeds can mean no new items or a source failure. `/healthz` exposes this uncertainty separately from process liveness; see [source health](source-health.md).
 - Production backups, password recovery and a broader moderation operation remain future work. Do not treat successful demo checks as an uptime guarantee.
+
+## Delivered revision
+
+The final application deployment is `9f2b697e-5949-4658-af52-2d2c0eefcd4e`, built from product commit `2801efc` on `codex/townsquare-live`. Later commits contain handoff evidence only. The sandbox remains on `f9cdf45a-a36d-4435-932c-6dcad90c3407`. The repaired worker remains on `67b61203-2588-419c-acb9-6a78cf66b3b1`; the worker branch is pushed through evidence commit `17582f6`.
+
+The deployments were uploaded from the review branches. Neither private repository's main branch was changed. Merge the reviewed worker repair before a future deployment from main so that the fix is not replaced by old code.

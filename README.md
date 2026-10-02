@@ -4,7 +4,7 @@ Town Square connects Russellville and the Arkansas River Valley through local st
 
 The live preview includes real local feeds, a town map, a day planner, handle/password accounts, persistent saves and reviewed directory corrections. The starter creation uses real public listings and is clearly labeled as an example. Resident app publishing is not open yet.
 
-**[Open the live preview](https://townsquare-live-production.up.railway.app)** · [Setup and deployment](docs/execution-2026-10-01/deployment.md) · [Accounts and persistence](docs/persistence-and-accounts.md) · [Design evidence](docs/execution-2026-10-01/design.md)
+**[Open the live preview](https://townsquare-live-production.up.railway.app)** · [Tour and handoff](docs/execution-2026-10-01/handoff.md) · [Setup and deployment](docs/execution-2026-10-01/deployment.md) · [Accounts and persistence](docs/persistence-and-accounts.md) · [Design evidence](docs/execution-2026-10-01/design.md)
 
 The code is MIT-licensed; this repository is currently private. [VISION.md](VISION.md) describes the longer-term community platform, including capabilities beyond this preview.
 
