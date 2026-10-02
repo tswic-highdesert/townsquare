@@ -740,6 +740,7 @@ function GroupLanding({
             <Icon name="filter" size={14} />
             Open now
           </button>
+          {!onMap && <>
           <button className="dir-tool" data-on={sort === 'near' || undefined} onClick={() => onSort('near')} aria-pressed={sort === 'near'}>
             <Icon name="sort" size={14} />
             {position ? 'Nearest' : 'What is open'}
@@ -756,6 +757,7 @@ function GroupLanding({
             <Icon name={layout === 'rows' ? 'grid' : 'list'} size={14} />
             {layout === 'rows' ? 'Cards' : 'List'}
           </button>
+          </>}
           {/*
             Only drawn when there is something to draw. `bounds` needs placeable
             listings, and this is the rule Nearby already had.
@@ -799,7 +801,7 @@ function GroupLanding({
         </div>
       )}
 
-      {onMap && <div className="dir-chips dir-chips-inset" aria-label="Map place categories">
+      {onMap && <div className="dir-chips dir-chips-inset dir-map-categories" aria-label="Map place categories">
         <button className="dir-chip" aria-pressed={view.name === 'all'} onClick={() => onGroup(null)}>All places</button>
         {payload.groups.map(item => <button key={item.id} className="dir-chip" aria-pressed={view.name === 'group' && view.id === item.id} onClick={() => onGroup(item.id)}><Icon name={GROUP_ICON[item.id]} size={16} />{item.label}</button>)}
       </div>}

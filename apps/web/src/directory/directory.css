@@ -1466,3 +1466,14 @@
   color: var(--ts-cream);
   border-color: var(--ts-navy);
 }
+
+/* Keep the map in reach on phones; category buttons remain keyboard reachable. */
+@media (max-width: 640px) {
+  .dir-map-categories {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    padding-bottom: 8px;
+    scroll-padding-inline: 20px;
+  }
+  .dir-map-categories .dir-chip { flex: 0 0 auto; }
+}
