@@ -49,6 +49,31 @@ const getLiveLibraryEvents = cachedSource(fetchLibraryEvents, CACHE_TTL);
 const getLiveCenterArtsEvents = cachedSource(fetchCenterArtsEvents, CACHE_TTL);
 const getLivePopeCountyEvents = cachedSource(fetchPopeCountyEvents, CACHE_TTL);
 
+/** Read-only diagnostics: does not trigger source requests or count static listings
+ * as a live check. Empty means no records returned, not a verified healthy source:
+ * legacy adapters intentionally return [] for both outages and quiet calendars.
+ */
+export function getSourceHealth() {
+  const feeds = [
+    { id: "courier-rss", sourceIds: ["the-courier"], kinds: ["story"], read: getLiveCourierStories },
+    { id: "community-rss", sourceIds: ["arkansas-tech"], kinds: ["story"], read: getLiveRSSStories },
+    { id: "atu-calendar", sourceIds: ["arkansas-tech"], kinds: ["event"], read: getLiveICalEvents },
+    { id: "school-calendars", sourceIds: ["russellville-sd", "pottsville-sd"], kinds: ["event"], read: getLiveThrillshareEvents },
+    { id: "city-calendar", sourceIds: ["city-russellville"], kinds: ["event"], read: getLiveCivicPlusEvents },
+    { id: "city-alerts", sourceIds: ["city-russellville"], kinds: ["notice"], read: getLiveCivicAlerts },
+    { id: "chamber-calendar", sourceIds: ["chamber"], kinds: ["event"], read: getLiveChamberEvents },
+    { id: "discover-calendar", sourceIds: ["discover-russellville"], kinds: ["event"], read: getLiveDiscoverRussellvilleEvents },
+    { id: "state-parks", sourceIds: ["lake-dardanelle"], kinds: ["event"], read: getLiveStateParksEvents },
+    { id: "weather-alerts", sourceIds: ["nws-weather"], kinds: ["notice"], read: getLiveNWSAlerts },
+    { id: "main-street", sourceIds: ["main-street"], kinds: ["event"], read: getLiveMainStreetEvents },
+    { id: "courier-calendar", sourceIds: ["courier-events"], kinds: ["event"], read: getLiveEvvntEvents },
+    { id: "library-calendar", sourceIds: ["pope-county-library"], kinds: ["event"], read: getLiveLibraryEvents },
+    { id: "arts-calendar", sourceIds: ["center-for-arts"], kinds: ["event"], read: getLiveCenterArtsEvents },
+    { id: "county-calendar", sourceIds: ["pope-county"], kinds: ["event"], read: getLivePopeCountyEvents },
+  ];
+  return feeds.map(({ read, ...feed }) => ({ ...feed, ...read.health() }));
+}
+
 /** Deduplicate stories by title similarity */
 function deduplicateStories(items: StoryItem[]): StoryItem[] {
   const seen = new Set<string>();
