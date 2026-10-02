@@ -48,3 +48,10 @@ Six additional local browser scenarios passed (three per viewport). They cover a
 Four affected scenarios passed against the final deployed build: the full detail/search/refresh/back/map/list journey and the blocked-write contribution journey, each on desktop and phone. Those deployed failure tests aborted writes before the service; they created no contribution or draft. The more invasive cleanup and withdrawal cases remained local. The final read-only database audit found zero elevated QA accounts.
 
 The six final screenshot captures came from this deployment. Both viewport captures reported no page errors or horizontal overflow; Today, the phone map and the selected day planner were visually inspected. Runtime observation is recorded in the handoff completion note below.
+
+
+## Handoff completion
+
+Final deployment-scoped logs were checked through approximately 01:47:30 UTC, about two and a half minutes after the 01:45:05 startup. They show one startup, the persistent volume mount, API listening and email disabled; no restart loop or runtime error appeared during this short final window. The previous app build also had approximately nine minutes of observation, with upstream feed errors handled without restarting. The unchanged sandbox logs show its 00:54:01 startup and no later restart through the final check. These are bounded observations, not uptime guarantees.
+
+After the task's local web and API servers were stopped, both deployed health endpoints remained reachable. The resident health response reported 991 records: 741 static listings, 250 fresh live records, zero retained stale live records and explicitly partial source coverage. Final screenshots and handoff documentation are committed and both private review branches are pushed. No main merge or custom-domain change was performed.
