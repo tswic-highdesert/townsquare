@@ -157,6 +157,14 @@ test('Today details, search, direct-link refresh, browser back and town map use 
   await expect(page.getByRole('img', { name: /^(OpenStreetMap map of Russellville|A map of the town)/ })).toBeVisible()
   await page.getByRole('button', { name: 'Zoom in', exact: true }).click()
   await page.getByRole('button', { name: 'Zoom out', exact: true }).click()
+  await page.getByRole('button', { name: 'List', exact: true }).last().click()
+  await expect(page).toHaveURL(/\/places\?view=list$/)
+  await page.reload()
+  await expect(page.getByRole('button', { name: 'Map', exact: true })).toBeVisible()
+  await expect(page.getByRole('img', { name: /^OpenStreetMap map/ })).toHaveCount(0)
+  await page.getByRole('button', { name: 'Map', exact: true }).click()
+  await expect(page).toHaveURL(/\/places\?view=map$/)
+  await expect(page.getByRole('img', { name: /^OpenStreetMap map/ })).toBeVisible()
   await healthyLayout(page)
   await screenshot(page, testInfo, 'town-map')
   expect(errors).toEqual([])
@@ -247,4 +255,127 @@ test('empty search, failed requests and missing photos remain usable with a keyb
   await page.getByRole('button', { name: 'Try again', exact: true }).click()
   await expect(page.getByRole('button', { name: /^Eat and drink/ }).first()).toBeVisible()
   await healthyLayout(page)
+})
+
+test('Lunch around town runs on its separate origin and cannot read resident identity', async ({ page, baseURL }, testInfo) => {
+  const handle = `qa_${Date.now().toString(36)}_${randomBytes(2).toString('hex')}`
+  const password = randomBytes(24).toString('base64url')
+  await page.goto('/account')
+  await page.getByRole('button', { name: 'New here? Create an account', exact: true }).click()
+  await page.getByLabel('Handle', { exact: true }).fill(handle)
+  await page.getByLabel('Password', { exact: true }).fill(password)
+  await page.getByRole('button', { name: 'Create my account', exact: true }).click()
+  await expect(page.getByRole('heading', { name: `@${handle}`, exact: true })).toBeVisible()
+  const catalogue = await (await page.request.get('/api/creations')).json()
+  const creation = catalogue.find((item: { slug: string }) => item.slug === 'burrito-index')
+  expect(creation.name).toBe('Lunch around town')
+  expect(new URL(creation.origin).origin).not.toBe(new URL(baseURL!).origin)
+  expect(creation.manifest.permissions.identity).toBe('none')
+  await page.goto('/creations/burrito-index/open')
+  const iframe = page.locator('iframe')
+  const guest = iframe.contentFrame()
+  await expect(guest.getByRole('heading', { name: 'Lunch around town', exact: true })).toBeVisible()
+  await expect(guest.getByRole('status')).toContainText('places to explore')
+  const firstName = (await guest.locator('#list h2').first().textContent())!
+  await guest.getByRole('searchbox', { name: 'Find a restaurant', exact: true }).fill(firstName)
+  await expect(guest.locator('#list h2').first()).toHaveText(firstName)
+  await screenshot(page, testInfo, 'creation-running')
+  const frame = await (await iframe.elementHandle())!.contentFrame()
+  expect(frame).not.toBeNull()
+  const boundary = await frame!.evaluate(async (shellOrigin) => {
+    let parentReadable = false
+    try { parentReadable = Boolean(window.parent.document.body) } catch { /* Browser must deny it. */ }
+    const moduleName = '@townsquare/sdk'
+    const sdk = await import(moduleName)
+    let identityCode = 'unexpected-success'
+    try { await sdk.user.current() } catch (error) { identityCode = (error as { code: string }).code }
+    const violations: string[] = []
+    const recordViolation = (event: SecurityPolicyViolationEvent) => violations.push(event.effectiveDirective)
+    document.addEventListener('securitypolicyviolation', recordViolation)
+    let directRequestBlocked = false
+    try { await fetch(`${shellOrigin}/api/auth/me`, { credentials: 'include' }) } catch { directRequestBlocked = true }
+    await new Promise((resolve) => setTimeout(resolve, 100))
+    document.removeEventListener('securitypolicyviolation', recordViolation)
+    return { parentReadable, identityCode, sessionVisible: document.cookie.includes('tsq_session'), directRequestBlocked, violations }
+  }, baseURL!)
+  expect(boundary.parentReadable).toBe(false)
+  expect(boundary.identityCode).toBe('permission_denied')
+  expect(boundary.sessionVisible).toBe(false)
+  expect(boundary.directRequestBlocked).toBe(true)
+  expect(boundary.violations).toContain('connect-src')
+  const sessionCookie = (await page.context().cookies(baseURL!)).find((cookie) => cookie.name.includes('tsq_session'))
+  expect(sessionCookie?.httpOnly).toBe(true)
+  if (baseURL!.startsWith('https://')) expect(sessionCookie?.secure).toBe(true)
+})
+
+
+test('a delayed creation catalogue does not close an active search', async ({ page }) => {
+  let release!: () => void
+  const ready = new Promise<void>((resolve) => { release = resolve })
+  await page.route('**/api/creations', async (route) => {
+    const response = await route.fetch()
+    await ready
+    await route.fulfill({ response })
+  })
+  await page.goto('/')
+  await page.getByRole('button', { name: 'Search Russellville', exact: true }).click()
+  const dialog = page.getByRole('dialog', { name: 'Search Russellville', exact: true })
+  await expect(dialog).toBeVisible()
+  const completed = page.waitForResponse((response) => response.url().endsWith('/api/creations'))
+  release()
+  await (await completed).finished()
+  await page.evaluate(() => new Promise<void>((resolve) => requestAnimationFrame(() => requestAnimationFrame(() => resolve()))))
+  await expect(dialog).toBeVisible()
+  await dialog.getByRole('searchbox').fill('Lake Dardanelle')
+  await expect(dialog.getByRole('searchbox')).toHaveValue('Lake Dardanelle')
+})
+
+
+test('a delayed saves response cannot cross a sign-out and account switch', async ({ page, baseURL }) => {
+  const register = async () => {
+    const handle = `qa_${Date.now().toString(36)}_${randomBytes(2).toString('hex')}`
+    await page.getByRole('button', { name: 'New here? Create an account', exact: true }).click()
+    await page.getByLabel('Handle', { exact: true }).fill(handle)
+    await page.getByLabel('Password', { exact: true }).fill(randomBytes(24).toString('base64url'))
+    await page.getByRole('button', { name: 'Create my account', exact: true }).click()
+    await expect(page.getByRole('heading', { name: `@${handle}`, exact: true })).toBeVisible()
+    return handle
+  }
+  await page.goto('/account')
+  const initialSaves = page.waitForResponse(response => response.url().endsWith('/api/yours'))
+  await register()
+  await (await initialSaves).finished()
+  const directory = await (await page.request.get('/api/directory')).json()
+  const place = directory.places[0]
+  expect((await page.request.post('/api/saves', { headers: { Origin: baseURL! }, data: { kind: 'business', refId: place.id, title: place.name } })).ok()).toBe(true)
+  let release!: () => void
+  let captured!: () => void
+  const hold = new Promise<void>(resolve => { release = resolve })
+  const pending = new Promise<void>(resolve => { captured = resolve })
+  let first = true
+  await page.route('**/api/yours', async route => {
+    if (!first) { await route.continue(); return }
+    first = false
+    const response = await route.fetch()
+    captured()
+    await hold
+    await route.fulfill({ response })
+  })
+  await page.reload()
+  await pending
+  await page.getByRole('button', { name: 'Sign out', exact: true }).click()
+  await expect(page.getByRole('heading', { name: 'Welcome back', exact: true })).toBeVisible()
+  const emptySaves = page.waitForResponse(response => response.url().endsWith('/api/yours'))
+  await register()
+  expect((await (await emptySaves).json()).saves).toEqual([])
+  const oldResponse = page.waitForResponse(response => response.url().endsWith('/api/yours'))
+  release()
+  await (await oldResponse).finished()
+  await page.evaluate(() => new Promise<void>(resolve => requestAnimationFrame(() => requestAnimationFrame(() => resolve()))))
+  // Use client navigation so a document reload cannot hide stale React state.
+  await page.getByRole('button', { name: 'Back', exact: true }).click()
+  await page.getByRole('button', { name: 'Yours', exact: true }).click()
+  await expect(page).toHaveURL(/\/saved$/)
+  await expect(page.getByRole('button', { name: place.name, exact: true })).toHaveCount(0)
+  expect((await (await page.request.get('/api/yours')).json()).saves).toEqual([])
 })

@@ -36,6 +36,7 @@ test('moderator reads a real correction and declines with a durable note, then l
   const moderator = await moderatorContext.newPage()
   let promoted = false
   let declined = false
+  let competingId: string | undefined
   try {
     await register(moderator, reviewer, randomBytes(24).toString('base64url'))
     expect((await moderator.request.get('/api/review/contributions')).status()).toBe(404)
@@ -63,12 +64,85 @@ test('moderator reads a real correction and declines with a durable note, then l
     await page.screenshot({ path: testInfo.outputPath('resident-review-note.png'), fullPage: true })
     await moderator.getByRole('button', { name: 'Back to corrections', exact: true }).click()
     await expect(moderator.getByRole('button').filter({ hasText: `@${resident}` })).toHaveCount(0)
+    const competing = await page.request.post('/api/contributions', { headers: { Origin: baseURL! }, data: { type: 'correction', content: { targetRef: place.id, targetLabel: place.name, field: 'name', beforeValue: place.name, newValue: place.name, reason: 'QA concurrent-review validation only. Please decline; no public data change requested.' } } })
+    expect(competing.ok()).toBe(true)
+    competingId = (await competing.json()).contribution.id
+    await moderator.reload()
+    await moderator.getByRole('button').filter({ hasText: `@${resident}` }).click()
+    await expect(moderator.getByRole('heading', { name: 'Proposed change', exact: true })).toBeVisible()
+    const competingNote = 'This correction was already reviewed in another session. No public change.'
+    expect((await moderator.request.post(`/api/review/contributions/${competingId}/decide`, { headers: { Origin: baseURL! }, data: { decision: 'decline', note: competingNote } })).ok()).toBe(true)
+    await moderator.getByRole('textbox', { name: 'Note to the neighbor', exact: true }).fill('This stale decision must not replace the saved decision.')
+    await moderator.getByRole('button', { name: 'Decline correction', exact: true }).click()
+    await expect(moderator.getByRole('heading', { name: 'Correction declined', exact: true })).toBeVisible()
+    await expect(moderator.getByText(competingNote, { exact: true })).toBeVisible()
+    await expect(moderator.getByRole('button', { name: 'Approve correction', exact: true })).toHaveCount(0)
+
   } finally {
     if (promoted) {
       provision(reviewer, 'user')
       expect((await moderator.request.get('/api/review/contributions')).status()).toBe(404)
     }
+    if (competingId) await page.request.post(`/api/contributions/${competingId}/withdraw`, { headers: { Origin: baseURL! }, data: {} })
     if (!declined) await page.request.post(`/api/contributions/${id}/withdraw`, { headers: { Origin: baseURL! }, data: {} })
+    await moderatorContext.close()
+  }
+})
+
+/** This operator-only check publishes one sourced, formatting-only correction.
+ * It is disabled in normal suites and never publishes invented QA listing data. */
+test('operator approves a sourced phone format correction through the review UI', async ({ page, browser, baseURL }, testInfo) => {
+  test.skip(process.env['TOWNSQUARE_APPROVE_SOURCE_CORRECTION'] !== '1' || testInfo.project.name !== 'desktop', 'Requires explicit approval of this particular sourced public correction')
+  test.setTimeout(180_000)
+  expect(process.env['TOWNSQUARE_REVIEW_MODE']).toBe('railway')
+  expect(baseURL).toBe('https://townsquare-live-production.up.railway.app')
+  const target = 'biz-retro-roasts-d2ywzpsi'
+  const phone = '+1 479-219-9155'
+  const directory = await (await page.request.get('/api/directory')).json()
+  const place = directory.places.find((row: { id: string }) => row.id === target)
+  expect(place).toBeTruthy()
+  expect(place.phone.replace(/\D/g, '').replace(/^1(?=\d{10}$)/, '')).toBe('4792199155')
+  test.skip(place.phone === phone, 'The sourced formatting correction is already published')
+  const resident = `qa_${Date.now().toString(36)}_${randomBytes(2).toString('hex')}`
+  const reviewer = `qa_${Date.now().toString(36)}_${randomBytes(2).toString('hex')}`
+  await register(page, resident, randomBytes(24).toString('base64url'))
+  const reason = 'Formatting-only normalization of the existing phone number to +1 479-219-9155. The official https://www.retroroasts.com/ Contact section identifies 479-219-9155 for its W. 2nd location, checked October 1, 2026. This does not change the phone identity or claim new business activity.'
+  const submission = await page.request.post('/api/contributions', { headers: { Origin: baseURL! }, data: { type: 'correction', content: { targetRef: target, targetLabel: place.name, field: 'phone', beforeValue: place.phone, newValue: phone, reason } } })
+  expect(submission.ok()).toBe(true)
+  const id = (await submission.json()).contribution.id as string
+  const moderatorContext = await browser.newContext({ baseURL })
+  const moderator = await moderatorContext.newPage()
+  let promoted = false
+  let published = false
+  try {
+    await register(moderator, reviewer, randomBytes(24).toString('base64url'))
+    provision(reviewer, 'moderator')
+    promoted = true
+    await moderator.goto('/review')
+    await moderator.getByRole('button').filter({ hasText: `@${resident}` }).click()
+    await expect(moderator.getByText(reason, { exact: true })).toBeVisible()
+    await expect(moderator.getByRole('heading', { name: 'Proposed change', exact: true })).toBeVisible()
+    await moderator.getByRole('textbox', { name: 'Note to the neighbor', exact: true }).fill('Confirmed against the official Retro Roasts website: the W. 2nd location lists 479-219-9155. Approved phone formatting only; the destination number is unchanged.')
+    await moderator.screenshot({ path: testInfo.outputPath('sourced-correction-before-approval.png'), fullPage: true })
+    await moderator.getByRole('button', { name: 'Approve correction', exact: true }).click()
+    await expect(moderator.getByRole('heading', { name: 'Correction published', exact: true })).toBeVisible()
+    published = true
+    await expect.poll(async () => {
+      const payload = await (await page.request.get('/api/directory')).json()
+      return payload.places.find((row: { id: string }) => row.id === target)?.phone
+    }, { timeout: 75_000, intervals: [3000] }).toBe(phone)
+    const businesses = await (await page.request.get('/api/businesses?tag=coffee&limit=200')).json()
+    expect(businesses.items.find((row: { id: string }) => row.id === target)?.phone).toBe(phone)
+    await page.goto('/contribute')
+    await expect(page.getByText('Confirmed against the official Retro Roasts website: the W. 2nd location lists 479-219-9155. Approved phone formatting only; the destination number is unchanged.', { exact: true })).toBeVisible()
+    await page.screenshot({ path: testInfo.outputPath('sourced-correction-published.png'), fullPage: true })
+    await testInfo.attach('public-correction-evidence', { body: JSON.stringify({ target, field: 'phone', before: place.phone, after: phone, contributionId: id, source: 'https://www.retroroasts.com/', checkedAt: '2026-10-01', directoryVerified: true, businessesVerified: true }, null, 2), contentType: 'application/json' })
+  } finally {
+    if (promoted) {
+      provision(reviewer, 'user')
+      expect((await moderator.request.get('/api/review/contributions')).status()).toBe(404)
+    }
+    if (!published) await page.request.post(`/api/contributions/${id}/withdraw`, { headers: { Origin: baseURL! }, data: {} })
     await moderatorContext.close()
   }
 })

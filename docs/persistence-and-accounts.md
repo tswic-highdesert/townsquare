@@ -58,10 +58,28 @@ The directory route can cache an assembled response for up to 60 seconds. The HT
 
 On October 1, 2026, the early deployment at `https://townsquare-live-production.up.railway.app` passed the resident journey on desktop (1440 pixels wide) and phone (390 pixels wide). The test created an unverified `qa_` account, saved a real directory listing, refreshed Saved, signed out, signed in from a fresh browser context, found the save, submitted a labeled QA correction, refreshed its queued status, and verified that the resident could neither read nor approve the moderator queue. It withdrew the QA correction afterward. The proposed value equaled the original listing name; no invented public business fact was proposed.
 
-The separate guest/signature test was not completed against that early build, whose bundle preceded the newer design and weekend experience. Run the full suite against the final deployment:
+The later `e3d9cc44` deployment also passed the real day planner, correction-review decline, concurrent session saves, and separate-origin creation privacy checks at both widths. A search/catalogue response race found by that run was fixed and has a dedicated delayed-response regression. Run the complete suite against the final deployment:
 
 ```sh
 TOWNSQUARE_BASE_URL=https://townsquare-live-production.up.railway.app pnpm exec playwright test --config e2e/resident.config.ts
 ```
 
 The config starts no servers and records no auth traces. It captures account, saved, contribution, and guest-screen screenshots under `artifacts/resident-e2e`. Playwright clears this output directory at the start of a run, so run both projects in one invocation to retain both desktop and phone evidence.
+
+
+## Deployment restart and review evidence
+
+A resident session, password account, save, draft, and queued correction were created before deployment `e3d9cc44` replaced the API process. After deployment, the existing cookie still resolved the same account, every durable row remained, and password sign-in in a new session recovered the save. The QA correction was withdrawn and its test sessions revoked afterward. This checks the real Railway volume across deployment, in addition to the local process-restart tests.
+
+The moderator browser test provisions an ordinary test account through the server-only command, reviews a labeled same-value QA correction, declines it with a note, and confirms that the resident sees the saved note after reload. A second decision made while the review page is open returns a conflict; the UI refreshes the authoritative status and note instead of keeping active approval controls. The role is revoked in cleanup and the same session loses review access. Run it only with explicit operator access:
+
+```sh
+TOWNSQUARE_BASE_URL=https://townsquare-live-production.up.railway.app \
+TOWNSQUARE_REVIEW_MODE=railway \
+TOWNSQUARE_E2E_OUTPUT=../artifacts/deployed-final \
+pnpm exec playwright test --config e2e/resident.config.ts
+```
+
+The ordinary suite never publishes a fabricated correction. The separate sourced phone-format approval test is disabled unless `TOWNSQUARE_APPROVE_SOURCE_CORRECTION=1` is explicitly set. It targets only the verified Retro Roasts W. 2nd phone number, uses a formatting-only change, records the official source, checks both public APIs, and revokes the reviewer role. Do not enable it as a routine CI test.
+
+The creation-frame check runs Lunch around town on the actual sandbox origin. It verifies useful restaurant data, a denied parent-DOM read, a denied SDK identity call, HttpOnly/Secure cookie properties, and an enforced `connect-src` CSP rejection for a direct credentialed request to the shell. The map regression checks Map/List URLs through refresh. Two delayed-response tests ensure a late creation catalogue cannot dismiss Search and a previous account's saves cannot reappear after sign-out and account switching.
