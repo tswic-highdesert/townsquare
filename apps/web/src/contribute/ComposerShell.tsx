@@ -178,7 +178,7 @@ export function attributionSentence(attribution: Attribution): ReactNode {
     case 'resident':
       return (
         <>
-          Posting as <b>@{attribution.handle}</b>, verified resident
+          Contributing as <b>@{attribution.handle}</b>
         </>
       )
     case 'resident_via_creation':

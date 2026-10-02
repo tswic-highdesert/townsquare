@@ -668,7 +668,7 @@ export class Contributions {
   private async attribute(
     who: Contributor,
     input: SubmitInput,
-    standing: 'verified' | 'organisation',
+    standing: 'signed_in' | 'verified' | 'organisation',
   ): Promise<Attribution | null> {
     if (standing === 'organisation') {
       const orgs = await this.opts.orgs.membershipsFor(who.userId)
@@ -688,7 +688,7 @@ export class Contributions {
       }
     }
 
-    if (!who.verified) return null
+    if (standing === 'verified' && !who.verified) return null
     return this.residentAttribution(who, input.via ?? null)
   }
 

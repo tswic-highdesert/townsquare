@@ -244,3 +244,7 @@ details > pre {
   align-items: center;
   flex-wrap: wrap;
 }
+
+.mod-correction-diff { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 24px; margin: 24px 0; }
+.mod-correction-diff section { padding: 20px; border-radius: 16px; background: var(--ts-bg-raised, #fff); overflow-wrap: anywhere; }
+@media (max-width: 560px) { .mod-correction-diff { grid-template-columns: 1fr; gap: 12px; } }

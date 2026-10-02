@@ -26,14 +26,15 @@
  * it is built it needs to arrive without either.
  */
 
-import { Button } from './ui/index.js'
+import { useState } from 'react'
+import { Button, InlineError } from './ui/index.js'
 import { Icon } from './Icon.js'
 import { initials } from './AppBar.js'
 import { SignIn } from './identity/SignIn.js'
 import { UnlockTable, VerificationCard } from './identity/Verification.js'
 import { Vouching } from './identity/Vouching.js'
 import { WhatWeHold } from './identity/WhatWeHold.js'
-import { signOut, type AccountView } from './session.js'
+import { signOut, isError, type AccountView } from './session.js'
 import './identity/identity.css'
 
 export interface AccountScreenProps {
@@ -43,16 +44,25 @@ export interface AccountScreenProps {
 }
 
 export function AccountScreen(props: AccountScreenProps) {
-  if (!props.account) return <SignIn onBack={props.onBack} />
+  if (!props.account) return <SignIn onBack={props.onBack} onAccountChange={props.onAccountChange} />
   return <SignedIn {...props} account={props.account} />
 }
 
 function SignedIn(props: AccountScreenProps & { account: AccountView }) {
   const { account } = props
+  const [leaving, setLeaving] = useState(false)
+  const [leaveError, setLeaveError] = useState<string | null>(null)
 
   async function leave(everywhere: boolean) {
-    await signOut(everywhere)
-    props.onAccountChange(null)
+    setLeaving(true)
+    setLeaveError(null)
+    try {
+      const result = await signOut(everywhere)
+      if (isError(result)) setLeaveError(result.message)
+      else props.onAccountChange(null)
+    } catch {
+      setLeaveError('We could not sign you out. Check your connection and try again.')
+    } finally { setLeaving(false) }
   }
 
   return (
@@ -111,11 +121,12 @@ function SignedIn(props: AccountScreenProps & { account: AccountView }) {
         <h2 className="id-h2" id="id-leaving-t">
           Leaving
         </h2>
+        {leaveError && <InlineError>{leaveError}</InlineError>}
         <div className="id-actions">
-          <Button variant="secondary" onClick={() => void leave(false)}>
+          <Button variant="secondary" disabled={leaving} onClick={() => void leave(false)}>
             Sign out
           </Button>
-          <Button variant="quiet" onClick={() => void leave(true)}>
+          <Button variant="quiet" disabled={leaving} onClick={() => void leave(true)}>
             Sign out everywhere
           </Button>
         </div>

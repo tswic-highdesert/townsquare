@@ -21,7 +21,7 @@ export type ContributionType = 'event' | 'correction' | 'notice' | 'collection' 
 export interface GateAvailability {
   type: ContributionType
   label: string
-  standing: 'verified' | 'organisation'
+  standing: 'signed_in' | 'verified' | 'organisation'
   allowed: boolean
   /**
    * What happens if they use it anyway.

@@ -36,8 +36,7 @@ export function WhatWeHold(props: { account: AccountView }) {
         <li>
           <Icon name="check" size={15} />
           <span>
-            Your email, which nobody sees. It signs you in and lets a moderator reach you.
-            {account.emailConfirmed ? ' Confirmed.' : ' Not confirmed yet.'}
+            A salted password hash, used to check your password. We do not store the password itself or ask for your email.
           </span>
         </li>
         <li>

@@ -38,13 +38,10 @@ export function VerificationCard(props: { account: AccountView }) {
             <StatusPill tone="quiet">Not verified</StatusPill>
           </header>
           <p className="id-rung-say">
-            You can read everything, save things, and build, validate and preview a creation right
-            now. Nothing here is waiting on you.
+            You can read everything, save places and stories, and suggest corrections. Your account is ready to use.
           </p>
           <p className="id-rung-fine">
-            Publishing code that runs in a neighbour&rsquo;s browser, reporting something, and
-            correcting town data all need a neighbour to say they know you live here. There is no
-            hurry, and anything you write before then is held rather than thrown away.
+            Corrections go to a moderator before anything changes. Publishing events and creations needs verified residency; signing up does not grant it.
           </p>
         </CardBody>
       </Card>
@@ -127,8 +124,8 @@ const ROWS: readonly Row[] = [
     icon: 'flag',
   },
   {
-    what: 'Correct town data: hours, a closed trail, a moved meeting',
-    at: [false, false, true],
+    what: 'Suggest a correction for moderator review',
+    at: [false, true, true],
     icon: 'edit',
   },
   {
