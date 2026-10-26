@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <!-- The entry document named by "entry" in townsquare.json. There is no
+         build step: what is in this folder is exactly what a resident's
+         browser runs and exactly what the reviewer reads. -->
+    <title>Starter</title>
+    <style>
+      /* Style from the --ts-* tokens Town Square injects into the frame, so the
+         creation picks up the town's look without knowing which town it is in.
+         The full list is in packages/tokens/src/index.ts. */
+      main { padding: var(--ts-space-6) var(--ts-space-5); max-width: 640px; margin: 0 auto; }
+      h1 { font-size: var(--ts-text-h2); margin: 0 0 var(--ts-space-2); }
+      .lede { color: var(--ts-ink60); margin: 0 0 var(--ts-space-6); }
+      ul { list-style: none; padding: 0; margin: 0; display: grid; gap: var(--ts-space-3); }
+      li {
+        padding: var(--ts-space-4);
+        background: var(--ts-surface);
+        border: 1px solid var(--ts-hairline);
+        border-radius: var(--ts-radius-card);
+      }
+      .note { margin-top: var(--ts-space-6); color: var(--ts-ink45); font-size: var(--ts-text-caption); }
+    </style>
+  </head>
+  <body>
+    <main>
+      <h1 id="title">Starter</h1>
+      <p class="lede" id="lede">Loading…</p>
+      <ul id="list"></ul>
+      <p class="note">
+        This is the starter creation. Copy the folder, rename it, and make it
+        yours. README.md in this folder says what to change first.
+      </p>
+    </main>
+
+    <script type="module">
+      // A bare specifier with no package.json and no node_modules. Town Square
+      // splices an import map into this document when it serves it, and that
+      // is what makes '@townsquare/sdk' resolve. Do not ship your own import
+      // map for it: the validator rejects a bundle that tries.
+      //
+      // Import only the namespaces you use. Each call is checked by the host
+      // against the permissions block in townsquare.json, not by this code.
+      import { town, user, app } from '@townsquare/sdk'
+
+      const title = document.getElementById('title')
+      const lede = document.getElementById('lede')
+      const list = document.getElementById('list')
+
+      try {
+        // town.* is public town information and needs no permission at all.
+        // town.info and town.businesses are wired in the local shell today;
+        // see README.md for the ones that still answer empty.
+        const { name } = await town.info()
+        const { items } = await town.businesses({ limit: 10 })
+
+        // user.current() needs "identity": "handle" in the manifest. It
+        // returns { handle, verified } or null, and null (nobody signed in) is
+        // the most common answer, so write the signed-out version first.
+        const me = await user.current()
+
+        title.textContent = `Around ${name}`
+        if (!me) {
+          lede.textContent = `${items.length} places from the town directory.`
+        } else if (!me.verified) {
+          lede.textContent = `Hi ${me.handle}. A neighbor's vouch makes you a verified resident.`
+        } else {
+          lede.textContent = `Hi ${me.handle}. ${items.length} places from the town directory.`
+        }
+
+        for (const place of items) {
+          const li = document.createElement('li')
+          // textContent, never innerHTML. This is town data, and markup built
+          // from it is one bad listing away from an incident.
+          li.textContent = place.category ? `${place.name}, ${place.category}` : place.name
+          list.append(li)
+        }
+
+        // The line the host shows above the frame. Use it for live state; the
+        // host already shows the creation's name from the manifest.
+        app.setTitle(`${items.length} places`)
+      } catch (err) {
+        // Every SDK call throws a TownSquareError with a stable err.code
+        // (permission_denied, unavailable, ...). Show something useful rather
+        // than a blank frame.
+        lede.textContent = `Could not load the town: ${err.message}`
+      } finally {
+        // Always call ready(), even on failure. A creation that has not called
+        // it within ten seconds is replaced by a did-not-load state.
+        app.ready()
+      }
+    </script>
+  </body>
+</html>
