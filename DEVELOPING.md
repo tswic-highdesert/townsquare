@@ -2,17 +2,30 @@
 type: note
 title: Running Town Square locally
 status: active
-updated: 2026-08-05
+updated: 2026-10-25
 ---
 
 # Running it
 
-Three processes, on three origins. The origins are the security model, so
-development uses real ones rather than paths on one host.
+New to the repo? [GETTING-STARTED.md](GETTING-STARTED.md) walks a clean machine
+through to a running town. This file is the detail behind it.
+
+Four processes. Three of them are the three origins the security model rests on
+(the shell, the bundle origins and the read API), so development uses real
+origins rather than paths on one host. The fourth is the builder door.
 
 ```bash
 pnpm install
+pnpm dev            # all four below, labelled, in one terminal. Ctrl-C stops them all
+```
 
+`pnpm dev` (`scripts/dev.mjs`) stops the other three if any one of them exits,
+because a town with three of its four processes up looks like it works and does
+not. Environment variables reach all four, so
+`TOWNSQUARE_SEED_COHORT='tswic:tal@example.com:admin' pnpm dev` seeds the API
+and the builder door together. To run one on its own, in its own terminal:
+
+```bash
 pnpm dev:api        # read API      → http://localhost:3030/api
 pnpm dev:sandbox    # bundles       → http://<origin-key>.tsq-apps.localhost:3031
 pnpm dev:web        # the shell     → http://townsquare.localhost:5173
@@ -442,7 +455,7 @@ meeting that was cancelled.
 A waiver is allowed and must carry a written rule saying what makes shipping it
 defensible. The test refuses one without.
 
-## Why three processes
+## Why four processes
 
 | Process | Holds | Must never hold |
 |---|---|---|
@@ -778,6 +791,42 @@ is empty until something is actually approved through the queue, since the
 examples never went through it — the same development seam as the queue itself,
 and it closes when all three processes read one database.
 
+## Contributing to the town's record
+
+Separate from creations, and easy to confuse with them: a contribution is a
+resident adding to the town's own data (an event, a notice, a correction to a
+listing), reviewed by a moderator. The rules live in `packages/contributions`;
+the HTTP side is two files in `apps/api`.
+
+```
+GET  /api/contribute/options            the chooser, and where you are on the ladder
+POST /api/contribute/when               read a date the way somebody would say it
+GET  /api/contributions                 yours: proposals, drafts, the pause
+GET  /api/contributions/:id             one of yours
+POST /api/contributions                 propose something
+POST /api/contributions/:id/withdraw    pull it back before anyone acts
+GET  /api/drafts                        your drafts
+POST /api/drafts                        autosave
+POST /api/drafts/:id/discard            throw one away, for real
+GET  /api/records/:id/history           every version there has ever been
+
+GET  /api/review/contributions          the moderator's queue (reviewRoutes.ts)
+GET  /api/review/contributions/:id
+POST /api/review/contributions/:id/decide
+```
+
+The resident side is `contributionRoutes.ts` and the shell calls it from
+`apps/web/src/contribute/`. The moderator side sits in `reviewRoutes.ts`, behind
+the same role gate as the submission and report queues.
+
+**In development every contribution and draft is in memory.** `apps/api/src/main.ts`
+builds the service on `MemoryContributionStore`, `MemoryRecordStore`,
+`MemoryAttemptLog` and `MemoryDraftStore`, the same as identity, storage and the
+review queue, so restarting the API empties every proposal and draft. The
+Postgres tables are in `packages/db/src/schema.ts` and created by
+`packages/db/drizzle/0002_contributions_saves_moderation.sql`, but no
+Postgres-backed `ContributionStore` exists yet.
+
 ## Adding an example creation
 
 Drop a directory in `apps/sandbox/examples/`. It needs a `townsquare.json`, the
@@ -785,11 +834,32 @@ entry document it names, and a square icon. It is loaded through the same
 validator a resident's upload hits, so if it would be rejected in production it
 fails loudly at startup rather than working only here.
 
+Start from `apps/sandbox/examples/starter/`, which is written to be copied: a
+minimal manifest, a commented entry document, and a README covering the
+permissions it does not use and the `records.*` calls that are not built yet.
+`burrito-index` is the finished example to read next. Examples are read once at
+startup, so restart the sandbox and API after adding one.
+
 ## Tests
 
 ```bash
-pnpm test        # 788 tests
+pnpm test        # 1,314 unit tests on 2026-10-25, plus 5 skipped (below)
 pnpm typecheck
+```
+
+**Five skipped tests are expected.** `packages/db/src/ingest.test.ts` runs
+against a throwaway Postgres in Docker (testcontainers) and skips itself when
+`docker info` fails, so a laptop without Docker reports `5 skipped`, not a fault.
+
+**`vitest: command not found` means a broken install, not a broken test.** It
+happens when `node_modules` was copied, zipped, symlinked from another worktree
+or half deleted: `pnpm install` then says "Already up to date" and relinks
+nothing. `pnpm test`, `pnpm typecheck` and `pnpm dev` now run
+`scripts/check-setup.mjs` first and stop with the fix, which is:
+
+```bash
+rm -rf node_modules apps/*/node_modules packages/*/node_modules
+pnpm install
 ```
 
 `packages/host/src/protocol.test.ts` is the one worth reading first: it runs the
@@ -826,12 +896,16 @@ in two jobs split by cost:
 
 | Job | Runs | Roughly |
 |---|---|---|
-| `checks` | typecheck, generated-docs drift, 788 unit tests | under a minute |
+| `checks` | typecheck, generated-docs drift, the unit tests | under a minute |
 | `boundary` | the Playwright suite, three origins in Chromium | two to three minutes |
 
-Neither is configured as a **required** status check, on purpose. This repo is
-pushed to `main` directly, and a required check would block that. The signal is
-there to be read.
+Both jobs read the Node version from `.nvmrc`, the same file a contributor's
+version manager reads.
+
+Neither is configured as a **required** status check today. GitHub does not
+offer branch protection or rulesets on a private repository on the Free plan,
+so nothing can require them yet. CONTRIBUTING.md says what must pass before
+work is merged, and the settings to turn on once the plan allows it.
 
 The browser is cached on the resolved Playwright version, so bumping Playwright
 fetches a matching Chromium rather than silently reusing an incompatible one.
