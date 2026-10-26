@@ -1,14 +1,15 @@
 # Two jobs, split by what they cost.
 #
 # `checks` is fast and runs on everything: typecheck, the generated-docs drift
-# check, and 328 unit tests. `boundary` is the Playwright suite — it installs a
-# browser and drives three origins, so it takes a couple of minutes, and it is
-# the only thing here that can honestly say the sandbox holds.
+# check, and the unit tests (1,314 on 2026-10-25). `boundary` is the Playwright
+# suite: it installs a browser and drives three origins, so it takes a couple of
+# minutes, and it is the only thing here that can honestly say the sandbox holds.
 #
-# Both run on push and on pull requests. Neither is configured as a *required*
-# status check, deliberately: this repo is pushed to `main` directly, and a
-# required check would block that. The signal is here to be read, not to be a
-# gate nobody asked for.
+# Both run on push and on pull requests, on the Node version in `.nvmrc`.
+# Neither is a *required* status check yet: GitHub offers branch protection and
+# rulesets on a private repository only on a paid plan. CONTRIBUTING.md has the
+# settings to turn on once it can be, with the repo owner on the bypass list so
+# direct pushes to `main` keep working.
 
 name: CI
 
@@ -43,7 +44,7 @@ jobs:
 
       - uses: actions/setup-node@v4
         with:
-          node-version: 22
+          node-version-file: .nvmrc
           cache: pnpm
 
       - run: pnpm install --frozen-lockfile
@@ -74,7 +75,7 @@ jobs:
 
       - uses: actions/setup-node@v4
         with:
-          node-version: 22
+          node-version-file: .nvmrc
           cache: pnpm
 
       - run: pnpm install --frozen-lockfile
