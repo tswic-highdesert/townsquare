@@ -1,0 +1,53 @@
+/* Town Square injects the --ts-* design tokens; using them makes the creation
+   look native without importing anything. */
+
+body {
+  margin: 0;
+  background: var(--ts-cream);
+  color: var(--ts-navy);
+}
+
+main {
+  max-width: 40rem;
+  margin: 0 auto;
+  padding: var(--ts-space-5) var(--ts-space-4);
+}
+
+h1 {
+  font-family: var(--ts-font-serif);
+  margin: 0 0 var(--ts-space-2);
+}
+
+.lede {
+  margin: 0 0 var(--ts-space-5);
+}
+
+.panel {
+  background: var(--ts-surface);
+  border-radius: var(--ts-radius);
+  padding: var(--ts-space-4);
+}
+
+.panel h2 {
+  font-size: 1rem;
+  margin: 0 0 var(--ts-space-3);
+}
+
+dl {
+  display: grid;
+  grid-template-columns: max-content 1fr;
+  gap: var(--ts-space-2) var(--ts-space-4);
+  margin: 0;
+}
+
+dt {
+  font-weight: 600;
+}
+
+dd {
+  margin: 0;
+}
+
+.error {
+  color: var(--ts-terracotta);
+}

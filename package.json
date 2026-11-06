@@ -17,6 +17,8 @@
     "test:watch": "vitest",
     "predev": "node scripts/check-setup.mjs",
     "dev": "node scripts/dev.mjs",
+    "predev:demo": "node scripts/check-setup.mjs",
+    "dev:demo": "node scripts/dev-demo.mjs",
     "gen": "tsx packages/sdk/scripts/generate.ts",
     "gen:check": "tsx packages/sdk/scripts/generate.ts --check",
     "dev:api": "tsx watch apps/api/src/main.ts",

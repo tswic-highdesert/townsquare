@@ -1,6 +1,7 @@
 packages:
   - packages/*
   - apps/*
+  - apps/sandbox/sdk-demo
 allowBuilds:
   cpu-features: false   # optional native speedup for ssh2; not needed
   esbuild: true
