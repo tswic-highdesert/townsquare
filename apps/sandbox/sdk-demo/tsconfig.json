@@ -5,6 +5,12 @@
     "jsx": "react-jsx",
     "lib": ["ES2022", "DOM", "DOM.Iterable"],
     "types": ["node"],
-    "noEmit": true
+    "noEmit": true,
+    // Tests only: the mock host runs the real permission gate, which imports
+    // the manifest package. `@townsquare/sdk` is deliberately not mapped here,
+    // since app code must see the guest runtime typed in townsquare-sdk.d.ts.
+    "paths": {
+      "@townsquare/manifest": ["../../../packages/manifest/src/index.ts"]
+    }
   }
 }
