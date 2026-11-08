@@ -147,6 +147,10 @@ const NOT_YET =
   'The host does not serve records yet (Phase 8), so this answers "not available yet". ' +
   'The call and manifest are already correct and will work unchanged once it lands.'
 
+const EMPTY_LOCALLY =
+  'The local shell does not serve town content yet (apps/web/src/townData.ts), so under ' +
+  'pnpm dev this returns empty lists or null. That is the real answer, not a bug in the demo.'
+
 // ── the catalog ────────────────────────────────────────────────────────────
 
 export const METHODS: SdkMethod[] = [
@@ -212,6 +216,7 @@ export const METHODS: SdkMethod[] = [
     inputs: [],
     run: () => town.thisWeek(),
     code: () => 'await town.thisWeek()',
+    note: EMPTY_LOCALLY,
   },
   {
     id: 'town.items',
@@ -227,6 +232,7 @@ export const METHODS: SdkMethod[] = [
     run: (v) => town.items(options(v, [['type', 'text'], ['q', 'text'], ...pagingFields])),
     code: (v) =>
       safe(() => `await town.items(${optsCode(options(v, [['type', 'text'], ['q', 'text'], ...pagingFields]))})`),
+    note: EMPTY_LOCALLY,
   },
   {
     id: 'town.item',
@@ -237,6 +243,7 @@ export const METHODS: SdkMethod[] = [
     inputs: [{ name: 'id', label: 'id', kind: 'text', hint: 'an id from town.items' }],
     run: (v) => town.item(requiredText(v, 'id')),
     code: (v) => `await town.item(${show(text(v, 'id') ?? '')})`,
+    note: EMPTY_LOCALLY,
   },
   {
     id: 'town.businesses',

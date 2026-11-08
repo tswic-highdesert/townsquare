@@ -9,11 +9,14 @@
  *   - bad form input is stopped before anything goes over the wire.
  */
 
+import { readFileSync } from 'node:fs'
+import { dirname, join } from 'node:path'
+import { fileURLToPath } from 'node:url'
 import * as sdk from '@townsquare/sdk'
 import { afterEach, describe, expect, it, vi } from 'vitest'
 import { InputError, initialValues, METHODS, nextCursorOf, type InputValues, type SdkMethod } from './methods.js'
 import { installMockBridge, type MockBridge, type MockBridgeOptions } from './mockBridge.js'
-import { toCallError } from './useSdkCall.js'
+import { isNotYet, toCallError } from './useSdkCall.js'
 
 vi.mock('@townsquare/sdk', () => import('../../../../../packages/sdk/runtime/sdk.js'))
 
@@ -160,7 +163,43 @@ describe('what the host says comes back as an error code', () => {
       code,
       message: `host said ${code}`,
       retryable,
+      notYet: false,
     })
+  })
+
+  it.each(['records.list', 'records.get', 'records.create', 'records.update', 'records.history'])(
+    '%s, not built yet, is marked notYet and not retryable',
+    async (id) => {
+      // What the real host sends today: NotYetError, flattened to `unavailable`.
+      bridgeWith({
+        handler: (req) => ({
+          ok: false,
+          error: { code: 'unavailable', message: `${req.method} is not available yet in this town.` },
+        }),
+      })
+      const method = METHODS.find((m) => m.id === id)!
+      expect(await errorOf(method.run(filled(method)))).toMatchObject({
+        code: 'unavailable',
+        retryable: false,
+        notYet: true,
+      })
+    },
+  )
+
+  it('matches the exact wording of the host NotYetError', () => {
+    // Read from source, because importing the host would pull in all of it.
+    const bridgeSource = readFileSync(
+      join(dirname(fileURLToPath(import.meta.url)), '../../../../../packages/host/src/bridge.ts'),
+      'utf8',
+    )
+    const template = bridgeSource.match(/class NotYetError[\s\S]*?super\(`\$\{method\}([^`]*)`\)/)?.[1]
+    expect(template, 'NotYetError in bridge.ts no longer has the expected shape').toBeDefined()
+    expect(isNotYet('unavailable', `records.list${template}`)).toBe(true)
+  })
+
+  it('treats any other unavailable as a real outage', () => {
+    expect(isNotYet('unavailable', 'Town Square could not complete that request.')).toBe(false)
+    expect(isNotYet('permission_denied', 'records.list is not available yet in this town.')).toBe(false)
   })
 
   it('anything that is not an SDK error becomes "unknown"', () => {
@@ -169,6 +208,7 @@ describe('what the host says comes back as an error code', () => {
       code: 'unknown',
       message: 'boom',
       retryable: false,
+      notYet: false,
     })
     expect(toCallError('plain string')).toMatchObject({ code: 'unknown', message: 'plain string' })
   })

@@ -15,17 +15,38 @@ export type CallState =
   | { status: 'running' }
   /** `fired` is true for `app.*` calls, which return nothing by design. */
   | { status: 'ok'; result: unknown; fired: boolean; ms: number }
-  | { status: 'error'; code: string; message: string; retryable: boolean }
+  /** `notYet` is true when the host says the method is not built yet; see below. */
+  | { status: 'error'; code: string; message: string; retryable: boolean; notYet: boolean }
 
 /** Only these two are worth retrying; every other code is an answer. */
 const RETRYABLE = new Set(['rate_limited', 'unavailable'])
 
+/**
+ * The host answers a method it has not built yet (records, until Phase 8) with
+ * `unavailable`, the same code as a passing outage, so the code alone would
+ * tell a reader to retry something retrying can never fix. The message is the
+ * only thing that tells them apart: it comes from `NotYetError` in
+ * `packages/host/src/bridge.ts`, and a test fails if that wording changes.
+ */
+export const NOT_YET_MESSAGE = / is not available yet in this town\.$/
+
+export function isNotYet(code: string, message: string): boolean {
+  return code === 'unavailable' && NOT_YET_MESSAGE.test(message)
+}
+
 export function toCallError(err: unknown): Extract<CallState, { status: 'error' }> {
   if (err instanceof TownSquareError || err instanceof InputError) {
-    return { status: 'error', code: err.code, message: err.message, retryable: RETRYABLE.has(err.code) }
+    const notYet = isNotYet(err.code, err.message)
+    return {
+      status: 'error',
+      code: err.code,
+      message: err.message,
+      retryable: RETRYABLE.has(err.code) && !notYet,
+      notYet,
+    }
   }
   const message = err instanceof Error ? err.message : String(err)
-  return { status: 'error', code: 'unknown', message, retryable: false }
+  return { status: 'error', code: 'unknown', message, retryable: false, notYet: false }
 }
 
 export function useSdkCall(method: SdkMethod) {

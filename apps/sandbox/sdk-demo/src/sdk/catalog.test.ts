@@ -101,6 +101,29 @@ describe('the demo type declarations match the SDK method table', () => {
   })
 })
 
+describe('notes about the local shell stay true', () => {
+  // The local shell stubs some town.* methods with empty answers. The demo
+  // says so on exactly those methods, so a reader does not hunt for a bug.
+  const townData = readFileSync(
+    new URL('../../../../../apps/web/src/townData.ts', import.meta.url),
+    'utf8',
+  )
+  const stubbed = new Set(
+    [...townData.matchAll(/^\s+(\w+): async \(\) => (?:\(\{|null)/gm)].map((m) => `town.${m[1]}`),
+  )
+
+  it('finds the stubs it is checking', () => {
+    expect(stubbed.size).toBeGreaterThan(0)
+  })
+
+  for (const method of METHODS.filter((m) => m.namespace === 'town')) {
+    const explained = /townData\.ts/.test(method.note ?? '')
+    it(`${method.id} ${stubbed.has(method.id) ? 'explains' : 'does not claim'} an empty local answer`, () => {
+      expect(explained).toBe(stubbed.has(method.id))
+    })
+  }
+})
+
 describe('the demo manifest', () => {
   it('is valid', () => {
     expect(() => loadDemoManifest()).not.toThrow()

@@ -105,7 +105,13 @@ describe('useSdkCall', () => {
     unmount = hook.unmount
 
     await act(() => hook.current.run({}))
-    expect(hook.current.state).toEqual({ status: 'error', code: 'rate_limited', message: 'slow down', retryable: true })
+    expect(hook.current.state).toEqual({
+      status: 'error',
+      code: 'rate_limited',
+      message: 'slow down',
+      retryable: true,
+      notYet: false,
+    })
   })
 
   it('keeps the newer answer when an older one lands last', async () => {
