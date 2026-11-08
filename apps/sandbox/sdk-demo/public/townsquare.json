@@ -3,11 +3,23 @@
   "sdk": 1,
   "name": "SDK Demo",
   "tagline": "A React creation for testing the Town Square SDK",
-  "description": "A developer creation built with React and Vite. It renders, tells Town Square it is ready, and reads the town's name and timezone. It is the base for a test bench that exercises every SDK method.",
+  "description": "A developer creation built with React and Vite. It calls every SDK method from a simple form and shows the result, the error code, and the equivalent line of code.",
   "version": "0.1.0",
   "tags": ["developer"],
   "entry": "index.html",
   "icon": "icon.png",
   "display": { "surface": "full", "height": "auto" },
-  "permissions": {}
+  "permissions": {
+    "identity": "handle",
+    "storage": true,
+    "read": ["sdk_demo_note"],
+    "write": ["sdk_demo_note"]
+  },
+  "defines": [
+    {
+      "type": "sdk_demo_note",
+      "label": "SDK demo note",
+      "schema": { "text": { "type": "string", "required": true, "maxLength": 500 } }
+    }
+  ]
 }
