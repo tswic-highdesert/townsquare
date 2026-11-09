@@ -136,3 +136,10 @@ describe('the demo manifest', () => {
     expect(manifest.permissions.write).toContain(DEMO_RECORD_TYPE)
   })
 })
+
+describe('every method explains itself', () => {
+  it.each(METHODS.map((m) => [m.id, m] as const))('%s has a "why" that is more than its summary', (_id, m) => {
+    expect(m.why.trim().length).toBeGreaterThan(40)
+    expect(m.why).not.toBe(m.summary)
+  })
+})

@@ -41,7 +41,13 @@ export interface SdkMethod {
   id: string
   namespace: Namespace
   signature: string
+  /** What the method returns or does, in one line. */
   summary: string
+  /**
+   * Why a creation would use it: the kind of feature it makes possible and
+   * when to reach for it. Plain language, shown under "When to use it".
+   */
+  why: string
   /** The manifest permission the call needs, or `null` for none. */
   requires: string | null
   inputs: InputField[]
@@ -143,11 +149,11 @@ const pagingFields: Array<[string, 'text' | 'number']> = [
 
 const recordId: InputField = { name: 'id', label: 'id', kind: 'text', hint: 'from records.list or records.create' }
 
-const NOT_YET =
+export const NOT_YET =
   'The host does not serve records yet (Phase 8), so this answers "not available yet". ' +
   'The call and manifest are already correct and will work unchanged once it lands.'
 
-const EMPTY_LOCALLY =
+export const EMPTY_LOCALLY =
   'The local shell does not serve town content yet (apps/web/src/townData.ts), so under ' +
   'pnpm dev this returns empty lists or null. That is the real answer, not a bug in the demo.'
 
@@ -160,6 +166,7 @@ export const METHODS: SdkMethod[] = [
     namespace: 'app',
     signature: 'app.ready(): void',
     summary: 'Tell Town Square the app has rendered.',
+    why: 'Every creation needs this. Until it is called, Town Square shows a loading skeleton, and after 10 seconds it swaps your app for a "did not load" message. Call it as soon as the first screen is drawn, even if data is still loading.',
     requires: null,
     inputs: [],
     run: () => app.ready(),
@@ -171,6 +178,7 @@ export const METHODS: SdkMethod[] = [
     namespace: 'app',
     signature: 'app.setHeight(px: number): void',
     summary: 'Ask the host to resize the frame (clamped to 200-4000px).',
+    why: 'Makes the frame fit your content so visitors scroll the page, not a small box inside it. Town Square cannot see inside the frame, so the app has to report its own height. This demo does it automatically whenever its content changes.',
     requires: null,
     inputs: [{ name: 'px', label: 'px', kind: 'number', initial: '720' }],
     run: (v) => {
@@ -179,13 +187,14 @@ export const METHODS: SdkMethod[] = [
       app.setHeight(px)
     },
     code: (v) => safe(() => `app.setHeight(${number(v, 'px') ?? ''})`),
-    note: 'This demo uses display.height "auto", so the host ignores it. That is expected.',
+    note: 'The demo also reports its own height whenever it resizes (main.tsx), so a value set here lasts until the next resize.',
   },
   {
     id: 'app.setTitle',
     namespace: 'app',
     signature: 'app.setTitle(text: string): void',
     summary: 'Set the line Town Square shows above the app (80 chars, plain text).',
+    why: "Shows live status above your app, like \"12 cameras mapped\" or \"3 events today\". Not for your app's name: Town Square already shows that from the manifest.",
     requires: null,
     inputs: [{ name: 'text', label: 'text', kind: 'text', initial: 'Testing the SDK' }],
     run: (v) => {
@@ -202,6 +211,7 @@ export const METHODS: SdkMethod[] = [
     namespace: 'town',
     signature: 'town.info(): Promise<TownInfo>',
     summary: 'The town id, display name and IANA timezone.',
+    why: "Tells you which town you are in and its timezone. Use the timezone for anything with dates, so \"today\" means today in the town, not on the visitor's device. Also handy for a greeting like \"Welcome to Russellville\".",
     requires: null,
     inputs: [],
     run: () => town.info(),
@@ -212,6 +222,7 @@ export const METHODS: SdkMethod[] = [
     namespace: 'town',
     signature: 'town.thisWeek(): Promise<ThisWeek>',
     summary: 'Events and notices bucketed into today, weekend, comingUp and notices.',
+    why: "The quickest way to show what is happening: today, this weekend, coming up, and notices, already sorted in the town's timezone. Use it for a \"this week\" view instead of filtering town.items yourself, since the grouping rules are tricky and match the rest of Town Square.",
     requires: null,
     inputs: [],
     run: () => town.thisWeek(),
@@ -223,6 +234,7 @@ export const METHODS: SdkMethod[] = [
     namespace: 'town',
     signature: 'town.items(opts?): Promise<{ items, nextCursor }>',
     summary: 'Ingested town content: events, notices, stories. Cursor-paginated.',
+    why: 'For anything that lists or searches town content: a news feed, an events calendar, a search box. Filter by type or text, page through with the cursor, and pass since when refreshing so you only fetch what changed.',
     requires: null,
     inputs: [
       { name: 'type', label: 'type', kind: 'select', options: ['', 'event', 'notice', 'story'], optional: true },
@@ -239,6 +251,7 @@ export const METHODS: SdkMethod[] = [
     namespace: 'town',
     signature: 'town.item(id: string): Promise<Item | null>',
     summary: 'One ingested item by id. Returns null when missing or stale.',
+    why: 'Shows one event, notice or story in full, for example a detail view after someone taps a list entry. Returns null when it is gone, so you can say "no longer available" instead of showing an error.',
     requires: null,
     inputs: [{ name: 'id', label: 'id', kind: 'text', hint: 'an id from town.items' }],
     run: (v) => town.item(requiredText(v, 'id')),
@@ -250,6 +263,7 @@ export const METHODS: SdkMethod[] = [
     namespace: 'town',
     signature: 'town.businesses(opts?): Promise<{ items, nextCursor }>',
     summary: 'The town business directory. Cursor-paginated.',
+    why: "Start here for anything about local places: a restaurant ranking, a shop-local map, a \"what's open now\" list. It holds about 700 real listings with addresses, hours and coordinates, kept current, so you never maintain your own list that goes stale.",
     requires: null,
     inputs: [
       { name: 'tag', label: 'tag', kind: 'text', optional: true, hint: 'e.g. restaurant' },
@@ -269,6 +283,7 @@ export const METHODS: SdkMethod[] = [
     namespace: 'user',
     signature: 'user.current(): Promise<User | null>',
     summary: 'The signed-in handle and whether they are verified.',
+    why: 'Lets your app adapt to who is looking: greet a signed-in resident by handle, or show "sign in to contribute" to everyone else. Most visitors are signed out, so always handle null. It only reveals a handle and whether they are verified, never a name or email.',
     requires: 'permissions.identity: "handle"',
     inputs: [],
     run: () => user.current(),
@@ -282,6 +297,7 @@ export const METHODS: SdkMethod[] = [
     namespace: 'storage',
     signature: 'storage.get(key: string): Promise<unknown>',
     summary: "Read this user's private value for a key. undefined when unset.",
+    why: 'Brings back what this person saved last time, such as their filters, favourites or progress in a game, so the app remembers them. Works only when they are signed in, and only your app can read it.',
     requires: 'permissions.storage: true',
     inputs: [{ name: 'key', label: 'key', kind: 'text', initial: 'demo' }],
     run: (v) => storage.get(requiredText(v, 'key')),
@@ -293,6 +309,7 @@ export const METHODS: SdkMethod[] = [
     namespace: 'storage',
     signature: 'storage.set(key: string, value: unknown): Promise<void>',
     summary: "Save this user's private value (JSON, 64KB total per user).",
+    why: "Saves one person's preferences or progress privately for their next visit, up to 64KB per person. If other people should see it, use records instead.",
     requires: 'permissions.storage: true',
     inputs: [
       { name: 'key', label: 'key', kind: 'text', initial: 'demo' },
@@ -309,6 +326,7 @@ export const METHODS: SdkMethod[] = [
     namespace: 'records',
     signature: 'records.list(type: string, opts?): Promise<{ items, nextCursor }>',
     summary: 'Read shared town records of one type.',
+    why: 'Shows what the town has collected together, such as every reported pothole or every mapped camera. Records are shared between creations, so you can build on data another app started instead of beginning from nothing.',
     requires: `"${DEMO_RECORD_TYPE}" in permissions.read`,
     inputs: paging,
     run: (v) => {
@@ -323,6 +341,7 @@ export const METHODS: SdkMethod[] = [
     namespace: 'records',
     signature: 'records.get(type: string, id: string): Promise<Record | null>',
     summary: 'One record, by type and id.',
+    why: 'Loads one shared record, for example to open its detail view or check its latest state before editing it.',
     requires: `"${DEMO_RECORD_TYPE}" in permissions.read`,
     inputs: [recordId],
     run: (v) => records.get('sdk_demo_note', requiredText(v, 'id')),
@@ -334,6 +353,7 @@ export const METHODS: SdkMethod[] = [
     namespace: 'records',
     signature: 'records.create(type: string, data: object): Promise<Record>',
     summary: 'Add a record to the town. Needs a verified resident.',
+    why: "Lets residents add to the town's shared data, like reporting a broken streetlight. Only verified residents can create records, and Town Square attaches who wrote it and from which app automatically, so it cannot be faked.",
     requires: `"${DEMO_RECORD_TYPE}" in permissions.write`,
     inputs: [{ name: 'data', label: 'data (JSON)', kind: 'json', initial: '{"text": "Hello from the SDK demo"}' }],
     run: (v) => records.create('sdk_demo_note', jsonObject(v, 'data')),
@@ -345,6 +365,7 @@ export const METHODS: SdkMethod[] = [
     namespace: 'records',
     signature: 'records.update(type: string, id: string, patch: object): Promise<Record>',
     summary: 'Change a record. Writes a new version; nothing is destroyed.',
+    why: 'Lets residents correct shared data, like marking a pothole as fixed. Records work like a wiki: any verified resident can edit, nothing is deleted, and every change is kept as a new version.',
     requires: `"${DEMO_RECORD_TYPE}" in permissions.write`,
     inputs: [recordId, { name: 'patch', label: 'patch (JSON)', kind: 'json', initial: '{"text": "Edited"}' }],
     run: (v) => records.update('sdk_demo_note', requiredText(v, 'id'), jsonObject(v, 'patch')),
@@ -357,6 +378,7 @@ export const METHODS: SdkMethod[] = [
     namespace: 'records',
     signature: 'records.history(type: string, id: string): Promise<Version[]>',
     summary: 'Every version of a record, oldest first.',
+    why: 'Shows who changed a record, when, and what it said before. Displaying this is what makes community-edited data trustworthy, because every edit stays visible and accountable.',
     requires: `"${DEMO_RECORD_TYPE}" in permissions.read`,
     inputs: [recordId],
     run: (v) => records.history('sdk_demo_note', requiredText(v, 'id')),
