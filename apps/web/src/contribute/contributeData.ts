@@ -21,7 +21,7 @@ export type ContributionType = 'event' | 'correction' | 'notice' | 'collection' 
 export interface GateAvailability {
   type: ContributionType
   label: string
-  standing: 'verified' | 'organisation'
+  standing: 'signed_in' | 'verified' | 'organisation'
   allowed: boolean
   /**
    * What happens if they use it anyway.
@@ -193,9 +193,11 @@ export async function fetchMine(): Promise<MinePayload | null> {
  */
 export async function readWhen(text: string): Promise<WhenResult> {
   if (!text.trim()) return { kind: 'empty' }
-  const res = await post('/api/contribute/when', { text })
-  if (!res.ok) return { kind: 'unreadable', text }
-  return (await res.json()) as WhenResult
+  try {
+    const res = await post('/api/contribute/when', { text })
+    if (!res.ok) return { kind: 'unreadable', text }
+    return (await res.json()) as WhenResult
+  } catch { return { kind: 'unreadable', text } }
 }
 
 export async function submit(input: {
@@ -203,9 +205,13 @@ export async function submit(input: {
   content: unknown
   draftId?: string
 }): Promise<SubmitResult | ContributeError> {
-  const res = await post('/api/contributions', input.draftId ? { draftId: input.draftId } : input)
-  const body = (await res.json()) as SubmitResult | ContributeError
-  return res.ok ? (body as SubmitResult) : (body as ContributeError)
+  try {
+    const res = await post('/api/contributions', input.draftId ? { draftId: input.draftId } : input)
+    const body = (await res.json()) as SubmitResult | ContributeError
+    return res.ok ? (body as SubmitResult) : (body as ContributeError)
+  } catch {
+    return { error: 'unavailable', message: 'We could not confirm your submission. Your text is still here. Check your contributions before trying again.' }
+  }
 }
 
 export async function saveDraft(input: {
@@ -213,21 +219,31 @@ export async function saveDraft(input: {
   type: ContributionType
   content: unknown
 }): Promise<Draft | ContributeError> {
-  const res = await post('/api/drafts', input)
-  const body = (await res.json()) as { draft: Draft } | ContributeError
-  return res.ok ? (body as { draft: Draft }).draft : (body as ContributeError)
+  try {
+    const res = await post('/api/drafts', input)
+    const body = (await res.json()) as { draft: Draft } | ContributeError
+    return res.ok ? (body as { draft: Draft }).draft : (body as ContributeError)
+  } catch {
+    return { error: 'unavailable', message: 'Draft not saved. Keep this page open and try again when your connection returns.' }
+  }
 }
 
 export async function discardDraft(id: string): Promise<boolean> {
-  const res = await post(`/api/drafts/${id}/discard`, {})
-  if (!res.ok) return false
-  return ((await res.json()) as { discarded: boolean }).discarded
+  try {
+    const res = await post(`/api/drafts/${id}/discard`, {})
+    if (!res.ok) return false
+    return ((await res.json()) as { discarded: boolean }).discarded
+  } catch { return false }
 }
 
 export async function withdraw(id: string): Promise<Contribution | ContributeError> {
-  const res = await post(`/api/contributions/${id}/withdraw`, {})
-  const body = (await res.json()) as { contribution: Contribution } | ContributeError
-  return res.ok ? (body as { contribution: Contribution }).contribution : (body as ContributeError)
+  try {
+    const res = await post(`/api/contributions/${id}/withdraw`, {})
+    const body = (await res.json()) as { contribution: Contribution } | ContributeError
+    return res.ok ? (body as { contribution: Contribution }).contribution : (body as ContributeError)
+  } catch {
+    return { error: 'unavailable', message: 'We could not confirm the withdrawal. Check the status and try again.' }
+  }
 }
 
 export interface RecordVersion {

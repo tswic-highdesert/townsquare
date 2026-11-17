@@ -1,0 +1,97 @@
+# Durable accounts and resident contributions
+
+The deployed account path uses a handle and password. It sends no email. A new account is an ordinary, unverified resident. Password recovery is intentionally unavailable and the account form says so before registration.
+
+## Runtime and deployment
+
+Use Node 22.13 or newer (Node 24 is recommended for the deployment). The API uses the built-in `node:sqlite` module without a database dependency. Set `TOWNSQUARE_DB_PATH=/data/residents.sqlite` and mount a persistent Railway volume at `/data`. Run exactly one API replica. Do not use the container's temporary filesystem for the deployed database.
+
+The database uses WAL journaling, full synchronous commits, a five-second busy timeout, and owner-only file permissions. Startup creates additive tables and indexes. It never resets existing data. The existing Postgres service is untouched.
+
+The SQLite adapters implement the existing identity, saves, contribution, record-history, draft, and contribution-attempt interfaces. Each row mutation is committed before its promise resolves. Account creation and password storage commit together. Record creation and history append commit together. These adapters use SQL-backed row collections rather than serializing an in-memory snapshot during shutdown, so an abrupt exit does not discard successful requests.
+
+The broader creation publishing/moderation services still use their original memory stores. The working durable review path covered here is a listing correction. Do not advertise durable user-built app publication until those remaining stores and artifact publishing have been connected.
+
+## Account security
+
+The deployed `createAccountRoutes` handler must run before `createIdentityRoutes`. It owns signup and signin and returns HTTP 410 for old email confirmation. The password path never invokes challenge delivery or echoes a link.
+
+Passwords are 12–128 characters. They are hashed with scrypt (N=32768, r=8, p=1), an independent random 32-byte salt, and a 64-byte derived key. Only salt and hash are stored. Authentication compares derived keys with `timingSafeEqual`, including a dummy calculation for unknown accounts. At most four expensive password operations run concurrently. Persistent rate limits apply to account handles and the socket peer; behind a reverse proxy, the network limit is shared by that proxy's traffic. This is a deliberate conservative demo limit, not a claim of distributed abuse prevention.
+
+Account mutations require the exact configured `SHELL_ORIGIN`. HTTPS deployments receive `__Host-tsq_session` cookies with Secure, HttpOnly, SameSite=Lax, Path=/ and no Domain. The server stores only a hash of each random session token. Sign-out revokes it durably. Sign-in creates a new session, and saves remain linked to the same account. No submitted role, verification flag, or user ID is trusted. Creation identity remains exactly `{ handle, verified }`.
+
+## Moderation without an admin bypass
+
+A resident can suggest a directory correction while unverified. It enters the moderator queue; it does not change residency status or public data automatically. Submitted drafts, correction status, reviewer decision, notes, and versioned records persist across restarts.
+
+First create the reviewer account through the ordinary account form. A server operator with deployment shell access can then run:
+
+```sh
+TOWNSQUARE_DB_PATH=/data/residents.sqlite pnpm exec tsx apps/api/src/provisionReviewer.ts chosen-handle moderator
+```
+
+The command changes only the role. It never grants verified residency or creates a credential. `user` can be passed in place of `moderator` to revoke review access. There is no HTTP role-grant route, environment password, shared demo login, or admin bypass.
+
+The existing review screen uses `/api/review/contributions` and the decision endpoints. Guests receive 401; ordinary signed-in residents receive 404. Approval stores a versioned listing record. The API's content loader must apply those record overrides for approved changes to appear in the public directory.
+
+## Verification
+
+`pnpm exec vitest run apps/api/src/persistence.test.ts` exercises the routes through a real HTTP socket, with the HTTPS cookie policy selected. It checks:
+
+- Registration, sign-out revocation, and sign-in with a fresh session.
+- Persistent saves after database close/reopen.
+- Rejection of wrong passwords, missing/bad origins, anonymous writes, and role escalation attempts.
+- Salted password storage, hashed session storage, and exact public identity projection.
+- Durable rate limits across restart.
+- Draft edits, unverified correction submission, moderator approval, status, notes, and immutable record history after reopen.
+- A separate Node process commits a save, exits, and a subsequent connection reads it.
+
+Existing identity, save, contribution, and review tests remain applicable. Browser and Railway-volume verification are separate integration gates; the local suite does not prove that a deployed mount or proxy is configured correctly.
+
+## Reviewed corrections in the public feed
+
+`withApprovedCorrections(loadContent, records, townId)` supplies the API's public content loader. Its pure helper accepts only active business records for that town and only the supported fields. Name changes also update the title. Address changes clear the previous geocode rather than moving a map pin by guesswork. A reviewed “Closed for good” statement removes a listing from discovery; reverting that record to its empty baseline restores the source listing. Saved snapshots are retained. Source timestamps stay unchanged, because a review is not a fresh scrape.
+
+The directory route can cache an assembled response for up to 60 seconds. The HTTP integration test checks the original public listing while a correction is queued, approves it through the moderator endpoint, expires that cache, and checks the changed public phone. It then reopens the database and checks the decision and record history. `correctionOverlay.test.ts` covers closures, address/geocode consistency, source immutability, unsupported fields, and wrong-town/inactive records.
+
+## Deployed resident browser evidence
+
+On October 1, 2026, the early deployment at `https://townsquare-live-production.up.railway.app` passed the resident journey on desktop (1440 pixels wide) and phone (390 pixels wide). The test created an unverified `qa_` account, saved a real directory listing, refreshed Saved, signed out, signed in from a fresh browser context, found the save, submitted a labeled QA correction, refreshed its queued status, and verified that the resident could neither read nor approve the moderator queue. It withdrew the QA correction afterward. The proposed value equaled the original listing name; no invented public business fact was proposed.
+
+The later `e3d9cc44` deployment also passed the real day planner, correction-review decline, concurrent session saves, and separate-origin creation privacy checks at both widths. A search/catalogue response race found by that run was fixed and has a dedicated delayed-response regression. Run the complete suite against the final deployment:
+
+```sh
+TOWNSQUARE_BASE_URL=https://townsquare-live-production.up.railway.app pnpm exec playwright test --config e2e/resident.config.ts
+```
+
+The config starts no servers and records no auth traces. It captures account, saved, contribution, and guest-screen screenshots under `artifacts/resident-e2e`. Playwright clears this output directory at the start of a run, so run both projects in one invocation to retain both desktop and phone evidence.
+
+
+## Deployment restart and review evidence
+
+A resident session, password account, save, draft, and queued correction were created before deployment `e3d9cc44` replaced the API process. After deployment, the existing cookie still resolved the same account, every durable row remained, and password sign-in in a new session recovered the save. The QA correction was withdrawn and its test sessions revoked afterward. This checks the real Railway volume across deployment, in addition to the local process-restart tests.
+
+The moderator browser test provisions an ordinary test account through the server-only command, reviews a labeled same-value QA correction, declines it with a note, and confirms that the resident sees the saved note after reload. A second decision made while the review page is open returns a conflict; the UI refreshes the authoritative status and note instead of keeping active approval controls. The role is revoked in cleanup and the same session loses review access. Run it only with explicit operator access:
+
+```sh
+TOWNSQUARE_BASE_URL=https://townsquare-live-production.up.railway.app \
+TOWNSQUARE_REVIEW_MODE=railway \
+TOWNSQUARE_E2E_OUTPUT=../artifacts/deployed-final \
+pnpm exec playwright test --config e2e/resident.config.ts
+```
+
+The ordinary suite never publishes a fabricated correction. The separate sourced phone-format approval test is disabled unless `TOWNSQUARE_APPROVE_SOURCE_CORRECTION=1` is explicitly set. It targets only the verified Retro Roasts W. 2nd phone number, uses a formatting-only change, records the official source, checks both public APIs, and revokes the reviewer role. Do not enable it as a routine CI test.
+
+The creation-frame check runs Lunch around town on the actual sandbox origin. It verifies useful restaurant data, a denied parent-DOM read, a denied SDK identity call, HttpOnly/Secure cookie properties, and an enforced `connect-src` CSP rejection for a direct credentialed request to the shell. The map regression checks Map/List URLs through refresh. Two delayed-response tests ensure a late creation catalogue cannot dismiss Search and a previous account's saves cannot reappear after sign-out and account switching.
+
+## Final deployed checks on October 1, 2026
+
+Deployment `5232734c-a482-434e-aeba-5ba3682a77bf` passed all 18 routine resident and reviewer browser cases across desktop and phone. Evidence is under `artifacts/deployed-final-5232734c`. The tests cover real detail routes, search and keyboard behavior, list/map URL refresh, day-planner saves after a new session, durable review decisions, denied ordinary-user review, role revocation, late-response account isolation, and the actual deployed creation's browser and SDK boundary.
+
+The explicitly authorized sourced approval also published successfully and changed both `/api/directory` (after its cache expired) and `/api/businesses`. It normalized only Retro Roasts' existing W. 2nd phone number from `(479) 219-9155` to `+1 479-219-9155`. The destination number is unchanged and was checked against the [official business contact page](https://www.retroroasts.com/). Contribution `8fb993cb-eee1-4818-adab-1da78e1794c9` and record `ecf135a4-df9e-46b1-98ba-7a65ffea8686` retain the source explanation and moderator note in the durable database. The temporary reviewer role was revoked.
+
+The opt-in approval case then exposed a display bug: the contributor saw Live and History but the approved moderator note was hidden. Commit `4e16a1b` renders saved moderator notes after approval as well as decline. A real local approval, author reload, and persisted-note check passed at both widths. The published production correction should not be repeated merely to rerun a test; the opt-in check skips it once the normalized value is already present.
+
+The full local browser run initially had two frame failures because no local sandbox process was running. After starting the configured sandbox at port 3031, both frame cases passed. The deployed sandbox cases passed without this setup issue.
+
+Deployment `41eb440f-2e24-4292-9243-e6d3f807366d` then shipped the approval-note fix. The final routine suite passed 17 cases immediately; one phone detail case pressed Escape between the dialog becoming visible and its focus effect running. The test now explicitly verifies that the dialog heading receives focus before sending the key. The full detail/search/map case then passed three consecutive runs at each width (six total) against that same deployment, without changing product code. The approved phone value also remained present in both public APIs after this deployment. A read-only database check found zero elevated `qa_` accounts. Final screenshots are in `artifacts/deployed-final-41eb440f`, with the repeated focus checks in `artifacts/deployed-final-focus`.

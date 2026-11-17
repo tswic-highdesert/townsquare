@@ -3,6 +3,7 @@
 // ============================================================
 
 import type { EventItem } from "./types.js";
+import { parseICalDate } from "./ical-date.js";
 
 /** iCal feed configuration */
 export interface ICalFeedConfig {
@@ -31,33 +32,6 @@ export const ICAL_FEEDS: ICalFeedConfig[] = [
   },
 ];
 
-/** Parse an iCal date string (YYYYMMDD or YYYYMMDDTHHmmss) into ISO string */
-function parseICalDate(dateStr: string, isEnd?: boolean): string {
-  // Handle VALUE=DATE format: YYYYMMDD
-  if (dateStr.length === 8) {
-    const year = dateStr.slice(0, 4);
-    const month = dateStr.slice(4, 6);
-    const day = dateStr.slice(6, 8);
-    // For all-day events, end date in iCal is exclusive
-    return `${year}-${month}-${day}T${isEnd ? "23:59:59" : "00:00:00"}-05:00`;
-  }
-
-  // Handle YYYYMMDDTHHMMSS or YYYYMMDDTHHMMSSZ
-  const match = dateStr.match(
-    /^(\d{4})(\d{2})(\d{2})T(\d{2})(\d{2})(\d{2})(Z?)$/
-  );
-  if (match) {
-    const [, yr, mo, dy, hr, mn, sc, z] = match;
-    if (z) {
-      return new Date(`${yr}-${mo}-${dy}T${hr}:${mn}:${sc}Z`).toISOString();
-    }
-    return `${yr}-${mo}-${dy}T${hr}:${mn}:${sc}-05:00`;
-  }
-
-  // Fallback
-  return new Date(dateStr).toISOString();
-}
-
 /** Unescape iCal text values */
 function unescapeIcal(text: string): string {
   return text
@@ -81,6 +55,8 @@ function parseVEvent(block: string): Record<string, string> {
 
     // Normalize key: strip parameters (e.g., DTSTART;VALUE=DATE → DTSTART)
     const key = rawKey.split(";")[0].toUpperCase();
+    const timeZone = rawKey.match(/;TZID=([^;]+)/i)?.[1]?.replace(/^"|"$/g, "");
+    if (timeZone) props[`${key}_TZID`] = timeZone;
 
     // Check if this is an all-day date
     if (rawKey.includes("VALUE=DATE") && (key === "DTSTART" || key === "DTEND")) {
@@ -147,9 +123,9 @@ async function parseICalFeed(
       if (!dtStart) continue;
 
       const isAllDay = props.DTSTART_ALLDAY === "true";
-      const startDate = parseICalDate(dtStart);
+      const startDate = parseICalDate(dtStart, props.DTSTART_TZID);
       const endDate = props.DTEND
-        ? parseICalDate(props.DTEND, isAllDay)
+        ? parseICalDate(props.DTEND, props.DTEND_TZID)
         : undefined;
 
       // Skip past events (more than 1 day ago)

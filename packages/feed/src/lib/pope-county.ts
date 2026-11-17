@@ -3,6 +3,7 @@
 // ============================================================
 
 import type { EventItem } from "./types.js";
+import { localDate, localDateParts } from "./local-date.js";
 import { fetchWithRetry } from "./http.js";
 
 const CALENDAR_URL = "https://www.popecountyar.gov/calendar";
@@ -56,7 +57,8 @@ export async function fetchPopeCountyEvents(): Promise<EventItem[]> {
     const html = await response.text();
     const events: EventItem[] = [];
     const now = new Date();
-    const currentYear = now.getFullYear();
+    const localNow = localDateParts(now);
+    const currentYear = localNow.year;
 
     // Parse each cal_item block:
     // <a class="cal_item" href="calendar-view?id=XX">
@@ -83,16 +85,17 @@ export async function fetchPopeCountyEvents(): Promise<EventItem[]> {
 
       // Determine year — if month is before current month, assume next year
       let year = currentYear;
-      if (monthNum < now.getMonth()) {
+      if (monthNum < localNow.month) {
         year = currentYear + 1;
       }
 
       // Parse time from the title if available (e.g., "5:30 PM")
       const time = parseTimeFromTitle(title);
-      const hours = time?.hours ?? 17; // default 5 PM for government meetings
-      const minutes = time?.minutes ?? 30;
+      // Do not invent a meeting time when the source omits it.
+      if (!time) continue;
+      const { hours, minutes } = time;
 
-      const startDate = new Date(year, monthNum, day, hours, minutes, 0, 0);
+      const startDate = new Date(localDate(year, monthNum, day, hours, minutes));
 
       // Skip past events
       if (startDate < now) continue;

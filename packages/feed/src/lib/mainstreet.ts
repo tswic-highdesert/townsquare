@@ -3,6 +3,7 @@
 // ============================================================
 
 import type { EventItem } from "./types.js";
+import { namedLocalDate } from "./local-date.js";
 
 const BASE_URL = "https://www.mainstreetrussellville.com";
 const EVENTS_URL = `${BASE_URL}/events/`;
@@ -25,21 +26,6 @@ function decodeEntities(text: string): string {
 }
 
 /**
- * Parse a Locable date string like "Apr 02, 2026" into a Date object.
- * Returns null if unparseable.
- */
-function parseLocableDate(dateStr: string): Date | null {
-  try {
-    const cleaned = dateStr.trim();
-    const parsed = new Date(cleaned);
-    if (isNaN(parsed.getTime())) return null;
-    return parsed;
-  } catch {
-    return null;
-  }
-}
-
-/**
  * Parse a time string like "6:00 PM CDT" or "7:00 PM CST" into hours/minutes.
  */
 function parseTime(timeStr: string): { hours: number; minutes: number } | null {
@@ -58,18 +44,9 @@ function parseTime(timeStr: string): { hours: number; minutes: number } | null {
 }
 
 /** Combine a date string and time string into an ISO datetime */
-function combineDateAndTime(dateStr: string, timeStr?: string): string | null {
-  const date = parseLocableDate(dateStr);
-  if (!date) return null;
-
-  if (timeStr) {
-    const time = parseTime(timeStr);
-    if (time) {
-      date.setHours(time.hours, time.minutes, 0, 0);
-    }
-  }
-
-  return date.toISOString();
+export function combineDateAndTime(dateStr: string, timeStr?: string): string | null {
+  const time = timeStr ? parseTime(timeStr) : null;
+  return namedLocalDate(dateStr.trim(), time ?? undefined);
 }
 
 /** Parse events from the Locable events page HTML */

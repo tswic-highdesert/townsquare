@@ -148,16 +148,17 @@ export function ContributionRow(props: {
           <p className="cn-gate-say">
             <b>A moderator did not put this one up, and left you a note.</b>
           </p>
-          {c.decisionNote ? (
-            <blockquote className="cn-modnote">
-              <p>{c.decisionNote}</p>
-              <footer>
-                <Icon name="shield" size={16} /> A moderator
-              </footer>
-            </blockquote>
-          ) : null}
           <p className="cn-gate-tiny">Nothing was deleted. What you wrote is exactly as you wrote it.</p>
         </>
+      ) : null}
+
+      {c.decisionNote ? (
+        <blockquote className="cn-modnote">
+          <p>{c.decisionNote}</p>
+          <footer>
+            <Icon name="shield" size={16} /> A moderator
+          </footer>
+        </blockquote>
       ) : null}
 
       <div className="cn-gate-acts-row">

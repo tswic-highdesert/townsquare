@@ -375,15 +375,12 @@ next real orphan hides.
 
 Two ways to get a meaningless result, both hit for real:
 
-**Reusing servers that lack the fixtures.** `reuseExistingServer` is on outside
-CI, so a suite run against any servers already on 3030/3031/5173 will reuse
-them. If those were started without `TOWNSQUARE_EXTRA_EXAMPLES`, the e2e fixture
-creations do not exist, every test that opens `Neighborhood Watch` falls through
-to the sandbox explainer page, and the CSP assertion compares against the
-explainer's four directives instead of a bundle's. **Check `GET
-/api/creations` returns both `The Burrito Index` and `Neighborhood Watch` before
-trusting a single tick.** A green security suite that proves nothing is worse
-than a red one.
+**Reusing servers that lack the fixtures.** The boundary suite now starts fresh
+servers on ports 4410, 4411 and 4412, with an isolated temporary database and
+fixture directory. It never reuses an existing server. The public starter is
+`Lunch around town`; adversarial and identity/storage examples are test-only
+fixtures. Keep the exact CSP and isolation assertions even when changing the
+public example.
 
 **Setting `CI=true` "to make it deterministic".** Do not, in a worktree. The
 config's webServer commands are `pnpm tsx …`; pnpm sees `node_modules` is a
@@ -476,26 +473,24 @@ door, and the shell is the only thing holding the key.
 
 ## Signing in locally
 
-There is no mail server in development. `pnpm dev:api` prints every sign-in
-link to its terminal and hands the same link back in the response, which the
-sign-in screen shows in a dashed box. Click either one.
+Use the account form to create a handle and password (12–128 characters). No
+email is sent, printed or echoed. Accounts are ordinary unverified residents.
+SQLite persists identity, sessions, saves, drafts and corrections across API
+restarts. Set `TOWNSQUARE_DB_PATH` to choose the database; the local default is
+`/tmp/townsquare-data/residents.sqlite`. Production requires an explicit path on
+a persistent volume outside `/tmp` and exactly one API replica.
 
-That echo is refused the moment `SHELL_ORIGIN` is https, because a returned
-sign-in link is a complete account takeover for anyone who can guess an email.
+After creating an account normally, an operator can grant review access:
 
-```bash
-# start the town with a verified resident already in it
-TOWNSQUARE_SEED_COHORT='tswic:tal@example.com:admin' pnpm dev:api
+```sh
+TOWNSQUARE_DB_PATH=/tmp/townsquare-data/residents.sqlite pnpm exec tsx apps/api/src/provisionReviewer.ts chosen-handle moderator
 ```
 
-Vouching is a closure — only a verified resident can vouch — so a fresh town
-has nobody who can let anyone else in. `TOWNSQUARE_SEED_COHORT` is how the
-first residents exist: `handle:email` pairs, comma or newline separated, with
-an optional `:admin` or `:moderator`. Re-running is safe; it promotes an
-existing account rather than creating a second one.
-
-Identity is held in memory for now, alongside the example creations, so
-restarting the API signs everyone out.
+Pass `user` instead of `moderator` to revoke the role. This does not grant verified
+residency. There is no public role-grant route or shared reviewer password.
+Password recovery and new creation publishing are not enabled in this preview.
+See [durable accounts](docs/persistence-and-accounts.md) and
+[the deployed setup](docs/execution-2026-10-01/deployment.md).
 
 ## What a creation can learn about you
 
@@ -591,7 +586,7 @@ token can never reach anything that reads a session.
 
 In development the three processes hold separate memory stores, so a token
 minted through the API is not one `pnpm dev:mcp` will accept. That process prints
-its own instead, the same way `pnpm dev:api` prints sign-in links:
+its own instead, independently of the persistent password accounts in `apps/api`:
 
 ```bash
 TOWNSQUARE_SEED_COHORT='tswic:tal@example.com:admin' pnpm dev:mcp
@@ -819,13 +814,12 @@ The resident side is `contributionRoutes.ts` and the shell calls it from
 `apps/web/src/contribute/`. The moderator side sits in `reviewRoutes.ts`, behind
 the same role gate as the submission and report queues.
 
-**In development every contribution and draft is in memory.** `apps/api/src/main.ts`
-builds the service on `MemoryContributionStore`, `MemoryRecordStore`,
-`MemoryAttemptLog` and `MemoryDraftStore`, the same as identity, storage and the
-review queue, so restarting the API empties every proposal and draft. The
-Postgres tables are in `packages/db/src/schema.ts` and created by
-`packages/db/drizzle/0002_contributions_saves_moderation.sql`, but no
-Postgres-backed `ContributionStore` exists yet.
+**Contributions and drafts are stored in SQLite.** `apps/api/src/main.ts`
+builds the service on the SQLite stores in `apps/api/src/persistence/`, at
+`TOWNSQUARE_DB_PATH` (`/tmp/townsquare-data/residents.sqlite` in development),
+so they survive a restart. The Postgres tables are in `packages/db/src/schema.ts`
+and created by `packages/db/drizzle/0002_contributions_saves_moderation.sql`,
+but no Postgres-backed `ContributionStore` exists yet.
 
 ## Adding an example creation
 

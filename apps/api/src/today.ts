@@ -24,6 +24,7 @@
  * those are checked under `tsconfig.ported.json` on purpose. See the note at
  * the top of that file.
  */
+import { distinctVenues } from './localEvents.js'
 import type {
   BusinessItem,
   EventItem,
@@ -120,7 +121,7 @@ export interface TodayPayload {
   neighbors: { featured: TodayCreation | null; rest: TodayCreation[] }
   cityHall: { notice: TodayNotice | null; items: TodayCivicItem[] }
   directory: TodayBusiness[]
-  footer: { updatedLabel: string; sourceCount: number; creationCount: number }
+  footer: { updatedLabel: string; sourceCount: number; creationCount: number; sourceNote?: string; sourceCheckedLabel?: string }
 }
 
 /**
@@ -391,7 +392,7 @@ export function assembleToday(input: AssembleInput): TodayPayload {
 
   const events = {
     total: todayEvents.length,
-    items: upcoming.slice(0, 3).map((e) => {
+    items: distinctVenues(upcoming, 3).map((e) => {
       const { time, meridiem } = clockParts(e.startDate, tz)
       return {
         id: e.id,

@@ -51,6 +51,8 @@ export interface GalleryProps {
   onBack?: () => void
   /** The build layer's front door. Reached by asking, never sprung. */
   onHowItWorks: () => void
+  onOpenPlan?: () => void
+  onOpenMap?: () => void
 }
 
 /**
@@ -81,12 +83,18 @@ export function Gallery(props: GalleryProps) {
         </button>
       )}
 
-      <div className="cr-eyebrow">{props.townName} · the build layer</div>
-      <h1 className="cr-h1">Built by neighbors</h1>
+      <div className="cr-eyebrow">{props.townName} · made to be useful</div>
+      <h1 className="cr-h1">Small ideas. More connected.</h1>
       <p className="cr-lede">
-        Everything here was made by someone who lives in town. Each one runs sandboxed on Town
-        Square and can only reach what it says it can.
+        Useful tools for a day in the River Valley, and a starting point for something you could make.
+        Starter examples are labeled. Community creations will appear here as they are reviewed.
       </p>
+
+      {(props.onOpenPlan || props.onOpenMap) && <section className="cr-local-tools" aria-label="Town Square tools">
+        {props.onOpenPlan && <button className="cr-local-tool" onClick={props.onOpenPlan}><span className="cr-tool-art cr-tool-art-day"><Icon name="sun" size={52}/><span className="cr-tool-route" aria-hidden="true"><i/><i/><i/></span></span><span className="cr-tool-body"><small>Town Square tool</small><strong>Make a day of it</strong><span>A coffee, a local event, somewhere to eat. Bring your favorite stops together.</span><b>Plan your day <Icon name="arrow-right" size={18}/></b></span></button>}
+        {props.onOpenMap && <button className="cr-local-tool" onClick={props.onOpenMap}><span className="cr-tool-art cr-tool-art-map"><Icon name="map" size={70}/><Icon name="map-pin" size={34}/></span><span className="cr-tool-body"><small>Town Square tool</small><strong>Around the corner</strong><span>Explore places across town and find their address, phone and published details.</span><b>Explore the map <Icon name="arrow-right" size={18}/></b></span></button>}
+      </section>}
+      <div className="cr-gallery-section"><h2>Creation starters</h2><p>Examples of what can be built here. These are not resident endorsements or community activity.</p></div>
 
       {creations === null ? (
         <div className="cr-loading" aria-busy="true" aria-label="Loading the gallery">
@@ -98,8 +106,8 @@ export function Gallery(props: GalleryProps) {
         <EmptyState
           mark="sprout"
           tone="young"
-          line="Nobody has built anything yet."
-          sub="The build layer is open. The first thing in this gallery will be something a neighbour wanted to exist."
+          line="No creations published yet."
+          sub="A useful local idea can start small. See how a creation connects to Town Square."
           action={{ label: 'How it works', onAct: props.onHowItWorks }}
         />
       ) : (
@@ -155,8 +163,8 @@ export function Gallery(props: GalleryProps) {
       )}
 
       <p className="cr-footnote">
-        Nobody is paid for anything on this page. Every creation declares what it can reach before
-        you open it, and a neighbour on the review committee read it first.
+        Each creation declares its permissions before it opens. Starter examples show the platform’s
+        capabilities; they are not submissions from local residents.
       </p>
     </div>
   )
@@ -248,8 +256,8 @@ function Invitation({ onHowItWorks }: { onHowItWorks: () => void }) {
         </span>
         <div className="cr-invite-name">Build one</div>
         <p className="cr-invite-copy">
-          Describe what you want to the AI tool you already use, connect it to Town Square, and a
-          neighbour on the review committee reads it before it goes up.
+          Start with something you wish existed in town. A useful list, a local guide, a small tool.
+          Learn how to connect an app and submit it for review.
         </p>
         <Button variant="secondary" trailingIcon="arrow-right" onClick={onHowItWorks}>
           How it works
@@ -257,7 +265,7 @@ function Invitation({ onHowItWorks }: { onHowItWorks: () => void }) {
       </article>
 
       <p className="cr-invite-line">
-        Every one of these was made by somebody who lives here.
+        The next useful idea could be yours.
         <button className="cr-invite-link" onClick={onHowItWorks}>
           You could make one <Icon name="arrow-right" size={15} />
         </button>

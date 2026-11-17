@@ -2,6 +2,7 @@
 // CivicPlus Scraper — Parses City of Russellville calendar & alerts
 // ============================================================
 
+import { localISO, namedLocalDate, localDate, localDateParts } from "./local-date.js";
 import type { EventItem, NoticeItem } from "./types.js";
 
 const BASE_URL = "https://russellvillearkansas.org";
@@ -38,7 +39,7 @@ function generateAlertId(articleId: string): string {
  * Parse a CivicPlus date string like "March 24, 2026, 5:00 PM" into ISO
  * The HTML uses &nbsp; between parts, so we normalize spaces first.
  */
-function parseCivicPlusDateTime(dateStr: string): string {
+export function parseCivicPlusDateTime(dateStr: string): string {
   // Clean up non-breaking spaces and thin spaces
   const cleaned = dateStr
     .replace(/&nbsp;/g, " ")
@@ -51,32 +52,15 @@ function parseCivicPlusDateTime(dateStr: string): string {
   const parts = cleaned.split(/\s*[-–]\s*/);
   const startPart = parts[0].trim();
 
-  try {
-    const date = new Date(startPart);
-    if (!isNaN(date.getTime())) {
-      return date.toISOString();
-    }
-  } catch {
-    // fall through
-  }
-
-  // Fallback: try the whole string
-  try {
-    const date = new Date(cleaned);
-    if (!isNaN(date.getTime())) {
-      return date.toISOString();
-    }
-  } catch {
-    // fall through
-  }
-
-  return new Date().toISOString();
+  const parsed = namedLocalDate(startPart);
+  if (!parsed) throw new RangeError(`Unrecognized civic date: ${dateStr}`);
+  return parsed;
 }
 
 /**
  * Parse end time from a date string like "March 24, 2026, 5:00 PM - 6:00 PM"
  */
-function parseCivicPlusEndTime(dateStr: string, startDateStr: string): string | undefined {
+export function parseCivicPlusEndTime(dateStr: string, startDateStr: string): string | undefined {
   const cleaned = dateStr
     .replace(/&nbsp;/g, " ")
     .replace(/&thinsp;/g, " ")
@@ -88,23 +72,11 @@ function parseCivicPlusEndTime(dateStr: string, startDateStr: string): string | 
 
   const endTimePart = parts[1].trim(); // e.g., "6:00 PM"
 
-  // Extract the date portion from the start date
-  const startDate = new Date(startDateStr);
-  if (isNaN(startDate.getTime())) return undefined;
-
-  // Build a full datetime string using the start date's date + end time
-  const datePrefix = `${startDate.getFullYear()}-${String(startDate.getMonth() + 1).padStart(2, "0")}-${String(startDate.getDate()).padStart(2, "0")}`;
-
-  try {
-    const endDate = new Date(`${datePrefix} ${endTimePart}`);
-    if (!isNaN(endDate.getTime())) {
-      return endDate.toISOString();
-    }
-  } catch {
-    // fall through
-  }
-
-  return undefined;
+  const time = /^(\d{1,2})(?::(\d{2}))?\s*(AM|PM)$/i.exec(endTimePart);
+  if (!time) return undefined;
+  const { year, month, day } = localDateParts(new Date(startDateStr));
+  const hour = +time[1] % 12 + (time[3].toUpperCase() === "PM" ? 12 : 0);
+  return localDate(year, month, day, hour, +(time[2] ?? 0));
 }
 
 /**
@@ -152,8 +124,8 @@ export async function fetchCivicPlusEvents(): Promise<EventItem[]> {
       if (startDateMatch) {
         // The microdata has clean ISO-ish format like "2026-03-24T17:00:00"
         const raw = startDateMatch[1].trim();
-        // Append Central time offset
-        startDate = `${raw}-05:00`;
+        // Preserve explicit offsets; interpret floating values in Chicago.
+        startDate = localISO(raw);
       } else {
         startDate = parseCivicPlusDateTime(rawDateStr);
       }

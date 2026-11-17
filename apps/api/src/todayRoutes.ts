@@ -41,6 +41,7 @@ export interface TodayRoutesConfig {
    * reaches the network.
    */
   loadItems: () => Promise<readonly TownSquareItem[]>
+  contentStatus?: () => { status: string; lastLiveDataAt: string | null }
   now?: () => Date
 }
 
@@ -75,13 +76,23 @@ export function createTodayRoutes(cfg: TodayRoutesConfig) {
 
   async function build(): Promise<TodayPayload> {
     const items = await load()
-    return assembleToday({
+    const result = assembleToday({
       now: clock().toISOString(),
       town: cfg.town,
       items,
       creations: cfg.listCreations(),
       sources: SOURCE_INDEX,
     })
+    const health = cfg.contentStatus?.()
+    if (health) {
+      result.footer.sourceNote = health.status === 'fresh' ? 'Local sources are returning current records.' :
+        health.status === 'partial' ? 'Some sources have no new items or are unavailable. Check original listings before heading out.' :
+        'Showing the last available collection. Live sources are not currently up to date.'
+      if (health.lastLiveDataAt) result.footer.sourceCheckedLabel = new Date(health.lastLiveDataAt).toLocaleString('en-US', {
+        timeZone: cfg.town.timezone, month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit',
+      })
+    }
+    return result
   }
 
   async function payload(): Promise<TodayPayload> {

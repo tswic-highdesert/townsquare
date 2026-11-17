@@ -26,7 +26,7 @@ import { Button } from '../ui/index.js'
 import { Icon } from '../Icon.js'
 import type { Attribution } from './contributeData.js'
 
-/** Three states, and the third one is the honest one. */
+/** A saved badge appears only after the server confirms the current draft. */
 export type SaveState = 'idle' | 'saving' | 'saved' | 'offline'
 
 export interface ComposerShellProps {
@@ -104,7 +104,7 @@ export function ComposerShell(props: ComposerShellProps) {
 
       <footer className="cn-publish">
         {props.onSaveDraft ? (
-          <Button variant="quiet" onClick={props.onSaveDraft}>
+          <Button variant="quiet" onClick={props.onSaveDraft} disabled={props.publishDisabled}>
             Save draft
           </Button>
         ) : (
@@ -137,7 +137,7 @@ function SaveIndicator({ state }: { state: SaveState }) {
       ) : state === 'offline' ? (
         <>
           <Icon name="cloud-upload" size={16} />
-          Saved on this phone
+          Not saved — keep this page open
         </>
       ) : (
         <>
@@ -178,7 +178,7 @@ export function attributionSentence(attribution: Attribution): ReactNode {
     case 'resident':
       return (
         <>
-          Posting as <b>@{attribution.handle}</b>, verified resident
+          Contributing as <b>@{attribution.handle}</b>
         </>
       )
     case 'resident_via_creation':

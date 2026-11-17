@@ -17,7 +17,7 @@ describe('the publish gate matrix', () => {
     })
     expect(summary).toEqual([
       ['event', 'verified', 'immediate', true],
-      ['correction', 'verified', 'owner_then_moderator', false],
+      ['correction', 'signed_in', 'owner_then_moderator', false],
       ['notice', 'organisation', 'immediate', true],
       ['collection', 'verified', 'immediate', true],
       ['photo', 'verified', 'immediate', true],

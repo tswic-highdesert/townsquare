@@ -200,3 +200,22 @@
   color: var(--ts-navy);
   box-shadow: 0 1px 2px var(--ts-ink08);
 }
+
+/* Locally hosted OpenStreetMap geometry: water, parkland and actual road paths. */
+.local-map-water { fill: color-mix(in srgb, var(--ts-navy) 18%, #DCEFF3); stroke: none; }
+.local-map-park { fill: color-mix(in srgb, var(--ts-sage) 18%, var(--ts-cream)); stroke: none; }
+.local-map-major { fill: none; stroke: var(--ts-surface); stroke-linecap: round; stroke-linejoin: round; }
+.local-map-road { fill: none; stroke: color-mix(in srgb, var(--ts-surface) 92%, var(--ts-cream)); stroke-linecap: round; stroke-linejoin: round; }
+.local-map-label { font-family:var(--ts-font-sans); fill:var(--ts-quiet); stroke:var(--ts-cream); paint-order:stroke; stroke-linejoin:round; text-anchor:middle; dominant-baseline:middle; font-weight:650; }
+.map-provenance a { color:inherit; text-underline-offset:2px; }
+
+.local-map-waterway { fill: none; stroke: #bad7de; stroke-width: 2; }
+
+/* Keep the whole town and its controls within a desktop viewport. */
+@media(min-width:1040px) {
+ .dir-mapview .map-wrap { flex:none; height:clamp(460px,calc(100dvh - 330px),720px); min-height:460px; }
+ .dir-mapview .map { height:100%; }
+}
+.map-control { width:44px; height:44px; }
+.map-provenance { font-size:.8125rem; line-height:1.5; }
+.local-map-label { fill:var(--ts-ink60); }

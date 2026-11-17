@@ -156,7 +156,7 @@ export function Reader(props: ReaderProps) {
               />
             </span>
             <p className="nw-reader-credit">
-              Photo: {source.name}. Shown at thumbnail size and linked back, not reproduced.
+              Photo: {source.name}. Story preview; read the full article at the source.
             </p>
           </>
         )}
@@ -169,8 +169,7 @@ export function Reader(props: ReaderProps) {
             </div>
             <p className="nw-summary-lede">{story.summary}</p>
             <p className="nw-summary-fine">
-              This is the paragraph {source.name} publishes in its own feed, not a summary we wrote.
-              We do not reprint the article and we have nothing they do not.
+              This preview comes from {source.name}’s feed. The complete article is available from the publisher.
             </p>
           </div>
         )}

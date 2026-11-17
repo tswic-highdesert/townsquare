@@ -140,6 +140,11 @@ export async function signIn(email: string): Promise<SentResult> {
   return result
 }
 
+/** Passwords are sent only to the same-origin API, never stored by the shell. */
+export function passwordAccount(mode: 'signup' | 'signin', handle: string, password: string): Promise<AccountView | ApiError> {
+  return post<AccountView>(`/api/auth/${mode}`, { handle, password })
+}
+
 export async function confirm(token: string): Promise<AccountView | ApiError> {
   const result = await post<AccountView>('/api/auth/confirm', { token })
   if (!isError(result)) promotePending(result.handle)

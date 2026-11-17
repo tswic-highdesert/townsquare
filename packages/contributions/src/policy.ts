@@ -38,7 +38,7 @@ import type {
 } from './model.js'
 
 /** What a contributor must be. */
-export type Standing = 'verified' | 'organisation'
+export type Standing = 'signed_in' | 'verified' | 'organisation'
 
 /** Who reads it first. `owner_then_moderator` falls back when nobody claims it. */
 export type PublishRoute = 'immediate' | 'moderator' | 'owner_then_moderator'
@@ -62,7 +62,7 @@ export interface PublishGate {
   /**
    * Whether publishing this counts against the daily pause.
    *
-   * Corrections do not. They are reviewed anyway, so the pause buys nothing
+   * Corrections do not. Any signed-in resident may suggest one, and every correction is reviewed, so the pause buys nothing
    * against them, and the person filing six corrections in an afternoon is
    * doing the single most valuable unpaid work in the product.
    */
@@ -117,7 +117,7 @@ export const PUBLISH_GATES: Record<ContributionType, PublishGate> = {
   correction: {
     type: 'correction',
     label: 'A correction',
-    standing: 'verified',
+    standing: 'signed_in',
     route: 'owner_then_moderator',
     holdWhenShort: true,
     countsTowardPause: false,
@@ -202,7 +202,7 @@ export function availabilityFor(
 ): GateAvailability[] {
   return (Object.keys(PUBLISH_GATES) as ContributionType[]).map((type) => {
     const gate = PUBLISH_GATES[type]
-    const hasStanding = gate.standing === 'organisation' ? orgCount > 0 : who.verified
+    const hasStanding = gate.standing === 'organisation' ? orgCount > 0 : gate.standing === 'signed_in' || who.verified
 
     if (!gate.available) {
       return {

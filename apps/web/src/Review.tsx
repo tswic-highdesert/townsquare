@@ -66,6 +66,7 @@ import {
   type Report,
   type ReviewDetail,
 } from './reviewApi.js'
+import { ContributionReview } from './ContributionReview.js'
 import { onDay, waited } from './identity/when.js'
 import './identity/identity.css'
 
@@ -73,9 +74,10 @@ export interface ReviewScreenProps {
   onBack(): void
 }
 
-type Tab = 'submissions' | 'reports' | 'live'
+type Tab = 'contributions' | 'submissions' | 'reports' | 'live'
 
 const TABS: ReadonlyArray<[Tab, string]> = [
+  ['contributions', 'Corrections'],
   ['submissions', 'Submissions'],
   ['reports', 'Reports'],
   ['live', 'Live creations'],
@@ -90,7 +92,7 @@ const TABS: ReadonlyArray<[Tab, string]> = [
  * who reads them weekly.
  */
 export function ReviewScreen(props: ReviewScreenProps) {
-  const [tab, setTab] = useState<Tab>('submissions')
+  const [tab, setTab] = useState<Tab>('contributions')
 
   return (
     <div className="mod-screen">
@@ -112,6 +114,7 @@ export function ReviewScreen(props: ReviewScreenProps) {
         ))}
       </nav>
 
+      {tab === 'contributions' && <ContributionReview />}
       {tab === 'submissions' && <SubmissionsTab />}
       {tab === 'reports' && <ReportsTab />}
       {tab === 'live' && <LiveTab />}

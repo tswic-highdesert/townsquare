@@ -1,42 +1,11 @@
-/**
- * The map on Nearby. `design/hifi` 5a.
- *
- * ## It talks to nobody
- *
- * There is no tile host in this file, no `<img>` pointing off-origin, and no
- * fetch of any kind. **The shell's CSP is unchanged by this screen** — no
- * `img-src`, no `connect-src`, no key, no attribution beacon — and a resident
- * panning around their own town tells nobody anything.
- *
- * That is worth saying plainly because the alternative is what everybody does.
- * A tile layer means the origin holding the session cookie issuing a steady
- * stream of requests to a third party, each one naming a square of Russellville
- * at a zoom level, which together describe where somebody lives and what they
- * were looking for. `packages/tokens` self-hosts four typefaces rather than take
- * a Google Fonts link for a much smaller version of the same trade.
- *
- * ## What it is drawn from
- *
- * The same payload the list uses, and nothing else. Street corridors derived
- * from the 741 addresses in the directory (`apps/api/src/townMap.ts`), pins from
- * the ranked places, and the resident's own position if they offered one.
- *
- * A corridor is drawn as a **band as wide as its measured spread**, not a
- * hairline. A storefront's coordinate sits a couple of hundred feet back from
- * the road, so the corridor knows where Main Street runs to about a block —
- * and the width of the line is the honest width of that knowledge. There is no
- * river, park or railway on it, because the directory says nothing about any of
- * those and the hi-fi's versions are drawing.
- *
- * ## It is an enhancement, never the screen
- *
- * The List half is the default and works on its own. This renders only when the
- * payload carries `bounds`, which needs placeable listings; with none, the
- * switch is not drawn and Nearby is a list, exactly as it was.
+/** Interactive map with a bundled, attributed OpenStreetMap basemap.
+ * Directory-derived street corridors remain the fallback if geometry cannot load.
+ * All map geometry comes from this origin; no third-party tiles or location calls.
  */
 
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { Icon, type IconName } from './Icon.js'
+import { LocalBasemap, useLocalBasemap } from './LocalBasemap.js'
 import {
   MAP_WIDTH,
   centreOn,
@@ -79,6 +48,7 @@ const LABEL_AT = 10
 
 export function TownMap(props: TownMapProps) {
   const { bounds, streets, places, position } = props
+  const localMap = useLocalBasemap()
   const [camera, setCamera] = useState<Camera>(() => wholeTown(bounds))
   const svgRef = useRef<SVGSVGElement>(null)
   /**
@@ -164,8 +134,18 @@ export function TownMap(props: TownMapProps) {
       e.currentTarget.releasePointerCapture(e.pointerId)
       return
     }
-    // A press that went nowhere on the background is "close the card".
-    if (e.target === e.currentTarget) props.onSelect(null)
+    // A 44px touch target is useful even when the visible overview pin is small.
+    const transform = e.currentTarget.getScreenCTM()
+    if (!transform) return
+    const point = new DOMPoint(e.clientX, e.clientY).matrixTransform(transform.inverse())
+    let nearest: RankedPlace | null = null
+    let distance = px(22)
+    for (const place of places) {
+      const pin = project(place.lat, place.lng, bounds)
+      const next = Math.hypot(pin.x - point.x, pin.y - point.y)
+      if (next < distance) { distance = next; nearest = place }
+    }
+    props.onSelect(nearest)
   }
 
   function zoomBy(factor: number) {
@@ -207,7 +187,16 @@ export function TownMap(props: TownMapProps) {
         */
         preserveAspectRatio="xMidYMid meet"
         role="img"
-        aria-label={`A map of the town, drawn from ${streets.length} street corridors and ${places.length} listings`}
+        tabIndex={0}
+        onKeyDown={(event) => {
+          const step = 60 * unitsPerPixel
+          const deltas: Record<string, [number, number]> = { ArrowLeft: [-step, 0], ArrowRight: [step, 0], ArrowUp: [0, -step], ArrowDown: [0, step] }
+          const delta = deltas[event.key]
+          if (delta) { event.preventDefault(); setCamera(c => clampCamera({ ...c, x: c.x + delta[0], y: c.y + delta[1] }, bounds)) }
+          else if (event.key === '+' || event.key === '=') { event.preventDefault(); zoomBy(1.6) }
+          else if (event.key === '-') { event.preventDefault(); zoomBy(1 / 1.6) }
+        }}
+        aria-label={localMap ? `OpenStreetMap map of Russellville with ${places.length} directory places` : `Approximate directory map with ${places.length} listings`}
         onPointerDown={onPointerDown}
         onPointerMove={onPointerMove}
         onPointerUp={onPointerUp}
@@ -222,7 +211,8 @@ export function TownMap(props: TownMapProps) {
           className="map-ground"
         />
 
-        {corridors.map(({ street, d, width }) => (
+        {localMap && <LocalBasemap map={localMap} bounds={bounds} unitsPerPixel={unitsPerPixel} zoom={camera.zoom} />}
+        {!localMap && corridors.map(({ street, d, width }) => (
           <path key={street.name} className="map-street" d={d} strokeWidth={width} />
         ))}
 
@@ -247,6 +237,10 @@ export function TownMap(props: TownMapProps) {
               r={r}
               strokeWidth={px(1.5)}
               onClick={() => props.onSelect(place)}
+              role="button"
+              tabIndex={selected ? 0 : -1}
+              aria-label={place.name}
+              onKeyDown={event => { if(event.key === 'Enter' || event.key === ' ') { event.preventDefault(); props.onSelect(place) } }}
             >
               <title>{place.name}</title>
             </circle>
@@ -258,7 +252,7 @@ export function TownMap(props: TownMapProps) {
           band or by the pins on it. The halo is the same stone as the ground,
           scaled with the camera so it stays a hairline at every zoom.
         */}
-        {corridors.map(({ street, label }) =>
+        {!localMap && corridors.map(({ street, label }) =>
           label ? (
             <text
               key={`${street.name}-label`}
@@ -310,7 +304,7 @@ export function TownMap(props: TownMapProps) {
         precision they are reading is a block, not a survey.
       */}
       <p className="map-provenance">
-        Drawn from {streets.length} streets in the town’s own directory. No map service was asked.
+        {localMap ? <>Map © <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener noreferrer">OpenStreetMap contributors</a>. Served by Town Square; no map provider receives your location.</> : <>Approximate streets from directory addresses. Places can be explored in the list if the map is unavailable.</>}
       </p>
     </div>
   )

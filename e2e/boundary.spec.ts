@@ -13,8 +13,10 @@
 
 import { test, expect, type Frame, type Page } from '@playwright/test'
 
-const SANDBOX_ORIGIN_SUFFIX = '.tsq-apps.localhost:3031'
-const API = 'http://localhost:3030'
+const SANDBOX_PORT = process.env['BOUNDARY_SANDBOX_PORT'] ?? '4412'
+const SANDBOX_ORIGIN_SUFFIX = `.tsq-apps.localhost:${SANDBOX_PORT}`
+const SHELL = `http://townsquare.localhost:${process.env['BOUNDARY_SHELL_PORT'] ?? '4410'}`
+const API = `http://127.0.0.1:${process.env['BOUNDARY_API_PORT'] ?? '4411'}`
 
 interface Probe {
   outcome?: string
@@ -44,8 +46,7 @@ interface AttackResults {
  * points at a detached frame.
  */
 async function openCreation(page: Page, name: string): Promise<Frame> {
-  await page.goto('/')
-  await page.getByRole('button', { name: 'Browse' }).click()
+  await page.goto(`${SHELL}/creations`)
   await page.getByRole('button', { name: new RegExp(name, 'i') }).click()
   await expect(page.getByText('What it can touch')).toBeVisible()
   await page.getByRole('button', { name: 'Open' }).click()
@@ -291,7 +292,7 @@ test.describe('the served response', () => {
         // The shell, not 'self'. A creation is framed by the shell, which is a
         // different registrable domain by design, so 'self' here would mean
         // nothing could ever embed a creation at all.
-        'frame-ancestors http://townsquare.localhost:5173',
+        `frame-ancestors ${SHELL}`,
     )
   })
 
@@ -307,7 +308,7 @@ test.describe('the served response', () => {
 
   test('a misdirected Host gets 421, not somebody else content', async ({ request }) => {
     for (const host of ['evil.example', 'evil-tsq-apps.localhost', 'a.b.tsq-apps.localhost']) {
-      const res = await request.get('http://127.0.0.1:3031/', { headers: { Host: host } })
+      const res = await request.get(`http://127.0.0.1:${SANDBOX_PORT}/`, { headers: { Host: host } })
       expect(res.status(), host).toBe(421)
     }
   })
@@ -349,8 +350,8 @@ test.describe('#16 per-creation origins', () => {
     request,
   }) => {
     const attacker = await creationOrigin(request, 'Neighborhood Watch')
-    const burrito = await creationOrigin(request, 'The Burrito Index')
-    expect(attacker).not.toBe(burrito)
+    const lunch = await creationOrigin(request, 'Lunch around town')
+    expect(attacker).not.toBe(lunch)
 
     // The attacker writes to its own localStorage during its probes. Wait for
     // it to actually have run rather than racing it.
@@ -359,7 +360,7 @@ test.describe('#16 per-creation origins', () => {
     expect(await guest.evaluate(() => localStorage.getItem('attacker-was-here'))).toBe('yes')
 
     // The other creation's origin is a different storage area entirely.
-    const other = await openCreation(page, 'The Burrito Index')
+    const other = await openCreation(page, 'Lunch around town')
     expect(await other.evaluate(() => localStorage.getItem('attacker-was-here'))).toBeNull()
   })
 })
@@ -370,7 +371,7 @@ test.describe('the ordinary path still works', () => {
   }) => {
     // If the boundary suite passed but nothing worked, we would have built a
     // very secure blank page.
-    await openCreation(page, 'The Burrito Index')
+    await openCreation(page, 'Lunch around town')
 
     // Poll for the rendered list on whichever frame is currently live.
     await expect
@@ -389,11 +390,15 @@ test.describe('the ordinary path still works', () => {
     const navy = await guest.evaluate(() =>
       getComputedStyle(document.documentElement).getPropertyValue('--ts-navy').trim(),
     )
-    expect(navy).toBe('#26405B')
+    expect(navy).toBe('#315B4C')
 
     // And the self-hosted typeface actually loaded, rather than falling back.
     const font = await guest.evaluate(() => getComputedStyle(document.body).fontFamily)
-    expect(font).toContain('DM Sans')
+    expect(font).toContain('Nunito Sans')
+    expect(await guest.evaluate(async () => {
+      const faces = await document.fonts.load('16px "Nunito Sans"')
+      return faces.length > 0 && faces.every(face => face.status === 'loaded')
+    })).toBe(true)
   })
 
   test('the starter creation renders, so the folder people copy is known to work', async ({
@@ -402,7 +407,8 @@ test.describe('the ordinary path still works', () => {
     // apps/sandbox/examples/starter is what a new builder copies first. If it
     // stopped loading, the first hour of every new team would be debugging a
     // starter rather than building on it.
-    await openCreation(page, 'Starter')
+    // The gallery labels every example as a starter, so match the card by its tagline too.
+    await openCreation(page, 'Starter The smallest')
 
     await expect
       .poll(
@@ -419,7 +425,7 @@ test.describe('the ordinary path still works', () => {
   })
 
   test('the shell shows the chrome a creation cannot draw over', async ({ page }) => {
-    await openCreation(page, 'The Burrito Index')
+    await openCreation(page, 'Lunch around town')
     await expect(page.getByText('Sandboxed')).toBeVisible()
     await expect(page.getByText('running on Town Square')).toBeVisible()
   })
@@ -466,29 +472,27 @@ async function fetchBundle(
 }
 
 test.describe('#4 identity reaches a creation only through the bridge', () => {
-  /**
-   * Sign in the way a resident does: ask for a link, then open it.
-   *
-   * The development API hands the link straight back in the response, which is
-   * exactly what makes this testable without a mailbox — and exactly why that
-   * echo is refused the moment the shell is https.
-   */
-  async function signIn(page: Page, handle: string, email: string): Promise<void> {
-    const res = await page.request.post(`${API}/api/auth/signup`, {
-      headers: { Origin: 'http://townsquare.localhost:5173' },
-      data: { handle, email },
-    })
-    const body = (await res.json()) as { devLink?: string }
-    if (!body.devLink) throw new Error('the development API did not echo a sign-in link')
-    await page.goto(body.devLink)
+  /** Sign up through the shell proxy so the browser receives its real session cookie. */
+  async function signIn(page: Page, handle: string, _email: string): Promise<void> {
+    await page.goto(SHELL)
+    const result = await page.evaluate(async (handle) => {
+      const response = await fetch('/api/auth/signup', {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ handle, password: 'Boundary-test-only-passphrase-2026' }),
+      })
+      return { ok: response.ok, status: response.status, body: await response.text() }
+    }, handle)
+    expect(result.ok, `${result.status}: ${result.body}`).toBe(true)
+    await page.goto(SHELL)
     await expect(page.getByRole('button', { name: new RegExp(handle) })).toBeVisible()
+    expect((await page.context().cookies(SHELL)).some(cookie => cookie.httpOnly)).toBe(true)
   }
 
   test('a signed-in handle reaches the guest, and the credential behind it does not', async ({
     page,
   }) => {
     await signIn(page, 'boundary-tester', 'boundary@example.com')
-    const frame = await openCreation(page, 'Burrito Index')
+    const frame = await openCreation(page, 'Boundary Identity Probe')
 
     // The handle arrives — through the port, projected by the server, in a
     // creation that declared `permissions.identity: "handle"`.
@@ -534,7 +538,7 @@ test.describe('#4 identity reaches a creation only through the bridge', () => {
     // key. Neither request names a user anywhere — the scope comes from the
     // act token — so this is the property holding, not a filter working.
     await signIn(page, 'storage-one', 'storage-one@example.com')
-    const first = await openCreation(page, 'Burrito Index')
+    const first = await openCreation(page, 'Boundary Identity Probe')
     // Frame locators, not page locators: the button lives inside the guest, on
     // a different origin, which is the entire point of the architecture.
     await expect(first.locator('#pin')).toHaveText('Pin my favourite')
@@ -543,13 +547,13 @@ test.describe('#4 identity reaches a creation only through the bridge', () => {
 
     // Reopening reads it back: the value survived the frame being destroyed,
     // which is what makes it storage rather than a variable.
-    await openCreation(page, 'Burrito Index')
+    await openCreation(page, 'Boundary Identity Probe')
     const reopened = await liveGuestFrame(page)
     await expect(reopened.locator('#favourite')).toBeVisible()
 
     const other = await browser.newPage()
     await signIn(other, 'storage-two', 'storage-two@example.com')
-    const theirs = await openCreation(other, 'Burrito Index')
+    const theirs = await openCreation(other, 'Boundary Identity Probe')
     await expect(theirs.locator('#pin')).toHaveText('Pin my favourite')
     await expect(theirs.locator('#favourite')).toHaveCount(0)
     await other.close()
@@ -562,10 +566,10 @@ test.describe('#4 identity reaches a creation only through the bridge', () => {
     // holding a legitimately minted act token for itself, the API refuses —
     // the host's check is a fast error message, this is the boundary.
     const res = await request.post(`${API}/api/creations/attacker/act`, {
-      headers: { Origin: 'http://townsquare.localhost:5173' },
+      headers: { Origin: SHELL },
       data: {},
     })
-    if (res.status() === 404) test.skip(true, 'attacker fixture is not loaded')
+    expect(res.status(), 'the adversarial fixture must be loaded').toBe(200)
 
     const { token } = (await res.json()) as { token: string }
     const me = await request.get(`${API}/api/bridge/me`, {

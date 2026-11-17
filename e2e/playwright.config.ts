@@ -16,22 +16,61 @@
 
 import { defineConfig, devices } from '@playwright/test'
 import { fileURLToPath } from 'node:url'
+import { cpSync, mkdirSync, mkdtempSync, writeFileSync } from 'node:fs'
+import { tmpdir } from 'node:os'
+import { join } from 'node:path'
 
 const r = (p: string) => fileURLToPath(new URL(p, import.meta.url))
 
-const SHELL = 'http://townsquare.localhost:5173'
-const FIXTURES = r('./fixtures')
-
+const SHELL_PORT = process.env['BOUNDARY_SHELL_PORT'] ?? '4410'
+const API_PORT = process.env['BOUNDARY_API_PORT'] ?? '4411'
+const SANDBOX_PORT = process.env['BOUNDARY_SANDBOX_PORT'] ?? '4412'
+const SHELL = `http://townsquare.localhost:${SHELL_PORT}`
+const RUN_DIR = process.env['BOUNDARY_RUN_DIR'] ?? mkdtempSync(join(tmpdir(), 'townsquare-boundary-'))
+process.env['BOUNDARY_RUN_DIR'] = RUN_DIR
+const FIXTURES = join(RUN_DIR, 'fixtures')
+cpSync(r('./fixtures'), FIXTURES, { recursive: true })
+// Public starter examples need no private permissions. Keep identity/storage
+// coverage in a test-only creation published through the same real validator.
+const PROBE = join(FIXTURES, 'identity-probe')
+mkdirSync(PROBE, { recursive: true })
+cpSync(r('./fixtures/attacker/icon.png'), join(PROBE, 'icon.png'))
+writeFileSync(join(PROBE, 'townsquare.json'), JSON.stringify({
+  manifest_version: 1, sdk: 1, name: 'Boundary Identity Probe',
+  tagline: 'Test-only identity and private storage probe',
+  description: 'A test fixture for explicit identity grants and resident-scoped storage. Never loaded outside the boundary suite.',
+  version: '1.0.0', entry: 'index.html', icon: 'icon.png',
+  permissions: { identity: 'handle', storage: true },
+}))
+writeFileSync(join(PROBE, 'index.html'), `<!doctype html><html lang="en"><head><title>Boundary Identity Probe</title></head><body>
+<p id="lede">Loading</p><button id="pin" hidden>Pin my favourite</button>
+<script type="module">
+import { user, storage, app } from '@townsquare/sdk';
+try {
+ const me = await user.current();
+ document.getElementById('lede').textContent = me ? me.handle : 'Signed out';
+ if (me) {
+  const value = await storage.get('favourite');
+  if (value) { const marker = document.createElement('p'); marker.id='favourite'; marker.textContent=String(value); document.body.append(marker); }
+  const pin=document.getElementById('pin'); pin.hidden=false;
+  pin.textContent=value ? 'Pin a different favourite' : 'Pin my favourite';
+  pin.addEventListener('click',async()=>{await storage.set('favourite','boundary-private-value');pin.textContent='Pinned';});
+ }
+} catch(error) { document.getElementById('lede').textContent=String(error); }
+finally { app.ready(); }
+</script></body></html>`)
 const env = {
+  NODE_ENV: 'test',
   TOWNSQUARE_EXTRA_EXAMPLES: FIXTURES,
+  TOWNSQUARE_DB_PATH: join(RUN_DIR, 'residents.sqlite'),
   APPS_DOMAIN: 'tsq-apps.localhost',
-  SANDBOX_PORT: '3031',
-  API_PORT: '3030',
+  SANDBOX_PORT, API_PORT, SHELL_PORT,
+  SHELL_ORIGIN: SHELL, SHELL_ORIGINS: SHELL,
 }
 
 export default defineConfig({
   testDir: r('.'),
-  testMatch: '**/*.spec.ts',
+  testMatch: 'boundary.spec.ts',
   // Serial. The suite drives shared servers and asserts on cross-origin
   // storage, so parallel workers would be testing each other's leftovers.
   workers: 1,
@@ -54,10 +93,10 @@ export default defineConfig({
   webServer: [
     {
       command: 'pnpm tsx apps/api/src/main.ts',
-      url: 'http://localhost:3030/api/town',
+      url: `http://127.0.0.1:${API_PORT}/api/town`,
       cwd: r('..'),
-      env,
-      reuseExistingServer: !process.env['CI'],
+      env: { ...env, PORT: API_PORT },
+      reuseExistingServer: false,
       stdout: 'pipe',
     },
     {
@@ -65,10 +104,10 @@ export default defineConfig({
       // Waiting on the port rather than a URL: every response this server gives
       // may legitimately be a 404, so "listening" is the only honest readiness
       // signal for it.
-      port: 3031,
+      port: Number(SANDBOX_PORT),
       cwd: r('..'),
-      env,
-      reuseExistingServer: !process.env['CI'],
+      env: { ...env, PORT: SANDBOX_PORT },
+      reuseExistingServer: false,
       stdout: 'pipe',
     },
     {
@@ -76,10 +115,10 @@ export default defineConfig({
       // Loopback, not the name: Node's resolver does not know `*.localhost`,
       // only browsers do. The tests still drive the shell by name, which is
       // what makes it a distinct registrable domain from the bundle origins.
-      url: 'http://127.0.0.1:5173/',
+      url: `http://127.0.0.1:${SHELL_PORT}/`,
       cwd: r('..'),
       env,
-      reuseExistingServer: !process.env['CI'],
+      reuseExistingServer: false,
       stdout: 'pipe',
     },
   ],

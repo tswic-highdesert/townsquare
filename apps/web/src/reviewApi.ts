@@ -208,3 +208,25 @@ async function send<T>(path: string, body: unknown): Promise<T | ApiError> {
 }
 
 export { isError }
+
+export interface CorrectionReviewDetail {
+  contribution: import('./contribute/contributeData.js').Contribution
+  currentValue: string | null
+}
+
+export async function fetchContributionQueue(): Promise<import('./contribute/contributeData.js').Contribution[] | ApiError> {
+  const response = await fetch('/api/review/contributions', { credentials: 'same-origin' })
+  const body = await response.json().catch(() => null)
+  if (!response.ok) return body ?? { error: 'unavailable', message: 'The correction queue could not be loaded.' }
+  return body.items
+}
+
+export async function fetchContributionReview(id: string): Promise<CorrectionReviewDetail | ApiError> {
+  const response = await fetch(`/api/review/contributions/${encodeURIComponent(id)}`, { credentials: 'same-origin' })
+  const body = await response.json().catch(() => null)
+  return response.ok ? body : body ?? { error: 'unavailable', message: 'The correction could not be loaded.' }
+}
+
+export function decideContribution(id: string, decision: 'approve' | 'decline', note: string): Promise<{ contribution: import('./contribute/contributeData.js').Contribution } | ApiError> {
+  return send(`/api/review/contributions/${encodeURIComponent(id)}/decide`, { decision, note })
+}
