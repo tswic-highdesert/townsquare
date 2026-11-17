@@ -814,13 +814,12 @@ The resident side is `contributionRoutes.ts` and the shell calls it from
 `apps/web/src/contribute/`. The moderator side sits in `reviewRoutes.ts`, behind
 the same role gate as the submission and report queues.
 
-**In development every contribution and draft is in memory.** `apps/api/src/main.ts`
-builds the service on `MemoryContributionStore`, `MemoryRecordStore`,
-`MemoryAttemptLog` and `MemoryDraftStore`, the same as identity, storage and the
-review queue, so restarting the API empties every proposal and draft. The
-Postgres tables are in `packages/db/src/schema.ts` and created by
-`packages/db/drizzle/0002_contributions_saves_moderation.sql`, but no
-Postgres-backed `ContributionStore` exists yet.
+**Contributions and drafts are stored in SQLite.** `apps/api/src/main.ts`
+builds the service on the SQLite stores in `apps/api/src/persistence/`, at
+`TOWNSQUARE_DB_PATH` (`/tmp/townsquare-data/residents.sqlite` in development),
+so they survive a restart. The Postgres tables are in `packages/db/src/schema.ts`
+and created by `packages/db/drizzle/0002_contributions_saves_moderation.sql`,
+but no Postgres-backed `ContributionStore` exists yet.
 
 ## Adding an example creation
 

@@ -28,6 +28,17 @@ const TOWN_ID = 'russellville-ar'
 const EXTRA_DIR = process.env['TOWNSQUARE_EXTRA_EXAMPLES']
 
 /**
+ * Examples that load only in development.
+ *
+ * Every example serves from its own origin, and in production each origin is a
+ * hostname someone has to add to the sandbox service by hand. Only
+ * burrito-index has one. The starter is a folder to copy, so a gallery card for
+ * it in production would open a frame that cannot load.
+ */
+const DEVELOPMENT_ONLY = new Set(['starter'])
+const PRODUCTION = process.env['NODE_ENV'] === 'production'
+
+/**
  * Who is allowed to frame these creations.
  *
  * Baked into the frozen CSP at publish time. Getting this wrong does not fail
@@ -82,6 +93,7 @@ export async function loadExampleCreations(): Promise<MemoryBundleStore> {
 
   for (const [name, dir] of entries) {
     if (!(await stat(dir)).isDirectory()) continue
+    if (PRODUCTION && DEVELOPMENT_ONLY.has(name)) continue
 
     const files = await readDirectoryAsBundle(dir)
     const report = validateBundle(files, { hashes: hashFiles(files) })

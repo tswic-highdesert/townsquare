@@ -13,8 +13,10 @@ covers the usual reasons.
   `packageManager` in `package.json`. No global install needed.
 - **git.**
 - **Internet access.** The API scrapes the town's live sources when it starts.
-- **Not needed:** Postgres, Docker, any account, any secret. Everything runs in
-  memory locally. Docker is optional and only un-skips five database tests.
+- **Not needed:** Postgres, Docker, any account, any secret. Accounts, saves
+  and contributions go to a local SQLite file, `/tmp/townsquare-data/residents.sqlite`
+  unless `TOWNSQUARE_DB_PATH` says otherwise. Docker is optional and only
+  un-skips five database tests.
 
 Windows has not been tested. Use WSL2 and follow the Linux steps inside it.
 
@@ -65,15 +67,18 @@ crashes, `pnpm dev` stops the others too, on purpose.
 
 ### Signing in
 
-Locally nobody exists until you seed yourself:
+Press **Sign in** in the shell and create an account with a handle and a
+password of at least 12 characters. No email is sent, and there is no password
+recovery.
+
+To see the **Review queue**, give that account the moderator role from another
+terminal:
 
 ```bash
-TOWNSQUARE_SEED_COHORT='yourhandle:you@example.com:admin' pnpm dev
+pnpm exec tsx apps/api/src/provisionReviewer.ts yourhandle moderator
 ```
 
-Sign in from the shell with that email. No email is sent. The sign-in link is
-printed in the `api` lines and shown in the shell. The `admin` part also gives
-you the **Review queue**.
+Set `TOWNSQUARE_DB_PATH` the same way you started the API if you changed it.
 
 ### Connecting an AI tool to the builder door
 
