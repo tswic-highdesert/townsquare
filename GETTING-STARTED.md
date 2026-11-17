@@ -75,10 +75,11 @@ To see the **Review queue**, give that account the moderator role from another
 terminal:
 
 ```bash
-pnpm exec tsx apps/api/src/provisionReviewer.ts yourhandle moderator
+TOWNSQUARE_DB_PATH=/tmp/townsquare-data/residents.sqlite \
+  pnpm exec tsx apps/api/src/provisionReviewer.ts yourhandle moderator
 ```
 
-Set `TOWNSQUARE_DB_PATH` the same way you started the API if you changed it.
+If you started the API with a different `TOWNSQUARE_DB_PATH`, use that path.
 
 ### Connecting an AI tool to the builder door
 
