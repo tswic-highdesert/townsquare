@@ -1,0 +1,12 @@
+{
+  "manifest_version": 1,
+  "sdk": 1,
+  "name": "Senior Directory",
+  "tagline": "Services and resources for seniors in town",
+  "description": "A directory of local services, programs and resources for seniors. Work in progress.",
+  "version": "0.1.0",
+  "tags": ["community"],
+  "entry": "index.html",
+  "icon": "icon.png",
+  "display": { "surface": "full", "height": "auto" }
+}

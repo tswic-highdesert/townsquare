@@ -1,0 +1,26 @@
+/* Town Square injects the --ts-* design tokens; using them makes the creation
+   look native without importing anything. Fallbacks keep it readable if the
+   tokens are missing (for example when opening the build file directly). */
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: var(--ts-cream, #f8f6f1);
+  color: var(--ts-ink, #1d1b16);
+  font-family: var(--ts-font-sans, system-ui, sans-serif);
+  font-size: 15px;
+  line-height: 1.5;
+}
+
+.shell {
+  max-width: 72rem;
+  margin: 0 auto;
+  padding: var(--ts-space-6, 24px) var(--ts-space-4, 16px);
+}
+
+.muted {
+  opacity: 0.7;
+}
