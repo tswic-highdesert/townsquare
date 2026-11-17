@@ -1,0 +1,13 @@
+{
+  "manifest_version": 1,
+  "sdk": 1,
+  "name": "Starter",
+  "tagline": "The smallest creation that works. Copy this folder to begin your own",
+  "description": "A minimal, commented creation to copy. It lists a few places from the town directory, greets a signed-in resident by handle, and handles the signed-out visitor, which is the common case. Read README.md in this folder before changing anything.",
+  "version": "0.1.0",
+  "tags": ["starter"],
+  "entry": "index.html",
+  "icon": "icon.png",
+  "display": { "surface": "full", "height": "auto" },
+  "permissions": { "identity": "handle" }
+}

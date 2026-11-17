@@ -5,12 +5,18 @@
   "type": "module",
   "packageManager": "pnpm@11.0.9",
   "engines": {
-    "node": ">=22"
+    "node": ">=24 <25"
   },
   "scripts": {
+    "check:setup": "node scripts/check-setup.mjs",
+    "pretypecheck": "node scripts/check-setup.mjs",
     "typecheck": "tsc --noEmit && tsc --noEmit -p tsconfig.ported.json",
+    "pretest": "node scripts/check-setup.mjs",
     "test": "vitest run",
+    "pretest:watch": "node scripts/check-setup.mjs",
     "test:watch": "vitest",
+    "predev": "node scripts/check-setup.mjs",
+    "dev": "node scripts/dev.mjs",
     "gen": "tsx packages/sdk/scripts/generate.ts",
     "gen:check": "tsx packages/sdk/scripts/generate.ts --check",
     "dev:api": "tsx watch apps/api/src/main.ts",

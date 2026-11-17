@@ -401,6 +401,28 @@ test.describe('the ordinary path still works', () => {
     })).toBe(true)
   })
 
+  test('the starter creation renders, so the folder people copy is known to work', async ({
+    page,
+  }) => {
+    // apps/sandbox/examples/starter is what a new builder copies first. If it
+    // stopped loading, the first hour of every new team would be debugging a
+    // starter rather than building on it.
+    await openCreation(page, 'Starter')
+
+    await expect
+      .poll(
+        async () => {
+          const frame = await liveGuestFrame(page)
+          return frame.locator('#lede').textContent()
+        },
+        { timeout: 20_000 },
+      )
+      .toContain('places from the town directory')
+
+    const guest = await liveGuestFrame(page)
+    expect(await guest.locator('li').count()).toBeGreaterThan(0)
+  })
+
   test('the shell shows the chrome a creation cannot draw over', async ({ page }) => {
     await openCreation(page, 'Lunch around town')
     await expect(page.getByText('Sandboxed')).toBeVisible()

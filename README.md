@@ -21,6 +21,8 @@ reading.
 
 | File | What it covers |
 |---|---|
+| [GETTING-STARTED.md](GETTING-STARTED.md) | **New here? Start with this.** Clean machine to a running town, step by step |
+| [CONTRIBUTING.md](CONTRIBUTING.md) | Where your work lives, how it is submitted, and what must pass |
 | [VISION.md](VISION.md) | What this is and every decision made so far |
 | [spec-manifest-and-sdk.md](spec-manifest-and-sdk.md) | **The contract.** Manifest, SDK surface, permissions, CSP, error codes |
 | [spec-tier-0-1.md](spec-tier-0-1.md) | Identity, vouching, privilege tiers, the registry, the read API |
@@ -34,19 +36,31 @@ reading.
 ## Repository
 
 ```
-packages/manifest    the townsquare.json schema, and additive-only type evolution
-packages/identity    handles, sessions, vouching, act tokens. no email leaves it
-packages/storage     per creation, per user scratch space, with the quota rules
-packages/shared      wire protocol, error codes, CSP compiler, path normalizer, origins
-packages/tokens      design tokens, emitted for both the shell and the guest frame
-packages/sdk         @townsquare/sdk, the contract creations are written against
-packages/bundle      publish-time validation, autochecks, content addressing
-packages/sandbox     the bundle server, as a pure request-in/response-out function
-packages/host        the frame, the handshake, and the permission gate. no React
-apps/api             the read API and every auth route. holds the credential
-apps/sandbox         serves untrusted bundles. holds nothing
-apps/web             the shell: gallery, trust page, running creation
+packages/manifest       the townsquare.json schema, and additive-only type evolution
+packages/identity       handles, sessions, vouching, act tokens. no email leaves it
+packages/storage        per creation, per user scratch space, with the quota rules
+packages/saves          a resident's private bookmarks on things the town publishes
+packages/shared         wire protocol, error codes, CSP compiler, path normalizer, origins
+packages/tokens         design tokens, emitted for both the shell and the guest frame
+packages/sdk            @townsquare/sdk, the contract creations are written against
+packages/bundle         publish-time validation, autochecks, content addressing
+packages/sandbox        the bundle server, as a pure request-in/response-out function
+packages/host           the frame, the handshake, and the permission gate. no React
+packages/mcp            the builder door's tools: scaffold, upload, validate, preview, submit
+packages/review         the review queue, reports, and moderation actions
+packages/contributions  residents adding to the town's own record: proposals, drafts, versions
+packages/civic          notices and their severity ladder, public meetings, alert subscriptions
+packages/content        contracts for ingested town content. nothing here describes a person
+packages/feed           the source adapters that ingest the town into one feed
+packages/db             the Postgres schema (Drizzle), its migrations, and ingest
+apps/api                the read API and every auth route. holds the credential
+apps/sandbox            serves untrusted bundles. holds nothing
+apps/web                the shell: gallery, trust page, running creation
+apps/mcp                the builder door: an MCP server residents point their AI tool at
 ```
+
+Example creations live in `apps/sandbox/examples/`: `burrito-index` (a
+finished app) and `starter` (the one to copy).
 
 ## Develop
 
@@ -54,10 +68,12 @@ apps/web             the shell: gallery, trust page, running creation
 pnpm install
 pnpm typecheck
 pnpm test
+pnpm dev        # all four local processes, Ctrl-C stops them
 ```
 
-Running it locally takes three processes on three origins. See
-[DEVELOPING.md](DEVELOPING.md).
+Running it locally takes four processes on four ports, and `pnpm dev` starts
+them together. New to the repo: [GETTING-STARTED.md](GETTING-STARTED.md). The
+detail: [DEVELOPING.md](DEVELOPING.md).
 
 ## Two rules worth knowing before reading the code
 

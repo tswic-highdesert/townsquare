@@ -10,7 +10,7 @@
 
 import { createServer, type Server } from 'node:http'
 import { gunzipSync } from 'node:zlib'
-import { afterEach, describe, expect, it } from 'vitest'
+import { afterEach, describe, expect, it, vi } from 'vitest'
 import { createDirectoryRoutes } from './directoryRoutes.js'
 import type { TownSquareItem } from './today.js'
 
@@ -168,6 +168,9 @@ describe('GET /api/directory', () => {
   })
 
   it('answers 503 rather than an empty directory when there was never a copy', async () => {
+    // The route logs the failure, which is right in production and a stack
+    // trace in the middle of a passing run here. Held, and asserted instead.
+    const logged = vi.spyOn(console, 'error').mockImplementation(() => {})
     const base = await serve(
       createDirectoryRoutes({
         town: TOWN,
@@ -178,6 +181,8 @@ describe('GET /api/directory', () => {
       }),
     )
     expect((await fetch(`${base}/api/directory`)).status).toBe(503)
+    expect(logged).toHaveBeenCalledWith('directory: could not assemble', expect.any(Error))
+    logged.mockRestore()
   })
 
   /**

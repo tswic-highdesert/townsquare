@@ -1,12 +1,19 @@
 // @vitest-environment happy-dom
-// @vitest-environment-options { "happyDOM": { "settings": { "disableIframePageLoading": true, "disableJavaScriptFileLoading": true, "disableCSSFileLoading": true } } }
+// @vitest-environment-options { "settings": { "navigation": { "disableChildFrameNavigation": true }, "disableJavaScriptFileLoading": true, "disableCSSFileLoading": true } }
 /**
  * The frame element and its lifecycle.
  *
- * Iframe page loading is off: the src points at a real bundle origin that does
+ * Iframe navigation is off: the src points at a real bundle origin that does
  * not exist in a test process, and letting happy-dom try to fetch it produces
  * pages of navigation noise without testing anything. What matters here is the
  * element we construct and the state machine around it.
+ *
+ * Two traps in the line above, both of which once left that noise on. Vitest
+ * nests the docblock options under `happyDOM` itself, so wrapping them in a
+ * `happyDOM` key here hides them one level too deep and they are ignored. And
+ * happy-dom 20's older `disableIframePageLoading` logs a `NotSupportedError`
+ * for every frame it declines to load, which is the same noise in a different
+ * shape; `navigation.disableChildFrameNavigation` declines quietly.
  *
  * The attribute assertions here are snapshot-strict on purpose. `sandbox` and
  * `allow` *are* the boundary, so loosening either must require editing a test
