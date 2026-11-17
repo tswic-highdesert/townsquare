@@ -49,7 +49,7 @@ railway up --project 20d807a4-40ae-471f-abf8-eecc8d00a427 --service 3f5124af-9bd
 
 Use the sandbox service ID only when sandbox code changes. A SQLite volume means one API replica, and deployments can have brief handoff downtime. Startup refuses an absent or temporary production database path. SIGTERM drains requests before closing SQLite.
 
-The existing `railway.toml` works during this build; Railway warns that this configuration format is deprecated and needs migration before December 1, 2026. Do not change the production domain or volume as part of that migration.
+Service settings live in `.railway/railway.ts` (Railway Infrastructure as Code), which replaced the deprecated `railway.toml` before Railway stops reading it on December 1, 2026. The file exports the named partial `townsquare-live`, so it manages only this service and its volume; the sandbox, feed API, worker and Postgres are left alone. Preview with `railway config plan` and apply with `railway config apply` from a directory linked to the production environment. A plan that detaches or resizes `townsquare-resident-data`, or touches any other service, is wrong; do not apply it.
 
 ## Validation
 

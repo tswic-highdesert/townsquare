@@ -407,7 +407,8 @@ test.describe('the ordinary path still works', () => {
     // apps/sandbox/examples/starter is what a new builder copies first. If it
     // stopped loading, the first hour of every new team would be debugging a
     // starter rather than building on it.
-    await openCreation(page, 'Starter')
+    // The gallery labels every example as a starter, so match the card by its tagline too.
+    await openCreation(page, 'Starter The smallest')
 
     await expect
       .poll(
