@@ -12,7 +12,7 @@ import { useEffect, useRef, useState } from 'react'
 import { CreationHost, type ErrorReason, type HostState } from '@townsquare/host'
 import type { Manifest } from '@townsquare/manifest'
 import { createActTokenHolder } from './actToken.js'
-import { townData } from './townData.js'
+import { createTownData } from './townData.js'
 import { Icon, type IconName } from './Icon.js'
 import { Button } from './ui/index.js'
 import './creations/creations.css'
@@ -69,7 +69,7 @@ export function CreationFrame(props: CreationFrameProps) {
       town: props.town,
       context: {
         user: props.user,
-        town: townData,
+        town: createTownData(props.town.id),
         identity: act.identity,
         storage: act.storage,
       },

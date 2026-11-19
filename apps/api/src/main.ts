@@ -27,6 +27,7 @@ import { createEventsRoutes } from './eventsRoutes.js'
 import { createDirectoryRoutes } from './directoryRoutes.js'
 import { createSavesRoutes } from './savesRoutes.js'
 import { createTodayRoutes } from './todayRoutes.js'
+import { createTownReadRoutes } from './townReadRoutes.js'
 import type { TownSquareItem } from './today.js'
 import { loadContent, contentStatus, imageRoute } from './contentSource.js'
 import { staticFiles } from './staticFiles.js'
@@ -360,6 +361,11 @@ async function main(): Promise<void> {
   const eventsRoutes = createEventsRoutes({ town: TOWN, loadItems })
   const directoryRoutes = createDirectoryRoutes({ town: TOWN, loadItems })
 
+  // What `town.items`, `town.item` and `town.businesses` read through the
+  // bridge. Anonymous like the rest of this block, because town data is open to
+  // read: the Tier 1 paths from the spec, under `/api` like everything here.
+  const townReadRoutes = createTownReadRoutes({ town: TOWN, loadItems })
+
   // Saving is the one thing on Yours with a real source. Memory store, same as
   // identity and storage — the interface is the one the Drizzle implementation
   // lands on, so restarting the API empties every resident's list and nothing
@@ -433,6 +439,7 @@ async function main(): Promise<void> {
       .then((handled) => (handled ? true : newsRoutes(req, res, url)))
       .then((handled) => (handled ? true : eventsRoutes(req, res, url)))
       .then((handled) => (handled ? true : directoryRoutes(req, res, url)))
+      .then((handled) => (handled ? true : townReadRoutes(req, res, url)))
       .then((handled) => {
         if (!handled) return readRoutes(url, store, json, loadItems)
       })
