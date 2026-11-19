@@ -181,6 +181,8 @@ export const PAIRS: readonly Pair[] = [
   },
 
   { fg: 'ink60', bg: ['stone'], kind: 'large', min: 3, use: 'the pending-review pill' },
+  { fg: 'ink60', bg: ['ink08', 'cream'], kind: 'body', min: 4.5, use: 'an unselected segment, and tags on their wash' },
+  { fg: 'ink60', bg: ['navy10', 'cream'], kind: 'body', min: 4.5, use: 'secondary text on the pale navy card' },
 
   // Non-text. A ring or a border still has to be findable.
   { fg: 'terracotta', bg: ['cream'], kind: 'ui', min: 3, use: 'the focus ring against the page' },

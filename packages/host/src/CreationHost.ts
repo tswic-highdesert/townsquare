@@ -106,6 +106,12 @@ export interface CreationHostConfig {
   loading?: 'eager' | 'lazy'
   /** Injectable for tests. */
   timeouts?: { handshakeMs?: number; readyMs?: number }
+  /**
+   * The frame's accessible name, in the shell's language. A screen reader
+   * announces it on entering the frame, so it names the creation and says
+   * whose it is. Defaults to English.
+   */
+  frameTitle?: string
 }
 
 export class CreationHost {
@@ -140,7 +146,7 @@ export class CreationHost {
     iframe.setAttribute('allow', ALLOW_ATTRIBUTE)
     iframe.setAttribute('referrerpolicy', 'no-referrer')
     iframe.setAttribute('loading', this.cfg.loading ?? 'eager')
-    iframe.setAttribute('title', `${this.cfg.manifest.name} — a resident-built creation`)
+    iframe.setAttribute('title', this.cfg.frameTitle ?? `${this.cfg.manifest.name}, a resident-built creation`)
     iframe.style.width = '100%'
     iframe.style.border = '0'
     iframe.style.display = 'block'
