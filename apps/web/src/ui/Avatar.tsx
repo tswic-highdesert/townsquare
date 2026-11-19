@@ -1,6 +1,7 @@
 import type { ReactNode } from 'react'
 import { Icon, type IconName } from '../Icon.js'
 import { cx } from './cx.js'
+import { tn } from '../i18n/index.js'
 
 /**
  * A person, with no photograph and no name.
@@ -75,7 +76,8 @@ export function AvatarStack({ people, shown = 3, size = 34, className }: AvatarS
           +{rest}
         </span>
       ) : null}
-      <span className="ts-sr-only">{people.length} neighbours</span>
+      {/* English keeps its existing wording for one; Spanish gets a real singular. */}
+      <span className="ts-sr-only">{tn(people.length, '{count} neighbours', '{count} neighbours')}</span>
     </span>
   )
 }

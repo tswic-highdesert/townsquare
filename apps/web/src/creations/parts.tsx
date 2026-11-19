@@ -11,6 +11,7 @@ import { useState } from 'react'
 import { Icon, type IconName } from '../Icon.js'
 import { iconLook, iconUrl } from './appIcon.js'
 import { touchChips } from './touch.js'
+import { msg, t } from '../i18n/index.js'
 import type { TrustLine } from '@townsquare/host'
 import type { CreationSummary } from '../townData.js'
 
@@ -28,6 +29,32 @@ export const TRUST_GLYPHS: Record<TrustLine['kind'], IconName> = {
   storage: 'sliders',
   network: 'globe',
   no_network: 'lock',
+}
+
+/**
+ * The fixed sentences `describeManifest` writes, so the trust page can read
+ * them in the resident's language. A line built around record types or hosts
+ * is not in this set and stays as `describeManifest` wrote it.
+ */
+const TRUST_TEXT: ReadonlySet<string> = new Set([
+  msg('Reads the town directory and calendar'),
+  msg('Names, hours, addresses and events. The same things the website shows anyone.'),
+  msg("Knows you're a verified resident"),
+  msg('Your handle and whether you are verified. Not your name, email or address.'),
+  msg('Shared records other residents contributed. It cannot change them.'),
+  msg(
+    'Asks the first time. Everything it writes is attributed to you and to this creation, and every version is kept.',
+  ),
+  msg('Remembers your settings for this app'),
+  msg('Private to you and to this app. No other creation can read it.'),
+  msg('That is the only outside address it can reach.'),
+  msg('Those are the only outside addresses it can reach.'),
+  msg("Can't reach anything outside town"),
+  msg('Runs sandboxed on Town Square. Nothing it sees can leave.'),
+])
+
+export function trustText(text: string): string {
+  return TRUST_TEXT.has(text) ? t(text) : text
 }
 
 export type PlateSize = 'sm' | 'md' | 'lg'
@@ -84,4 +111,4 @@ export function TouchStrip({ creation, onDark }: { creation: CreationSummary; on
 /** Current seeded creations are platform examples, not attributed resident submissions.
  * Replace this label with verified per-creation attribution when the catalogue provides it.
  */
-export const MADE_BY = 'Town Square starter example'
+export const MADE_BY = msg('Town Square starter example')

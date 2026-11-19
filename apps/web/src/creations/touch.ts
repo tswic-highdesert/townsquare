@@ -13,6 +13,7 @@
 
 import type { Manifest } from '@townsquare/manifest'
 import type { IconName } from '../Icon.js'
+import { getLocale, list as joinList, t } from '../i18n/index.js'
 
 export interface TouchChip {
   /** Stable key, so React does not need an index and a caller can test one. */
@@ -43,7 +44,7 @@ export function touchChips(manifest: Manifest): TouchChip[] {
     chips.push({
       kind: 'writes',
       icon: 'cloud-upload',
-      label: `Posts ${list(p.write.map((t) => typeLabel(t, manifest)))} as you`,
+      label: t('Posts {types} as you', { types: list(p.write.map((type) => typeLabel(type, manifest))) }),
       consequential: true,
     })
   }
@@ -54,20 +55,20 @@ export function touchChips(manifest: Manifest): TouchChip[] {
       icon: 'globe',
       // One host is named. Three hostnames on a 160px card wrap into an
       // unreadable block, and the trust page names every one of them.
-      label: p.network.length === 1 ? p.network[0]! : `${p.network.length} outside hosts`,
+      label: p.network.length === 1 ? p.network[0]! : t('{count} outside hosts', { count: p.network.length }),
       consequential: true,
     })
   } else {
     chips.push({
       kind: 'no_network',
       icon: 'lock',
-      label: 'Nothing leaves town',
+      label: t('Nothing leaves town'),
       consequential: false,
     })
   }
 
   if (p.identity === 'handle') {
-    chips.push({ kind: 'identity', icon: 'badge-check', label: 'Your handle', consequential: false })
+    chips.push({ kind: 'identity', icon: 'badge-check', label: t('Your handle'), consequential: false })
   }
 
   const readOnly = p.read.filter((t) => !p.write.includes(t))
@@ -75,7 +76,7 @@ export function touchChips(manifest: Manifest): TouchChip[] {
     chips.push({
       kind: 'reads_records',
       icon: 'database',
-      label: `Reads ${list(readOnly.map((t) => typeLabel(t, manifest)))}`,
+      label: t('Reads {types}', { types: list(readOnly.map((type) => typeLabel(type, manifest))) }),
       consequential: false,
     })
   }
@@ -83,12 +84,12 @@ export function touchChips(manifest: Manifest): TouchChip[] {
   chips.push({
     kind: 'reads_town',
     icon: 'storefront',
-    label: 'Reads the directory',
+    label: t('Reads the directory'),
     consequential: false,
   })
 
   if (p.storage) {
-    chips.push({ kind: 'storage', icon: 'sliders', label: 'Remembers your settings', consequential: false })
+    chips.push({ kind: 'storage', icon: 'sliders', label: t('Remembers your settings'), consequential: false })
   }
 
   return chips.slice(0, MAX_CHIPS)
@@ -103,6 +104,7 @@ function typeLabel(type: string, manifest: Manifest): string {
 function list(items: string[]): string {
   if (items.length === 0) return ''
   if (items.length === 1) return items[0]!
+  if (getLocale() === 'es') return joinList(items)
   if (items.length === 2) return `${items[0]} and ${items[1]}`
   return `${items.slice(0, -1).join(', ')} and ${items[items.length - 1]}`
 }

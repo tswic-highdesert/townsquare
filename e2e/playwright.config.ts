@@ -70,7 +70,7 @@ const env = {
 
 export default defineConfig({
   testDir: r('.'),
-  testMatch: 'boundary.spec.ts',
+  testMatch: ['boundary.spec.ts', 'a11y.spec.ts'],
   // Serial. The suite drives shared servers and asserts on cross-origin
   // storage, so parallel workers would be testing each other's leftovers.
   workers: 1,

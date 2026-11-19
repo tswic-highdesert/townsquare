@@ -32,6 +32,7 @@
 import type { CreationSummary } from '../townData.js'
 import type { NearbyPayload } from '../nearbyData.js'
 import type { TodayPayload } from '../todayData.js'
+import { msg, t } from '../i18n/index.js'
 
 export type SearchKind = 'story' | 'event' | 'place' | 'creation'
 
@@ -66,10 +67,10 @@ export interface SearchGroup {
 export const PER_GROUP = 3
 
 const LABELS: Record<SearchKind, string> = {
-  story: 'Stories',
-  event: 'Events',
-  place: 'Places',
-  creation: 'Creations',
+  story: msg('Stories'),
+  event: msg('Events'),
+  place: msg('Places'),
+  creation: msg('Creations'),
 }
 
 /**
@@ -227,7 +228,9 @@ export function docsFromToday(today: TodayPayload): SearchDoc[] {
       kind: 'creation',
       id: creation.slug,
       title: creation.name,
-      detail: creation.author ? `${creation.tagline} · by ${creation.author}` : creation.tagline,
+      detail: creation.author
+        ? t('{tagline} · by {author}', { tagline: creation.tagline, author: creation.author })
+        : creation.tagline,
       href: null,
       slug: creation.slug,
     })

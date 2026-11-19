@@ -6,6 +6,8 @@
  * construction, so there is nothing here that would be dangerous to hold.
  */
 
+import { t } from './i18n/index.js'
+
 export interface AccountView {
   handle: string
   emailConfirmed: boolean
@@ -110,7 +112,7 @@ async function post<T>(path: string, body: unknown): Promise<T | ApiError> {
   })
   const parsed: unknown = await res.json().catch(() => null)
   if (!res.ok) {
-    return (parsed as ApiError | null) ?? { error: 'unavailable', message: 'Something went wrong.' }
+    return (parsed as ApiError | null) ?? { error: 'unavailable', message: t('Something went wrong.') }
   }
   return parsed as T
 }

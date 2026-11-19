@@ -1434,8 +1434,8 @@
 .dir-sheet-overlay .dir-act:first-child { background: var(--ts-action); color: var(--ts-surface); border-color: var(--ts-action); }
 .dir-sheet-overlay .dir-act:first-child :is(.dir-act-label,.dir-act-sub) { color: var(--ts-surface); }
 @media(min-width:1040px) {
- .ts-shell .dir > :is(.dir-intro,.dir-cathead,.dir-block,.dir-locate,.dir-loading) { margin-right: 40px; }
- .ts-shell .dir > .dir-serendipity { width: calc(100% - 60px); }
+ .ts-shell .dir > :is(.dir-loading, .ts-main > :is(.dir-intro,.dir-cathead,.dir-block,.dir-locate)) { margin-right: 40px; }
+ .ts-shell .dir > .ts-main > .dir-serendipity { width: calc(100% - 60px); }
  .dir .dir-tiles { grid-template-columns: repeat(3,minmax(0,1fr)); }
  .dir .dir-grid { grid-template-columns: repeat(3,minmax(0,1fr)); }
  .dir .dir-block-last { padding-bottom: 64px; }

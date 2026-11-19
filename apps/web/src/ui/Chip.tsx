@@ -1,6 +1,7 @@
 import type { ButtonHTMLAttributes, ReactNode } from 'react'
 import { Icon, type IconName } from '../Icon.js'
 import { cx } from './cx.js'
+import { t } from '../i18n/index.js'
 
 /**
  * The three small round things, which are three different things.
@@ -88,7 +89,7 @@ export function Tag({ label, onRemove, className }: TagProps) {
           className="ts-tag-x"
           // Names what it removes, not "remove". A screen reader going through
           // six filters hears six identical buttons otherwise.
-          aria-label={`Remove the ${label} filter`}
+          aria-label={t('Remove the {label} filter', { label })}
           onClick={onRemove}
         >
           <Icon name="close" size={14} />

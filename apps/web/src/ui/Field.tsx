@@ -7,6 +7,7 @@ import type {
 } from 'react'
 import { Icon } from '../Icon.js'
 import { cx } from './cx.js'
+import { t } from '../i18n/index.js'
 
 /**
  * Text entry, and the wiring that makes an error mean something.
@@ -204,7 +205,7 @@ export function SearchInput({
           {value ? (
             // A real 32px button, not a decorative glyph the finger keeps
             // missing on the way to the keyboard.
-            <button type="button" className="ts-search-clear" aria-label="Clear the search" onClick={onClear}>
+            <button type="button" className="ts-search-clear" aria-label={t('Clear the search')} onClick={onClear}>
               <Icon name="close" size={14} />
             </button>
           ) : null}

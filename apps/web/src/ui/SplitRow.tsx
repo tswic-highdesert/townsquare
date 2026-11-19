@@ -2,6 +2,7 @@ import { useCallback, useRef, useState, type ReactNode } from 'react'
 import { Icon, type IconName } from '../Icon.js'
 import { cx } from './cx.js'
 import { nextFocusAfterRemoval, removalAnnouncement } from './rowRemoval.js'
+import { t } from '../i18n/index.js'
 
 /**
  * A row with one primary destination and small independent actions.
@@ -222,7 +223,7 @@ export function SplitRowList<T>({
                         ...a,
                         onAct: () => {
                           a.onAct()
-                          handleRemoval(i, itemLabel?.(item) ?? 'Item', items.length)
+                          handleRemoval(i, itemLabel?.(item) ?? t('Item'), items.length)
                         },
                       }
                     : a,

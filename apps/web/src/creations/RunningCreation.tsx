@@ -59,7 +59,7 @@ export function RunningCreation(props: RunningCreationProps) {
   const misbehaved = state.name === 'error' && state.reason === 'navigated'
 
   return (
-    <div className="shell cr-screen">
+    <main className="shell cr-screen">
       <HostChrome
         creation={creation}
         liveTitle={liveTitle}
@@ -104,6 +104,6 @@ export function RunningCreation(props: RunningCreationProps) {
           onClose={() => setReporting(false)}
         />
       )}
-    </div>
+    </main>
   )
 }

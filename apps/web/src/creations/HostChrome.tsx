@@ -25,6 +25,7 @@
 
 import { Icon } from '../Icon.js'
 import { AppIcon } from './parts.js'
+import { t } from '../i18n/index.js'
 import type { CreationSummary } from '../townData.js'
 
 export interface HostChromeProps {
@@ -42,21 +43,21 @@ export function HostChrome(props: HostChromeProps) {
   return (
     <>
       <div className="cr-chrome" data-state={props.alert ? 'alert' : undefined}>
-        <button className="cr-iconbtn" aria-label="Back" onClick={props.onBack}>
+        <button className="cr-iconbtn" aria-label={t('Back')} onClick={props.onBack}>
           <Icon name="arrow-left" size={20} />
         </button>
         <AppIcon creation={creation} size="sm" />
-        <span className="cr-chrome-id">
-          <span className="cr-chrome-title">{creation.name}</span>
+        <div className="cr-chrome-id">
+          <h1 className="cr-chrome-title">{creation.name}</h1>
           {/*
             Attribution is platform-assigned at approval and a manifest that
             asserts an author is rejected outright as an impersonation attempt.
             Nothing in development has been through the review queue, so this is
             the honest line, and it is deliberately not initials.
           */}
-          <span className="cr-chrome-by">by a neighbor</span>
-        </span>
-        <span className="cr-badge">Sandboxed</span>
+          <span className="cr-chrome-by">{t('by a neighbor')}</span>
+        </div>
+        <span className="cr-badge">{t('Sandboxed')}</span>
       </div>
 
       {props.liveTitle && <div className="cr-livetitle">{props.liveTitle}</div>}
@@ -74,14 +75,14 @@ export function FooterChrome(props: FooterChromeProps) {
   return (
     <div className="cr-footchrome" data-state={props.reporting ? 'open' : undefined}>
       <Icon name="package" size={14} />
-      <span>running on Town Square · v{props.version}</span>
+      <span>{t('running on Town Square · v{version}', { version: props.version })}</span>
       <button
         className="cr-linkbtn"
         data-state={props.reporting ? 'on' : undefined}
         aria-expanded={props.reporting}
         onClick={props.onToggleReport}
       >
-        Report
+        {t('Report')}
       </button>
     </div>
   )

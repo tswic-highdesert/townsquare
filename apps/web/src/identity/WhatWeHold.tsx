@@ -15,7 +15,14 @@
 
 import { Icon } from '../Icon.js'
 import type { AccountView } from '../session.js'
+import { msg, t } from '../i18n/index.js'
 import './identity.css'
+
+const METHOD: Record<NonNullable<AccountView['verifiedMethod']>, string> = {
+  vouch: msg('vouch'),
+  manual: msg('manual'),
+  postcard: msg('postcard'),
+}
 
 export function WhatWeHold(props: { account: AccountView }) {
   const { account } = props
@@ -23,67 +30,71 @@ export function WhatWeHold(props: { account: AccountView }) {
   return (
     <section className="id-hold" aria-labelledby="id-hold-t">
       <h2 className="id-h2" id="id-hold-t">
-        What we hold about you
+        {t('What we hold about you')}
       </h2>
 
       <ul className="id-hold-list" data-have>
         <li>
           <Icon name="check" size={15} />
           <span>
-            Your handle, <b>@{account.handle}</b>, which the town sees.
+            {t('Your handle,')} <b>@{account.handle}</b>
+            {t(', which the town sees.')}
           </span>
         </li>
         <li>
           <Icon name="check" size={15} />
           <span>
-            A salted password hash, used to check your password. We do not store the password itself or ask for your email.
+            {t('A salted password hash, used to check your password. We do not store the password itself or ask for your email.')}
           </span>
         </li>
         <li>
           <Icon name="check" size={15} />
           <span>
-            Two facts about verification: that you are{account.verified ? '' : ' not'} verified
-            {account.verified && account.verifiedMethod
-              ? `, and that the method was ${account.verifiedMethod}`
-              : ''}
-            .
+            {!account.verified
+              ? t('Two facts about verification: that you are not verified.')
+              : account.verifiedMethod
+                ? t('Two facts about verification: that you are verified, and that the method was {method}.', {
+                    method: t(METHOD[account.verifiedMethod]),
+                  })
+                : t('Two facts about verification: that you are verified.')}
           </span>
         </li>
         <li>
           <Icon name="check" size={15} />
-          <span>Which handles vouched for you, and which you vouched for. Committee only.</span>
+          <span>{t('Which handles vouched for you, and which you vouched for. Committee only.')}</span>
         </li>
         <li>
           <Icon name="check" size={15} />
-          <span>What you built and what you changed, with the date.</span>
+          <span>{t('What you built and what you changed, with the date.')}</span>
         </li>
       </ul>
 
-      <h3 className="id-eyebrow id-eyebrow-sep">And what we do not</h3>
+      <h3 className="id-eyebrow id-eyebrow-sep">{t('And what we do not')}</h3>
       <ul className="id-hold-list" data-havent>
         <li>
           <Icon name="close" size={15} />
-          <span>Your address. Not hashed, not once, not ever. There is no column.</span>
+          <span>{t('Your address. Not hashed, not once, not ever. There is no column.')}</span>
         </li>
         <li>
           <Icon name="close" size={15} />
-          <span>Your real name, unless you typed it into your handle yourself.</span>
+          <span>{t('Your real name, unless you typed it into your handle yourself.')}</span>
         </li>
         <li>
           <Icon name="close" size={15} />
-          <span>Your phone number.</span>
+          <span>{t('Your phone number.')}</span>
         </li>
         <li>
           <Icon name="close" size={15} />
-          <span>Where you are. Nearby measures distances on your phone and tells us nothing.</span>
+          <span>{t('Where you are. Nearby measures distances on your phone and tells us nothing.')}</span>
         </li>
       </ul>
 
       <p className="id-quiet-note">
         <Icon name="shield" size={15} />
         <span>
-          A creation you open is handed your handle and whether you are verified, and that is the
-          entire list. No email, no id it could join on, no vouch count.
+          {t(
+            'A creation you open is handed your handle and whether you are verified, and that is the entire list. No email, no id it could join on, no vouch count.',
+          )}
         </span>
       </p>
     </section>

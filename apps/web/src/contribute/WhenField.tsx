@@ -23,6 +23,8 @@
 import { useEffect, useRef, useState } from 'react'
 import { Button, InlineError } from '../ui/index.js'
 import { Icon } from '../Icon.js'
+import { t } from '../i18n/index.js'
+import { withBold } from './ComposerShell.js'
 import { readWhen, type WhenResult } from './contributeData.js'
 
 /**
@@ -69,7 +71,7 @@ export function WhenField(props: WhenFieldProps) {
   return (
     <div className="cn-field">
       <label className="cn-label" htmlFor="cn-when">
-        When
+        {t('When')}
       </label>
       <div className="cn-nl" data-bad={result.kind === 'unreadable' || undefined}>
         <Icon name="clock" size={16} className="cn-nl-ic" />
@@ -123,7 +125,7 @@ function ParseLine(props: {
   const { result } = props
 
   if (result.kind === 'empty') {
-    return <p className="cn-hint">However you would say it out loud.</p>
+    return <p className="cn-hint">{t('However you would say it out loud.')}</p>
   }
 
   if (result.kind === 'ok') {
@@ -133,7 +135,7 @@ function ParseLine(props: {
         <Icon name="check-circle" size={16} />
         <div>
           <p className="cn-parse-read">
-            We read that as <b>{result.reading.label}</b>. Is that right?
+            {withBold(t('We read that as {reading}. Is that right?'), 'reading', result.reading.label)}
           </p>
           <div className="cn-parse-acts">
             <button
@@ -143,10 +145,10 @@ function ParseLine(props: {
               aria-pressed={yes}
               onClick={() => props.onConfirm(result.reading.startsAt)}
             >
-              {yes ? <Icon name="check" size={16} /> : null} Yes
+              {yes ? <Icon name="check" size={16} /> : null} {t('Yes')}
             </button>
             <button type="button" className="cn-chip" onClick={props.onManual}>
-              Set it myself
+              {t('Set it myself')}
             </button>
           </div>
         </div>
@@ -159,7 +161,7 @@ function ParseLine(props: {
       <div className="cn-parse" data-tone="ask" role="status">
         <Icon name="help" size={16} />
         <div>
-          <p className="cn-parse-read">Two readings of that. Which one?</p>
+          <p className="cn-parse-read">{t('Two readings of that. Which one?')}</p>
           <div className="cn-parse-acts">
             {result.readings.map((reading) => (
               <button
@@ -176,7 +178,7 @@ function ParseLine(props: {
           </div>
           {/* Nothing is picked for you, and the reason is on the screen. */}
           <p className="cn-parse-tiny">
-            Nothing is picked for you. A market at 7am and a game at 7pm are both normal here.
+            {t('Nothing is picked for you. A market at 7am and a game at 7pm are both normal here.')}
           </p>
         </div>
       </div>
@@ -189,14 +191,14 @@ function ParseLine(props: {
         <Icon name="help" size={16} />
         <div>
           <p className="cn-parse-read">
-            We found <b>{result.dayLabel}</b>, but no time in that.
+            {withBold(t('We found {day}, but no time in that.'), 'day', result.dayLabel)}
           </p>
           <div className="cn-parse-acts">
             <button type="button" className="cn-chip" onClick={props.onManual}>
-              Set the time by hand
+              {t('Set the time by hand')}
             </button>
           </div>
-          <p className="cn-parse-tiny">Add a time to the line above, or set it here.</p>
+          <p className="cn-parse-tiny">{t('Add a time to the line above, or set it here.')}</p>
         </div>
       </div>
     )
@@ -210,15 +212,15 @@ function ParseLine(props: {
             register here is how it stops meaning anything at 6am when the
             river is up. */}
         <p className="cn-parse-read">
-          We could not find a date in that. Try a day and a time, or set it by hand.
+          {t('We could not find a date in that. Try a day and a time, or set it by hand.')}
         </p>
         <div className="cn-parse-acts">
           <button type="button" className="cn-chip" onClick={props.onManual}>
-            Set it by hand
+            {t('Set it by hand')}
           </button>
         </div>
         <p className="cn-parse-tiny">
-          The words you typed are kept. Nothing you wrote was thrown away.
+          {t('The words you typed are kept. Nothing you wrote was thrown away.')}
         </p>
       </div>
     </div>
@@ -246,10 +248,10 @@ function ManualEntry(props: { onBack: () => void; onSet: (at: number) => void })
     <div className="cn-parse" data-tone="edit">
       <Icon name="edit" size={16} />
       <div>
-        <p className="cn-parse-read">You set this by hand. We stopped guessing.</p>
+        <p className="cn-parse-read">{t('You set this by hand. We stopped guessing.')}</p>
         <div className="cn-manual">
           <label className="cn-manual-f">
-            <span>Date</span>
+            <span>{t('Date')}</span>
             <input
               className="cn-input cn-input--sm"
               type="date"
@@ -258,7 +260,7 @@ function ManualEntry(props: { onBack: () => void; onSet: (at: number) => void })
             />
           </label>
           <label className="cn-manual-f">
-            <span>Starts</span>
+            <span>{t('Starts')}</span>
             <input
               className="cn-input cn-input--sm"
               type="time"
@@ -267,9 +269,9 @@ function ManualEntry(props: { onBack: () => void; onSet: (at: number) => void })
             />
           </label>
         </div>
-        {incomplete ? <InlineError>A date and a time, and it is set.</InlineError> : null}
+        {incomplete ? <InlineError>{t('A date and a time, and it is set.')}</InlineError> : null}
         <Button variant="quiet" size="sm" icon="refresh" onClick={props.onBack}>
-          Go back to typing it
+          {t('Go back to typing it')}
         </Button>
       </div>
     </div>

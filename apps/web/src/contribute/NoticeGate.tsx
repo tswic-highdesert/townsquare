@@ -25,6 +25,7 @@
 
 import { Button, Textarea, TextInput } from '../ui/index.js'
 import { Icon } from '../Icon.js'
+import { t } from '../i18n/index.js'
 import { NOTICE_SEVERITIES } from './contributeData.js'
 
 export interface NoticeDraft {
@@ -40,8 +41,8 @@ export function noticeContent(draft: NoticeDraft) {
 }
 
 export function noticeMissing(draft: NoticeDraft): string | null {
-  if (!draft.title.trim()) return 'The notice needs a line saying what it is.'
-  if (!draft.body.trim()) return 'It needs the detail underneath.'
+  if (!draft.title.trim()) return t('The notice needs a line saying what it is.')
+  if (!draft.body.trim()) return t('It needs the detail underneath.')
   return null
 }
 
@@ -62,16 +63,14 @@ export function NoticeGate(props: {
       <div className="cn-gate-ic">
         <Icon name="megaphone" size={32} />
       </div>
-      <h3 className="cn-gate-title">Notices come from organisations</h3>
+      <h3 className="cn-gate-title">{t('Notices come from organisations')}</h3>
       <p className="cn-gate-body">
         {props.reason ??
-          'A notice goes out under an organisation name, so residents know who is telling them.'}{' '}
-        The library, a church, the school district, a city department. Your account is a person, so
-        this one is not open to you yet.
+          t('A notice goes out under an organisation name, so residents know who is telling them.')}{' '}
+        {t('The library, a church, the school district, a city department. Your account is a person, so this one is not open to you yet.')}
       </p>
       <p className="cn-gate-body">
-        If you run something in town, or you help run it, we can attach you to it. It takes a couple
-        of days and a person reads it.
+        {t('If you run something in town, or you help run it, we can attach you to it. It takes a couple of days and a person reads it.')}
       </p>
 
       <div className="cn-gate-acts">
@@ -80,36 +79,36 @@ export function NoticeGate(props: {
             than a sentence that says what to do. */}
         <p className="cn-gate-soon">
           <Icon name="badge-check" size={16} />
-          Claiming an organisation is not built yet. Email a moderator and they will sort it out.
+          {t('Claiming an organisation is not built yet. Email a moderator and they will sort it out.')}
         </p>
       </div>
 
       <div className="cn-gate-alt">
-        <p className="cn-gate-alt-head">Or, if what you have is one of these</p>
+        <p className="cn-gate-alt-head">{t('Or, if what you have is one of these')}</p>
         <ul className="cn-gate-list">
           <li>
             <Icon name="calendar" size={16} />
             <span>
-              <b>Something is happening.</b> That is an event, and anyone verified can add one.
+              <b>{t('Something is happening.')}</b> {t('That is an event, and anyone verified can add one.')}
             </span>
             <Button variant="quiet" size="sm" onClick={props.onPickEvent}>
-              Add an event
+              {t('Add an event')}
             </Button>
           </li>
           <li>
             <Icon name="edit" size={16} />
             <span>
-              <b>Something is wrong on a listing.</b> That is a correction.
+              <b>{t('Something is wrong on a listing.')}</b> {t('That is a correction.')}
             </span>
             <Button variant="quiet" size="sm" onClick={props.onPickCorrection}>
-              Correct a listing
+              {t('Correct a listing')}
             </Button>
           </li>
           <li>
             <Icon name="alert-circle" size={16} />
             <span>
-              <b>Water is out on your street right now.</b> Ring the city. We are not an emergency
-              service and we will not pretend to be.
+              <b>{t('Water is out on your street right now.')}</b>{' '}
+              {t('Ring the city. We are not an emergency service and we will not pretend to be.')}
             </span>
           </li>
         </ul>
@@ -128,24 +127,24 @@ export function NoticeComposer(props: {
   return (
     <>
       <TextInput
-        label="The notice"
+        label={t('The notice')}
         value={draft.title}
         maxLength={140}
         onChange={(e) => onChange({ ...draft, title: e.target.value })}
       />
 
       <Textarea
-        label="Detail"
+        label={t('Detail')}
         value={draft.body}
         rows={3}
         maxLength={400}
-        help="Say it the way you would say it from the pulpit."
+        help={t('Say it the way you would say it from the pulpit.')}
         onChange={(e) => onChange({ ...draft, body: e.target.value })}
       />
 
       <div className="cn-field">
         <span className="cn-label" id="cn-sev">
-          How far this goes
+          {t('How far this goes')}
         </span>
         <div className="cn-sev" role="radiogroup" aria-labelledby="cn-sev">
           {NOTICE_SEVERITIES.map((rung) => {
@@ -166,10 +165,10 @@ export function NoticeComposer(props: {
                 <span className="cn-sev-mark" aria-hidden="true" />
                 <span className="cn-sev-text">
                   <span className="cn-sev-name">
-                    {rung.name}
-                    {rung.note ? <span className="cn-sev-default">{rung.note}</span> : null}
+                    {t(rung.name)}
+                    {rung.note ? <span className="cn-sev-default">{t(rung.note)}</span> : null}
                   </span>
-                  <span className="cn-sev-what">{rung.what}</span>
+                  <span className="cn-sev-what">{t(rung.what)}</span>
                 </span>
               </label>
             )
@@ -179,8 +178,7 @@ export function NoticeComposer(props: {
         <div className="cn-nudge">
           <Icon name="lightbulb" size={16} />
           <p>
-            Supper time changing is a notice. Urgent is for when somebody could get hurt. Nobody
-            thinks less of you for using the quiet one, and everyone notices the loud one twice.
+            {t('Supper time changing is a notice. Urgent is for when somebody could get hurt. Nobody thinks less of you for using the quiet one, and everyone notices the loud one twice.')}
           </p>
         </div>
       </div>

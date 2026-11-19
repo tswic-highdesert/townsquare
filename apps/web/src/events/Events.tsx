@@ -45,15 +45,23 @@ import {
   Skeleton,
 } from '../ui/index.js'
 import type { AccountView } from '../session.js'
+import { getLocale, msg, t, tn } from '../i18n/index.js'
 import {
   fetchDay,
   fetchMonth,
+  type DayGap,
   type DayPayload,
+  type DaySegment,
   type EventRow,
   type MonthCell,
   type MonthPayload,
+  type WeekCell,
 } from './eventsData.js'
 import {
+  capitalize,
+  dayCount,
+  dayText,
+  longDay,
   nowLineIndex,
   relativeLabel,
   rowState,
@@ -65,13 +73,93 @@ import { CATEGORY_ICON } from './categories.js'
 import './events.css'
 
 const WORDS = [
-  'Nothing', 'One', 'Two', 'Three', 'Four', 'Five', 'Six', 'Seven', 'Eight',
-  'Nine', 'Ten', 'Eleven', 'Twelve', 'Thirteen', 'Fourteen', 'Fifteen',
+  msg('Nothing'), msg('One'), msg('Two'), msg('Three'), msg('Four'), msg('Five'), msg('Six'),
+  msg('Seven'), msg('Eight'), msg('Nine'), msg('Ten'), msg('Eleven'), msg('Twelve'),
+  msg('Thirteen'), msg('Fourteen'), msg('Fifteen'),
 ] as const
 
 /** Small counts read as words; the rest as digits. A sentence, not a metric. */
 function countWord(n: number): string {
-  return WORDS[n] ?? String(n)
+  const word = WORDS[n]
+  return word ? t(word) : String(n)
+}
+
+/**
+ * The day payload's date labels in the reader's language. The API writes them
+ * in English, so English shows them as sent and Spanish builds the same labels
+ * from the same day.
+ */
+function dayLabels(payload: DayPayload) {
+  if (getLocale() === 'en') {
+    return {
+      eyebrow: payload.eyebrow,
+      headline: payload.headline,
+      dayName: payload.dayName,
+      date: payload.eyebrow.replace(`${payload.dayName} `, ''),
+      next: payload.next?.label ?? '',
+    }
+  }
+  const town = payload.town.name
+  const weekday = dayText(payload.day, { weekday: 'long' })
+  const next = payload.next ? longDay(payload.next.day) : ''
+  return {
+    eyebrow: capitalize(longDay(payload.day)),
+    headline: payload.isToday
+      ? t('Today in {town}', { town })
+      : t('{weekday} in {town}', { weekday: capitalize(weekday), town }),
+    dayName: weekday,
+    date: dayText(payload.day, { day: 'numeric', month: 'long' }),
+    next: payload.isToday ? t('Tomorrow, {date}', { date: next }) : capitalize(next),
+  }
+}
+
+/** A week strip cell's short name and spoken label, as `dayLabels` does for the day. */
+function weekCellText(cell: WeekCell): { name: string; label: string } {
+  if (getLocale() === 'en') return { name: cell.name, label: cell.label }
+  return {
+    name: dayText(cell.day, { weekday: 'short' }),
+    label: [capitalize(longDay(cell.day)), cell.isToday ? t('today') : null, dayCount(cell.count)]
+      .filter(Boolean)
+      .join(', '),
+  }
+}
+
+/** The sentence under a quiet stretch, naming the clock time things resume. */
+function gapLine(gap: DayGap, after: DaySegment | undefined, timezone: string): string {
+  const resumes = after?.kind === 'rows' ? after.rows[0] : undefined
+  if (getLocale() === 'en' || !resumes) return gap.line
+  return t('A quiet stretch, then it picks back up at {time}.', {
+    time: townClock(Date.parse(resumes.startsAt), timezone),
+  })
+}
+
+/** `1 hr 30 min`, `45 min`, `2 hr`. */
+function gapLength(gap: DayGap): string {
+  if (getLocale() === 'en') return gap.lengthLabel
+  const hours = Math.floor(gap.minutes / 60)
+  const minutes = gap.minutes % 60
+  if (hours === 0) return t('{minutes} min', { minutes })
+  if (minutes === 0) return t('{hours} hr', { hours })
+  return t('{hours} hr {minutes} min', { hours, minutes })
+}
+
+/** `to 5:30`. The clock digits read the same in both languages. */
+function endText(label: string): string {
+  return getLocale() === 'en' ? label : t('to {time}', { time: label.replace(/^to /, '') })
+}
+
+/** The busiest day this week, said for a quiet day. */
+function busiestLine(busiest: WeekCell, selected: string): string {
+  if (busiest.name !== 'Sat' && busiest.day === selected) {
+    return tn(busiest.count, 'There are {count} things on today.', 'There are {count} things on today.')
+  }
+  const day =
+    getLocale() !== 'en'
+      ? dayText(busiest.day, { weekday: 'long' })
+      : busiest.name === 'Sat'
+        ? 'Saturday'
+        : busiest.name
+  return tn(busiest.count, 'There are {count} things on {day}.', 'There are {count} things on {day}.', { day })
 }
 
 /**
@@ -136,56 +224,58 @@ export function EventsScreen(props: EventsScreenProps) {
         onAccount={props.onAccount}
         onReview={props.onReview}
       />
+      <main id="ts-main" tabIndex={-1}>
+        <div className="ev-top">
+          <button className="ev-back" onClick={props.onBack}>
+            <Icon name="chevron-left" size={16} /> {t('Today')}
+          </button>
+          <SegmentedControl
+            label={t('How to see the calendar')}
+            value={view}
+            onChange={setView}
+            options={[
+              { value: 'day', label: t('Day') },
+              { value: 'month', label: t('Month') },
+            ]}
+          />
+        </div>
 
-      <div className="ev-top">
-        <button className="ev-back" onClick={props.onBack}>
-          <Icon name="chevron-left" size={16} /> Today
-        </button>
-        <SegmentedControl
-          label="How to see the calendar"
-          value={view}
-          onChange={setView}
-          options={[
-            { value: 'day', label: 'Day' },
-            { value: 'month', label: 'Month' },
-          ]}
-        />
-      </div>
-
-      {/*
-        Each view owns its own failure. A day that could not load must not blank
-        the month, because the month is a working answer to the same question
-        and taking it away turns one broken request into a broken screen.
-      */}
-      {view === 'day' && failed ? (
-        <ErrorState
-          scope="screen"
-          line="The calendar could not be loaded."
-          sub="Nothing is wrong with your connection as far as we can tell, so this is probably us."
-          onRetry={() => load(day)}
-        />
-      ) : view === 'month' ? (
-        <MonthView
-          month={day?.slice(0, 7)}
-          selected={day}
-          onPickDay={(picked) => {
-            setDay(picked)
-            load(picked)
-            setView('day')
-            props.onDayChange?.(picked)
-          }}
-          onOpenEvent={props.onOpenEvent}
-        />
-      ) : payload ? (
-        <DayView
-          payload={payload}
-          onPickDay={(picked) => { load(picked); props.onDayChange?.(picked) }}
-          onOpenEvent={props.onOpenEvent}
-          onSeeMonth={() => setView('month')}
-        />
-      ) : (
-        <DaySkeleton />
-      )}
+        {/*
+          Each view owns its own failure. A day that could not load must not blank
+          the month, because the month is a working answer to the same question
+          and taking it away turns one broken request into a broken screen.
+        */}
+        {view === 'day' && failed ? (
+          <ErrorState
+            scope="screen"
+            heading
+            line={t('The calendar could not be loaded.')}
+            sub={t('Nothing is wrong with your connection as far as we can tell, so this is probably us.')}
+            onRetry={() => load(day)}
+          />
+        ) : view === 'month' ? (
+          <MonthView
+            month={day?.slice(0, 7)}
+            selected={day}
+            onPickDay={(picked) => {
+              setDay(picked)
+              load(picked)
+              setView('day')
+              props.onDayChange?.(picked)
+            }}
+            onOpenEvent={props.onOpenEvent}
+          />
+        ) : payload ? (
+          <DayView
+            payload={payload}
+            onPickDay={(picked) => { load(picked); props.onDayChange?.(picked) }}
+            onOpenEvent={props.onOpenEvent}
+            onSeeMonth={() => setView('month')}
+          />
+        ) : (
+          <DaySkeleton />
+        )}
+      </main>
     </div>
   )
 }
@@ -207,17 +297,19 @@ function DayView(props: {
   // hide the entire screen.
   const rows = payload.segments.flatMap((s) => (s.kind === 'rows' ? s.rows : []))
   const { earlier } = payload.isToday ? splitEarlier(rows, now) : { earlier: [] }
+  const labels = dayLabels(payload)
 
   return (
     <div className="ev-screen">
       <header className="ev-head">
-        <div className="ev-eyebrow">{payload.eyebrow}</div>
-        <h1 className="ev-h1">{payload.headline}</h1>
+        <div className="ev-eyebrow">{labels.eyebrow}</div>
+        <h1 className="ev-h1">{labels.headline}</h1>
         <p className="ev-sub">
           {payload.total === 0
-            ? 'Nothing on the calendar.'
-            : `${countWord(payload.total)} ${payload.total === 1 ? 'thing' : 'things'} on.`}
-          {earlier.length > 0 && ` ${countWord(earlier.length)} ${earlier.length === 1 ? 'has' : 'have'} already finished.`}
+            ? t('Nothing on the calendar.')
+            : tn(payload.total, '{word} thing on.', '{word} things on.', { word: countWord(payload.total) })}
+          {earlier.length > 0 &&
+            ` ${tn(earlier.length, '{word} has already finished.', '{word} have already finished.', { word: countWord(earlier.length) })}`}
         </p>
       </header>
 
@@ -230,7 +322,9 @@ function DayView(props: {
           onClick={() => setShowEarlier((open) => !open)}
         >
           <Icon name={showEarlier ? 'chevron-up' : 'chevron-down'} size={16} />
-          {showEarlier ? 'Hide' : 'Show'} {earlier.length} earlier today
+          {showEarlier
+            ? tn(earlier.length, 'Hide {count} earlier today', 'Hide {count} earlier today')
+            : tn(earlier.length, 'Show {count} earlier today', 'Show {count} earlier today')}
         </button>
       )}
 
@@ -249,7 +343,7 @@ function DayView(props: {
         <>
           <div className="ev-dayline">
             <button onClick={() => props.onPickDay(payload.next?.day ?? '')}>
-              {payload.next.label}
+              {labels.next}
               <Icon name="chevron-right" size={14} />
             </button>
           </div>
@@ -262,7 +356,7 @@ function DayView(props: {
       )}
 
       <p className="ev-tail">
-        <button onClick={props.onSeeMonth}>See the whole month</button>
+        <button onClick={props.onSeeMonth}>{t('See the whole month')}</button>
       </p>
     </div>
   )
@@ -290,8 +384,8 @@ function Segments(props: {
       {payload.segments.map((segment, i) =>
         segment.kind === 'gap' ? (
           <div className="ev-gap" key={`gap-${i}`}>
-            <p>{segment.line}</p>
-            <span className="ev-gap-len">{segment.lengthLabel}</span>
+            <p>{gapLine(segment, payload.segments[i + 1], tz)}</p>
+            <span className="ev-gap-len">{gapLength(segment)}</span>
           </div>
         ) : (
           <SegmentRows
@@ -335,8 +429,8 @@ function SegmentRows(props: {
             title. It sits between two `RowItem`s rather than inside one.
           */}
           {line !== null && line === i + from && (
-            <li className="ev-nowline" role="separator">
-              <span className="ev-nowline-label">now, {townClock(now, props.timezone)}</span>
+            <li className="ev-nowline">
+              <span className="ev-nowline-label">{t('now, {time}', { time: townClock(now, props.timezone) })}</span>
             </li>
           )}
           <AgendaRow row={row} now={now} onOpen={props.onOpen} />
@@ -387,21 +481,21 @@ function AgendaRow(props: { row: EventRow; now: number; onOpen: (id: string) => 
           <span className="ev-time" data-allday={row.allDay || undefined}>
             {row.allDay ? (
               <span className="ev-allday">
-                all
+                {t('all')}
                 <br />
-                day
+                {t('day')}
               </span>
             ) : (
               <>
                 <span className="ev-clock">{row.timeLabel}</span>
                 <span className="ev-meridiem">{row.meridiem}</span>
                 {row.endLabel ? (
-                  <span className="ev-end">{row.endLabel}</span>
+                  <span className="ev-end">{endText(row.endLabel)}</span>
                 ) : (
                   /* No end time published, which is 40% of the feed. A short
                      rule running off the bottom of the clock says "this keeps
                      going" without inventing an hour. */
-                  <span className="ev-open" title="No end time published" aria-hidden="true" />
+                  <span className="ev-open" title={t('No end time published')} aria-hidden="true" />
                 )}
               </>
             )}
@@ -436,7 +530,7 @@ function WeekStrip(props: { payload: DayPayload; onPick: (day: string) => void }
   }
 
   return (
-    <div className="ev-week" role="tablist" aria-label="Pick a day">
+    <div className="ev-week" role="tablist" aria-label={t('Pick a day')}>
       {cells.map((cell, i) => (
         <button
           key={cell.day}
@@ -446,7 +540,7 @@ function WeekStrip(props: { payload: DayPayload; onPick: (day: string) => void }
           className="ev-day"
           role="tab"
           aria-selected={cell.isSelected}
-          aria-label={cell.label}
+          aria-label={weekCellText(cell).label}
           // A roving tabindex: one stop for the whole strip, then arrow keys.
           // Seven tab stops to cross a week is seven too many.
           tabIndex={cell.isSelected ? 0 : -1}
@@ -463,7 +557,7 @@ function WeekStrip(props: { payload: DayPayload; onPick: (day: string) => void }
             e.preventDefault()
           }}
         >
-          <span className="ev-day-name">{cell.name}</span>
+          <span className="ev-day-name">{weekCellText(cell).name}</span>
           <span className="ev-day-num">{cell.num}</span>
           <span className="ev-dots" aria-hidden="true">
             {cell.count === 0 ? (
@@ -497,13 +591,13 @@ function QuietDay(props: { payload: DayPayload; onSeeMonth: () => void }) {
   return (
     <EmptyState
       mark="calendar"
-      line={`Nothing on for ${props.payload.dayName}`}
+      line={t('Nothing on for {day}', { day: dayLabels(props.payload).dayName })}
       sub={
         busiest && busiest.count > 0
-          ? `Nobody scheduled anything and nothing is broken. There are ${busiest.count} things on ${busiest.name === 'Sat' ? 'Saturday' : busiest.day === props.payload.day ? 'today' : busiest.name}.`
-          : 'Nobody scheduled anything and nothing is broken.'
+          ? `${t('Nobody scheduled anything and nothing is broken.')} ${busiestLine(busiest, props.payload.day)}`
+          : t('Nobody scheduled anything and nothing is broken.')
       }
-      action={{ label: 'See the whole month', onAct: props.onSeeMonth }}
+      action={{ label: t('See the whole month'), onAct: props.onSeeMonth }}
     />
   )
 }
@@ -544,7 +638,10 @@ function DaySkeleton() {
 
 /* ────────────────────────────────────────────────────────── the month ──── */
 
-const DOW = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'] as const
+/** The grid head, Sunday first. 1 March 2026 was a Sunday. */
+function weekdays(): string[] {
+  return Array.from({ length: 7 }, (_, i) => dayText(`2026-03-0${1 + i}`, { weekday: 'short' }))
+}
 
 /**
  * The month grid.
@@ -570,6 +667,9 @@ function MonthView(props: {
   const [month, setMonth] = useState(props.month)
   const [payload, setPayload] = useState<MonthPayload | null>(null)
   const [failed, setFailed] = useState(false)
+  // Bumped by "Try now". Setting the month to itself is not a change, so it
+  // cannot be what asks for the month again.
+  const [attempt, setAttempt] = useState(0)
   const [focused, setFocused] = useState<string | null>(props.selected ?? null)
   const [panelDay, setPanelDay] = useState<string | null>(props.selected ?? null)
   const gridRef = useRef<HTMLDivElement | null>(null)
@@ -587,7 +687,7 @@ function MonthView(props: {
       },
       () => setFailed(true),
     )
-  }, [month])
+  }, [month, attempt])
 
   useEffect(() => {
     if (!pending.current || !payload) return
@@ -602,12 +702,17 @@ function MonthView(props: {
     return (
       <ErrorState
         scope="screen"
-        line="The month could not be loaded."
-        onRetry={() => setMonth((m) => m)}
+        line={t('The month could not be loaded.')}
+        onRetry={() => setAttempt((n) => n + 1)}
       />
     )
   }
   if (!payload) return <div className="ev-month-loading" aria-busy="true"><Skeleton shape="block" height={420} /></div>
+
+  const monthLabel =
+    getLocale() === 'en'
+      ? payload.label
+      : capitalize(dayText(`${payload.month}-15`, { month: 'long', year: 'numeric' }))
 
   const shift = (from: string, delta: number) => {
     const next = new Date(Date.parse(`${from}T00:00:00Z`) + delta * 86_400_000)
@@ -631,25 +736,25 @@ function MonthView(props: {
           <IconButton
             variant="quiet"
             name="chevron-left"
-            label="Previous month"
+            label={t('Previous month')}
             disabled={!payload.prevMonth}
             onClick={() => payload.prevMonth && setMonth(payload.prevMonth)}
           />
-          <h2>{payload.label}</h2>
+          <h2>{monthLabel}</h2>
           <IconButton
             variant="quiet"
             name="chevron-right"
-            label="Next month"
+            label={t('Next month')}
             disabled={!payload.nextMonth}
             onClick={() => payload.nextMonth && setMonth(payload.nextMonth)}
           />
           <span className="ev-month-count">
-            {payload.total} {payload.total === 1 ? 'event' : 'events'}
+            {tn(payload.total, '{count} event', '{count} events')}
           </span>
         </div>
 
         <div className="ev-month-dow" aria-hidden="true">
-          {DOW.map((d) => (
+          {weekdays().map((d) => (
             <span key={d}>{d}</span>
           ))}
         </div>
@@ -657,7 +762,7 @@ function MonthView(props: {
         <div
           className="ev-month-grid"
           role="grid"
-          aria-label={payload.label}
+          aria-label={monthLabel}
           ref={gridRef}
           onKeyDown={(e) => {
             const day = focused ?? panelDay
@@ -727,7 +832,7 @@ function MonthDay(props: {
       data-today={cell.isToday || undefined}
       data-quiet={cell.count === 0 || undefined}
       aria-selected={props.selected}
-      aria-label={cell.label}
+      aria-label={getLocale() === 'en' ? cell.label : `${capitalize(longDay(cell.day))}, ${dayCount(cell.count)}`}
       tabIndex={props.tabIndex}
       onFocus={props.onFocus}
       onClick={props.onPick}
@@ -739,7 +844,7 @@ function MonthDay(props: {
         compete with the month being read.
       */}
       {!cell.inMonth ? null : cell.count === 0 ? (
-        <span className="ev-mnone">nothing on</span>
+        <span className="ev-mnone">{t('nothing on')}</span>
       ) : (
         <>
           {cell.chips.map((chip) => (
@@ -747,7 +852,7 @@ function MonthDay(props: {
               {chip.title}
             </span>
           ))}
-          {cell.more > 0 && <span className="ev-mmore">+{cell.more} more</span>}
+          {cell.more > 0 && <span className="ev-mmore">{t('+{count} more', { count: cell.more })}</span>}
           <span className="ev-mload" aria-hidden="true">
             <i style={{ width: `${Math.round(cell.load * 100)}%` }} />
           </span>
@@ -772,17 +877,18 @@ function DayPanel(props: {
   }, [props.day])
 
   const rows = payload?.segments.flatMap((s) => (s.kind === 'rows' ? s.rows : [])) ?? []
+  const labels = payload ? dayLabels(payload) : null
 
   return (
-    <aside className="ev-daypanel" aria-label={payload?.eyebrow ?? 'The day'}>
-      {payload ? (
+    <aside className="ev-daypanel" aria-label={labels?.eyebrow ?? t('The day')}>
+      {payload && labels ? (
         <>
-          <div className="ev-eyebrow">{payload.dayName}</div>
-          <h3 className="ev-daypanel-date">{payload.eyebrow.replace(`${payload.dayName} `, '')}</h3>
+          <div className="ev-eyebrow">{capitalize(labels.dayName)}</div>
+          <h3 className="ev-daypanel-date">{labels.date}</h3>
           <p className="ev-daypanel-sub">
             {payload.total === 0
-              ? 'Nothing on.'
-              : `${countWord(payload.total)} ${payload.total === 1 ? 'thing' : 'things'} on.`}
+              ? t('Nothing on.')
+              : tn(payload.total, '{word} thing on.', '{word} things on.', { word: countWord(payload.total) })}
           </p>
           {/* Compact, because it sits beside the grid rather than owning the
               screen. Four variables change; the tap target still floors at
@@ -794,7 +900,7 @@ function DayPanel(props: {
           </RowList>
           {payload.total > 4 && (
             <Button variant="quiet" onClick={() => props.onSeeDay(props.day)}>
-              See all {payload.total}
+              {t('See all {count}', { count: payload.total })}
             </Button>
           )}
         </>

@@ -807,6 +807,7 @@
 
 .cr-chrome-title {
   display: block;
+  margin: 0;
   font-family: var(--ts-font-serif);
   font-size: var(--ts-text-card-title);
   font-weight: 600;

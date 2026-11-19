@@ -24,28 +24,29 @@
 
 import { BottomSheet } from '../ui/index.js'
 import { Icon, type IconName } from '../Icon.js'
+import { msg, t, tn } from '../i18n/index.js'
 import type { ContributionType, GateAvailability } from './contributeData.js'
 
 const DESCRIPTIONS: Record<ContributionType, { icon: IconName; desc: string }> = {
   event: {
     icon: 'calendar',
-    desc: 'Something happening at a time and a place that people can turn up to.',
+    desc: msg('Something happening at a time and a place that people can turn up to.'),
   },
   correction: {
     icon: 'edit',
-    desc: 'Hours, a phone number or a name that is wrong on a listing.',
+    desc: msg('Hours, a phone number or a name that is wrong on a listing.'),
   },
   notice: {
     icon: 'megaphone',
-    desc: 'An organisation telling the town something. Verified organisations only.',
+    desc: msg('An organisation telling the town something. Verified organisations only.'),
   },
   collection: {
     icon: 'layers',
-    desc: 'Places or stories you have gathered into a list with a name.',
+    desc: msg('Places or stories you have gathered into a list with a name.'),
   },
   photo: {
     icon: 'camera',
-    desc: 'One picture of something in town, and one line saying what it is.',
+    desc: msg('One picture of something in town, and one line saying what it is.'),
   },
 }
 
@@ -60,9 +61,9 @@ export interface ChooserProps {
 
 export function Chooser(props: ChooserProps) {
   return (
-    <BottomSheet open={props.open} onClose={props.onClose} title="Add something">
+    <BottomSheet open={props.open} onClose={props.onClose} title={t('Add something')}>
       <p className="cn-sheet-sub">
-        Pick what it is. Everything in Town Square has a shape, so it can be found again.
+        {t('Pick what it is. Everything in Town Square has a shape, so it can be found again.')}
       </p>
 
       <ul className="cn-choose">
@@ -74,13 +75,13 @@ export function Chooser(props: ChooserProps) {
       {props.draftCount > 0 ? (
         <button type="button" className="cn-drafts-link" onClick={props.onDrafts}>
           <Icon name="archive" size={16} />
-          {props.draftCount === 1 ? '1 draft' : `${props.draftCount} drafts`}, not posted yet
+          {tn(props.draftCount, '{count} draft, not posted yet', '{count} drafts, not posted yet')}
         </button>
       ) : null}
 
       <p className="cn-sheet-foot">
         <Icon name="info" size={16} />
-        There is no general post box here, on purpose.
+        {t('There is no general post box here, on purpose.')}
       </p>
     </BottomSheet>
   )
@@ -123,14 +124,14 @@ function ChooserRow({ row, onPick }: { row: GateAvailability; onPick: () => void
               needs to know what it is, and swapping the two leaves a lock with
               no explanation of what is behind it. */}
           <span className="cn-choose-desc" id={descId}>
-            {meta.desc}
+            {t(meta.desc)}
           </span>
           {row.allowed || !row.reason ? null : (
             <span className="cn-choose-why">{sentence(row.reason)}</span>
           )}
           {row.ifUsed === 'hold' ? (
             <span className="cn-choose-hold">
-              You can write it now. It posts the moment you are verified.
+              {t('You can write it now. It posts the moment you are verified.')}
             </span>
           ) : null}
         </span>
@@ -155,5 +156,5 @@ function sentence(reason: string): string {
 }
 
 function lockLabel(row: GateAvailability): string {
-  return row.ifUsed === 'unavailable' ? 'Not available yet' : 'Locked'
+  return row.ifUsed === 'unavailable' ? t('Not available yet') : t('Locked')
 }

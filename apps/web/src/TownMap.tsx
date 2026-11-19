@@ -19,6 +19,7 @@ import {
   type Camera,
 } from './mapProjection.js'
 import type { NearbyPlace, PlaceKind, Position, RankedPlace } from './nearbyData.js'
+import { t, tn } from './i18n/index.js'
 
 export interface StreetCorridor {
   name: string
@@ -186,7 +187,15 @@ export function TownMap(props: TownMapProps) {
           are the same stone rather than two grey stripes.
         */
         preserveAspectRatio="xMidYMid meet"
-        role="img"
+        /*
+          A group, not an image: the pins inside are buttons, and an image's
+          children are hidden from assistive technology. The arrow keys pan it
+          and +/- zoom it. The pins are not each a tab stop, because seven
+          hundred of them would be a trap; the list view one toggle away is the
+          keyboard's way to every place on this map.
+        */
+        role="group"
+        aria-roledescription={t('map')}
         tabIndex={0}
         onKeyDown={(event) => {
           const step = 60 * unitsPerPixel
@@ -196,7 +205,9 @@ export function TownMap(props: TownMapProps) {
           else if (event.key === '+' || event.key === '=') { event.preventDefault(); zoomBy(1.6) }
           else if (event.key === '-') { event.preventDefault(); zoomBy(1 / 1.6) }
         }}
-        aria-label={localMap ? `OpenStreetMap map of Russellville with ${places.length} directory places` : `Approximate directory map with ${places.length} listings`}
+        aria-label={localMap
+          ? tn(places.length, 'OpenStreetMap map of Russellville with {count} directory places', 'OpenStreetMap map of Russellville with {count} directory places')
+          : tn(places.length, 'Approximate directory map with {count} listings', 'Approximate directory map with {count} listings')}
         onPointerDown={onPointerDown}
         onPointerMove={onPointerMove}
         onPointerUp={onPointerUp}
@@ -286,14 +297,14 @@ export function TownMap(props: TownMapProps) {
         <button
           className="map-control"
           onClick={() => setCamera(position ? centreOn(position.lat, position.lng, bounds) : wholeTown(bounds))}
-          aria-label={position ? 'Centre on me' : 'Show the whole town'}
+          aria-label={position ? t('Centre on me') : t('Show the whole town')}
         >
           <Icon name={position ? 'target' : 'compass'} size={20} />
         </button>
-        <button className="map-control" onClick={() => zoomBy(1.6)} aria-label="Zoom in">
+        <button className="map-control" onClick={() => zoomBy(1.6)} aria-label={t('Zoom in')}>
           <Icon name="add" size={20} />
         </button>
-        <button className="map-control" onClick={() => zoomBy(1 / 1.6)} aria-label="Zoom out">
+        <button className="map-control" onClick={() => zoomBy(1 / 1.6)} aria-label={t('Zoom out')}>
           <Icon name="minus" size={20} />
         </button>
       </div>
@@ -304,7 +315,7 @@ export function TownMap(props: TownMapProps) {
         precision they are reading is a block, not a survey.
       */}
       <p className="map-provenance">
-        {localMap ? <>Map © <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener noreferrer">OpenStreetMap contributors</a>. Served by Town Square; no map provider receives your location.</> : <>Approximate streets from directory addresses. Places can be explored in the list if the map is unavailable.</>}
+        {localMap ? <>{t('Map ©')} <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener noreferrer">{t('OpenStreetMap contributors')}</a>. {t('Served by Town Square; no map provider receives your location.')}</> : <>{t('Approximate streets from directory addresses. Places can be explored in the list if the map is unavailable.')}</>}
       </p>
     </div>
   )

@@ -25,6 +25,7 @@
 import { useEffect, useState } from 'react'
 import { Skeleton } from '../ui/index.js'
 import { Icon } from '../Icon.js'
+import { t, tn } from '../i18n/index.js'
 import { fetchHistory, type Attribution, type RecordHistory } from './contributeData.js'
 
 export function HistoryPanel({ recordId }: { recordId: string }) {
@@ -43,7 +44,7 @@ export function HistoryPanel({ recordId }: { recordId: string }) {
     }
   }, [recordId])
 
-  if (missing) return <p className="cn-hint">That record is not there any more.</p>
+  if (missing) return <p className="cn-hint">{t('That record is not there any more.')}</p>
   if (!history) return <Skeleton shape="block" height={160} />
 
   // Newest first: the question is almost always "what does it say now, and who
@@ -52,11 +53,13 @@ export function HistoryPanel({ recordId }: { recordId: string }) {
 
   return (
     <>
-      <h1 className="cn-h1">History</h1>
+      <h1 className="cn-h1">{t('History')}</h1>
       <p className="cn-lead">
-        {versions.length === 1
-          ? 'One version. Everything that has ever been on this record is here.'
-          : `${versions.length} versions. Everything that has ever been on this record is still here.`}
+        {tn(
+          versions.length,
+          'One version. Everything that has ever been on this record is here.',
+          '{count} versions. Everything that has ever been on this record is still here.',
+        )}
       </p>
 
       <ol className="cn-hist">
@@ -67,8 +70,8 @@ export function HistoryPanel({ recordId }: { recordId: string }) {
               <span className="cn-hist-dot" aria-hidden="true" />
               <div className="cn-hist-card">
                 <div className="cn-hist-head">
-                  <b>Version {version.version}</b>
-                  {current ? <span className="cn-hist-now">on the record now</span> : null}
+                  <b>{t('Version {version}', { version: version.version })}</b>
+                  {current ? <span className="cn-hist-now">{t('on the record now')}</span> : null}
                 </div>
                 <p className="cn-hist-what">{describe(version.data)}</p>
                 <p className="cn-hist-who">
@@ -83,8 +86,7 @@ export function HistoryPanel({ recordId }: { recordId: string }) {
 
       <p className="cn-hist-foot">
         <Icon name="info" size={16} />
-        Putting a version back does not erase the ones after it. It writes a new version that copies
-        an old one, which is why nobody can quietly rewrite what happened here.
+        {t('Putting a version back does not erase the ones after it. It writes a new version that copies an old one, which is why nobody can quietly rewrite what happened here.')}
       </p>
     </>
   )
@@ -109,7 +111,7 @@ function describe(data: Record<string, unknown>): string {
   for (const key of ['title', 'name', 'caption']) {
     if (typeof data[key] === 'string') return data[key] as string
   }
-  return 'Created'
+  return t('Created')
 }
 
 /**
@@ -121,16 +123,16 @@ function describe(data: Record<string, unknown>): string {
  * they wrote, and the revert is a separate line rather than a replacement.
  */
 function who(author: Attribution, revertedFrom: number | null): string {
-  if (revertedFrom !== null) return `A moderator put version ${revertedFrom} back`
+  if (revertedFrom !== null) return t('A moderator put version {version} back', { version: revertedFrom })
   switch (author.kind) {
     case 'resident':
       return `@${author.handle}`
     case 'resident_via_creation':
-      return `@${author.handle}, through ${author.creationName}`
+      return t('@{handle}, through {creation}', { handle: author.handle, creation: author.creationName })
     case 'organisation':
-      return `${author.orgName}, by @${author.handle}`
+      return t('{org}, by @{handle}', { org: author.orgName, handle: author.handle })
     case 'creation':
-      return `${author.creationName}, owned by @${author.ownerHandle}`
+      return t('{creation}, owned by @{owner}', { creation: author.creationName, owner: author.ownerHandle })
     case 'source':
       return author.label
   }

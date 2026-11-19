@@ -5,6 +5,7 @@ import { fetchDay, type DayPayload, type EventRow } from './events/eventsData.js
 import { fetchDirectory, type DirectoryPlace } from './directory/directoryData.js'
 import { saveThing, type SavedThing } from './savesData.js'
 import type { AccountView } from './session.js'
+import { intlLocale, t } from './i18n/index.js'
 import './styles/weekend.css'
 
 function saturday(): string {
@@ -32,11 +33,11 @@ export function Weekend(props: {
   const [message, setMessage] = useState('')
   const [saving, setSaving] = useState(false)
   useEffect(() => { try { sessionStorage.setItem('townsquare-day-out', JSON.stringify({ day, eventId, coffeeId, foodId })) } catch { /* Browser storage is optional. */ } }, [day, eventId, coffeeId, foodId])
-  useEffect(() => { void fetchDirectory().then((data) => setPlaces(data.places), () => setError('Places could not be loaded. Please try again.')) }, [])
+  useEffect(() => { void fetchDirectory().then((data) => setPlaces(data.places), () => setError(t('Places could not be loaded. Please try again.'))) }, [])
   useEffect(() => {
     let current = true
     setCalendar(null); setError(''); setMessage('')
-    void fetchDay(day).then((data) => { if (current) setCalendar(data) }, () => { if (current) setError('The calendar could not be loaded. Please try another date.') })
+    void fetchDay(day).then((data) => { if (current) setCalendar(data) }, () => { if (current) setError(t('The calendar could not be loaded. Please try another date.')) })
     return () => { current = false }
   }, [day])
   const coffee = useMemo(() => places.filter((place) => /coffee|bakery|cafe/i.test(place.category + ' ' + place.name)).sort((a,b) => a.name.localeCompare(b.name)), [places])
@@ -53,56 +54,56 @@ export function Weekend(props: {
     const next = [...props.saved]
     try {
       const stops = [
-        ...(chosenCoffee ? [{ kind: 'business' as const, refId: chosenCoffee.id, title: chosenCoffee.name, detail: `Day out · ${day}`, url: chosenCoffee.url ?? undefined }] : []),
+        ...(chosenCoffee ? [{ kind: 'business' as const, refId: chosenCoffee.id, title: chosenCoffee.name, detail: t('Day out · {day}', { day }), url: chosenCoffee.url ?? undefined }] : []),
         ...(chosenEvent ? [{ kind: 'event' as const, refId: chosenEvent.id, title: chosenEvent.title, detail: `${day} · ${chosenEvent.timeLabel} ${chosenEvent.meridiem}`, url: chosenEvent.url ?? undefined }] : []),
-        ...(chosenFood ? [{ kind: 'business' as const, refId: chosenFood.id, title: chosenFood.name, detail: `Day out · ${day}`, url: chosenFood.url ?? undefined }] : []),
+        ...(chosenFood ? [{ kind: 'business' as const, refId: chosenFood.id, title: chosenFood.name, detail: t('Day out · {day}', { day }), url: chosenFood.url ?? undefined }] : []),
       ]
       for (const stop of stops) {
         if (next.some((saved) => saved.kind === stop.kind && saved.refId === stop.refId)) continue
         const saved = await saveThing(stop)
-        if (!saved) throw new Error('Some stops could not be saved. Saved stops remain in your list; try again for the rest.')
+        if (!saved) throw new Error(t('Some stops could not be saved. Saved stops remain in your list; try again for the rest.'))
         next.unshift(saved)
       }
-      setMessage('Your stops are saved. Find them in Saved whenever you are ready.')
-    } catch (problem) { setError(problem instanceof Error ? problem.message : 'Saving failed. Please try again.') }
+      setMessage(t('Your stops are saved. Find them in Saved whenever you are ready.'))
+    } catch (problem) { setError(problem instanceof Error ? problem.message : t('Saving failed. Please try again.')) }
     finally { props.onSavedChange(next); setSaving(false) }
   }
 
-  const dateLabel = new Date(`${day}T12:00:00Z`).toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', timeZone: 'UTC' })
+  const dateLabel = new Date(`${day}T12:00:00Z`).toLocaleDateString(intlLocale(), { weekday: 'long', month: 'long', day: 'numeric', timeZone: 'UTC' })
   return <main className="dayout">
-    <Button variant="quiet" icon="arrow-left" onClick={props.onBack}>Back to Today</Button>
+    <Button variant="quiet" icon="arrow-left" onClick={props.onBack}>{t('Back to Today')}</Button>
     <header className="dayout-hero">
-      <span className="dayout-kicker"><Icon name="sun" size={22} /> A little closer to home</span>
-      <h1>Make a day of it.</h1>
-      <p>A coffee, something happening, a table worth gathering around. Put together your own River Valley day.</p>
-      <label className="dayout-date">Your day <input type="date" value={day} onChange={(event) => { if (event.target.value) setDay(event.target.value) }} /></label>
+      <span className="dayout-kicker"><Icon name="sun" size={22} /> {t('A little closer to home')}</span>
+      <h1>{t('Make a day of it.')}</h1>
+      <p>{t('A coffee, something happening, a table worth gathering around. Put together your own River Valley day.')}</p>
+      <label className="dayout-date">{t('Your day')} <input type="date" value={day} onChange={(event) => { if (event.target.value) setDay(event.target.value) }} /></label>
     </header>
     <div className="dayout-layout">
       <div className="dayout-choices">
-        <section><span className="dayout-step">01</span><h2>Ease into the day</h2><p>Pick a local coffee shop or bakery.</p>
-          <label className="sr-only" htmlFor="coffee-stop">Coffee or bakery</label>
-          <select id="coffee-stop" value={coffeeId} onChange={(event) => { setCoffeeId(event.target.value); setMessage('') }}><option value="">Choose your first stop</option>{coffee.map((place) => <option key={place.id} value={place.id}>{place.name}</option>)}</select>
+        <section><span className="dayout-step">01</span><h2>{t('Ease into the day')}</h2><p>{t('Pick a local coffee shop or bakery.')}</p>
+          <label className="sr-only" htmlFor="coffee-stop">{t('Coffee or bakery')}</label>
+          <select id="coffee-stop" value={coffeeId} onChange={(event) => { setCoffeeId(event.target.value); setMessage('') }}><option value="">{t('Choose your first stop')}</option>{coffee.map((place) => <option key={place.id} value={place.id}>{place.name}</option>)}</select>
           {chosenCoffee && <PlaceStop place={chosenCoffee} onOpen={props.onPlace} />}
         </section>
-        <section><span className="dayout-step">02</span><h2>Be part of something</h2><p>Published events for {dateLabel}.</p>
-          {!calendar && !error && <p role="status">Checking the local calendars…</p>}
-          {calendar && !events.length && <p className="dayout-empty">No published events for this date yet. Choose another day, or make it a day to explore local places.</p>}
+        <section><span className="dayout-step">02</span><h2>{t('Be part of something')}</h2><p>{t('Published events for {date}.', { date: dateLabel })}</p>
+          {!calendar && !error && <p role="status">{t('Checking the local calendars…')}</p>}
+          {calendar && !events.length && <p className="dayout-empty">{t('No published events for this date yet. Choose another day, or make it a day to explore local places.')}</p>}
           <div className="dayout-events">{events.map((event) => <button key={event.id} className="dayout-event" aria-pressed={eventId === event.id} onClick={() => { setEventId(event.id); setMessage('') }}>
-            <span>{event.allDay ? 'All day' : `${event.timeLabel} ${event.meridiem}`}</span><strong>{event.title}</strong><small>{event.location} · {event.sourceName}</small><Icon name={eventId === event.id ? 'check' : 'plus'} size={20} />
+            <span>{event.allDay ? t('All day') : `${event.timeLabel} ${event.meridiem}`}</span><strong>{event.title}</strong><small>{event.location} · {event.sourceName}</small><Icon name={eventId === event.id ? 'check' : 'plus'} size={20} />
           </button>)}</div>
-          {chosenEvent && <Button variant="quiet" icon="arrow-right" onClick={() => props.onEvent(chosenEvent.id)}>Read event details</Button>}
+          {chosenEvent && <Button variant="quiet" icon="arrow-right" onClick={() => props.onEvent(chosenEvent.id)}>{t('Read event details')}</Button>}
         </section>
-        <section><span className="dayout-step">03</span><h2>Pull up a chair</h2><p>Finish with something local.</p>
-          <label className="sr-only" htmlFor="food-stop">Restaurant</label>
-          <select id="food-stop" value={foodId} onChange={(event) => { setFoodId(event.target.value); setMessage('') }}><option value="">Choose somewhere to eat</option>{food.map((place) => <option key={place.id} value={place.id}>{place.name}</option>)}</select>
+        <section><span className="dayout-step">03</span><h2>{t('Pull up a chair')}</h2><p>{t('Finish with something local.')}</p>
+          <label className="sr-only" htmlFor="food-stop">{t('Restaurant')}</label>
+          <select id="food-stop" value={foodId} onChange={(event) => { setFoodId(event.target.value); setMessage('') }}><option value="">{t('Choose somewhere to eat')}</option>{food.map((place) => <option key={place.id} value={place.id}>{place.name}</option>)}</select>
           {chosenFood && <PlaceStop place={chosenFood} onOpen={props.onPlace} />}
         </section>
       </div>
-      <aside className="dayout-summary"><Icon name="map" size={32} /><h2>Your {new Date(`${day}T12:00:00Z`).toLocaleDateString('en-US', {weekday:'long', timeZone:'UTC'})}</h2><p>{dateLabel}</p>
-        {count ? <ol>{chosenCoffee && <li>{chosenCoffee.name}</li>}{chosenEvent && <li>{chosenEvent.title}<small>{chosenEvent.timeLabel} {chosenEvent.meridiem}</small></li>}{chosenFood && <li>{chosenFood.name}</li>}</ol> : <p>Start with a place or an event. There is no wrong order.</p>}
-        <Button full variant="primary" icon="bookmark" disabled={!count} loading={saving} onClick={() => void savePlan()}>{props.account ? 'Save my stops' : 'Sign in to save stops'}</Button>
+      <aside className="dayout-summary"><Icon name="map" size={32} /><h2>{t('Your {weekday}', { weekday: new Date(`${day}T12:00:00Z`).toLocaleDateString(intlLocale(), {weekday:'long', timeZone:'UTC'}) })}</h2><p>{dateLabel}</p>
+        {count ? <ol>{chosenCoffee && <li>{chosenCoffee.name}</li>}{chosenEvent && <li>{chosenEvent.title}<small>{chosenEvent.timeLabel} {chosenEvent.meridiem}</small></li>}{chosenFood && <li>{chosenFood.name}</li>}</ol> : <p>{t('Start with a place or an event. There is no wrong order.')}</p>}
+        <Button full variant="primary" icon="bookmark" disabled={!count} loading={saving} onClick={() => void savePlan()}>{props.account ? t('Save my stops') : t('Sign in to save stops')}</Button>
         {message && <p role="status" className="dayout-success">{message}</p>}
-        <p className="dayout-note">A collection of ideas, not a booking. Check current hours and event details before heading out. Stops save individually.</p>
+        <p className="dayout-note">{t('A collection of ideas, not a booking. Check current hours and event details before heading out. Stops save individually.')}</p>
       </aside>
     </div>
     {error && <p role="alert" className="problem">{error}</p>}
@@ -110,5 +111,5 @@ export function Weekend(props: {
 }
 
 function PlaceStop({ place, onOpen }: { place: DirectoryPlace; onOpen(id: string): void }) {
-  return <div className="dayout-place"><Icon name="storefront" size={24} /><div><strong>{place.name}</strong><p>{place.address ?? place.category}</p></div><Button variant="quiet" onClick={() => onOpen(place.id)}>Details</Button></div>
+  return <div className="dayout-place"><Icon name="storefront" size={24} /><div><strong>{place.name}</strong><p>{place.address ?? place.category}</p></div><Button variant="quiet" onClick={() => onOpen(place.id)}>{t('Details')}</Button></div>
 }

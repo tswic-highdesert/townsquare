@@ -8,6 +8,7 @@
  */
 
 import { isError, type ApiError } from './session.js'
+import { msg, t } from './i18n/index.js'
 
 export type ReportReason = 'illegal' | 'security' | 'impersonation' | 'spam' | 'broken' | 'other'
 
@@ -20,12 +21,12 @@ export type ReportReason = 'illegal' | 'security' | 'impersonation' | 'spam' | '
  * closed. Saying so here is fairer than a form that implies otherwise.
  */
 export const REPORT_REASONS: ReadonlyArray<{ value: ReportReason; label: string }> = [
-  { value: 'illegal', label: 'Illegal — this breaks the law' },
-  { value: 'security', label: 'Security — it is doing something it should not be able to' },
-  { value: 'impersonation', label: 'Impersonation — it pretends to be someone or something else' },
-  { value: 'spam', label: 'Spam — it exists to advertise' },
-  { value: 'broken', label: 'Broken — it does not work any more' },
-  { value: 'other', label: 'Something else' },
+  { value: 'illegal', label: msg('Illegal — this breaks the law') },
+  { value: 'security', label: msg('Security — it is doing something it should not be able to') },
+  { value: 'impersonation', label: msg('Impersonation — it pretends to be someone or something else') },
+  { value: 'spam', label: msg('Spam — it exists to advertise') },
+  { value: 'broken', label: msg('Broken — it does not work any more') },
+  { value: 'other', label: msg('Something else') },
 ]
 
 export interface FiledReport {
@@ -49,7 +50,7 @@ export async function fileReport(input: {
   const parsed: unknown = await res.json().catch(() => null)
   if (!res.ok) {
     return (
-      (parsed as ApiError | null) ?? { error: 'unavailable', message: 'Could not send that.' }
+      (parsed as ApiError | null) ?? { error: 'unavailable', message: t('Could not send that.') }
     )
   }
   return parsed as FiledReport

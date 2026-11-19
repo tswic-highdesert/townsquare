@@ -24,6 +24,7 @@
 import { useState, type ReactNode } from 'react'
 import { Button } from '../ui/index.js'
 import { Icon } from '../Icon.js'
+import { t } from '../i18n/index.js'
 import type { Attribution } from './contributeData.js'
 
 /** A saved badge appears only after the server confirms the current draft. */
@@ -56,7 +57,7 @@ export function ComposerShell(props: ComposerShellProps) {
   return (
     <div className="cn-comp">
       <div className="cn-comp-bar">
-        <button className="cn-icon-btn" type="button" aria-label="Back" onClick={props.onBack}>
+        <button className="cn-icon-btn" type="button" aria-label={t('Back')} onClick={props.onBack}>
           <Icon name="chevron-left" />
         </button>
         <div className="cn-comp-heading">
@@ -67,7 +68,7 @@ export function ComposerShell(props: ComposerShellProps) {
       </div>
 
       {props.preview === undefined ? null : (
-        <div className="cn-toggle" role="tablist" aria-label="Write or preview">
+        <div className="cn-toggle" role="tablist" aria-label={t('Write or preview')}>
           <button
             className="cn-toggle-opt"
             role="tab"
@@ -76,7 +77,7 @@ export function ComposerShell(props: ComposerShellProps) {
             data-on={tab === 'write' || undefined}
             onClick={() => setTab('write')}
           >
-            Write
+            {t('Write')}
           </button>
           <button
             className="cn-toggle-opt"
@@ -86,7 +87,7 @@ export function ComposerShell(props: ComposerShellProps) {
             data-on={tab === 'preview' || undefined}
             onClick={() => setTab('preview')}
           >
-            Preview
+            {t('Preview')}
           </button>
         </div>
       )}
@@ -105,7 +106,7 @@ export function ComposerShell(props: ComposerShellProps) {
       <footer className="cn-publish">
         {props.onSaveDraft ? (
           <Button variant="quiet" onClick={props.onSaveDraft} disabled={props.publishDisabled}>
-            Save draft
+            {t('Save draft')}
           </Button>
         ) : (
           <span />
@@ -132,17 +133,17 @@ function SaveIndicator({ state }: { state: SaveState }) {
       {state === 'saving' ? (
         <>
           <Icon name="loader" size={16} className="cn-spin" />
-          Saving
+          {t('Saving')}
         </>
       ) : state === 'offline' ? (
         <>
           <Icon name="cloud-upload" size={16} />
-          Not saved — keep this page open
+          {t('Not saved — keep this page open')}
         </>
       ) : (
         <>
           <Icon name="check" size={16} />
-          Saved
+          {t('Saved')}
         </>
       )}
     </span>
@@ -176,34 +177,46 @@ export function AttributionRow({ attribution }: { attribution: Attribution }) {
 export function attributionSentence(attribution: Attribution): ReactNode {
   switch (attribution.kind) {
     case 'resident':
-      return (
-        <>
-          Contributing as <b>@{attribution.handle}</b>
-        </>
-      )
+      return withBold(t('Contributing as {handle}'), 'handle', <>@{attribution.handle}</>)
     case 'resident_via_creation':
-      return (
-        <>
-          Posting as <b>@{attribution.handle}</b>, through {attribution.creationName}
-        </>
+      return withBold(
+        t('Posting as {handle}, through {creation}', { creation: attribution.creationName }),
+        'handle',
+        <>@{attribution.handle}</>,
       )
     case 'organisation':
-      return (
-        <>
-          Posting as <b>{attribution.orgName}</b>, by @{attribution.handle}
-        </>
+      return withBold(
+        t('Posting as {org}, by @{handle}', { handle: attribution.handle }),
+        'org',
+        attribution.orgName,
       )
     case 'creation':
       // No acting user, so none is claimed. The phrasing changes from "added
       // by" to "kept up to date by" so nobody reads a person into it.
-      return (
-        <>
-          Kept up to date by <b>{attribution.creationName}</b>, owned by @{attribution.ownerHandle}
-        </>
+      return withBold(
+        t('Kept up to date by {creation}, owned by @{owner}', { owner: attribution.ownerHandle }),
+        'creation',
+        attribution.creationName,
       )
     case 'source':
-      return <>From {attribution.label}</>
+      return <>{t('From {source}', { source: attribution.label })}</>
   }
+}
+
+/**
+ * A translated sentence with one placeholder left unfilled, rendered with that
+ * placeholder in bold. The words around it move with the language; the `<b>`
+ * goes wherever the translation puts it.
+ */
+export function withBold(sentence: string, name: string, bold: ReactNode): ReactNode {
+  const [before = '', after = ''] = sentence.split(`{${name}}`)
+  return (
+    <>
+      {before}
+      <b>{bold}</b>
+      {after}
+    </>
+  )
 }
 
 /* Local, tiny, and not worth a hook file. */
