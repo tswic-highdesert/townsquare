@@ -1,0 +1,8 @@
+blank_issues_enabled: true
+contact_links:
+  - name: Security problem
+    url: https://github.com/tswic-highdesert/townsquare/blob/main/SECURITY.md
+    about: Report privately. Do not open a public issue for a way through the sandbox.
+  - name: Building a creation
+    url: https://github.com/tswic-highdesert/townsquare/blob/main/CONTRIBUTING.md
+    about: How residents and teams build and submit a creation.
