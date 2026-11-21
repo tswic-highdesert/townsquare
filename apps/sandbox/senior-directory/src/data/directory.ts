@@ -13,6 +13,12 @@
 
 import { town, type Business } from '@townsquare/sdk'
 import seniorResources from './senior-resources.json'
+import { needOf, type NeedId } from './needs.js'
+// The chamber list has no websites. These were found by searching the web and
+// have not been confirmed with the businesses, so the UI marks them as such.
+import assumedWebsites from './assumed-websites.json'
+
+const ASSUMED_WEBSITES = assumedWebsites as Record<string, string>
 
 /** One row of `senior-resources.json`. */
 export interface SeniorResource {
@@ -36,13 +42,19 @@ export interface DirectoryEntry {
   /** Chamber "industry" or the town directory "category". */
   category: string
   address: string
+  /** Known for chamber entries; town listings only carry a one-line address. */
+  city: string | null
   phone: string | null
   email: string | null
   website: string | null
+  /** True when `website` is a guess from `assumed-websites.json`, not from a source. */
+  websiteAssumed: boolean
   memberSince: number | null
   geo: { lat: number; lng: number } | null
   /** Which sources this entry came from (both, after a merge). */
   sources: DirectorySource[]
+  /** The plain-language group it is listed under. See `./needs.ts`. */
+  need: NeedId
 }
 
 /**
@@ -71,12 +83,15 @@ export const chamberEntries: DirectoryEntry[] = (seniorResources as SeniorResour
     name: r.company,
     category: r.industry,
     address: [r.address, r.address2, `${r.city}, ${r.state}`].filter(Boolean).join(', '),
+    city: r.city || null,
     phone: r.phone || null,
     email: r.email || null,
-    website: null,
+    website: ASSUMED_WEBSITES[r.company] ?? null,
+    websiteAssumed: r.company in ASSUMED_WEBSITES,
     memberSince: r.memberSince ?? null,
     geo: null,
     sources: ['chamber'],
+    need: needOf({ name: r.company, category: r.industry }),
   }),
 )
 
@@ -86,12 +101,15 @@ function fromBusiness(b: Business): DirectoryEntry {
     name: b.name,
     category: b.category ?? '',
     address: b.address ?? '',
+    city: null,
     phone: b.phone ?? null,
     email: null,
     website: b.website ?? null,
+    websiteAssumed: false,
     memberSince: null,
     geo: b.geo ?? null,
     sources: ['town'],
+    need: needOf({ name: b.name, category: b.category ?? '' }),
   }
 }
 
@@ -135,7 +153,11 @@ export function mergeEntries(
       continue
     }
     // Same organisation in both: fill gaps from the town directory.
-    existing.website ??= t.website
+    // A website from the town directory beats one we only assumed.
+    if (t.website && (!existing.website || existing.websiteAssumed)) {
+      existing.website = t.website
+      existing.websiteAssumed = false
+    }
     existing.geo ??= t.geo
     existing.phone ??= t.phone
     if (!existing.address) existing.address = t.address
