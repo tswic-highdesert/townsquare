@@ -581,3 +581,112 @@ test.describe('#4 identity reaches a creation only through the bridge', () => {
     expect(me.status()).toBe(403)
   })
 })
+
+test.describe('links out of a creation go through the resident', () => {
+  // The frame has no allow-popups and no allow-top-navigation, and these tests
+  // never loosen that. What they prove is the other half: an ordinary link a
+  // resident clicks reaches the shell's leaving dialog, the dialog names the
+  // real destination, and only the resident's own click opens anything.
+
+  test.beforeEach(async ({ context }) => {
+    // The destination is never actually fetched from the internet.
+    await context.route('https://example.org/**', (route) =>
+      route.fulfill({ contentType: 'text/html', body: '<title>Destination</title>' }),
+    )
+  })
+
+  const dialog = (page: Page) => page.getByRole('dialog')
+
+  test('a link nobody clicked is refused and shows nothing', async ({ page }) => {
+    const frame = await openCreation(page, 'Boundary Link Probe')
+    await expect(frame.locator('#status')).toHaveText('ready')
+    expect(await frame.evaluate(() => (window as never as { __unprompted?: string }).__unprompted)).toBe(
+      'invalid_request',
+    )
+    // Nor can a script call window.open its way around the click rule.
+    await frame.evaluate(() => void window.open('https://example.org/scripted'))
+    await page.waitForTimeout(300)
+    await expect(dialog(page)).toHaveCount(0)
+  })
+
+  test('a new-tab link asks first, and staying opens nothing', async ({ page, context }) => {
+    const frame = await openCreation(page, 'Boundary Link Probe')
+    await expect(frame.locator('#status')).toHaveText('ready')
+
+    const opened: string[] = []
+    context.on('page', (p) => opened.push(p.url()))
+
+    // Clicked on the span inside the link, as a finger would.
+    await frame.locator('#web span').click()
+    await expect(dialog(page)).toContainText("You're leaving Town Square")
+    await expect(dialog(page)).toContainText('Boundary Link Probe wants to open a website')
+    await expect(dialog(page)).toContainText('example.org')
+    await expect(dialog(page)).toContainText('https://example.org/senior-help')
+
+    await dialog(page).getByRole('button', { name: 'Stay here' }).click()
+    await expect(dialog(page)).toHaveCount(0)
+    await page.waitForTimeout(300)
+    expect(opened).toEqual([])
+
+    // The "Stay here" click must not count as permission to ask again. A
+    // creation that re-asks right away, without a new press inside it, is
+    // refused, so it cannot keep the resident in a loop of dialogs.
+    await frame.evaluate(() => void window.open('https://example.org/again'))
+    await page.waitForTimeout(300)
+    await expect(dialog(page)).toHaveCount(0)
+
+    // A real new press inside the creation still works.
+    await frame.locator('#tel').click()
+    await expect(dialog(page)).toContainText('Make a phone call?')
+    // Still running, not replaced with the "sent you somewhere else" screen.
+    await expect(frame.locator('#status')).toHaveText('ready')
+  })
+
+  test('agreeing opens the real destination in a new tab', async ({ page, context }) => {
+    const frame = await openCreation(page, 'Boundary Link Probe')
+    await expect(frame.locator('#status')).toHaveText('ready')
+
+    await frame.locator('#web').click()
+    const popup = context.waitForEvent('page')
+    await dialog(page).getByRole('button', { name: 'Open site' }).click()
+    const tab = await popup
+    await tab.waitForLoadState()
+    expect(tab.url()).toBe('https://example.org/senior-help')
+    // No opener: the destination cannot script the Town Square tab.
+    expect(await tab.evaluate(() => window.opener)).toBeNull()
+    await expect(dialog(page)).toHaveCount(0)
+  })
+
+  test('a plain link no longer replaces the creation', async ({ page }) => {
+    const frame = await openCreation(page, 'Boundary Link Probe')
+    await expect(frame.locator('#status')).toHaveText('ready')
+
+    await frame.locator('#plain').click()
+    await expect(dialog(page)).toContainText('https://example.org/plain')
+    await page.keyboard.press('Escape')
+    await expect(dialog(page)).toHaveCount(0)
+    await expect(page.getByText('This one tried to send you somewhere else')).toHaveCount(0)
+    await expect(frame.locator('#status')).toHaveText('ready')
+  })
+
+  test('a phone link shows the number before anything dials', async ({ page }) => {
+    const frame = await openCreation(page, 'Boundary Link Probe')
+    await expect(frame.locator('#status')).toHaveText('ready')
+
+    await frame.locator('#tel').click()
+    await expect(dialog(page)).toContainText('Make a phone call?')
+    await expect(dialog(page)).toContainText('+1 (479) 555-1212')
+    await dialog(page).getByRole('button', { name: 'Not now' }).click()
+    await expect(dialog(page)).toHaveCount(0)
+  })
+
+  test('a link the host refuses never reaches the resident', async ({ page }) => {
+    const frame = await openCreation(page, 'Boundary Link Probe')
+    await expect(frame.locator('#status')).toHaveText('ready')
+
+    await frame.locator('#refused').click()
+    await page.waitForTimeout(300)
+    await expect(dialog(page)).toHaveCount(0)
+    await expect(frame.locator('#status')).toHaveText('ready')
+  })
+})

@@ -33,6 +33,16 @@ const DENIED_HOST_SUFFIXES = [
 const DENIED_HOSTS = new Set(['localhost', 'metadata.google.internal'])
 
 /**
+ * A name that only means something on a private network, or nothing at all.
+ *
+ * Exported because outbound links (`./links.ts`) refuse the same names for the
+ * same reason: a resident's browser can reach them and a reviewer cannot.
+ */
+export function isReservedHostname(host: string): boolean {
+  return DENIED_HOSTS.has(host) || DENIED_HOST_SUFFIXES.some((s) => host.endsWith(s))
+}
+
+/**
  * A dotted name whose final label is alphabetic.
  *
  * The alphabetic-TLD requirement is what rejects a bare IP literal. An earlier
@@ -65,7 +75,7 @@ function assertSafeHost(host: string): void {
   if (/[;,'"\s\\()*]/.test(host)) {
     throw new CspCompileError(`host contains forbidden characters: ${JSON.stringify(host)}`)
   }
-  if (DENIED_HOSTS.has(host) || DENIED_HOST_SUFFIXES.some((s) => host.endsWith(s))) {
+  if (isReservedHostname(host)) {
     throw new CspCompileError(`host is not allowed: ${host}`)
   }
 }

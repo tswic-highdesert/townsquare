@@ -40,7 +40,7 @@ function manifest(permissions: Record<string, unknown> = {}): Manifest {
   return parsed.manifest
 }
 
-const frame = { ready: vi.fn(), setHeight: vi.fn(), setTitle: vi.fn() }
+const frame = { ready: vi.fn(), setHeight: vi.fn(), setTitle: vi.fn(), openLink: vi.fn() }
 
 interface Harness {
   bridge: Bridge
@@ -263,6 +263,126 @@ describe('teardown', () => {
     })
     await new Promise((r) => setTimeout(r, 10))
     expect(document.documentElement.style.getPropertyValue('--evil')).toBe('')
+  })
+})
+
+describe('links', () => {
+  /** Put a link in the page, click it as a resident would, and settle. */
+  async function click(attrs: Record<string, string>, init: MouseEventInit = {}): Promise<MouseEvent> {
+    const a = document.createElement('a')
+    for (const [k, v] of Object.entries(attrs)) a.setAttribute(k, v)
+    a.textContent = 'link'
+    document.body.appendChild(a)
+    const event = new MouseEvent('click', { bubbles: true, cancelable: true, button: 0, ...init })
+    a.dispatchEvent(event)
+    await new Promise((r) => setTimeout(r, 20))
+    a.remove()
+    return event
+  }
+
+  it('sends app.openLink through to the host', async () => {
+    await connect()
+    await expect(sdk.app.openLink('tel:+1 (479) 555-1212')).resolves.toBeNull()
+    expect(frame.openLink).toHaveBeenCalledWith({
+      kind: 'phone',
+      href: 'tel:+14795551212',
+      number: '+1 (479) 555-1212',
+    })
+  })
+
+  it('rejects with the reason when the host refuses a link', async () => {
+    await connect()
+    await expect(sdk.app.openLink('javascript:alert(1)')).rejects.toMatchObject({
+      code: 'invalid_request',
+    })
+    expect(frame.openLink).not.toHaveBeenCalled()
+  })
+
+  it('catches a plain new-tab link with no code from the builder', async () => {
+    await connect()
+    const event = await click({ href: 'https://www.arkansas.gov/aging', target: '_blank' })
+    expect(event.defaultPrevented).toBe(true)
+    expect(frame.openLink).toHaveBeenCalledWith(
+      expect.objectContaining({ kind: 'web', href: 'https://www.arkansas.gov/aging' }),
+    )
+  })
+
+  it('catches a link with no target, which would otherwise replace the creation', async () => {
+    await connect()
+    const event = await click({ href: 'https://example.org/' })
+    expect(event.defaultPrevented).toBe(true)
+    expect(frame.openLink).toHaveBeenCalledTimes(1)
+  })
+
+  it('catches phone and email links', async () => {
+    await connect()
+    await click({ href: 'tel:4795551212' })
+    await click({ href: 'mailto:help@example.org' })
+    expect(frame.openLink).toHaveBeenCalledWith(expect.objectContaining({ kind: 'phone' }))
+    expect(frame.openLink).toHaveBeenCalledWith(expect.objectContaining({ kind: 'email' }))
+  })
+
+  // A click on an element *inside* a link is covered by the boundary suite
+  // instead. happy-dom runs a link's navigation while the click is still
+  // bubbling, which no real browser does, so here it would navigate this test
+  // window before the runtime's listener on `document` ever saw the click.
+
+  it("leaves the creation's own links and in-page anchors alone", async () => {
+    await connect()
+    const same = await click({ href: `${location.origin}/page-two` })
+    const hash = await click({ href: '#section' })
+    const js = await click({ href: 'javascript:void 0' })
+    expect([same, hash, js].map((e) => e.defaultPrevented)).toEqual([false, false, false])
+    expect(frame.openLink).not.toHaveBeenCalled()
+  })
+
+  it('leaves a click the creation already handled alone', async () => {
+    await connect()
+    const a = document.createElement('a')
+    a.href = 'https://example.org/'
+    a.addEventListener('click', (e) => e.preventDefault())
+    document.body.appendChild(a)
+    a.dispatchEvent(new MouseEvent('click', { bubbles: true, cancelable: true, button: 0 }))
+    await new Promise((r) => setTimeout(r, 20))
+    a.remove()
+    expect(frame.openLink).not.toHaveBeenCalled()
+  })
+
+  it('ignores right-clicks', async () => {
+    await connect()
+    // happy-dom would follow the link it was told about; a listener on
+    // `window` runs after the runtime's, so it stops that without changing
+    // what the runtime saw.
+    const hold = (e: Event) => e.preventDefault()
+    window.addEventListener('click', hold)
+    await click({ href: 'https://example.org/' }, { button: 2 })
+    window.removeEventListener('click', hold)
+    expect(frame.openLink).not.toHaveBeenCalled()
+  })
+
+  it('routes window.open and answers null, as a blocked popup would', async () => {
+    await connect()
+    expect(window.open('https://example.org/', '_blank')).toBeNull()
+    await new Promise((r) => setTimeout(r, 20))
+    expect(frame.openLink).toHaveBeenCalledWith(
+      expect.objectContaining({ kind: 'web', href: 'https://example.org/' }),
+    )
+  })
+
+  it('warns rather than throwing when a clicked link is refused', async () => {
+    await connect()
+    const warn = vi.spyOn(console, 'warn').mockImplementation(() => {})
+    const unhandled = vi.fn()
+    process.on('unhandledRejection', unhandled)
+    await click({ href: 'http://localhost:8080/admin' })
+    await new Promise((r) => setTimeout(r, 20))
+    process.off('unhandledRejection', unhandled)
+    expect(unhandled).not.toHaveBeenCalled()
+    expect(warn).toHaveBeenCalledWith(
+      '[Town Square] That link was not opened:',
+      expect.stringMatching(/not a public web address/),
+    )
+    warn.mockRestore()
   })
 })
 
