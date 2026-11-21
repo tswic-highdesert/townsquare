@@ -19,8 +19,8 @@
 export interface InjectOptions {
   /** Cache-busted path to this town's compiled theme sheet. */
   themeHref: string
-  /** Major version directory the SDK is served from, e.g. `1`. */
-  sdkMajor: number
+  /** Directory the SDK is served from, from `sdkBasePath`, e.g. `/_ts/sdk/1-3fa9c2e1d04b7a65`. */
+  sdkBase: string
 }
 
 /**
@@ -30,7 +30,7 @@ export interface InjectOptions {
  * bare specifier mysteriously failing in some apps and not others.
  */
 export function injectionFor(opts: InjectOptions): string {
-  const sdkBase = `/_ts/sdk/${opts.sdkMajor}`
+  const sdkBase = opts.sdkBase
   return [
     `<!-- injected by Town Square -->`,
     `<meta charset="utf-8">`,

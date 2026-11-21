@@ -240,13 +240,15 @@ Injection into the entry HTML happens at **serve time**, on the entry document o
 <!-- injected by Town Square, immediately after <head> -->
 <meta charset="utf-8">
 <script type="importmap">
-{"imports":{"@townsquare/sdk":"/_ts/sdk/1/index.js","@townsquare/sdk/":"/_ts/sdk/1/"}}
+{"imports":{"@townsquare/sdk":"/_ts/sdk/1-3fa9c2e1d04b7a65/sdk.js","@townsquare/sdk/":"/_ts/sdk/1-3fa9c2e1d04b7a65/"}}
 </script>
 <link rel="stylesheet" href="/_ts/theme/russellville-ar-19.css">
-<script type="module" src="/_ts/sdk/1/boot.js"></script>
+<script type="module" src="/_ts/sdk/1-3fa9c2e1d04b7a65/boot.js"></script>
 ```
 
-`boot.js` is one line — `import './index.js'` — and exists so the handshake, theming, and auto-height start even for a creation that never imports the SDK. Because it is the same URL the app's own `import` resolves to, the module singleton is shared; there is no double-initialization.
+`boot.js` is one line — `import './sdk.js'` — and exists so the handshake, theming, and auto-height start even for a creation that never imports the SDK. Because it is the same URL the app's own `import` resolves to, the module singleton is shared; there is no double-initialization.
+
+The SDK directory is `<major>-<fingerprint>`, where the fingerprint is a hash of the runtime's bytes (`sdkBasePath` in `packages/sandbox/src/serve.ts`). The runtime is served `immutable` for a year, so its URL has to change whenever it does: with a fixed `/_ts/sdk/1/`, a resident who had loaded any creation before an SDK release would keep the old runtime until the cache expired. The entry document that names the URL is `no-cache`, so it always points at the current one. Nothing outside the injection may hard-code an SDK URL.
 
 The import map **must** be spliced before any module script in the document, which is why it goes first. The validator rejects any bundle shipping its own import map that maps `@townsquare/*`.
 
@@ -593,8 +595,8 @@ Exceeding any of these returns `rate_limited`. The SDK does **not** auto-retry �
 
 | Path | How | For |
 |---|---|---|
-| Bare specifier (spec's documented form) | Import map injected at serve time → `/_ts/sdk/1/index.js` | Everyone. Works with zero tooling, exactly as the spec is written |
-| Direct URL | `import { town } from '/_ts/sdk/1/index.js'` | Explicit / defensive authors |
+| Bare specifier (spec's documented form) | Import map injected at serve time → `/_ts/sdk/1-<fingerprint>/sdk.js` | Everyone. Works with zero tooling, exactly as the spec is written |
+| Direct URL | Not supported: the URL carries a content fingerprint (§1.5) and changes with every SDK release | — |
 | Global | `<script src="/_ts/sdk/1/global.js">` → `window.townsquare` | Non-module `<script>` apps, which LLMs emit often |
 | npm | `pnpm add -D @townsquare/sdk` | Door B: types, local dev server, editor completion. Never bundled — the import map wins at runtime |
 
