@@ -36,6 +36,24 @@ declare module '@townsquare/sdk' {
     nextCursor?: string | null
   }
 
+  /** One listing from `town.businesses()`, as `/api/businesses` projects it. */
+  export interface Business {
+    id: string
+    name: string
+    category?: string
+    address?: string
+    phone?: string
+    website?: string
+    geo?: { lat: number; lng: number }
+  }
+
+  export interface BusinessQuery {
+    /** Case-insensitive substring of a business's tags or category. */
+    tag?: string
+    /** Defaults to 50; the API caps it at 200. */
+    limit?: number
+  }
+
   export interface User {
     handle: string
     verified: boolean
@@ -52,7 +70,7 @@ declare module '@townsquare/sdk' {
     thisWeek(): Promise<{ today: unknown[]; weekend: unknown[]; comingUp: unknown[]; notices: unknown[] }>
     items(opts?: Record<string, unknown>): Promise<Page<unknown>>
     item(id: string): Promise<unknown | null>
-    businesses(opts?: Record<string, unknown>): Promise<Page<unknown>>
+    businesses(opts?: BusinessQuery): Promise<Page<Business>>
   }
 
   export const user: {
