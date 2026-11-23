@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <title>Boundary Link Probe</title>
+  </head>
+  <body>
+    <h1>Boundary Link Probe</h1>
+    <!--
+      Ordinary markup on purpose. No code here touches these links: the SDK
+      runtime that Town Square injects is what makes them work.
+    -->
+    <ul>
+      <li><a id="web" href="https://example.org/senior-help" target="_blank"><span>Senior help</span></a></li>
+      <li><a id="plain" href="https://example.org/plain">A plain link</a></li>
+      <li><a id="tel" href="tel:+1 (479) 555-1212">+1 (479) 555-1212</a></li>
+      <li><a id="refused" href="http://192.168.1.1/admin">The router</a></li>
+    </ul>
+    <p id="status">loading</p>
+
+    <script type="module">
+      import { app } from '@townsquare/sdk'
+
+      // A link nobody clicked. The host must refuse it, so a creation cannot
+      // put "leave Town Square?" in front of someone who did not ask.
+      try {
+        await app.openLink('https://example.org/unprompted')
+        window.__unprompted = 'opened'
+      } catch (err) {
+        window.__unprompted = err.code
+      }
+      document.getElementById('status').textContent = 'ready'
+      app.ready()
+    </script>
+  </body>
+</html>

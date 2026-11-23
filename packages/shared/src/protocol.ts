@@ -24,6 +24,7 @@ export const METHODS = [
   'app.ready',
   'app.setHeight',
   'app.setTitle',
+  'app.openLink',
 
   'town.info',
   'town.thisWeek',

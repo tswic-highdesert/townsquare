@@ -892,6 +892,9 @@
   position: relative;
   min-height: 220px;
 }
+/* Focus is parked here after a leaving dialog closes (see CreationFrame). It is
+ * a resting place, not a control, so it draws no ring. */
+.cr-frame-stack:focus { outline: none; }
 
 .cr-skeleton {
   padding: var(--ts-space-4);
@@ -1008,6 +1011,64 @@
   color: var(--ts-ink45);
   margin-top: var(--ts-space-4);
 }
+
+/* ── leaving dialog ─────────────────────────────────────────────────────── */
+/* The destination is the largest thing on the card. A resident deciding
+ * whether to go should read where before anything else, and the full address
+ * underneath is there to check, not to read. */
+
+.cr-leaving .ts-modal-s { margin-bottom: var(--ts-space-4); }
+
+.cr-leaving-dest {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ts-space-1);
+  padding: var(--ts-space-3) var(--ts-space-4);
+  border: 1px solid var(--ts-hairline);
+  border-radius: var(--ts-radius-card);
+  background: var(--ts-ink08);
+}
+
+.cr-leaving-label {
+  font-family: var(--ts-font-mono);
+  font-size: 10.5px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--ts-ink45);
+}
+
+.cr-leaving-host {
+  font-size: 20px;
+  font-weight: 600;
+  line-height: 1.25;
+  color: var(--ts-ink);
+  overflow-wrap: anywhere;
+}
+
+.cr-leaving-url {
+  font-family: var(--ts-font-mono);
+  font-size: 12px;
+  line-height: 1.45;
+  color: var(--ts-quiet);
+  overflow-wrap: anywhere;
+  max-height: 6.5em;
+  overflow: auto;
+}
+
+.cr-leaving-warn {
+  display: flex;
+  gap: var(--ts-space-2);
+  align-items: flex-start;
+  margin: var(--ts-space-3) 0 0;
+  padding: var(--ts-space-2) var(--ts-space-3);
+  border: 1px solid var(--ts-ui-terra-line);
+  border-radius: var(--ts-radius-card);
+  background: var(--ts-terracotta-tint);
+  font-size: 13.5px;
+  line-height: 1.45;
+  color: var(--ts-ink);
+}
+.cr-leaving-warn > svg { flex: none; margin-top: 2px; color: var(--ts-action); }
 
 /* ── report panel ───────────────────────────────────────────────────────── */
 
