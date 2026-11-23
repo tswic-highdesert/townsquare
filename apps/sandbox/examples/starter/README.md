@@ -68,13 +68,13 @@ What the other entries look like when you need them:
 
 ## Two limits to know about
 
-### Some town.* reads answer empty in the local shell
+### town.thisWeek answers empty in the local shell
 
-`town.info` and `town.businesses` return real data. `town.thisWeek`,
-`town.items` and `town.item` are documented and allowed, but the shell's data
-source in `apps/web/src/townData.ts` still answers them with empty lists and
-`null`. A creation that reads events will run without errors and show nothing,
-so do not read an empty result there as a bug in your code.
+`town.info`, `town.items`, `town.item` and `town.businesses` return real town
+data, paged with `nextCursor`. `town.thisWeek` is documented and allowed, but
+the shell's data source in `apps/web/src/townData.ts` still answers it with
+empty lists. Until it is built, read events with
+`town.items({ type: 'event' })` and bucket them yourself.
 
 ### Records are not built yet
 

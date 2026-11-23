@@ -13,7 +13,7 @@ import { CreationHost, openOutboundLink, type ErrorReason, type HostState } from
 import type { Manifest } from '@townsquare/manifest'
 import type { OutboundLink } from '@townsquare/shared'
 import { createActTokenHolder } from './actToken.js'
-import { townData } from './townData.js'
+import { createTownData } from './townData.js'
 import { Icon, type IconName } from './Icon.js'
 import { Button } from './ui/index.js'
 import { LeavingDialog } from './creations/LeavingDialog.js'
@@ -113,7 +113,7 @@ export function CreationFrame(props: CreationFrameProps) {
       town: props.town,
       context: {
         user: props.user,
-        town: townData,
+        town: createTownData(props.town.id),
         identity: act.identity,
         storage: act.storage,
       },
