@@ -1,0 +1,39 @@
+name: Platform change
+description: Propose a change to the SDK, the shell, the builder door or the review flow.
+labels: ["enhancement"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Want to build something for the town? That is a creation, and it does not need an issue.
+        Start with [CONTRIBUTING.md](../blob/main/CONTRIBUTING.md). This form is for changes to the platform itself.
+  - type: textarea
+    id: problem
+    attributes:
+      label: What you are trying to do
+      description: The creation or task that the platform gets in the way of today.
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: What you would change
+      description: The SDK method, manifest field, shell behavior or review step. Name the package if you know it.
+    validations:
+      required: true
+  - type: dropdown
+    id: boundary
+    attributes:
+      label: Does it touch the security boundary?
+      description: packages/host, packages/sandbox, packages/shared, the CSP, or what a creation can learn about a resident.
+      options:
+        - "No"
+        - "Yes"
+        - "Not sure"
+    validations:
+      required: true
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: What you tried instead
+      description: Workarounds you considered, and why they are not enough.
