@@ -20,6 +20,7 @@
 
 import { describeManifest, type TrustLine } from '@townsquare/host'
 import type { Manifest } from '@townsquare/manifest'
+import { getLocale, t, tn } from '../i18n/index.js'
 
 /** How loudly the tally reads. Never brick: see the note on `tone` below. */
 export type TrustTone = 'calm' | 'notable' | 'heavy'
@@ -58,10 +59,10 @@ export function summariseTrust(manifest: Manifest): TrustSummary {
   const lines = describeManifest(manifest)
 
   const groups: TrustGroup[] = [
-    { title: 'Leaves the visit', lines: lines.filter((l) => LEAVES_VISIT.has(l.kind)) },
-    { title: 'Leaves town', lines: lines.filter((l) => LEAVES_TOWN.has(l.kind)) },
+    { title: t('Leaves the visit'), lines: lines.filter((l) => LEAVES_VISIT.has(l.kind)) },
+    { title: t('Leaves town'), lines: lines.filter((l) => LEAVES_TOWN.has(l.kind)) },
     {
-      title: 'Background',
+      title: t('Background'),
       lines: lines.filter((l) => !LEAVES_VISIT.has(l.kind) && !LEAVES_TOWN.has(l.kind)),
     },
   ].filter((g) => g.lines.length > 0)
@@ -76,7 +77,7 @@ export function summariseTrust(manifest: Manifest): TrustSummary {
   if (total === 0) {
     return {
       tone: 'calm',
-      tally: 'Nothing here leaves the visit or leaves town.',
+      tally: t('Nothing here leaves the visit or leaves town.'),
       groups,
       counsel: false,
     }
@@ -92,20 +93,26 @@ export function summariseTrust(manifest: Manifest): TrustSummary {
 }
 
 function tally(writes: number, hosts: number, heavy: boolean): string {
-  const more = heavy ? ' That is more than most.' : ''
+  const more = heavy ? ` ${t('That is more than most.')}` : ''
 
   if (writes > 0 && hosts > 0) {
     const total = writes + hosts
-    return `${cap(count(total))} things here outlive the visit, and ${count(hosts)} of them leave town.${more}`
+    const sentence = tn(
+      hosts,
+      '{total} things here outlive the visit, and {hosts} of them leave town.',
+      '{total} things here outlive the visit, and {hosts} of them leave town.',
+      { total: cap(count(total)), hosts: count(hosts) },
+    )
+    return `${sentence}${more}`
   }
   if (writes > 0) {
     return writes === 1
-      ? `One thing here outlives the visit. It is marked.${more}`
-      : `${cap(count(writes))} things here outlive the visit. They are marked.${more}`
+      ? `${t('One thing here outlives the visit. It is marked.')}${more}`
+      : `${t('{total} things here outlive the visit. They are marked.', { total: cap(count(writes)) })}${more}`
   }
   return hosts === 1
-    ? `One thing here leaves town. It is marked.${more}`
-    : `${cap(count(hosts))} things here leave town. They are marked.${more}`
+    ? `${t('One thing here leaves town. It is marked.')}${more}`
+    : `${t('{total} things here leave town. They are marked.', { total: cap(count(hosts)) })}${more}`
 }
 
 /**
@@ -116,9 +123,11 @@ function tally(writes: number, hosts: number, heavy: boolean): string {
  * of this screen is written in.
  */
 const WORDS = ['zero', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine', 'ten']
+// Feminine, to agree with "cosas" in the Spanish tally.
+const WORDS_ES = ['cero', 'una', 'dos', 'tres', 'cuatro', 'cinco', 'seis', 'siete', 'ocho', 'nueve', 'diez']
 
 export function count(n: number): string {
-  return WORDS[n] ?? String(n)
+  return (getLocale() === 'es' ? WORDS_ES[n] : WORDS[n]) ?? String(n)
 }
 
 function cap(word: string): string {

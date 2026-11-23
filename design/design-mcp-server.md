@@ -18,7 +18,7 @@ bytes out of band via presigned upload so they never enter the model's context, 
 the exact same validator that `submit` runs, so the reviewer only ever sees bundles that
 already passed every mechanical check.
 
-House style is lifted from `team/naturalstateintel/stategov-app/src/mcp/`.
+House style follows an earlier MCP server of the maintainer's: a frozen tool table, a fixed gate chain, generated docs.
 
 ## Scopes and tiers
 

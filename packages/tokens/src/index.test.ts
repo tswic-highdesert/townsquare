@@ -170,7 +170,7 @@ describe('the approved Daily palette', () => {
   it('uses readable muted text and ink-based hairlines', () => {
     // The hi-fi is consistent about this, and it is the difference between text
     // that recedes and text that looks like a faded link.
-    expect(tokens.color.ink60).toBe('#5E6E65')
+    expect(tokens.color.ink60).toBe('#58685E')
     expect(tokens.color.hairline).toContain('38,59,50')
   })
 })

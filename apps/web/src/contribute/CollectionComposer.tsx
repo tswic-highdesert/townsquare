@@ -15,6 +15,7 @@
 import { useState } from 'react'
 import { TextInput, Textarea } from '../ui/index.js'
 import { Icon } from '../Icon.js'
+import { t } from '../i18n/index.js'
 import { searchListings, type Listing } from './contributeData.js'
 
 export interface CollectionItem {
@@ -41,8 +42,8 @@ export function collectionContent(draft: CollectionDraft) {
 }
 
 export function collectionMissing(draft: CollectionDraft): string | null {
-  if (!draft.name.trim()) return 'Call it something.'
-  if (draft.items.length === 0) return 'A collection needs at least one thing in it.'
+  if (!draft.name.trim()) return t('Call it something.')
+  if (draft.items.length === 0) return t('A collection needs at least one thing in it.')
   return null
 }
 
@@ -64,31 +65,31 @@ export function CollectionComposer(props: {
     onChange({ ...draft, items })
     // Announced, because a reorder a screen reader cannot hear is a reorder
     // that did not happen for the person doing it.
-    setMoved(`${item.label} moved to position ${to + 1} of ${items.length}`)
+    setMoved(t('{item} moved to position {position} of {total}', { item: item.label, position: to + 1, total: items.length }))
   }
 
   return (
     <>
       <TextInput
-        label="Call it something"
+        label={t('Call it something')}
         value={draft.name}
         maxLength={80}
         onChange={(e) => onChange({ ...draft, name: e.target.value })}
       />
 
       <Textarea
-        label="A line about it"
+        label={t('A line about it')}
         value={draft.description}
         rows={2}
         maxLength={200}
-        help="Optional."
+        help={t('Optional.')}
         onChange={(e) => onChange({ ...draft, description: e.target.value })}
       />
 
       <div className="cn-field">
-        <span className="cn-label">In this collection</span>
+        <span className="cn-label">{t('In this collection')}</span>
         {draft.items.length === 0 ? (
-          <p className="cn-hint">Nothing in it yet. Find a place below.</p>
+          <p className="cn-hint">{t('Nothing in it yet. Find a place below.')}</p>
         ) : (
           <ul className="cn-items">
             {draft.items.map((item, at) => (
@@ -104,7 +105,7 @@ export function CollectionComposer(props: {
                   <button
                     type="button"
                     className="cn-icon-btn cn-icon-btn--sm"
-                    aria-label={`Move ${item.label} up`}
+                    aria-label={t('Move {item} up', { item: item.label })}
                     disabled={at === 0}
                     onClick={() => move(at, at - 1)}
                   >
@@ -113,7 +114,7 @@ export function CollectionComposer(props: {
                   <button
                     type="button"
                     className="cn-icon-btn cn-icon-btn--sm"
-                    aria-label={`Move ${item.label} down`}
+                    aria-label={t('Move {item} down', { item: item.label })}
                     disabled={at === draft.items.length - 1}
                     onClick={() => move(at, at + 1)}
                   >
@@ -122,7 +123,7 @@ export function CollectionComposer(props: {
                   <button
                     type="button"
                     className="cn-icon-btn cn-icon-btn--sm"
-                    aria-label={`Remove ${item.label}`}
+                    aria-label={t('Remove {item}', { item: item.label })}
                     onClick={() =>
                       onChange({
                         ...draft,
@@ -144,7 +145,7 @@ export function CollectionComposer(props: {
 
       <div className="cn-field">
         <label className="cn-label" htmlFor="cn-coll-find">
-          Add a place
+          {t('Add a place')}
         </label>
         <div className="cn-place" data-open={results.length > 0 || undefined}>
           <span className="cn-place-ic">
@@ -154,7 +155,7 @@ export function CollectionComposer(props: {
             id="cn-coll-find"
             className="cn-input cn-input--bare"
             value={query}
-            placeholder="Find a listing"
+            placeholder={t('Find a listing')}
             onChange={(e) => {
               const next = e.target.value
               setQuery(next)
@@ -163,7 +164,7 @@ export function CollectionComposer(props: {
           />
         </div>
         {results.length > 0 ? (
-          <ul className="cn-picker-list" role="listbox" aria-label="Results">
+          <ul className="cn-picker-list" role="listbox" aria-label={t('Results')}>
             {results
               .filter((l) => !draft.items.some((i) => i.refId === l.id))
               .map((listing) => (

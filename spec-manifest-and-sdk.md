@@ -258,6 +258,7 @@ creations, not a database.
 app.ready()               // tell the host the app has rendered
 app.setHeight(720)        // ignored when display.height is "auto"
 app.setTitle('12 cameras mapped')   // shown in Town Square chrome
+await app.openLink('tel:+14795551212')   // from a click handler; see below
 ```
 
 `setHeight` under `height: "auto"` is a **no-op, not an error**, because generated
@@ -267,6 +268,18 @@ call `app.ready()`; past that it renders an it-did-not-load state rather than an
 empty box.
 
 `setTitle` accepts up to 80 characters of plain text, rendered as a text node.
+
+**Links just work.** A creation's frame cannot open pages itself, so the SDK
+catches clicks on `<a href>` links that leave the creation (including
+`target="_blank"`, `tel:` and `mailto:`) and calls `app.openLink` for it, and
+routes `window.open` the same way. Town Square shows the resident where the
+link goes, with the real host name, and opens it only if they agree. Allowed:
+`https:`, `http:` (flagged as not private), `tel:`, and `mailto:` with one
+address plus an optional subject and body. Refused: `javascript:`, `data:`, IP
+addresses, local network names, links with a username or password, and
+`cc`/`bcc`. A call that does not follow a press inside the creation is refused,
+and so is a second link while a dialog is open. Links to the creation's own
+pages are left alone.
 
 ### Theming comes free
 

@@ -25,7 +25,7 @@
 
 import { useEffect, useMemo, useState } from 'react'
 import { AccountScreen } from './Account.js'
-import { AppBar } from './AppBar.js'
+import { AppBar, SKIP_TARGET } from './AppBar.js'
 import { ReviewScreen } from './Review.js'
 import { resolveInitialAccount, type AccountView } from './session.js'
 import { ContributeScreen } from './contribute/Contribute.js'
@@ -56,6 +56,7 @@ import { fetchYours, type BuiltCreation, type SavedThing } from './savesData.js'
 import { fetchToday, type TodayPayload } from './todayData.js'
 import { fetchNearby, type NearbyPayload } from './nearbyData.js'
 import { fetchCreations, fetchTown, type CreationSummary } from './townData.js'
+import { msg, syncDocument, t, useLocale } from './i18n/index.js'
 
 type Screen =
   | { name: 'today' }
@@ -139,6 +140,9 @@ const TAB_OF: Partial<Record<Screen['name'], TabName>> = {
 }
 
 export function App() {
+  // The one subscriber. A language change re-renders the whole shell from here.
+  const locale = useLocale()
+  useEffect(syncDocument, [locale])
   const [creations, setCreations] = useState<CreationSummary[] | null>(null)
   const [town, setTown] = useState({ id: '', name: 'Town Square', timezone: 'America/Chicago' })
   const [screen, setScreenState] = useState<Screen>(() => readScreen([]))
@@ -153,6 +157,26 @@ export function App() {
     setScreenState(next)
     window.scrollTo({ top: 0, behavior: 'instant' })
   }
+
+  /*
+    WCAG 2.4.2: every screen has its own page title, in the resident's language.
+    And when a navigation unmounts the control that had focus, focus would fall
+    back to <body> and a screen reader would be left at the top of nothing. It
+    goes to the new screen's main content instead, the same place the skip link
+    lands. Focus that is still somewhere real is left alone.
+  */
+  useEffect(() => {
+    const part = 'creation' in screen ? screen.creation.name : t(SCREEN_TITLE[screen.name])
+    document.title = screen.name === 'today' ? `Town Square · ${town.name}` : `${part} · Town Square`
+  }, [screen, town.name, locale])
+  useEffect(() => {
+    if (document.activeElement && document.activeElement !== document.body) return
+    const target = document.getElementById(SKIP_TARGET) ?? document.querySelector('h1')
+    if (target instanceof HTMLElement) {
+      if (!target.hasAttribute('tabindex')) target.setAttribute('tabindex', '-1')
+      target.focus({ preventScroll: true })
+    }
+  }, [screen])
   const [liveTitle, setLiveTitle] = useState<string | null>(null)
   const [account, setAccount] = useState<AccountView | null>(null)
   const [reporting, setReporting] = useState(false)
@@ -274,7 +298,8 @@ export function App() {
         today ? docsFromToday(today) : [],
         creations ? docsFromCreations(creations) : [],
       ),
-    [places, today, creations, allSearchDocs],
+    // `locale`: the docs carry translated words, so a language change rebuilds them.
+    [places, today, creations, allSearchDocs, locale],
   )
 
   // Moderation is a role held by a committee, so the entry point is gated on
@@ -393,14 +418,14 @@ export function App() {
       if (todayFailed) {
         return (
           <div className="today-state">
-            <p className="problem">Today could not be loaded.</p>
+            <p className="problem">{t('Today could not be loaded.')}</p>
             <button className="secondary" onClick={() => window.location.reload()}>
-              Try again
+              {t('Try again')}
             </button>
           </div>
         )
       }
-      if (!today) return <div className="today-state">Loading today…</div>
+      if (!today) return <div className="today-state">{t('Loading today…')}</div>
 
       return (
         <Today
@@ -535,7 +560,7 @@ export function App() {
       return (
         <div className="today">
           <AppBar
-            label="Creations"
+            label={t('Creations')}
             place={town.name}
             account={account}
             canReview={canReview}
@@ -560,12 +585,12 @@ export function App() {
     if (screen.name === 'builder') {
       return (
         <main className="shell cr-screen">
-          <button className="secondary" onClick={() => setScreen({ name: 'gallery' })}>Back to creations</button>
-          <h1>What would make town better?</h1>
-          <p className="cr-lede">A guide to your favorite trail. A way to find a local table. A little tool that helps a neighbor.</p>
-          <p>The starter example shows how a small app can use the public directory while keeping resident information private.</p>
-          <p>Publishing new creations is not open in this preview yet. You can contribute now by helping correct a place listing.</p>
-          <button className="primary" onClick={() => setScreen({ name: 'contribute', startOpen: true })}>Suggest a correction</button>
+          <button className="secondary" onClick={() => setScreen({ name: 'gallery' })}>{t('Back to creations')}</button>
+          <h1>{t('What would make town better?')}</h1>
+          <p className="cr-lede">{t('A guide to your favorite trail. A way to find a local table. A little tool that helps a neighbor.')}</p>
+          <p>{t('The starter example shows how a small app can use the public directory while keeping resident information private.')}</p>
+          <p>{t('Publishing new creations is not open in this preview yet. You can contribute now by helping correct a place listing.')}</p>
+          <button className="primary" onClick={() => setScreen({ name: 'contribute', startOpen: true })}>{t('Suggest a correction')}</button>
         </main>
       )
     }
@@ -576,7 +601,7 @@ export function App() {
         <TrustScreen
           creation={creation}
           /* The label names where the control goes, not the word "Back". */
-          backLabel={BACK_LABEL[from]}
+          backLabel={t(BACK_LABEL[from])}
           onBack={() => setScreen(SCREENS[from])}
           onOpen={() => setScreen({ name: 'running', creation, from })}
           onDetail={() => setScreen({ name: 'detail', creation, from })}
@@ -615,12 +640,32 @@ export function App() {
   }
 }
 
+/** The first half of each screen's page title. */
+const SCREEN_TITLE: Record<Screen['name'], string> = {
+  today: msg('Today'),
+  nearby: msg('Directory'),
+  weekend: msg('Make a day of it'),
+  yours: msg('Yours'),
+  gallery: msg('Creations'),
+  account: msg('Account'),
+  review: msg('Review queue'),
+  news: msg('News'),
+  story: msg('News'),
+  contribute: msg('Add to the town'),
+  events: msg('Events'),
+  event: msg('Events'),
+  trust: msg('Creations'),
+  detail: msg('Creations'),
+  running: msg('Creations'),
+  builder: msg('Build on Town Square'),
+}
+
 /** Where each back control lands, said in the words on the nav. */
 const BACK_LABEL: Record<BackDestination, string> = {
-  today: 'Today',
-  nearby: 'Nearby',
-  creations: 'Creations',
-  yours: 'Yours',
+  today: msg('Today'),
+  nearby: msg('Nearby'),
+  creations: msg('Creations'),
+  yours: msg('Yours'),
 }
 
 /** Every resident destination has a shareable URL and survives refresh. */

@@ -17,5 +17,8 @@
     "@townsquare/tokens": "workspace:*",
     "react": "^19.2.8",
     "react-dom": "^19.2.8"
+  },
+  "devDependencies": {
+    "axe-core": "4.11.0"
   }
 }

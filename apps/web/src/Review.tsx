@@ -68,6 +68,7 @@ import {
 } from './reviewApi.js'
 import { ContributionReview } from './ContributionReview.js'
 import { onDay, waited } from './identity/when.js'
+import { msg, t, tn } from './i18n/index.js'
 import './identity/identity.css'
 
 export interface ReviewScreenProps {
@@ -77,10 +78,10 @@ export interface ReviewScreenProps {
 type Tab = 'contributions' | 'submissions' | 'reports' | 'live'
 
 const TABS: ReadonlyArray<[Tab, string]> = [
-  ['contributions', 'Corrections'],
-  ['submissions', 'Submissions'],
-  ['reports', 'Reports'],
-  ['live', 'Live creations'],
+  ['contributions', msg('Corrections')],
+  ['submissions', msg('Submissions')],
+  ['reports', msg('Reports')],
+  ['live', msg('Live creations')],
 ]
 
 /**
@@ -95,7 +96,7 @@ export function ReviewScreen(props: ReviewScreenProps) {
   const [tab, setTab] = useState<Tab>('contributions')
 
   return (
-    <div className="mod-screen">
+    <main className="mod-screen">
       <Button
         variant="quiet"
         size="sm"
@@ -103,13 +104,13 @@ export function ReviewScreen(props: ReviewScreenProps) {
         className="id-back"
         onClick={props.onBack}
       >
-        Back
+        {t('Back')}
       </Button>
 
-      <nav className="mod-tabs" aria-label="Moderation">
+      <nav className="mod-tabs" aria-label={t('Moderation')}>
         {TABS.map(([value, label]) => (
-          <button key={value} aria-current={tab === value} onClick={() => setTab(value)}>
-            {label}
+          <button key={value} aria-pressed={tab === value} onClick={() => setTab(value)}>
+            {t(label)}
           </button>
         ))}
       </nav>
@@ -118,7 +119,7 @@ export function ReviewScreen(props: ReviewScreenProps) {
       {tab === 'submissions' && <SubmissionsTab />}
       {tab === 'reports' && <ReportsTab />}
       {tab === 'live' && <LiveTab />}
-    </div>
+    </main>
   )
 }
 
@@ -153,19 +154,19 @@ function SubmissionsTab() {
 
   return (
     <>
-      <h1 className="id-h1">Review queue</h1>
+      <h1 className="id-h1">{t('Review queue')}</h1>
       {queue === null && <QueueSkeleton />}
       {queue?.length === 0 && (
         <EmptyState
           mark="tray"
           tone="good"
-          line="Nothing waiting"
-          sub="Every submitted version is read before it runs in anyone's browser, including updates to creations that are already live."
+          line={t('Nothing waiting')}
+          sub={t("Every submitted version is read before it runs in anyone's browser, including updates to creations that are already live.")}
         />
       )}
 
       {queue !== null && queue.length > 0 && (
-        <RowList label="Waiting for review">
+        <RowList label={t('Waiting for review')}>
           {queue.map((item) => (
             <RowItem
               key={item.id}
@@ -174,7 +175,8 @@ function SubmissionsTab() {
               meta={
                 <>
                   @{item.handle} · v{item.version} ·{' '}
-                  {item.kind === 'update' ? 'update' : 'new creation'} · {item.fileCount} files ·{' '}
+                  {item.kind === 'update' ? t('update') : t('new creation')} ·{' '}
+                  {tn(item.fileCount, '{count} files', '{count} files')} ·{' '}
                   {Math.ceil(item.byteSize / 1024)} KB · {waited(item.submittedAt)}
                 </>
               }
@@ -193,13 +195,12 @@ function SubmissionsTab() {
                   */}
                   {item.escalates && (
                     <StatusPill tone="gold" icon="alert-circle">
-                      asks for more
+                      {t('asks for more')}
                     </StatusPill>
                   )}
                   {item.warningCount > 0 && (
                     <StatusPill tone="quiet">
-                      {item.warningCount} warning
-                      {item.warningCount === 1 ? '' : 's'}
+                      {tn(item.warningCount, '{count} warning', '{count} warnings')}
                     </StatusPill>
                   )}
                 </>
@@ -241,13 +242,15 @@ function Submission(props: { id: string; onBack(): void; onDone(): void }) {
     // plainly rather than showing a success state that did not happen.
     setOutcome(
       result.submission.status === 'approved'
-        ? `Live at /${result.creation?.slug ?? ''}.`
-        : `Marked ${result.submission.status.replace('_', ' ')}.`,
+        ? t('Live at /{slug}.', { slug: result.creation?.slug ?? '' })
+        : t('Marked {status}.', {
+            status: t(STATUS_LABEL[result.submission.status] ?? result.submission.status.replace('_', ' ')),
+          }),
     )
     setTimeout(props.onDone, 1400)
   }
 
-  if (problem && !detail) return <InlineError>{problem}</InlineError>
+  if (problem && !detail) return <InlineError live>{problem}</InlineError>
   if (!detail) return <QueueSkeleton />
 
   const manifest = detail.submission.manifest as {
@@ -267,7 +270,7 @@ function Submission(props: { id: string; onBack(): void; onDone(): void }) {
         className="id-back"
         onClick={props.onBack}
       >
-        Queue
+        {t('Queue')}
       </Button>
 
       <h1 className="id-h1">{detail.submission.name}</h1>
@@ -275,11 +278,12 @@ function Submission(props: { id: string; onBack(): void; onDone(): void }) {
         @{detail.submission.handle} · v{detail.submission.version} ·{' '}
         {detail.kind === 'update' ? (
           <>
-            update to <code>{detail.live?.slug}</code>, currently on v{detail.live?.version}
+            {t('update to')} <code>{detail.live?.slug}</code>,{' '}
+            {t('currently on v{version}', { version: detail.live?.version ?? '' })}
           </>
         ) : (
           <>
-            new creation, proposed <code>{detail.submission.proposedSlug}</code>
+            {t('new creation, proposed')} <code>{detail.submission.proposedSlug}</code>
           </>
         )}
       </p>
@@ -291,7 +295,7 @@ function Submission(props: { id: string; onBack(): void; onDone(): void }) {
 
       {detail.warnings.length > 0 && (
         <section>
-          <h2 className="id-eyebrow">Flagged for a human</h2>
+          <h2 className="id-eyebrow">{t('Flagged for a human')}</h2>
           <ul className="mod-warnings">
             {detail.warnings.map((w, i) => (
               <li key={i}>
@@ -303,60 +307,61 @@ function Submission(props: { id: string; onBack(): void; onDone(): void }) {
       )}
 
       <section className="mod-source">
-        <h2 className="id-eyebrow id-eyebrow-sep">Source</h2>
+        <h2 className="id-eyebrow id-eyebrow-sep">{t('Source')}</h2>
         {detail.files.map((file) => (
           <details key={file.path} open={file.path === 'townsquare.json'}>
             <summary>
-              {file.path} · {file.bytes} bytes
+              {file.path} · {t('{bytes} bytes', { bytes: file.bytes })}
             </summary>
             <pre className="mod-code">{file.text}</pre>
           </details>
         ))}
         {detail.omitted.length > 0 && (
           <p className="id-note">
-            Not shown: {detail.omitted.map((o) => `${o.path} (${o.reason})`).join(', ')}
+            {t('Not shown: {files}', {
+              files: detail.omitted.map((o) => `${o.path} (${o.reason})`).join(', '),
+            })}
           </p>
         )}
       </section>
 
       <section className="mod-decide">
-        <h2 className="id-eyebrow">Decide</h2>
+        <h2 className="id-eyebrow">{t('Decide')}</h2>
         <Textarea
-          label="What the builder should know"
+          label={t('What the builder should know')}
           value={note}
           onChange={(e) => setNote(e.target.value)}
           rows={4}
           maxLength={4000}
-          placeholder="Required unless you are approving."
-          help="Shown to the builder verbatim."
+          placeholder={t('Required unless you are approving.')}
+          help={t('Shown to the builder verbatim.')}
         />
         <div className="id-actions">
           <Button variant="primary" loading={busy} onClick={() => void submit('approve')}>
-            Approve and publish
+            {t('Approve and publish')}
           </Button>
           <Button
             variant="secondary"
             disabled={busy || needsNote}
             onClick={() => void submit('request_changes')}
           >
-            Request changes
+            {t('Request changes')}
           </Button>
           <Button
             variant="quiet"
             disabled={busy || needsNote}
             onClick={() => void submit('reject')}
           >
-            Reject
+            {t('Reject')}
           </Button>
         </div>
         {needsNote && (
           <p className="id-fine">
             <Icon name="info" size={14} />
-            &ldquo;No&rdquo; with no reason is a dead end the builder cannot act on, so turning
-            something down needs a note. Approving does not.
+            {t('“No” with no reason is a dead end the builder cannot act on, so turning something down needs a note. Approving does not.')}
           </p>
         )}
-        {problem && <InlineError>{problem}</InlineError>}
+        {problem && <InlineError live>{problem}</InlineError>}
         {outcome && (
           <p className="id-outcome" role="status">
             <Icon name="check-circle" size={15} />
@@ -365,9 +370,9 @@ function Submission(props: { id: string; onBack(): void; onDone(): void }) {
         )}
         <p className="id-fine">
           <Icon name="lock" size={14} />
-          Approval is of this exact version, pinned by digest{' '}
-          <code>{detail.submission.bundleDigest.slice(0, 12)}</code>. A later update comes back
-          here.
+          {t('Approval is of this exact version, pinned by digest')}{' '}
+          <code>{detail.submission.bundleDigest.slice(0, 12)}</code>.{' '}
+          {t('A later update comes back here.')}
         </p>
       </section>
     </>
@@ -396,14 +401,14 @@ function ReportsTab() {
 
   return (
     <>
-      <h1 className="id-h1">Reports</h1>
+      <h1 className="id-h1">{t('Reports')}</h1>
       {reports === null && <QueueSkeleton />}
       {reports?.length === 0 && (
         <EmptyState
           mark="tray"
           tone="good"
-          line="Nothing open"
-          sub="A queue nobody drains is worse than no queue, so these are meant to be read and closed, including the many that are read and closed with nothing else happening."
+          line={t('Nothing open')}
+          sub={t('A queue nobody drains is worse than no queue, so these are meant to be read and closed, including the many that are read and closed with nothing else happening.')}
         />
       )}
 
@@ -423,7 +428,9 @@ function ReportsTab() {
                   {report.targetVersion ? ` · v${report.targetVersion}` : ''}
                 </CardTitle>
                 <CardMeta>
-                  {report.reason} · reported by @{report.reporterHandle} · {onDay(report.createdAt)}
+                  {t(REASON_LABEL[report.reason] ?? report.reason)} ·{' '}
+                  {t('reported by @{handle}', { handle: report.reporterHandle })} ·{' '}
+                  {onDay(report.createdAt)}
                 </CardMeta>
                 {report.detail && <p className="mod-row-say">{report.detail}</p>}
                 {open === report.id ? (
@@ -431,7 +438,7 @@ function ReportsTab() {
                 ) : (
                   <div className="id-actions">
                     <Button variant="secondary" size="sm" onClick={() => setOpen(report.id)}>
-                      Close this report
+                      {t('Close this report')}
                     </Button>
                   </div>
                 )}
@@ -443,8 +450,7 @@ function ReportsTab() {
 
       <p className="id-fine">
         <Icon name="info" size={14} />
-        Acting on a creation, hiding it, blocking it, reverting it, closes the open reports against
-        it on its own. This is for the ones where the answer is that nothing needs to happen.
+        {t('Acting on a creation, hiding it, blocking it, reverting it, closes the open reports against it on its own. This is for the ones where the answer is that nothing needs to happen.')}
       </p>
     </>
   )
@@ -467,12 +473,12 @@ function ResolveForm(props: { id: string; onDone(): void; onCancel(): void }) {
   return (
     <div className="mod-decide">
       <Textarea
-        label="What you concluded"
+        label={t('What you concluded')}
         value={note}
         onChange={(e) => setNote(e.target.value)}
         rows={2}
         maxLength={4000}
-        help="Kept with the report. The person who filed it is told what was concluded, and often that is “we read it, nothing needed to happen”."
+        help={t('Kept with the report. The person who filed it is told what was concluded, and often that is “we read it, nothing needed to happen”.')}
       />
       <div className="id-actions">
         <Button
@@ -481,16 +487,16 @@ function ResolveForm(props: { id: string; onDone(): void; onCancel(): void }) {
           loading={busy}
           onClick={() => void submit('dismissed')}
         >
-          Nothing to do
+          {t('Nothing to do')}
         </Button>
         <Button variant="secondary" size="sm" disabled={busy} onClick={() => void submit('upheld')}>
-          Fair, handled elsewhere
+          {t('Fair, handled elsewhere')}
         </Button>
         <Button variant="quiet" size="sm" disabled={busy} onClick={props.onCancel}>
-          Cancel
+          {t('Cancel')}
         </Button>
       </div>
-      {problem && <InlineError>{problem}</InlineError>}
+      {problem && <InlineError live>{problem}</InlineError>}
     </div>
   )
 }
@@ -520,18 +526,18 @@ function LiveTab() {
 
   return (
     <>
-      <h1 className="id-h1">Live creations</h1>
+      <h1 className="id-h1">{t('Live creations')}</h1>
       {rows === null && <QueueSkeleton />}
       {rows?.length === 0 && (
         <EmptyState
           mark="grid"
-          line="Nothing has been approved yet"
-          sub="This fills as the queue is worked through. The example creations were never submitted, so they are not here."
+          line={t('Nothing has been approved yet')}
+          sub={t('This fills as the queue is worked through. The example creations were never submitted, so they are not here.')}
         />
       )}
 
       {rows !== null && rows.length > 0 && (
-        <RowList label="Everything already running">
+        <RowList label={t('Everything already running')}>
           {rows.map((row) => (
             <RowItem
               key={row.id}
@@ -545,7 +551,9 @@ function LiveTab() {
               }
               trailing={
                 <>
-                  {row.status !== 'active' && <StatusPill tone="quiet">{row.status}</StatusPill>}
+                  {row.status !== 'active' && (
+                    <StatusPill tone="quiet">{t(STATUS_LABEL[row.status] ?? row.status)}</StatusPill>
+                  )}
                   {/*
                     A count, not a ranking, and only on a screen no resident can
                     reach. It tells a moderator there is something to read here;
@@ -553,8 +561,7 @@ function LiveTab() {
                   */}
                   {row.openReports > 0 && (
                     <StatusPill tone="pending">
-                      {row.openReports} open report
-                      {row.openReports === 1 ? '' : 's'}
+                      {tn(row.openReports, '{count} open report', '{count} open reports')}
                     </StatusPill>
                   )}
                 </>
@@ -568,10 +575,32 @@ function LiveTab() {
 }
 
 const ACTION_LABEL: Record<string, string> = {
-  hide: 'Hidden',
-  block: 'Blocked',
-  restore: 'Put back',
-  revert: 'Reverted',
+  hide: msg('Hidden'),
+  block: msg('Blocked'),
+  restore: msg('Put back'),
+  revert: msg('Reverted'),
+}
+
+// Status words the API sends as machine values and the screen shows as they
+// are. English renders each one unchanged.
+const STATUS_LABEL: Record<string, string> = {
+  active: msg('active'),
+  hidden: msg('hidden'),
+  blocked: msg('blocked'),
+  submitted: msg('submitted'),
+  approved: msg('approved'),
+  rejected: msg('rejected'),
+  superseded: msg('superseded'),
+  changes_requested: msg('changes requested'),
+}
+
+const REASON_LABEL: Record<string, string> = {
+  illegal: msg('illegal'),
+  security: msg('security'),
+  impersonation: msg('impersonation'),
+  spam: msg('spam'),
+  broken: msg('broken'),
+  other: msg('other'),
 }
 
 /**
@@ -616,15 +645,17 @@ function LiveCreation(props: { id: string; onBack(): void }) {
       return
     }
     const closed = result.resolvedReports.length
+    const done = `${t(ACTION_LABEL[action] ?? action)}.`
     setOutcome(
-      `${ACTION_LABEL[action] ?? action}.` +
-        (closed ? ` ${closed} open report${closed === 1 ? '' : 's'} closed with it.` : ''),
+      closed
+        ? `${done} ${tn(closed, '{count} open report closed with it.', '{count} open reports closed with it.')}`
+        : done,
     )
     setNote('')
     load()
   }
 
-  if (problem && !detail) return <InlineError>{problem}</InlineError>
+  if (problem && !detail) return <InlineError live>{problem}</InlineError>
   if (!detail) return <QueueSkeleton />
 
   const openReports = detail.reports.filter((r) => r.resolvedAt === null)
@@ -641,22 +672,22 @@ function LiveCreation(props: { id: string; onBack(): void }) {
         className="id-back"
         onClick={props.onBack}
       >
-        Live creations
+        {t('Live creations')}
       </Button>
 
       <h1 className="id-h1">{detail.creation.name}</h1>
       <p className="mod-row-detail">
-        /{detail.creation.slug} · {detail.creation.status}
+        /{detail.creation.slug} · {t(STATUS_LABEL[detail.creation.status] ?? detail.creation.status)}
       </p>
 
       {openReports.length > 0 && (
         <section className="mod-diff" data-escalates>
           <div className="mod-diff-head">
-            <h3>Open reports</h3>
+            <h3>{t('Open reports')}</h3>
           </div>
           {openReports.map((report) => (
             <p key={report.id}>
-              <b>{report.reason}</b>
+              <b>{t(REASON_LABEL[report.reason] ?? report.reason)}</b>
               {report.targetVersion ? ` · v${report.targetVersion}` : ''} — @{report.reporterHandle}
               {report.detail ? `: ${report.detail}` : ''}
             </p>
@@ -665,15 +696,15 @@ function LiveCreation(props: { id: string; onBack(): void }) {
       )}
 
       <section className="mod-decide">
-        <h2 className="id-eyebrow">Act</h2>
+        <h2 className="id-eyebrow">{t('Act')}</h2>
         <Textarea
-          label="Why"
+          label={t('Why')}
           value={note}
           onChange={(e) => setNote(e.target.value)}
           rows={3}
           maxLength={4000}
-          placeholder="Required, and kept in the moderation log."
-          help="“Who did this, when, and what did they say” is what makes this role accountable. Required for putting something back, too."
+          placeholder={t('Required, and kept in the moderation log.')}
+          help={t('“Who did this, when, and what did they say” is what makes this role accountable. Required for putting something back, too.')}
         />
         <div className="id-actions">
           {detail.creation.status === 'active' ? (
@@ -683,7 +714,7 @@ function LiveCreation(props: { id: string; onBack(): void }) {
                 disabled={busy || needsReason}
                 onClick={() => void act('hide')}
               >
-                Hide
+                {t('Hide')}
               </Button>
               {/*
                 Block is the one that means something, for what the law forces.
@@ -696,7 +727,7 @@ function LiveCreation(props: { id: string; onBack(): void }) {
                 disabled={busy || needsReason}
                 onClick={() => void act('block')}
               >
-                Block
+                {t('Block')}
               </Button>
             </>
           ) : (
@@ -705,11 +736,11 @@ function LiveCreation(props: { id: string; onBack(): void }) {
               disabled={busy || needsReason}
               onClick={() => void act('restore')}
             >
-              Put it back
+              {t('Put it back')}
             </Button>
           )}
         </div>
-        {problem && <InlineError>{problem}</InlineError>}
+        {problem && <InlineError live>{problem}</InlineError>}
         {outcome && (
           <p className="id-outcome" role="status">
             <Icon name="check-circle" size={15} />
@@ -718,13 +749,12 @@ function LiveCreation(props: { id: string; onBack(): void }) {
         )}
         <p className="id-fine">
           <Icon name="history" size={14} />
-          Nothing here deletes anything. Hidden and blocked both stop the sandbox serving it, both
-          get an explainer page rather than a blank frame, and both are undone by putting it back.
+          {t('Nothing here deletes anything. Hidden and blocked both stop the sandbox serving it, both get an explainer page rather than a blank frame, and both are undone by putting it back.')}
         </p>
       </section>
 
       <section>
-        <h2 className="id-eyebrow id-eyebrow-sep">Versions</h2>
+        <h2 className="id-eyebrow id-eyebrow-sep">{t('Versions')}</h2>
         <ul className="mod-versions">
           {/*
             A card each, and the live one carries the only edge on the list.
@@ -741,14 +771,14 @@ function LiveCreation(props: { id: string; onBack(): void }) {
                 <CardBody>
                   <div className="mod-version-head">
                     <span className="mod-version-n">v{version.version}</span>
-                    {version.live && <StatusPill tone="live">live</StatusPill>}
+                    {version.live && <StatusPill tone="live">{t('live')}</StatusPill>}
                     {version.revertedFromVersionId && (
                       <StatusPill tone="quiet" icon="history">
-                        a revert
+                        {t('a revert')}
                       </StatusPill>
                     )}
                     {!version.live && version.status === 'superseded' && (
-                      <StatusPill tone="quiet">replaced</StatusPill>
+                      <StatusPill tone="quiet">{t('replaced')}</StatusPill>
                     )}
                     <span className="mod-version-when">{onDay(version.createdAt)}</span>
                   </div>
@@ -757,7 +787,7 @@ function LiveCreation(props: { id: string; onBack(): void }) {
                       <Icon name="lock" size={14} />
                       <code>{version.bundleDigest.slice(0, 12)}</code>
                     </span>
-                    <span>{version.status}</span>
+                    <span>{t(STATUS_LABEL[version.status] ?? version.status)}</span>
                   </div>
                   {version.revertable && (
                     <div className="id-actions">
@@ -767,7 +797,7 @@ function LiveCreation(props: { id: string; onBack(): void }) {
                         disabled={busy || needsReason}
                         onClick={() => void act('revert', version.id)}
                       >
-                        Put v{version.version} back
+                        {t('Put v{version} back', { version: version.version })}
                       </Button>
                     </div>
                   )}
@@ -778,19 +808,18 @@ function LiveCreation(props: { id: string; onBack(): void }) {
         </ul>
         <p className="id-fine">
           <Icon name="git-branch" size={14} />
-          Reverting publishes these exact bytes again as a new version, re-checked against the
-          digest they were approved with. The version being replaced stays in this list with its
-          author still on it, so undoing this costs one more forward write.
+          {t('Reverting publishes these exact bytes again as a new version, re-checked against the digest they were approved with. The version being replaced stays in this list with its author still on it, so undoing this costs one more forward write.')}
         </p>
       </section>
 
       {detail.log.length > 0 && (
         <section>
-          <h2 className="id-eyebrow id-eyebrow-sep">Moderation log</h2>
+          <h2 className="id-eyebrow id-eyebrow-sep">{t('Moderation log')}</h2>
           <ul className="mod-log">
             {detail.log.map((entry) => (
               <li key={entry.id}>
-                <b>{ACTION_LABEL[entry.action] ?? entry.action}</b> by @{entry.actorHandle} ·{' '}
+                <b>{t(ACTION_LABEL[entry.action] ?? entry.action)}</b>{' '}
+                {t('by @{handle}', { handle: entry.actorHandle })} ·{' '}
                 {onDay(entry.createdAt)}
                 {entry.note && <p className="mod-log-note">{entry.note}</p>}
               </li>
@@ -798,7 +827,7 @@ function LiveCreation(props: { id: string; onBack(): void }) {
           </ul>
           <p className="id-fine">
             <Icon name="scale" size={14} />
-            Append-only. An entry is never edited or removed, including one somebody regrets.
+            {t('Append-only. An entry is never edited or removed, including one somebody regrets.')}
           </p>
         </section>
       )}
@@ -809,12 +838,12 @@ function LiveCreation(props: { id: string; onBack(): void }) {
 // ── the permission diff ──────────────────────────────────────────────────────
 
 const LABELS: Record<string, string> = {
-  identity: 'identity',
-  read: 'reads records',
-  write: 'writes records',
-  network: 'network',
-  storage: 'private storage',
-  device: 'device',
+  identity: msg('identity'),
+  read: msg('reads records'),
+  write: msg('writes records'),
+  network: msg('network'),
+  storage: msg('private storage'),
+  device: msg('device'),
 }
 
 function Diff(props: { diff: ManifestDiff }) {
@@ -826,22 +855,23 @@ function Diff(props: { diff: ManifestDiff }) {
     <section className="mod-diff" data-escalates={escalates || undefined}>
       <div className="mod-diff-head">
         <h3>
-          What changed · v{diff.versionFrom} to v{diff.versionTo}
+          {t('What changed · v{from} to v{to}', { from: diff.versionFrom, to: diff.versionTo })}
         </h3>
         {escalates && (
           <StatusPill tone="pending" icon="alert-circle">
-            asks for more
+            {t('asks for more')}
           </StatusPill>
         )}
       </div>
 
       {quiet && (
-        <p className="id-note">Nothing new is being asked for. This update only changes code.</p>
+        <p className="id-note">{t('Nothing new is being asked for. This update only changes code.')}</p>
       )}
 
       {diff.renamed && (
         <p data-add>
-          <b>Renamed</b> from {diff.renamed.from} to {diff.renamed.to}
+          <b>{t('Renamed')}</b>{' '}
+          {t('from {from} to {to}', { from: diff.renamed.from, to: diff.renamed.to })}
         </p>
       )}
 
@@ -854,7 +884,7 @@ function Diff(props: { diff: ManifestDiff }) {
       */}
       {diff.escalations.map((change) => (
         <p key={change.key} data-add>
-          <b>Adds</b> {LABELS[change.key] ?? change.key}
+          <b>{t('Adds')}</b> {t(LABELS[change.key] ?? change.key)}
           {change.key === 'storage' ? null : (
             <>
               : <code>{change.added.join(', ')}</code>
@@ -865,13 +895,14 @@ function Diff(props: { diff: ManifestDiff }) {
 
       {diff.newRecordTypes.length > 0 && (
         <p data-add>
-          <b>Defines new record types:</b> <code>{diff.newRecordTypes.join(', ')}</code>
+          <b>{t('Defines new record types:')}</b> <code>{diff.newRecordTypes.join(', ')}</code>
         </p>
       )}
 
       {diff.reductions.map((change) => (
         <p key={change.key} data-drop>
-          Drops {LABELS[change.key] ?? change.key}: <code>{change.removed.join(', ')}</code>
+          {t('Drops {permission}:', { permission: t(LABELS[change.key] ?? change.key) })}{' '}
+          <code>{change.removed.join(', ')}</code>
         </p>
       ))}
     </section>
@@ -882,17 +913,16 @@ function Grants(props: { grants: PermissionChange[] }) {
   return (
     <section className="mod-diff">
       <div className="mod-diff-head">
-        <h3>What it asks for</h3>
+        <h3>{t('What it asks for')}</h3>
       </div>
       {props.grants.length === 0 ? (
         <p className="id-note">
-          Nothing. It reads public town data, which needs no declaration, and can reach nothing
-          else.
+          {t('Nothing. It reads public town data, which needs no declaration, and can reach nothing else.')}
         </p>
       ) : (
         props.grants.map((grant) => (
           <p key={grant.key} data-add>
-            <b>{LABELS[grant.key] ?? grant.key}:</b> <code>{grant.added.join(', ')}</code>
+            <b>{t(LABELS[grant.key] ?? grant.key)}:</b> <code>{grant.added.join(', ')}</code>
           </p>
         ))
       )}

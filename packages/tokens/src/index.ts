@@ -39,7 +39,14 @@ export const tokens = {
 
     /** Body text, and the base every muted value is an alpha of. */
     ink: '#263B32',
-    ink60: '#5E6E65',
+    /**
+     * Two shades under the old #5E6E65, and the reason is measured. The old
+     * value came out at 4.43 on the segmented-control track and 4.38 on the
+     * pale navy card, under AA for the 14px labels that sit there, and lower
+     * still in Delta and Harbor. This is the lightest value that clears 4.5 on
+     * both washes in all three towns. `contrast.test.ts`.
+     */
+    ink60: '#58685E',
     ink45: '#64746B',
     ink26: 'rgba(38,59,50,0.26)',
     /** The hi-fi's hairline divider, one step stronger than `hairline`. */

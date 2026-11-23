@@ -26,6 +26,7 @@ import {
   isError,
   type ReportReason,
 } from './reportApi.js'
+import { t } from './i18n/index.js'
 import './creations/creations.css'
 
 export interface ReportPanelProps {
@@ -51,15 +52,15 @@ export function ReportPanel(props: ReportPanelProps) {
   if (!props.account?.verified) {
     return (
       <div className="cr-report">
-        <div className="cr-report-h">Report {props.name}</div>
+        <div className="cr-report-h">{t('Report {name}', { name: props.name })}</div>
         <p className="cr-report-note">
           {props.account
-            ? 'Reporting is for verified residents. Someone who is already verified can vouch for you from their account page.'
-            : 'Sign in to report this. Reporting is for verified residents, so a moderator knows a neighbour is behind it.'}
+            ? t('Reporting is for verified residents. Someone who is already verified can vouch for you from their account page.')
+            : t('Sign in to report this. Reporting is for verified residents, so a moderator knows a neighbour is behind it.')}
         </p>
         <div className="cr-report-foot">
           <Button variant="secondary" size="sm" onClick={props.onClose}>
-            Close
+            {t('Close')}
           </Button>
         </div>
       </div>
@@ -83,19 +84,19 @@ export function ReportPanel(props: ReportPanelProps) {
     }
     setOutcome(
       result.duplicate
-        ? 'You had already reported this, so we kept your first report rather than adding another.'
-        : 'Sent. A moderator will read it. Most reports are read and closed with nothing else happening, and that is normal.',
+        ? t('You had already reported this, so we kept your first report rather than adding another.')
+        : t('Sent. A moderator will read it. Most reports are read and closed with nothing else happening, and that is normal.'),
     )
   }
 
   if (outcome) {
     return (
       <div className="cr-report">
-        <div className="cr-report-h">Report {props.name}</div>
+        <div className="cr-report-h">{t('Report {name}', { name: props.name })}</div>
         <p className="cr-report-note">{outcome}</p>
         <div className="cr-report-foot">
           <Button variant="secondary" size="sm" onClick={props.onClose}>
-            Close
+            {t('Close')}
           </Button>
         </div>
       </div>
@@ -104,13 +105,12 @@ export function ReportPanel(props: ReportPanelProps) {
 
   return (
     <div className="cr-report">
-      <div className="cr-report-h">Tell the committee what happened</div>
+      <div className="cr-report-h">{t('Tell the committee what happened')}</div>
       <p className="cr-report-note">
-        Town Square follows the law and does not referee taste. What gets acted on is mostly the
-        first two.
+        {t('Town Square follows the law and does not referee taste. What gets acted on is mostly the first two.')}
       </p>
 
-      <div className="cr-report-opts" role="radiogroup" aria-label="What is wrong">
+      <div className="cr-report-opts" role="radiogroup" aria-label={t('What is wrong')}>
         {REPORT_REASONS.map((r) => (
           <Radio
             key={r.value}
@@ -119,18 +119,18 @@ export function ReportPanel(props: ReportPanelProps) {
             checked={reason === r.value}
             onChange={() => setReason(r.value)}
           >
-            {r.label}
+            {t(r.label)}
           </Radio>
         ))}
       </div>
 
       <Textarea
-        label="Anything a moderator should know"
+        label={t('Anything a moderator should know')}
         value={detail}
         onChange={(e) => setDetail(e.target.value)}
         rows={2}
         maxLength={2000}
-        placeholder="Optional. A sentence is plenty."
+        placeholder={t('Optional. A sentence is plenty.')}
       />
 
       {problem && (
@@ -146,14 +146,15 @@ export function ReportPanel(props: ReportPanelProps) {
           anonymous, and finds out later that it was not.
         */}
         <span>
-          Sent as @{props.account.handle}
-          {props.version ? ` with version ${props.version}` : ''}.
+          {props.version
+            ? t('Sent as @{handle} with version {version}.', { handle: props.account.handle, version: props.version })
+            : t('Sent as @{handle}.', { handle: props.account.handle })}
         </span>
         <Button variant="secondary" size="sm" disabled={busy} onClick={props.onClose}>
-          Cancel
+          {t('Cancel')}
         </Button>
         <Button variant="primary" size="sm" loading={busy} onClick={() => void send()}>
-          Send
+          {t('Send')}
         </Button>
       </div>
     </div>

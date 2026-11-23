@@ -14,6 +14,7 @@
  */
 
 import type { IconName } from '../Icon.js'
+import { msg } from '../i18n/index.js'
 import type { EventCategory } from './eventsData.js'
 
 export const CATEGORY_ICON: Record<EventCategory, IconName> = {
@@ -24,8 +25,8 @@ export const CATEGORY_ICON: Record<EventCategory, IconName> = {
 }
 
 export const CATEGORY_WORD: Record<EventCategory, string> = {
-  civic: 'Civic',
-  music: 'Music',
-  sport: 'Sport',
-  community: 'Community',
+  civic: msg('Civic'),
+  music: msg('Music'),
+  sport: msg('Sport'),
+  community: msg('Community'),
 }

@@ -396,7 +396,8 @@
 }
 
 .ev-chip--soon {
-  background: var(--ts-terracotta14);
+  /* The 10% wash, not 14%: terracotta text on 14% measured 4.46. */
+  background: var(--ts-terracotta10);
   color: var(--ts-terracotta-hover);
 }
 
@@ -432,7 +433,8 @@
   font-size: 10px;
   letter-spacing: 0.1em;
   text-transform: uppercase;
-  color: var(--ts-terracotta);
+  /* The text-safe terracotta: plain terracotta measures 3.4 on the page. */
+  color: var(--ts-terracotta-hover);
 }
 
 /* ── the written gap ──────────────────────────────────────────────────── */

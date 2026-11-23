@@ -23,7 +23,7 @@ Windows has not been tested. Use WSL2 and follow the Linux steps inside it.
 ## Five commands
 
 ```bash
-git clone git@github.com:tswic-highdesert/townsquare.git
+git clone https://github.com/tswic-highdesert/townsquare.git
 cd townsquare
 pnpm install        # about 6 seconds
 pnpm typecheck      # about 5 seconds, prints nothing on success

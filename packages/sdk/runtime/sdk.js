@@ -186,7 +186,146 @@ export const app = {
   setHeight: (px) => notify('app.setHeight', px),
   /** @param {string} text */
   setTitle: (text) => notify('app.setTitle', text),
+  /**
+   * Ask Town Square to open a link for the resident. They see where it goes
+   * and choose whether to go. Ordinary `<a href>` links already come here on
+   * their own; see `installLinkHandling` below.
+   *
+   * @param {string} url absolute, or relative to this page
+   * @returns {Promise<void>}
+   */
+  openLink: (url) => call('app.openLink', absolute(url)),
 }
+
+/**
+ * Resolve a link the way the browser would have, so `app.openLink('/x')` and
+ * `<a href="x">` mean what they mean in a normal page. The host checks the
+ * result; nothing here decides whether a link is allowed.
+ *
+ * @param {unknown} url
+ * @returns {string}
+ */
+function absolute(url) {
+  try {
+    return new URL(String(url), document.baseURI).href
+  } catch {
+    return String(url)
+  }
+}
+
+/**
+ * Whether following this URL would leave the creation.
+ *
+ * Same-origin http(s) links stay put, because they are the creation's own
+ * business (an in-page `#section`, or its own router). `javascript:` stays put
+ * too: it runs in the frame, which is where it was always going to run.
+ * Everything else, including `tel:` and `mailto:`, is a link out, and a link
+ * out from a sandboxed frame either does nothing or replaces the creation.
+ *
+ * @param {string} href
+ */
+function leavesApp(href) {
+  let url
+  try {
+    url = new URL(href)
+  } catch {
+    return false
+  }
+  if (url.protocol === 'javascript:') return false
+  if ((url.protocol === 'http:' || url.protocol === 'https:') && url.origin === location.origin) {
+    return false
+  }
+  return true
+}
+
+/** @param {unknown} err */
+function warnLink(err) {
+  const message = err && /** @type {any} */ (err).message ? /** @type {any} */ (err).message : err
+  console.warn('[Town Square] That link was not opened:', message)
+}
+
+/**
+ * The closest `<a>` or `<area>` with an href on the event's path, including
+ * through shadow roots and inside SVG.
+ *
+ * @param {Event} e
+ * @returns {string | null} the resolved href
+ */
+function linkHrefFor(e) {
+  const path = typeof e.composedPath === 'function' ? e.composedPath() : [e.target]
+  for (const node of path) {
+    const el = /** @type {any} */ (node)
+    if (!el || typeof el.getAttribute !== 'function') continue
+    const name = String(el.localName || '').toLowerCase()
+    if (name !== 'a' && name !== 'area') continue
+    const raw = el.getAttribute('href') ?? el.getAttribute('xlink:href')
+    if (raw === null) continue
+    try {
+      return new URL(raw, el.baseURI || document.baseURI).href
+    } catch {
+      return null
+    }
+  }
+  return null
+}
+
+/**
+ * Make ordinary links work inside the sandbox, with no code from the builder.
+ *
+ * The frame has no `allow-popups`, so `target="_blank"`, `tel:` and `mailto:`
+ * links do nothing, and a plain link out replaces the creation with a "tried
+ * to send you somewhere else" screen. This catches those clicks and sends them
+ * to `app.openLink`, where Town Square shows the resident where the link goes.
+ *
+ * Bubble phase on `document`, so a creation that handles a click itself and
+ * calls `preventDefault()` keeps that click. A handler that calls
+ * `stopPropagation()` hides the click from us too, and the browser does what it
+ * would have done anyway.
+ *
+ * `window.open` is routed the same way, and returns `null` just as a blocked
+ * popup does, so generated code that checks for a blocked popup still works.
+ */
+function installLinkHandling() {
+  if (typeof document === 'undefined' || typeof window === 'undefined') return
+
+  /** @param {MouseEvent} e */
+  const onClick = (e) => {
+    if (e.defaultPrevented) return
+    // Primary button on `click`, middle button on `auxclick`. Right-click and
+    // the rest belong to the browser's context menu.
+    if (e.type === 'click' && e.button !== 0) return
+    if (e.type === 'auxclick' && e.button !== 1) return
+    const href = linkHrefFor(e)
+    if (href === null || !leavesApp(href)) return
+    e.preventDefault()
+    app.openLink(href).catch(warnLink)
+  }
+  document.addEventListener('click', onClick)
+  document.addEventListener('auxclick', onClick)
+
+  /** @type {typeof window.open} */
+  const nativeOpen = window.open.bind(window)
+
+  /**
+   * @param {string | URL} [url]
+   * @param {string} [target]
+   * @param {string} [features]
+   * @returns {Window | null}
+   */
+  function routedOpen(url, target, features) {
+    if (url !== undefined && url !== '') {
+      const href = absolute(url)
+      if (leavesApp(href)) {
+        app.openLink(href).catch(warnLink)
+        return null
+      }
+    }
+    return nativeOpen(url, target, features)
+  }
+  window.open = routedOpen
+}
+
+installLinkHandling()
 
 export const town = {
   info: () => call('town.info', undefined),

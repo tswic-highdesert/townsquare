@@ -29,6 +29,7 @@ import type { ReactNode } from 'react'
 import { Icon, type IconName } from '../Icon.js'
 import { Card, CardBody, CardMeta, CardTitle, Row } from '../ui/index.js'
 import { formatDistance } from '../nearbyData.js'
+import { msg, t } from '../i18n/index.js'
 import type { GroupId, OpenPhase, PlaceKind, RankedPlace } from './directoryData.js'
 import { shortAddress } from './directoryData.js'
 
@@ -57,6 +58,29 @@ export const GROUP_ICON: Readonly<Record<GroupId, IconName>> = {
   fun: 'sport',
   civic: 'vote',
   serv: 'package',
+}
+
+/**
+ * The door names the server writes (`GROUP_LABELS` in `apps/api/src/directory.ts`),
+ * marked for translation. Screens render `t(group.label)`, so English stays
+ * exactly what the payload carries and Spanish finds its entry here.
+ */
+export const GROUP_LABEL: Readonly<Record<GroupId, string>> = {
+  eat: msg('Eat and drink'),
+  shop: msg('Shop'),
+  auto: msg('Auto and repair'),
+  health: msg('Health and care'),
+  home: msg('Home and trades'),
+  beauty: msg('Beauty and barber'),
+  money: msg('Money and law'),
+  stay: msg('Stay the night'),
+  out: msg('Outdoors and parks'),
+  learn: msg('Learn'),
+  pets: msg('Pets'),
+  kids: msg('Kids and family'),
+  fun: msg('Fun and fitness'),
+  civic: msg('Civic'),
+  serv: msg('Services'),
 }
 
 /**
@@ -162,10 +186,10 @@ export function Plate({
       // Named for what it is, so a screen reader is told there is no picture
       // rather than being handed a decorative box it cannot explain.
       role="img"
-      aria-label={`No photo of this ${category.toLowerCase()}`}
+      aria-label={t('No photo of this {category}', { category: category.toLowerCase() })}
     >
       <Icon name={GROUP_ICON[group]} size={caption ? 26 : 20} />
-      {caption && <span className="dir-plate-cap">No photo yet</span>}
+      {caption && <span className="dir-plate-cap">{t('No photo yet')}</span>}
       {children}
     </span>
   )
@@ -330,7 +354,7 @@ export function PinCard({ place }: { place: RankedPlace }) {
       </span>
       <span className="dir-pin-acts">
         {place.phone ? (
-          <a className="dir-iconbtn" href={`tel:${place.phone.replace(/[^\d+]/g, '')}`} aria-label={`Call ${place.name}`}>
+          <a className="dir-iconbtn" href={`tel:${place.phone.replace(/[^\d+]/g, '')}`} aria-label={t('Call {name}', { name: place.name })}>
             <Icon name="phone" size={18} />
           </a>
         ) : (
@@ -344,7 +368,7 @@ export function PinCard({ place }: { place: RankedPlace }) {
             href={directions}
             target="_blank"
             rel="noopener noreferrer"
-            aria-label={`Directions to ${place.name}`}
+            aria-label={t('Directions to {name}', { name: place.name })}
           >
             <Icon name="directions" size={18} />
           </a>
@@ -377,7 +401,7 @@ function SaveButton({
       className={inline ? 'dir-row-save' : 'dir-card-save'}
       data-saved={saved || undefined}
       onClick={onToggle}
-      aria-label={saved ? `Remove ${place.name} from your saved things` : `Save ${place.name}`}
+      aria-label={saved ? t('Remove {name} from your saved things', { name: place.name }) : t('Save {name}', { name: place.name })}
       aria-pressed={saved}
     >
       <Icon name={saved ? 'bookmark-filled' : 'bookmark'} size={18} />

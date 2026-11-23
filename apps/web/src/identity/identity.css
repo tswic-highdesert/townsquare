@@ -676,7 +676,7 @@
   white-space: nowrap;
 }
 
-.mod-tabs button[aria-current='true'] {
+.mod-tabs button[aria-pressed='true'] {
   color: var(--ts-ink);
   border-bottom-color: var(--ts-terracotta);
 }

@@ -17,6 +17,8 @@
  * that can be wrong.
  */
 
+import { t, tn } from '../i18n/index.js'
+
 export type FocusTarget = { kind: 'row'; index: number } | { kind: 'list' }
 
 export interface RemovalInput {
@@ -45,6 +47,6 @@ export function nextFocusAfterRemoval({ count, removed }: RemovalInput): FocusTa
  * worked. One polite sentence naming the thing and what is left.
  */
 export function removalAnnouncement(label: string, remaining: number): string {
-  if (remaining === 0) return `${label} removed. Nothing left in this list.`
-  return `${label} removed. ${remaining} ${remaining === 1 ? 'item' : 'items'} left.`
+  if (remaining === 0) return t('{label} removed. Nothing left in this list.', { label })
+  return tn(remaining, '{label} removed. {count} item left.', '{label} removed. {count} items left.', { label })
 }

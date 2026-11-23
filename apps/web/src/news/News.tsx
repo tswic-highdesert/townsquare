@@ -18,6 +18,7 @@ import { AppBar } from '../AppBar.js'
 import { Icon } from '../Icon.js'
 import { Card, RowItem, RowList, Skeleton } from '../ui/index.js'
 import type { AccountView } from '../session.js'
+import { intlLocale, t, tn } from '../i18n/index.js'
 import {
   fetchNews,
   isStale,
@@ -100,20 +101,22 @@ export function News(props: NewsProps) {
     return (
       <div className="nw-screen">
         {bar}
-        <div className="nw-quiet">
-          <span className="nw-quiet-art" aria-hidden="true">
-            <Icon name="newspaper" size={30} />
-          </span>
-          <p className="nw-quiet-line">The news could not be reached.</p>
-          <p className="nw-quiet-sub">
-            Nothing was lost. The sources are still where they were, and this page will fill in as
-            soon as one of them answers.
-          </p>
-          <button className="nw-retry" onClick={() => setTopic((t) => t)}>
-            <Icon name="refresh" size={15} />
-            Try again
-          </button>
-        </div>
+        <main id="ts-main" tabIndex={-1}>
+          <h1 className="ts-sr-only">{t('News')}</h1>
+          <div className="nw-quiet">
+            <span className="nw-quiet-art" aria-hidden="true">
+              <Icon name="newspaper" size={30} />
+            </span>
+            <p className="nw-quiet-line">{t('The news could not be reached.')}</p>
+            <p className="nw-quiet-sub">
+              {t('Nothing was lost. The sources are still where they were, and this page will fill in as soon as one of them answers.')}
+            </p>
+            <button className="nw-retry" onClick={() => setTopic((current) => current)}>
+              <Icon name="refresh" size={15} />
+              {t('Try again')}
+            </button>
+          </div>
+        </main>
       </div>
     )
   }
@@ -125,164 +128,167 @@ export function News(props: NewsProps) {
   return (
     <div className="nw-screen">
       {bar}
+      <main id="ts-main" tabIndex={-1}>
+        <h1 className="ts-sr-only">{t('News')}</h1>
 
-      <button className="nw-back" onClick={props.onBack}>
-        <Icon name="chevron-left" size={16} />
-        Today
-      </button>
+        <button className="nw-back" onClick={props.onBack}>
+          <Icon name="chevron-left" size={16} />
+          {t('Today')}
+        </button>
 
-      {/*
-        The rail scrolls, it never wraps. Counts come from all of town rather
-        than from the slice on screen, so a chip can tell you whether it is
-        worth leaving the list you are on.
-      */}
-      {payload.topics.length > 0 && (
-        <div className="nw-rail" role="group" aria-label="Topics">
-          <button
-            className="nw-chip"
-            data-on={topic === null || undefined}
-            aria-pressed={topic === null}
-            onClick={() => setTopic(null)}
-          >
-            All
-          </button>
-          {payload.topics.map((t) => (
-            <button
-              key={t.id}
-              className="nw-chip"
-              data-on={topic === t.id || undefined}
-              aria-pressed={topic === t.id}
-              onClick={() => setTopic(topic === t.id ? null : t.id)}
-            >
-              {t.label}
-              <span className="nw-chip-count">{t.count}</span>
-            </button>
-          ))}
-        </div>
-      )}
-
-      {/*
-        The API serves the last good build when a scrape fails. That is the
-        right trade and it is also the only way a resident can be shown old
-        news believing it is current, so the admission is at the top of the
-        screen rather than in the footer.
-      */}
-      {stale && (
-        <div className="nw-banner" role="status">
-          <Icon name="clock" size={15} />
-          <span className="nw-banner-text">
-            <b>This is the news as of {payload.signoff.assembledLabel}.</b>
-            Nothing has answered since then. We are still trying.
-          </span>
-        </div>
-      )}
-
-      {empty ? (
-        /*
-          A town with nothing to report is the normal case, not the error case,
-          and the difference between those two framings is the tone of the whole
-          product. No apology, no padding, no invented section.
-        */
-        <div className="nw-quiet">
-          <span className="nw-quiet-art" aria-hidden="true">
-            <Icon name="sun" size={30} />
-          </span>
-          <p className="nw-quiet-line">Quiet day in town.</p>
-          <p className="nw-quiet-sub">
-            {topic
-              ? 'Nobody has filed anything under this topic lately. The rest of town is on All.'
-              : 'None of the town’s sources has published anything we can see. That is most of August, and it is usually good news.'}
-          </p>
-        </div>
-      ) : (
-        <>
-          {payload.lead && (
-            <section className="nw-sec">
-              <SectionHead label="Top of town" />
-              <Lead story={payload.lead} onOpen={() => props.onOpenStory(payload.lead!.id)} />
-            </section>
-          )}
-
-          {/*
-            One heading over every cluster, not one per card. Repeating
-            "Everyone is covering" down the screen makes two events read as two
-            sections of the same thing, which is the duplication this card
-            exists to undo.
-          */}
-          {payload.clusters.length > 0 && (
-            <section className="nw-sec">
-              <SectionHead label="Everyone is covering" />
-              {payload.clusters.map((cluster) => (
-                <Cluster key={cluster.id} cluster={cluster} onOpen={props.onOpenStory} />
-              ))}
-            </section>
-          )}
-
-          {payload.rows.length > 0 && (
-            <section className="nw-sec">
-              <SectionHead label="More from town" />
-              {/*
-                `RowList` from the primitives. The density here is the four
-                container variables rather than a variant, set by
-                `.nw-feed-rows`: the sheet specifies a 15px headline and
-                space-3 padding, which is between the two named densities.
-                Unframed, because these sit on cream under a section rule
-                rather than standing on their own as a card.
-              */}
-              <RowList framed={false} className="nw-rows nw-feed-rows" label="More from town">
-                {payload.rows.map((story) => (
-                  <RowItem
-                    key={story.id}
-                    title={story.title}
-                    meta={<Byline story={story} small />}
-                    /*
-                      The thumbnail trails the headline and only exists when the
-                      source published one. Passing `undefined` rather than a
-                      placeholder is the section's whole rule: half the town's
-                      stories have art and none of the university's do, so a
-                      reserved grey square is a list that looks broken four days
-                      a week.
-                    */
-                    trailing={story.imageUrl ? <Art src={story.imageUrl} /> : undefined}
-                    /*
-                      No chevron. The photograph already says there is something
-                      here, and on the rows without one the headline is doing it.
-                    */
-                    chevron={false}
-                    onClick={() => props.onOpenStory(story.id)}
-                  />
-                ))}
-              </RowList>
-            </section>
-          )}
-        </>
-      )}
-
-      <footer className="nw-signoff">
-        <div className="nw-signoff-line">
-          {empty
-            ? 'We will put something here the moment anyone publishes.'
-            : `That is the town, as of ${payload.signoff.assembledLabel}.`}
-        </div>
         {/*
-          On an empty screen the counts come off entirely. "0 sources" is not a
-          fact worth printing, and the design sheet's version of this line
-          ("checked all 6 sources") is a number we do not have: the registry
-          holds twenty entries and two of them publish stories, so counting the
-          registry would say we checked eighteen things we did not.
+          The rail scrolls, it never wraps. Counts come from all of town rather
+          than from the slice on screen, so a chip can tell you whether it is
+          worth leaving the list you are on.
         */}
-        <div className="nw-signoff-meta">
-          {empty ? (
-            <>Checked at {payload.signoff.assembledLabel}</>
-          ) : (
-            <>
-              {payload.signoff.sourceCount} {plural(payload.signoff.sourceCount, 'source')} ·{' '}
-              {payload.signoff.storyCount} {plural(payload.signoff.storyCount, 'story', 'stories')}
-              {payload.signoff.oldestLabel && <> · nothing older than {payload.signoff.oldestLabel}</>}
-            </>
-          )}
-        </div>
-      </footer>
+        {payload.topics.length > 0 && (
+          <div className="nw-rail" role="group" aria-label={t('Topics')}>
+            <button
+              className="nw-chip"
+              data-on={topic === null || undefined}
+              aria-pressed={topic === null}
+              onClick={() => setTopic(null)}
+            >
+              {t('All')}
+            </button>
+            {payload.topics.map((item) => (
+              <button
+                key={item.id}
+                className="nw-chip"
+                data-on={topic === item.id || undefined}
+                aria-pressed={topic === item.id}
+                onClick={() => setTopic(topic === item.id ? null : item.id)}
+              >
+                {item.label}
+                <span className="nw-chip-count">{item.count}</span>
+              </button>
+            ))}
+          </div>
+        )}
+
+        {/*
+          The API serves the last good build when a scrape fails. That is the
+          right trade and it is also the only way a resident can be shown old
+          news believing it is current, so the admission is at the top of the
+          screen rather than in the footer.
+        */}
+        {stale && (
+          <div className="nw-banner" role="status">
+            <Icon name="clock" size={15} />
+            <span className="nw-banner-text">
+              <b>{t('This is the news as of {when}.', { when: payload.signoff.assembledLabel })}</b>
+              {t('Nothing has answered since then. We are still trying.')}
+            </span>
+          </div>
+        )}
+
+        {empty ? (
+          /*
+            A town with nothing to report is the normal case, not the error case,
+            and the difference between those two framings is the tone of the whole
+            product. No apology, no padding, no invented section.
+          */
+          <div className="nw-quiet">
+            <span className="nw-quiet-art" aria-hidden="true">
+              <Icon name="sun" size={30} />
+            </span>
+            <p className="nw-quiet-line">{t('Quiet day in town.')}</p>
+            <p className="nw-quiet-sub">
+              {topic
+                ? t('Nobody has filed anything under this topic lately. The rest of town is on All.')
+                : t('None of the town’s sources has published anything we can see. That is most of August, and it is usually good news.')}
+            </p>
+          </div>
+        ) : (
+          <>
+            {payload.lead && (
+              <section className="nw-sec">
+                <SectionHead label={t('Top of town')} />
+                <Lead story={payload.lead} onOpen={() => props.onOpenStory(payload.lead!.id)} />
+              </section>
+            )}
+
+            {/*
+              One heading over every cluster, not one per card. Repeating
+              "Everyone is covering" down the screen makes two events read as two
+              sections of the same thing, which is the duplication this card
+              exists to undo.
+            */}
+            {payload.clusters.length > 0 && (
+              <section className="nw-sec">
+                <SectionHead label={t('Everyone is covering')} />
+                {payload.clusters.map((cluster) => (
+                  <Cluster key={cluster.id} cluster={cluster} onOpen={props.onOpenStory} />
+                ))}
+              </section>
+            )}
+
+            {payload.rows.length > 0 && (
+              <section className="nw-sec">
+                <SectionHead label={t('More from town')} />
+                {/*
+                  `RowList` from the primitives. The density here is the four
+                  container variables rather than a variant, set by
+                  `.nw-feed-rows`: the sheet specifies a 15px headline and
+                  space-3 padding, which is between the two named densities.
+                  Unframed, because these sit on cream under a section rule
+                  rather than standing on their own as a card.
+                */}
+                <RowList framed={false} className="nw-rows nw-feed-rows" label={t('More from town')}>
+                  {payload.rows.map((story) => (
+                    <RowItem
+                      key={story.id}
+                      title={story.title}
+                      meta={<Byline story={story} small />}
+                      /*
+                        The thumbnail trails the headline and only exists when the
+                        source published one. Passing `undefined` rather than a
+                        placeholder is the section's whole rule: half the town's
+                        stories have art and none of the university's do, so a
+                        reserved grey square is a list that looks broken four days
+                        a week.
+                      */
+                      trailing={story.imageUrl ? <Art src={story.imageUrl} /> : undefined}
+                      /*
+                        No chevron. The photograph already says there is something
+                        here, and on the rows without one the headline is doing it.
+                      */
+                      chevron={false}
+                      onClick={() => props.onOpenStory(story.id)}
+                    />
+                  ))}
+                </RowList>
+              </section>
+            )}
+          </>
+        )}
+
+        <footer className="nw-signoff">
+          <div className="nw-signoff-line">
+            {empty
+              ? t('We will put something here the moment anyone publishes.')
+              : t('That is the town, as of {when}.', { when: payload.signoff.assembledLabel })}
+          </div>
+          {/*
+            On an empty screen the counts come off entirely. "0 sources" is not a
+            fact worth printing, and the design sheet's version of this line
+            ("checked all 6 sources") is a number we do not have: the registry
+            holds twenty entries and two of them publish stories, so counting the
+            registry would say we checked eighteen things we did not.
+          */}
+          <div className="nw-signoff-meta">
+            {empty ? (
+              <>{t('Checked at {when}', { when: payload.signoff.assembledLabel })}</>
+            ) : (
+              <>
+                {tn(payload.signoff.sourceCount, '{count} source', '{count} sources')} ·{' '}
+                {tn(payload.signoff.storyCount, '{count} story', '{count} stories')}
+                {payload.signoff.oldestLabel && <> · {t('nothing older than {when}', { when: payload.signoff.oldestLabel })}</>}
+              </>
+            )}
+          </div>
+        </footer>
+      </main>
     </div>
   )
 }
@@ -338,7 +344,7 @@ export function Byline({ story, small }: { story: NewsStory; small?: boolean }) 
       */}
       <span
         className={story.fresh ? 'nw-meta nw-fresh' : 'nw-meta'}
-        title={new Date(story.publishedAt).toLocaleString()}
+        title={new Date(story.publishedAt).toLocaleString(intlLocale())}
       >
         {story.timeLabel}
       </span>
@@ -374,7 +380,7 @@ function Kind({ medium }: { medium: NewsStory['medium'] }) {
   return (
     <span className="nw-kind">
       <Icon name={medium === 'opinion' ? 'quote' : 'newspaper'} size={13} />
-      {medium === 'opinion' ? 'Opinion' : 'News'}
+      {medium === 'opinion' ? t('Opinion') : t('News')}
     </span>
   )
 }
@@ -396,15 +402,15 @@ function Lead({ story, onOpen }: { story: NewsStory; onOpen: () => void }) {
           <Art src={story.imageUrl} className="nw-lead-art" />
           <span className="nw-kind" data-over="true">
             <Icon name={story.medium === 'opinion' ? 'quote' : 'newspaper'} size={13} />
-            {story.medium === 'opinion' ? 'Opinion' : 'News'}
+            {story.medium === 'opinion' ? t('Opinion') : t('News')}
           </span>
         </button>
       )}
       <div className="nw-lead-body">
         {!story.imageUrl && <Kind medium={story.medium} />}
-        <h3 className="nw-lead-title">
+        <h2 className="nw-lead-title">
           <button onClick={onOpen}>{story.title}</button>
-        </h3>
+        </h2>
         {!story.imageUrl && story.summary && <p className="nw-lead-summary">{story.summary}</p>}
         <Byline story={story} />
       </div>
@@ -439,7 +445,7 @@ function Cluster({ cluster, onOpen }: { cluster: NewsCluster; onOpen: (id: strin
       <div className="nw-cluster-head">
         <span className="nw-cluster-eyebrow">
           <Icon name="layers" size={13} />
-          {cluster.sourceCount} sources covering
+          {t('{count} sources covering', { count: cluster.sourceCount })}
         </span>
       </div>
       <ul className="nw-cluster-list">
@@ -456,7 +462,7 @@ function Cluster({ cluster, onOpen }: { cluster: NewsCluster; onOpen: (id: strin
                   they want in about a second.
                 */}
                 <span className="nw-cluster-meta">
-                  {story.medium === 'opinion' ? 'Opinion' : 'Reported'} · {story.timeLabel}
+                  {story.medium === 'opinion' ? t('Opinion') : t('Reported')} · {story.timeLabel}
                 </span>
               </span>
               <Icon name="chevron-right" size={16} className="nw-out" />
@@ -480,41 +486,41 @@ function Cluster({ cluster, onOpen }: { cluster: NewsCluster; onOpen: (id: strin
  */
 function NewsSkeleton({ bar }: { bar: React.ReactNode }) {
   return (
-    <div className="nw-screen" aria-busy="true" aria-label="Loading the news">
+    <div className="nw-screen" aria-busy="true">
       {bar}
-      <div className="nw-rail">
-        {[58, 96, 84, 110].map((w, i) => (
-          <Skeleton key={i} shape="block" width={`${w}px`} height={32} className="nw-skel-chip" />
-        ))}
-      </div>
-      <div className="nw-sec">
-        <SectionHead label="Top of town" />
-        <Skeleton shape="block" height={200} className="nw-skel-art" />
-        <Skeleton width="96%" height={13} />
-        <Skeleton width="64%" height={13} />
-        <Skeleton width="138px" height={10} />
-      </div>
-      <div className="nw-sec">
-        <SectionHead label="More from town" />
-        <div className="nw-skel-list">
-          {[true, false, true, false].map((withThumb, i) => (
-            <div className="nw-skel-row" key={i}>
-              <span className="nw-skel-col">
-                <Skeleton width={i % 2 === 0 ? '100%' : '92%'} height={13} />
-                <Skeleton width={i % 2 === 0 ? '58%' : '44%'} height={13} />
-                <Skeleton width="138px" height={10} />
-              </span>
-              {withThumb && <Skeleton shape="block" height={68} className="nw-skel-thumb" />}
-            </div>
+      <main id="ts-main" tabIndex={-1}>
+        <h1 className="ts-sr-only">{t('News')}</h1>
+        <p className="ts-sr-only" role="status">{t('Loading the news')}</p>
+        <div className="nw-rail">
+          {[58, 96, 84, 110].map((w, i) => (
+            <Skeleton key={i} shape="block" width={`${w}px`} height={32} className="nw-skel-chip" />
           ))}
         </div>
-      </div>
-      {/* The only words on this screen, because the wait has a nameable cause. */}
-      <p className="nw-skel-note">Reading the town’s sources</p>
+        <div className="nw-sec">
+          <SectionHead label={t('Top of town')} />
+          <Skeleton shape="block" height={200} className="nw-skel-art" />
+          <Skeleton width="96%" height={13} />
+          <Skeleton width="64%" height={13} />
+          <Skeleton width="138px" height={10} />
+        </div>
+        <div className="nw-sec">
+          <SectionHead label={t('More from town')} />
+          <div className="nw-skel-list">
+            {[true, false, true, false].map((withThumb, i) => (
+              <div className="nw-skel-row" key={i}>
+                <span className="nw-skel-col">
+                  <Skeleton width={i % 2 === 0 ? '100%' : '92%'} height={13} />
+                  <Skeleton width={i % 2 === 0 ? '58%' : '44%'} height={13} />
+                  <Skeleton width="138px" height={10} />
+                </span>
+                {withThumb && <Skeleton shape="block" height={68} className="nw-skel-thumb" />}
+              </div>
+            ))}
+          </div>
+        </div>
+        {/* The only words on this screen, because the wait has a nameable cause. */}
+        <p className="nw-skel-note">{t('Reading the town’s sources')}</p>
+      </main>
     </div>
   )
-}
-
-function plural(n: number, word: string, many?: string): string {
-  return n === 1 ? word : (many ?? `${word}s`)
 }

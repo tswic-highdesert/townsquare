@@ -29,6 +29,8 @@
 import { useEffect, useRef, useState } from 'react'
 import { Icon, Mark } from './Icon.js'
 import { useShell } from './nav/shellContext.js'
+import { LanguageSwitch } from './i18n/LanguageSwitch.js'
+import { t } from './i18n/index.js'
 import type { AccountView } from './session.js'
 import './nav/nav.css'
 
@@ -83,15 +85,15 @@ export function AppBar(props: AppBarProps) {
         reader announces as a skip link and what the browser's own focus
         handling already understands.
 
-        The target is owned by the screen. Today, Nearby and Yours each put
-        `id="ts-main" tabIndex={-1}` on their first block of content, which is
-        the only place that knows which block that is. An earlier version had
+        The target is owned by the screen. Every screen that renders this bar
+        puts `id="ts-main" tabIndex={-1}` on its `<main>`, which is the only
+        place that knows where the screen's own content starts. An earlier version had
         this component reach out and stamp the id on its own next sibling; it
         worked, and it was a component quietly writing attributes onto DOM it
         does not own.
       */}
       <a className="ts-skip" href={`#${SKIP_TARGET}`}>
-        Skip to the top of {props.place || 'town'}
+        {t('Skip to main content')}
       </a>
 
       <header className="today-bar ts-appbar" data-condensed={condensed || undefined} ref={bar}>
@@ -113,16 +115,19 @@ export function AppBar(props: AppBarProps) {
           type="button"
           onClick={shell.onSearch}
           aria-expanded={shell.searchOpen}
-          aria-label={`Search ${props.place || 'the town'}`}
+          aria-label={props.place ? t('Search {place}', { place: props.place }) : t('Search the town')}
         >
           <Icon name="search" size={18} />
-          <span className="ts-appbar-search-label">Search {props.place || 'the town'}</span>
+          <span className="ts-appbar-search-label">
+            {props.place ? t('Search {place}', { place: props.place }) : t('Search the town')}
+          </span>
         </button>
 
         <div className="today-bar-actions">
+          <LanguageSwitch />
           {props.canReview && (
             <button className="back" onClick={props.onReview}>
-              Review queue
+              {t('Review queue')}
             </button>
           )}
           {/*
@@ -135,8 +140,10 @@ export function AppBar(props: AppBarProps) {
             onClick={props.onAccount}
             aria-label={
               account
-                ? `${account.handle}${account.verified ? ', verified' : ''} — your account`
-                : 'Sign in'
+                ? account.verified
+                  ? t('{handle}, verified, your account', { handle: account.handle })
+                  : t('{handle}, your account', { handle: account.handle })
+                : t('Sign in')
             }
           >
             {account ? (
@@ -144,7 +151,7 @@ export function AppBar(props: AppBarProps) {
                 {initials(account.handle)}
               </span>
             ) : (
-              <span className="today-signin">Sign in</span>
+              <span className="today-signin">{t('Sign in')}</span>
             )}
           </button>
         </div>
@@ -161,7 +168,7 @@ export function VerifiedChip({ verified }: { verified: boolean }) {
   return (
     <span className="verified-chip" data-verified={verified || undefined}>
       <Icon name="verified" size={13} />
-      {verified ? 'Verified resident' : 'Not verified yet'}
+      {verified ? t('Verified resident') : t('Not verified yet')}
     </span>
   )
 }

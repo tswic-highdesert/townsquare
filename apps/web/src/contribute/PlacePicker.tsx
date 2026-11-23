@@ -15,6 +15,7 @@
 
 import { useEffect, useState } from 'react'
 import { Icon } from '../Icon.js'
+import { t } from '../i18n/index.js'
 import { searchListings, type Listing } from './contributeData.js'
 
 export interface PickedPlace {
@@ -71,13 +72,13 @@ export function PlacePicker(props: {
           <span className="cn-place-text">
             <b>{props.place.name}</b>
             <span>
-              {props.place.listingId ? 'From the directory' : 'A name you typed, no address stored'}
+              {props.place.listingId ? t('From the directory') : t('A name you typed, no address stored')}
             </span>
           </span>
           <button
             className="cn-icon-btn cn-icon-btn--sm"
             type="button"
-            aria-label={`Clear ${props.place.name}`}
+            aria-label={t('Clear {place}', { place: props.place.name })}
             onClick={() => {
               props.onPick(null)
               setQuery('')
@@ -97,7 +98,7 @@ export function PlacePicker(props: {
     <div className="cn-field">
       <label className="cn-label" htmlFor={`${listId}-in`}>
         {props.label}
-        {props.optional ? <span className="cn-optional">optional</span> : null}
+        {props.optional ? <span className="cn-optional">{t('optional')}</span> : null}
       </label>
       <div className="cn-place" data-open={open || undefined}>
         <span className="cn-place-ic">
@@ -107,7 +108,7 @@ export function PlacePicker(props: {
           id={`${listId}-in`}
           className="cn-input cn-input--bare"
           value={query}
-          placeholder="Find a place in town"
+          placeholder={t('Find a place in town')}
           role="combobox"
           aria-expanded={open}
           aria-controls={listId}
@@ -117,7 +118,7 @@ export function PlacePicker(props: {
       </div>
 
       {open ? (
-        <ul className="cn-picker-list" role="listbox" id={listId} aria-label="Places">
+        <ul className="cn-picker-list" role="listbox" id={listId} aria-label={t('Places')}>
           {results.map((listing) => (
             <li key={listing.id} role="presentation">
               <button
@@ -151,8 +152,8 @@ export function PlacePicker(props: {
                 <Icon name="plus" size={16} />
               </span>
               <span className="cn-item-text">
-                <b>Somewhere else</b>
-                <span>Use "{query.trim()}" as a place name. No street address, ever.</span>
+                <b>{t('Somewhere else')}</b>
+                <span>{t('Use "{name}" as a place name. No street address, ever.', { name: query.trim() })}</span>
               </span>
             </button>
           </li>

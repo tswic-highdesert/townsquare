@@ -6,7 +6,7 @@ The live preview includes real local feeds, a town map, a day planner, handle/pa
 
 **[Open the live preview](https://townsquare-live-production.up.railway.app)** · [Tour and handoff](docs/execution-2026-10-01/handoff.md) · [Setup and deployment](docs/execution-2026-10-01/deployment.md) · [Accounts and persistence](docs/persistence-and-accounts.md) · [Design evidence](docs/execution-2026-10-01/design.md)
 
-The code is MIT-licensed; this repository is currently private. [VISION.md](VISION.md) describes the longer-term community platform, including capabilities beyond this preview.
+The code is [MIT-licensed](LICENSE). [VISION.md](VISION.md) describes the longer-term community platform, including capabilities beyond this preview.
 
 ## The idea in one paragraph
 
@@ -23,6 +23,8 @@ reading.
 |---|---|
 | [GETTING-STARTED.md](GETTING-STARTED.md) | **New here? Start with this.** Clean machine to a running town, step by step |
 | [CONTRIBUTING.md](CONTRIBUTING.md) | Where your work lives, how it is submitted, and what must pass |
+| [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md) | How we treat each other here |
+| [SECURITY.md](SECURITY.md) | How to report a security problem privately |
 | [VISION.md](VISION.md) | What this is and every decision made so far |
 | [spec-manifest-and-sdk.md](spec-manifest-and-sdk.md) | **The contract.** Manifest, SDK surface, permissions, CSP, error codes |
 | [spec-tier-0-1.md](spec-tier-0-1.md) | Identity, vouching, privilege tiers, the registry, the read API |
@@ -91,3 +93,15 @@ cookie is unreachable from JavaScript anywhere, including the shell's own.
 **`script-src` is always `'self'` and is never influenced by a manifest.** That is
 the mechanism behind "everything is vendored". Without it, vendoring is a policy
 nobody checks.
+
+## Contributing, conduct and security
+
+[CONTRIBUTING.md](CONTRIBUTING.md) covers building a creation, changing the platform, and how
+credit works. Everyone here follows the [code of conduct](CODE_OF_CONDUCT.md).
+Security problems go through [SECURITY.md](SECURITY.md), not a public issue.
+
+## License
+
+[MIT](LICENSE). The typefaces in `packages/tokens/fonts/` are under the SIL Open
+Font License and the icons are [Phosphor](https://phosphoricons.com) (MIT); see
+[packages/tokens/fonts/README.md](packages/tokens/fonts/README.md).

@@ -10,6 +10,7 @@ import {
 } from 'react'
 import { Icon, type IconName } from '../Icon.js'
 import { cx } from './cx.js'
+import { t } from '../i18n/index.js'
 import {
   announce,
   dismissToast,
@@ -212,7 +213,7 @@ function ToastCard({ toast, onDismiss }: { toast: Toast; onDismiss: () => void }
         </button>
       ) : null}
       {/* A 16px glyph in a 44px button, which is the rule everywhere. */}
-      <button type="button" className="ts-toast-x" aria-label="Dismiss" onClick={onDismiss}>
+      <button type="button" className="ts-toast-x" aria-label={t('Dismiss')} onClick={onDismiss}>
         <Icon name="close" size={16} />
       </button>
     </div>
