@@ -225,6 +225,30 @@ export const strings: Record<string, Entry> = {
   'Used {count} minutes ago': { one: 'Se usó hace {count} minuto', other: 'Se usó hace {count} minutos' },
   'Used {count} hours ago': { one: 'Se usó hace {count} hora', other: 'Se usó hace {count} horas' },
   'Used {count} days ago': { one: 'Se usó hace {count} día', other: 'Se usó hace {count} días' },
+  // Leaving dialog (outbound links from a creation)
+  "You're leaving Town Square": 'Está saliendo de Town Square',
+  "{name} wants to open a website in a new tab. Town Square doesn't run that site and can't vouch for it.":
+    '{name} quiere abrir un sitio web en una pestaña nueva. Town Square no administra ese sitio y no puede responder por él.',
+  'Stay here': 'Quedarme aquí',
+  'Open site': 'Abrir sitio',
+  'Going to': 'Destino',
+  "This site's connection isn't private. Don't type a password or card number there.":
+    'La conexión de este sitio no es privada. No escriba ahí contraseñas ni números de tarjeta.',
+  'This address uses letters from another alphabet, which can make it look like a different site. Check the name carefully.':
+    'Esta dirección usa letras de otro alfabeto, lo que puede hacerla parecer otro sitio. Revise bien el nombre.',
+  'Make a phone call?': '¿Hacer una llamada?',
+  '{name} wants to start a call. Your phone or calling app will open with this number, and nothing is dialled until you press call there.':
+    '{name} quiere iniciar una llamada. Su teléfono o su aplicación de llamadas se abrirá con este número, y no se marca nada hasta que usted pulse llamar ahí.',
+  Call: 'Llamar',
+  Calling: 'Llamar a',
+  'Write an email?': '¿Escribir un correo?',
+  '{name} wants to start an email. Your email app will open with a message drafted for you to read, and nothing is sent until you press send there.':
+    '{name} quiere iniciar un correo. Su aplicación de correo se abrirá con un mensaje redactado para que usted lo lea, y no se envía nada hasta que pulse enviar ahí.',
+  '{name} wants to start an email. Your email app will open, and nothing is sent until you press send there.':
+    '{name} quiere iniciar un correo. Su aplicación de correo se abrirá, y no se envía nada hasta que usted pulse enviar ahí.',
+  'Write email': 'Escribir correo',
+  To: 'Para',
+  'Subject: {subject}': 'Asunto: {subject}',
 }
 
 export const review: Record<string, string> = {
@@ -291,4 +315,8 @@ export const review: Record<string, string> = {
   'Keep it':
     'Clashes with identity.ts ("Mantener el aval", for vouching) and is also used in contribute for keeping a draft. "Conservarlo" fits all three (aval, borrador, token are masculine).',
   'my laptop': 'Default token label sent to the server when the field is left blank; it later shows in the token list.',
+  "{name} wants to open a website in a new tab. Town Square doesn't run that site and can't vouch for it.":
+    'Safety warning before leaving the shell; "responder por él" for "vouch for it".',
+  "This site's connection isn't private. Don't type a password or card number there.":
+    'Security warning for http: links; confirm tone.',
 }

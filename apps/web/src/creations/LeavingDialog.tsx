@@ -14,6 +14,7 @@
 import type { OutboundLink } from '@townsquare/shared'
 import { Icon } from '../Icon.js'
 import { Button, Modal } from '../ui/index.js'
+import { t } from '../i18n/index.js'
 
 export interface LeavingDialogProps {
   /** The creation asking, by its approved manifest name. */
@@ -37,21 +38,24 @@ export function LeavingDialog({ creationName, link, onStay, onGo }: LeavingDialo
           onClose={onStay}
           kind="confirm"
           className="cr-leaving"
-          title="You're leaving Town Square"
-          description={`${creationName} wants to open a website in a new tab. Town Square doesn't run that site and can't vouch for it.`}
+          title={t("You're leaving Town Square")}
+          description={t(
+            "{name} wants to open a website in a new tab. Town Square doesn't run that site and can't vouch for it.",
+            { name: creationName },
+          )}
           actions={
             <>
               <Button variant="secondary" onClick={onStay}>
-                Stay here
+                {t('Stay here')}
               </Button>
               <Button variant="primary" trailingIcon="external" onClick={onGo}>
-                Open site
+                {t('Open site')}
               </Button>
             </>
           }
         >
           <div className="cr-leaving-dest">
-            <span className="cr-leaving-label">Going to</span>
+            <span className="cr-leaving-label">{t('Going to')}</span>
             <span className="cr-leaving-host">{link.host}</span>
             <span className="cr-leaving-url">{shorten(link.href)}</span>
           </div>
@@ -59,7 +63,7 @@ export function LeavingDialog({ creationName, link, onStay, onGo }: LeavingDialo
             <p className="cr-leaving-warn">
               <Icon name="unlock" size={16} />
               <span>
-                This site's connection isn't private. Don't type a password or card number there.
+                {t("This site's connection isn't private. Don't type a password or card number there.")}
               </span>
             </p>
           )}
@@ -67,8 +71,9 @@ export function LeavingDialog({ creationName, link, onStay, onGo }: LeavingDialo
             <p className="cr-leaving-warn">
               <Icon name="warning" size={16} />
               <span>
-                This address uses letters from another alphabet, which can make it look like a
-                different site. Check the name carefully.
+                {t(
+                  'This address uses letters from another alphabet, which can make it look like a different site. Check the name carefully.',
+                )}
               </span>
             </p>
           )}
@@ -82,21 +87,24 @@ export function LeavingDialog({ creationName, link, onStay, onGo }: LeavingDialo
           onClose={onStay}
           kind="confirm"
           className="cr-leaving"
-          title="Make a phone call?"
-          description={`${creationName} wants to start a call. Your phone or calling app will open with this number, and nothing is dialled until you press call there.`}
+          title={t('Make a phone call?')}
+          description={t(
+            '{name} wants to start a call. Your phone or calling app will open with this number, and nothing is dialled until you press call there.',
+            { name: creationName },
+          )}
           actions={
             <>
               <Button variant="secondary" onClick={onStay}>
-                Not now
+                {t('Not now')}
               </Button>
               <Button variant="primary" icon="phone" onClick={onGo}>
-                Call
+                {t('Call')}
               </Button>
             </>
           }
         >
           <div className="cr-leaving-dest">
-            <span className="cr-leaving-label">Calling</span>
+            <span className="cr-leaving-label">{t('Calling')}</span>
             <span className="cr-leaving-host">{link.number}</span>
           </div>
         </Modal>
@@ -109,25 +117,33 @@ export function LeavingDialog({ creationName, link, onStay, onGo }: LeavingDialo
           onClose={onStay}
           kind="confirm"
           className="cr-leaving"
-          title="Write an email?"
-          description={`${creationName} wants to start an email. Your email app will open${
-            link.subject || link.hasBody ? ' with a message drafted for you to read' : ''
-          }, and nothing is sent until you press send there.`}
+          title={t('Write an email?')}
+          description={
+            link.subject || link.hasBody
+              ? t(
+                  '{name} wants to start an email. Your email app will open with a message drafted for you to read, and nothing is sent until you press send there.',
+                  { name: creationName },
+                )
+              : t(
+                  '{name} wants to start an email. Your email app will open, and nothing is sent until you press send there.',
+                  { name: creationName },
+                )
+          }
           actions={
             <>
               <Button variant="secondary" onClick={onStay}>
-                Not now
+                {t('Not now')}
               </Button>
               <Button variant="primary" icon="mail" onClick={onGo}>
-                Write email
+                {t('Write email')}
               </Button>
             </>
           }
         >
           <div className="cr-leaving-dest">
-            <span className="cr-leaving-label">To</span>
+            <span className="cr-leaving-label">{t('To')}</span>
             <span className="cr-leaving-host">{link.to}</span>
-            {link.subject && <span className="cr-leaving-url">Subject: {link.subject}</span>}
+            {link.subject && <span className="cr-leaving-url">{t('Subject: {subject}', { subject: link.subject })}</span>}
           </div>
         </Modal>
       )
