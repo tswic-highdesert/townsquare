@@ -10,8 +10,15 @@
 import type { Manifest } from '@townsquare/manifest'
 import { advisoryGrants } from '@townsquare/sdk'
 import { cssVariables } from '@townsquare/tokens'
-import { LIMITS, PROTOCOL_VERSION, type Event as WireEvent, type Init } from '@townsquare/shared'
-import { Bridge, type BridgeContext } from './bridge.js'
+import {
+  LIMITS,
+  PROTOCOL_VERSION,
+  wireError,
+  type Event as WireEvent,
+  type Init,
+  type OutboundLink,
+} from '@townsquare/shared'
+import { Bridge, BridgeCallError, type BridgeContext } from './bridge.js'
 import { connect, type Connection } from './transport.js'
 
 /**
@@ -26,7 +33,10 @@ import { connect, type Connection } from './transport.js'
  * future review, which is why the explanation lives next to the string.
  *
  * Absent on purpose:
- *   allow-popups                      window.open() is egress that CSP cannot see
+ *   allow-popups                      window.open() is egress that CSP cannot see.
+ *                                     Links go through `app.openLink` instead,
+ *                                     which the host checks and the resident
+ *                                     confirms before anything opens.
  *   allow-popups-to-escape-sandbox    would hand a popup ambient privileges
  *   allow-top-navigation*             would let a frame navigate the whole tab away
  *   allow-downloads                   drive-by download
@@ -95,6 +105,28 @@ export interface CreationHostConfig {
   onHeightChange?(px: number): void
   onIncident?(kind: string, detail: Record<string, unknown>): void
   /**
+   * Show the resident where a link goes, and open it only if they agree.
+   *
+   * The link has already been checked (`checkOutboundLink`), and the shell
+   * opens it with `openOutboundLink` from its own confirm button. Resolve when
+   * the resident has answered either way; until then a second link is
+   * refused. Without this, `app.openLink` answers `unavailable`.
+   *
+   * The dialog is drawn by the shell, outside the frame, so a creation cannot
+   * restyle it, cover it or click it for the resident.
+   *
+   * When the dialog closes, do **not** return focus into the frame. A link is
+   * accepted only while focus is in the frame and the page has a recent press,
+   * and the dialog's own button is a recent press: handing focus back would
+   * let a creation reopen the dialog the moment the resident dismissed it.
+   */
+  onOpenLink?(link: OutboundLink): Promise<void>
+  /**
+   * Whether the resident has just pressed something *inside this frame*.
+   * Injectable for tests; see `pressedInsideFrame` for the default.
+   */
+  hasUserActivation?(): boolean
+  /**
    * `lazy` only when the frame is genuinely below the fold.
    *
    * Default `eager`, because the host is normally mounted in response to
@@ -125,6 +157,7 @@ export class CreationHost {
   private loadCount = 0
   private readonly aborter = new AbortController()
   private height: number = LIMITS.skeletonHeight
+  private askingAboutLink = false
 
   constructor(el: HTMLElement, cfg: CreationHostConfig) {
     this.el = el
@@ -178,6 +211,7 @@ export class CreationHost {
           ready: () => this.onGuestReady(),
           setHeight: (px) => this.applyHeight(px),
           setTitle: (text) => this.applyTitle(text),
+          openLink: (link) => this.requestLink(link),
         },
         onIncident: this.cfg.onIncident,
       })
@@ -251,6 +285,85 @@ export class CreationHost {
     this.cfg.onTitleChange?.(String(text).slice(0, LIMITS.maxTitleChars))
   }
 
+  /**
+   * Put a checked link in front of the resident.
+   *
+   * Three refusals, each one a way a creation could otherwise pester or trick
+   * someone with the dialog:
+   *
+   *  - **No click, no dialog.** A creation cannot pop "leave Town Square?" on
+   *    load or on a timer. Browsers propagate a click's activation from a frame
+   *    to the page around it, so a link the resident really pressed passes.
+   *  - **One at a time.** A second link while the first is on screen is
+   *    refused, so a creation cannot stack dialogs or swap one under a finger.
+   *  - **Not back into the sandbox.** A creation's own origin, or any other
+   *    creation's, would open that code unframed with no host around it.
+   */
+  private requestLink(link: OutboundLink): void {
+    const ask = this.cfg.onOpenLink
+    if (!ask) {
+      throw new BridgeCallError(wireError('unavailable', 'This Town Square cannot open links.'))
+    }
+    if (this.state.name === 'teardown' || this.state.name === 'error') {
+      throw new BridgeCallError(wireError('unavailable', 'This creation is closing.'))
+    }
+    if (!(this.cfg.hasUserActivation ?? (() => this.pressedInsideFrame()))()) {
+      throw new BridgeCallError(
+        wireError(
+          'invalid_request',
+          'app.openLink only works in response to a tap or click by the resident.',
+        ),
+      )
+    }
+    if (this.askingAboutLink) {
+      throw new BridgeCallError(
+        wireError('rate_limited', 'Town Square is already asking about another link.', {
+          retryAfter: 1,
+        }),
+      )
+    }
+    if (link.kind === 'web' && isSandboxOrigin(link.href, this.cfg.guestOrigin)) {
+      throw new BridgeCallError(
+        wireError('invalid_request', 'Links to creation pages cannot be opened outside Town Square.'),
+      )
+    }
+
+    this.askingAboutLink = true
+    Promise.resolve()
+      .then(() => ask(link))
+      .catch(() => {
+        // The shell's dialog failing is the shell's bug. The guest has
+        // already been answered, and there is nothing useful to tell it.
+      })
+      .finally(() => {
+        this.askingAboutLink = false
+      })
+  }
+
+  /**
+   * Did the resident just press something in this creation?
+   *
+   * Two signals, because either alone is fooled:
+   *
+   *  - `navigator.userActivation.isActive` says *someone pressed something on
+   *    this page* in the last few seconds. A click inside the frame sets it
+   *    here too, but so does the resident's own click on "Open" in the shell,
+   *    which would let a creation pop the dialog the moment it loads. The
+   *    boundary suite caught exactly that.
+   *  - Focus. A click or a keypress inside a cross-origin frame moves this
+   *    page's focus to the iframe element, and a click in the shell does not.
+   *
+   * Both together mean the press happened in this frame.
+   */
+  private pressedInsideFrame(): boolean {
+    const activation = (globalThis.navigator as { userActivation?: { isActive: boolean } } | undefined)
+      ?.userActivation
+    // A browser too old to report activation still has focus to go on, and
+    // the shell's own confirm click is still required before anything opens.
+    const active = activation ? activation.isActive : true
+    return active && this.iframe !== null && document.activeElement === this.iframe
+  }
+
   /** Host to guest, unsolicited. */
   send(event: WireEvent['event'], data: unknown): void {
     if (!this.connection || this.state.name === 'teardown') return
@@ -313,4 +426,49 @@ export class CreationHost {
       this.iframe = null
     }
   }
+}
+
+/**
+ * True for the creation's own origin and for any sibling on the same bundle
+ * domain: `https://other.tsq-apps.net` is another creation, and opening it as
+ * a top-level page would run it with no host around it.
+ */
+function isSandboxOrigin(href: string, guestOrigin: string): boolean {
+  let target: URL
+  let guest: URL
+  try {
+    target = new URL(href)
+    guest = new URL(guestOrigin)
+  } catch {
+    return true
+  }
+  if (target.origin === guest.origin) return true
+  const labels = guest.hostname.split('.')
+  // A bundle origin is `<id>.<apps domain>`. With fewer than three labels
+  // there is no separate apps domain to fence off beyond the origin itself.
+  if (labels.length < 3) return false
+  const appsDomain = labels.slice(1).join('.')
+  return target.hostname === appsDomain || target.hostname.endsWith('.' + appsDomain)
+}
+
+/**
+ * Open a link the resident has just agreed to, from the shell's own click.
+ *
+ * Web links get a new tab with no opener and no referrer, so the page that
+ * opens can neither script Town Square nor learn which creation sent it.
+ * Phone and email links go through an ordinary anchor, which is how every
+ * website hands `tel:` and `mailto:` to the device without leaving the page.
+ */
+export function openOutboundLink(link: OutboundLink): void {
+  if (link.kind === 'web') {
+    window.open(link.href, '_blank', 'noopener,noreferrer')
+    return
+  }
+  const a = document.createElement('a')
+  a.href = link.href
+  a.rel = 'noopener noreferrer'
+  a.style.display = 'none'
+  document.body.appendChild(a)
+  a.click()
+  a.remove()
 }

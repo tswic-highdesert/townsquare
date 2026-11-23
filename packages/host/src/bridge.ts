@@ -15,6 +15,7 @@
 import type { Manifest } from '@townsquare/manifest'
 import { checkCall, type ActingUser } from '@townsquare/sdk'
 import {
+  checkOutboundLink,
   isMethod,
   isRequestEnvelope,
   responseErr,
@@ -22,6 +23,7 @@ import {
   wireError,
   LIMITS,
   type Method,
+  type OutboundLink,
   type Response as WireResponse,
   type WireError,
 } from '@townsquare/shared'
@@ -71,6 +73,13 @@ export interface FrameControls {
   ready(): void
   setHeight(px: number): void
   setTitle(text: string): void
+  /**
+   * Ask the resident whether to leave for an already-checked link.
+   *
+   * Returns once the question is on screen, not when it is answered. Throws a
+   * `BridgeCallError` to refuse, for instance when no click led here.
+   */
+  openLink(link: OutboundLink): void
 }
 
 export interface BridgeContext {
@@ -185,6 +194,15 @@ export class Bridge {
       case 'app.setTitle':
         frame.setTitle(params as string)
         return null
+      case 'app.openLink': {
+        // Checked here, on the host side, every time. The guest runtime resolves
+        // and forwards links but decides nothing; a creation that hand-writes
+        // port messages arrives at exactly this line.
+        const checked = checkOutboundLink(params)
+        if (!checked.ok) throw new BridgeCallError(wireError('invalid_request', checked.reason))
+        frame.openLink(checked.link)
+        return null
+      }
 
       case 'town.info':
         return town.info()

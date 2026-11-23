@@ -1,0 +1,50 @@
+name: Bug report
+description: Something in the platform, the shell or the builder door does not work as documented.
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Security problems go through [SECURITY.md](../blob/main/SECURITY.md), not here.
+        Problems with a specific creation go to that creation's author.
+  - type: textarea
+    id: what
+    attributes:
+      label: What happened
+      description: What you ran, what you expected, and what happened instead. Paste the exact error text if there is one.
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Smallest steps that show it
+      placeholder: |
+        1. pnpm dev
+        2. Open http://townsquare.localhost:5173 and press Browse
+        3. ...
+    validations:
+      required: true
+  - type: input
+    id: node
+    attributes:
+      label: Node and pnpm versions
+      description: Output of `node -v` and `pnpm -v`.
+      placeholder: v24.20.0, 11.0.9
+    validations:
+      required: true
+  - type: dropdown
+    id: where
+    attributes:
+      label: Where
+      options:
+        - Local (pnpm dev)
+        - The live preview
+        - CI
+        - Other
+    validations:
+      required: true
+  - type: input
+    id: commit
+    attributes:
+      label: Commit or branch
+      description: Output of `git rev-parse --short HEAD`, or the branch name.

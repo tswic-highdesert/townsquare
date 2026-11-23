@@ -29,7 +29,7 @@ const townData = {
   businesses: vi.fn(async () => ({ items: [], nextCursor: null })),
 }
 
-const frame = { ready: vi.fn(), setHeight: vi.fn(), setTitle: vi.fn() }
+const frame = { ready: vi.fn(), setHeight: vi.fn(), setTitle: vi.fn(), openLink: vi.fn() }
 
 function bridge(overrides: Partial<BridgeContext> = {}): Bridge {
   return new Bridge({
@@ -317,6 +317,54 @@ describe('app.* is handled locally', () => {
   it('rejects a title over the documented length', async () => {
     const res = await bridge().handle(req('app.setTitle', 'x'.repeat(81)))
     expect(res).toMatchObject({ ok: false, error: { code: 'invalid_request' } })
+  })
+})
+
+describe('app.openLink', () => {
+  it('hands the frame the checked link, not the string the guest sent', async () => {
+    const res = await bridge().handle(req('app.openLink', '  HTTPS://Example.ORG/help  '))
+    expect(res).toMatchObject({ ok: true, result: null })
+    expect(frame.openLink).toHaveBeenCalledWith({
+      kind: 'web',
+      href: 'https://example.org/help',
+      host: 'example.org',
+      secure: true,
+      international: false,
+    })
+  })
+
+  it('refuses a dangerous link without ever reaching the frame', async () => {
+    for (const bad of [
+      'javascript:alert(document.domain)',
+      'data:text/html,<script>alert(1)</script>',
+      'https://bank.example@evil.example/',
+      'http://192.168.1.1/',
+      'mailto:a@example.org?bcc=evil@example.net',
+      42,
+    ]) {
+      const res = await bridge().handle(req('app.openLink', bad))
+      expect(res, String(bad)).toMatchObject({ ok: false, error: { code: 'invalid_request' } })
+    }
+    expect(frame.openLink).not.toHaveBeenCalled()
+  })
+
+  it('tells the builder why a link was refused', async () => {
+    const res = await bridge().handle(req('app.openLink', 'ftp://example.org/'))
+    expect(res).toMatchObject({ ok: false, error: { message: expect.stringMatching(/ftp:/) } })
+  })
+
+  it('passes a refusal from the frame straight through', async () => {
+    const refusing = {
+      ...frame,
+      openLink: vi.fn(() => {
+        throw new BridgeCallError(wireError('invalid_request', 'Only in response to a click.'))
+      }),
+    }
+    const res = await bridge({ frame: refusing }).handle(req('app.openLink', 'tel:4795551212'))
+    expect(res).toMatchObject({
+      ok: false,
+      error: { code: 'invalid_request', message: 'Only in response to a click.' },
+    })
   })
 })
 

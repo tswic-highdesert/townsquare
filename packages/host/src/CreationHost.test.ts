@@ -23,7 +23,15 @@
 
 import { describe, expect, it, vi } from 'vitest'
 import { parseManifest, type Manifest } from '@townsquare/manifest'
-import { CreationHost, SANDBOX_TOKENS, ALLOW_ATTRIBUTE, type HostState } from './CreationHost.js'
+import { checkOutboundLink, type OutboundLink } from '@townsquare/shared'
+import {
+  CreationHost,
+  SANDBOX_TOKENS,
+  ALLOW_ATTRIBUTE,
+  openOutboundLink,
+  type HostState,
+} from './CreationHost.js'
+import { BridgeCallError } from './bridge.js'
 
 function manifest(overrides: Record<string, unknown> = {}): Manifest {
   const parsed = parseManifest({
@@ -244,5 +252,114 @@ describe('title', () => {
     ;(instance as unknown as { applyTitle(t: string): void })['applyTitle']('x'.repeat(500))
     expect(titles[0]?.length).toBe(80)
     instance.destroy()
+  })
+})
+
+describe('opening links', () => {
+  const link = (raw: string): OutboundLink => {
+    const r = checkOutboundLink(raw)
+    if (!r.ok) throw new Error(r.reason)
+    return r.link
+  }
+
+  /** The bridge calls this; reaching it directly keeps the test about the rules. */
+  const request = (instance: CreationHost, l: OutboundLink) =>
+    (instance as unknown as { requestLink(l: OutboundLink): void }).requestLink(l)
+
+  /** Run a request and hand back the wire error it was refused with, if any. */
+  function refusal(instance: CreationHost, l: OutboundLink) {
+    try {
+      request(instance, l)
+      return null
+    } catch (err) {
+      if (err instanceof BridgeCallError) return err.wire
+      throw err
+    }
+  }
+
+  const settle = () => new Promise((r) => setTimeout(r, 0))
+
+  it('puts the checked link in front of the resident', async () => {
+    const onOpenLink = vi.fn(async () => {})
+    const { instance } = host({ onOpenLink, hasUserActivation: () => true })
+    expect(refusal(instance, link('https://example.org/'))).toBeNull()
+    await settle()
+    expect(onOpenLink).toHaveBeenCalledWith(link('https://example.org/'))
+    instance.destroy()
+  })
+
+  it('refuses a link nobody clicked, so a creation cannot pop the dialog on its own', async () => {
+    const onOpenLink = vi.fn(async () => {})
+    const { instance } = host({ onOpenLink, hasUserActivation: () => false })
+    expect(refusal(instance, link('https://example.org/'))).toMatchObject({
+      code: 'invalid_request',
+      message: expect.stringMatching(/tap or click/),
+    })
+    await settle()
+    expect(onOpenLink).not.toHaveBeenCalled()
+    instance.destroy()
+  })
+
+  it('asks about one link at a time, and asks again once answered', async () => {
+    let answer: () => void = () => {}
+    const onOpenLink = vi.fn(() => new Promise<void>((r) => (answer = r)))
+    const { instance } = host({ onOpenLink, hasUserActivation: () => true })
+
+    expect(refusal(instance, link('https://example.org/one'))).toBeNull()
+    await settle()
+    expect(refusal(instance, link('https://example.org/two'))).toMatchObject({ code: 'rate_limited' })
+
+    answer()
+    await settle()
+    expect(refusal(instance, link('https://example.org/three'))).toBeNull()
+    await settle()
+    expect(onOpenLink).toHaveBeenCalledTimes(2)
+    instance.destroy()
+  })
+
+  it('refuses links back into the sandbox, its own origin or another creation', () => {
+    const { instance } = host({ onOpenLink: async () => {}, hasUserActivation: () => true })
+    for (const raw of [
+      'https://a7k2m9x4tsq.tsq-apps.net/other-page',
+      'https://bbbbbbbbbbbb.tsq-apps.net/',
+      'https://tsq-apps.net/',
+    ]) {
+      expect(refusal(instance, link(raw)), raw).toMatchObject({ code: 'invalid_request' })
+    }
+    instance.destroy()
+  })
+
+  it('says unavailable when the shell has no way to ask', () => {
+    const { instance } = host({ hasUserActivation: () => true })
+    expect(refusal(instance, link('tel:4795551212'))).toMatchObject({ code: 'unavailable' })
+    instance.destroy()
+  })
+
+  it('refuses once the creation is closing', () => {
+    const { instance } = host({ onOpenLink: async () => {}, hasUserActivation: () => true })
+    instance.destroy()
+    expect(refusal(instance, link('https://example.org/'))).toMatchObject({ code: 'unavailable' })
+  })
+
+  it('opens a website in a new tab with no opener and no referrer', () => {
+    const open = vi.spyOn(window, 'open').mockReturnValue(null)
+    openOutboundLink(link('https://example.org/help'))
+    expect(open).toHaveBeenCalledWith('https://example.org/help', '_blank', 'noopener,noreferrer')
+    open.mockRestore()
+  })
+
+  it('hands phone and email links to the device through an ordinary anchor', () => {
+    const clicked: string[] = []
+    const click = vi
+      .spyOn(HTMLAnchorElement.prototype, 'click')
+      .mockImplementation(function (this: HTMLAnchorElement) {
+        clicked.push(this.getAttribute('href') ?? '')
+      })
+    openOutboundLink(link('tel:+1 479 555 1212'))
+    openOutboundLink(link('mailto:help@example.org?subject=Hi'))
+    expect(clicked).toEqual(['tel:+14795551212', 'mailto:help@example.org?subject=Hi'])
+    // And nothing is left behind in the page.
+    expect(document.querySelectorAll('a[href^="tel:"], a[href^="mailto:"]')).toHaveLength(0)
+    click.mockRestore()
   })
 })

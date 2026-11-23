@@ -8,14 +8,16 @@
  * can reuse every line that matters and reimplement only this file.
  */
 
-import { useEffect, useRef, useState } from 'react'
-import { CreationHost, type ErrorReason, type HostState } from '@townsquare/host'
+import { useCallback, useEffect, useRef, useState } from 'react'
+import { CreationHost, openOutboundLink, type ErrorReason, type HostState } from '@townsquare/host'
 import type { Manifest } from '@townsquare/manifest'
+import type { OutboundLink } from '@townsquare/shared'
 import { createActTokenHolder } from './actToken.js'
-import { townData } from './townData.js'
+import { createTownData } from './townData.js'
 import { Icon, type IconName } from './Icon.js'
 import { Button } from './ui/index.js'
 import { msg, t } from './i18n/index.js'
+import { LeavingDialog } from './creations/LeavingDialog.js'
 import './creations/creations.css'
 
 export interface CreationFrameProps {
@@ -52,6 +54,48 @@ export function CreationFrame(props: CreationFrameProps) {
   const mountRef = useRef<HTMLDivElement | null>(null)
   const [state, setState] = useState<HostState>({ name: 'mounting' })
   const [attempt, setAttempt] = useState(0)
+  // The link a creation asked to open, and how to tell the host the resident
+  // has answered. The host refuses another link until `answer` runs.
+  const [leaving, setLeaving] = useState<{ link: OutboundLink; answer(): void } | null>(null)
+  const leavingRef = useRef(leaving)
+  leavingRef.current = leaving
+  const stackRef = useRef<HTMLDivElement | null>(null)
+  const wasLeaving = useRef(false)
+
+  /*
+   * After the dialog closes, focus lands just outside the frame rather than
+   * back inside it.
+   *
+   * The host only accepts a link when focus is in the frame and the resident
+   * has just pressed something. The dialog's own "Stay here" click is such a
+   * press, so returning focus into the frame would let a creation ask again
+   * the instant the resident said no, and keep asking. With focus parked here,
+   * asking again takes a real new press inside the creation. A keyboard user
+   * is one Tab from where they were.
+   *
+   * This runs after the dialog's own cleanup, which restores focus to whatever
+   * opened it, so it has the last word.
+   */
+  useEffect(() => {
+    if (leaving) {
+      wasLeaving.current = true
+      return
+    }
+    if (wasLeaving.current) {
+      wasLeaving.current = false
+      stackRef.current?.focus()
+    }
+  }, [leaving])
+
+  const closeLeaving = useCallback((go: boolean) => {
+    const pending = leavingRef.current
+    if (!pending) return
+    // Opened from this click, in the shell, which is what lets the browser
+    // allow the new tab. The frame itself never could.
+    if (go) openOutboundLink(pending.link)
+    pending.answer()
+    setLeaving(null)
+  }, [])
 
   const { onStateChange } = props
   useEffect(() => {
@@ -71,7 +115,7 @@ export function CreationFrame(props: CreationFrameProps) {
       frameTitle: t('{name}, a resident-built creation', { name: props.manifest.name }),
       context: {
         user: props.user,
-        town: townData,
+        town: createTownData(props.town.id),
         identity: act.identity,
         storage: act.storage,
       },
@@ -81,6 +125,10 @@ export function CreationFrame(props: CreationFrameProps) {
       },
       onTitleChange: props.onTitleChange,
       onIncident: props.onIncident,
+      onOpenLink: (link) =>
+        new Promise<void>((answer) => {
+          setLeaving({ link, answer })
+        }),
     })
 
     void host.mount()
@@ -91,6 +139,10 @@ export function CreationFrame(props: CreationFrameProps) {
     return () => {
       host.destroy()
       act.dispose()
+      // A dialog belongs to the frame that asked. Rebuilding or leaving the
+      // creation withdraws the question rather than leaving it orphaned.
+      leavingRef.current?.answer()
+      setLeaving(null)
     }
     // `attempt` is in the deps so Try again rebuilds the whole host, and
     // `props.user` is in them so signing in re-mints under the new subject.
@@ -120,8 +172,14 @@ export function CreationFrame(props: CreationFrameProps) {
    * Found by the boundary suite.
    */
   return (
-    <div className="cr-framewrap cr-frame-stack">
+    <div className="cr-framewrap cr-frame-stack" ref={stackRef} tabIndex={-1}>
       <div ref={mountRef} />
+      <LeavingDialog
+        creationName={props.manifest.name}
+        link={leaving?.link ?? null}
+        onStay={() => closeLeaving(false)}
+        onGo={() => closeLeaving(true)}
+      />
       {state.name !== 'ready' && (
         <div className="cr-skeleton cr-skeleton-overlay" aria-busy="true">
           {/*

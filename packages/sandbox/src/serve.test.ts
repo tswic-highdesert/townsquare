@@ -3,7 +3,7 @@ import { compileCsp } from '@townsquare/shared'
 import { guestThemeCss } from '@townsquare/tokens'
 import { parseManifest } from '@townsquare/manifest'
 import { MemoryBundleStore } from './memoryStore.js'
-import { serveBundleRequest, type SandboxConfig } from './serve.js'
+import { sdkBasePath, serveBundleRequest, type SandboxConfig } from './serve.js'
 
 const ORIGIN = { appsDomain: 'tsq-apps.localhost', scheme: 'http' as const, port: 3031 }
 
@@ -71,6 +71,8 @@ function config(overrides: Partial<SandboxConfig> = {}): SandboxConfig {
 }
 
 const HOST = 'a7k2m9x4tsq.tsq-apps.localhost:3031'
+/** Where this config's SDK is served, fingerprint included. */
+const SDK = sdkBasePath(config().assets)
 const get = (url: string, host = HOST) =>
   serveBundleRequest({ method: 'GET', host, url }, config())
 
@@ -85,9 +87,9 @@ describe('serving a bundle', () => {
   it('injects the import map, theme and boot script into the entry', async () => {
     const body = dec((await get('/')).body)
     expect(body).toContain('<script type="importmap">')
-    expect(body).toContain('"@townsquare/sdk":"/_ts/sdk/1/sdk.js"')
+    expect(body).toContain(`"@townsquare/sdk":"${SDK}/sdk.js"`)
     expect(body).toContain('/_ts/theme/russellville-ar-19.css')
-    expect(body).toContain('/_ts/sdk/1/boot.js')
+    expect(body).toContain(`${SDK}/boot.js`)
   })
 
   it('puts the import map before any module script in the document', async () => {
@@ -131,7 +133,7 @@ describe('serving a bundle', () => {
 
 describe('security headers', () => {
   it('serves the frozen CSP verbatim on every asset', async () => {
-    for (const path of ['/', '/app.js', '/data/cameras.geojson', '/_ts/sdk/1/sdk.js']) {
+    for (const path of ['/', '/app.js', '/data/cameras.geojson', `${SDK}/sdk.js`]) {
       const res = await get(path)
       expect(res.headers['Content-Security-Policy'], path).toBe(csp())
     }
@@ -169,7 +171,7 @@ describe('security headers', () => {
   })
 
   it('never emits a Set-Cookie, because this process knows nothing about sessions', async () => {
-    for (const path of ['/', '/app.js', '/nope', '/_ts/sdk/1/sdk.js']) {
+    for (const path of ['/', '/app.js', '/nope', `${SDK}/sdk.js`]) {
       const res = await get(path)
       const names = Object.keys(res.headers).map((h) => h.toLowerCase())
       expect(names, path).not.toContain('set-cookie')
@@ -243,14 +245,14 @@ describe('host resolution', () => {
 
 describe('platform assets', () => {
   it('serves the SDK from the guest own origin so script-src self covers it', async () => {
-    const res = await get('/_ts/sdk/1/sdk.js')
+    const res = await get(`${SDK}/sdk.js`)
     expect(res.status).toBe(200)
     expect(res.headers['Content-Type']).toBe('text/javascript; charset=utf-8')
     expect(dec(res.body)).toContain('export const town')
   })
 
   it('serves a boot module that imports the same SDK URL', async () => {
-    const res = await get('/_ts/sdk/1/boot.js')
+    const res = await get(`${SDK}/boot.js`)
     expect(res.status).toBe(200)
     expect(dec(res.body)).toContain("import './sdk.js'")
   })
@@ -264,6 +266,20 @@ describe('platform assets', () => {
   it('404s an unknown platform path', async () => {
     expect((await get('/_ts/nope.js')).status).toBe(404)
     expect((await get('/_ts/sdk/9/sdk.js')).status).toBe(404)
+  })
+
+  it('puts a fingerprint of the SDK in its URL, so an update is never served from cache', async () => {
+    // The SDK is cached `immutable` for a year. Without the fingerprint, a
+    // browser that loaded an older SDK would keep running it after a release.
+    expect(SDK).toMatch(/^\/_ts\/sdk\/1-[0-9a-f]{16}$/)
+    const updated = { ...config().assets, sdkJs: 'export const town = { v: 2 }' }
+    expect(sdkBasePath(updated)).not.toBe(SDK)
+    expect(sdkBasePath({ ...updated })).toBe(sdkBasePath(updated))
+
+    // The old, unfingerprinted URL no longer serves anything.
+    expect((await get('/_ts/sdk/1/sdk.js')).status).toBe(404)
+    const res = await get(`${SDK}/sdk.js`)
+    expect(res.headers['Cache-Control']).toContain('immutable')
   })
 })
 

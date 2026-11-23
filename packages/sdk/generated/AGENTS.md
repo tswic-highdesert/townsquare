@@ -101,6 +101,21 @@ import { app } from '@townsquare/sdk'
 app.setTitle('12 cameras mapped')
 ```
 
+#### app.openLink(url: string): Promise<void>
+
+Open a website, phone number or email address for the resident.
+
+**You usually do not need this: ordinary links already work.** The SDK catches clicks on `<a href>` links that leave your app, including `target="_blank"`, `tel:` and `mailto:`, and calls this for you; it also routes `window.open`. Your frame cannot open pages itself, so Town Square shows the resident where the link goes and opens it only if they agree. Call it directly only from a click or tap handler: a call that is not the result of the resident pressing something is refused, and so is a second link while the first dialog is still open. Allowed: `https:`, `http:` (shown as not private), `tel:` and `mailto:` with one address and an optional subject and body. Refused: `javascript:`, `data:`, IP addresses, local network names, links with a username or password, and `cc`/`bcc`. The promise resolves once the dialog is shown, not when the resident answers, and you are never told whether they went.
+
+**Requires:** nothing  
+**Returns:** nothing  
+**Throws:** `invalid_request`, `rate_limited`, `unavailable`
+
+```js
+import { app } from '@townsquare/sdk'
+document.querySelector('#call').addEventListener('click', () => app.openLink('tel:+14795551212'))
+```
+
 ### `town`
 
 #### town.info(): Promise<TownInfo>

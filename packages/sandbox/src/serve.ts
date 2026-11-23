@@ -200,13 +200,55 @@ export async function serveBundleRequest(
 
   const injected = injectEntryHtml(new TextDecoder('utf-8').decode(blob), {
     themeHref: themeHref(resolved.townId, cfg.assets),
-    sdkMajor: cfg.assets.sdkMajor,
+    sdkBase: sdkBasePath(cfg.assets),
   })
   const bytes = encoder.encode(injected)
   // The served entry no longer matches the stored blob, so the blob's hash is
   // the wrong validator for it.
   delete headers['ETag']
   return { status: 200, headers: withLength(headers, bytes), body: bodyFor(req, bytes) }
+}
+
+/**
+ * Where the SDK is served from: `/_ts/sdk/<major>-<fingerprint>`.
+ *
+ * The SDK is served `immutable` with a one-year max-age, so a browser that has
+ * fetched it never asks again. If the URL stayed `/_ts/sdk/1/` across releases,
+ * a resident who had opened any creation before an SDK update would keep the old
+ * runtime for up to a year, and every fix or feature in the runtime would miss
+ * them. The fingerprint changes whenever the SDK's bytes do, so an update is a
+ * new URL. The entry document that names the URL is `no-cache`, so it always
+ * points at the current one. Same idea as `themeVersion` in the theme's URL,
+ * but derived from the content so it cannot be forgotten.
+ */
+export function sdkBasePath(assets: Pick<PlatformAssets, 'sdkMajor' | 'sdkJs'>): string {
+  if (assets.sdkJs !== fingerprinted.sdkJs) {
+    fingerprinted = { sdkJs: assets.sdkJs, fingerprint: fingerprint(assets.sdkJs) }
+  }
+  return `/_ts/sdk/${assets.sdkMajor}-${fingerprinted.fingerprint}`
+}
+
+/** The SDK is the same string on every request, so hash it once. */
+let fingerprinted = { sdkJs: '', fingerprint: '' }
+
+/**
+ * A 64-bit content fingerprint, as 16 hex characters.
+ *
+ * For cache busting only, not security: it only has to differ between one SDK
+ * release and the next. Synchronous and dependency-free because this package
+ * runs without Node's `crypto`, and Web Crypto's digest is async.
+ */
+function fingerprint(text: string): string {
+  let h1 = 0xdeadbeef
+  let h2 = 0x41c6ce57
+  for (let i = 0; i < text.length; i++) {
+    const c = text.charCodeAt(i)
+    h1 = Math.imul(h1 ^ c, 2654435761)
+    h2 = Math.imul(h2 ^ c, 1597334677)
+  }
+  h1 = Math.imul(h1 ^ (h1 >>> 16), 2246822507) ^ Math.imul(h2 ^ (h2 >>> 13), 3266489909)
+  h2 = Math.imul(h2 ^ (h2 >>> 16), 2246822507) ^ Math.imul(h1 ^ (h1 >>> 13), 3266489909)
+  return (h2 >>> 0).toString(16).padStart(8, '0') + (h1 >>> 0).toString(16).padStart(8, '0')
 }
 
 function themeHref(townId: string, assets: PlatformAssets): string {
@@ -224,7 +266,7 @@ function servePlatformAsset(
   cfg: SandboxConfig,
 ): SandboxResponse {
   const { assets } = cfg
-  const base = `/_ts/sdk/${assets.sdkMajor}/`
+  const base = `${sdkBasePath(assets)}/`
 
   const common: Record<string, string> = {
     ...BASE_HEADERS,

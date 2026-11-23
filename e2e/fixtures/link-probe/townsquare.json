@@ -1,0 +1,11 @@
+{
+  "manifest_version": 1,
+  "sdk": 1,
+  "name": "Boundary Link Probe",
+  "tagline": "Test-only outbound links",
+  "description": "A test fixture with ordinary links out of the sandbox: a new-tab website, a plain website, a phone number and a refused address. Never loaded outside the boundary suite.",
+  "version": "1.0.0",
+  "entry": "index.html",
+  "icon": "icon.png",
+  "permissions": {}
+}

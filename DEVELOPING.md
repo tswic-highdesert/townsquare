@@ -896,10 +896,9 @@ in two jobs split by cost:
 Both jobs read the Node version from `.nvmrc`, the same file a contributor's
 version manager reads.
 
-Neither is configured as a **required** status check today. GitHub does not
-offer branch protection or rulesets on a private repository on the Free plan,
-so nothing can require them yet. CONTRIBUTING.md says what must pass before
-work is merged, and the settings to turn on once the plan allows it.
+Neither is configured as a **required** status check yet. CONTRIBUTING.md says
+what must pass before work is merged, and the ruleset settings that make the
+two jobs required once the maintainer turns them on.
 
 The browser is cached on the resolved Playwright version, so bumping Playwright
 fetches a matching Chromium rather than silently reusing an incompatible one.
