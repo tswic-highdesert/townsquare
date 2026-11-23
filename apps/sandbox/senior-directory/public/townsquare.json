@@ -1,0 +1,12 @@
+{
+  "manifest_version": 1,
+  "sdk": 1,
+  "name": "Senior Directory",
+  "tagline": "Local help for older adults and their caregivers",
+  "description": "Find care, health, housing, money and everyday help for seniors in town, sorted by what you need, with one tap to call. Listings from the chamber of commerce and the Town Square directory.",
+  "version": "0.1.0",
+  "tags": ["community"],
+  "entry": "index.html",
+  "icon": "icon.png",
+  "display": { "surface": "full", "height": "auto" }
+}
