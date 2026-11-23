@@ -120,7 +120,7 @@ describe('the frame element', () => {
     const { instance, el } = host()
     void instance.mount()
     expect(frameIn(el)!.getAttribute('title')).toBe(
-      'The Burrito Index — a resident-built creation',
+      'The Burrito Index, a resident-built creation',
     )
     instance.destroy()
   })

@@ -15,7 +15,18 @@
  * of the policy, and the two would disagree on the day it mattered.
  */
 
+import { msg, t } from '../i18n/index.js'
+
 export type ContributionType = 'event' | 'correction' | 'notice' | 'collection' | 'photo'
+
+/** The type's own noun, for places that would otherwise print the machine value. */
+export const TYPE_NAMES: Record<ContributionType, string> = {
+  event: msg('event'),
+  correction: msg('correction'),
+  notice: msg('notice'),
+  collection: msg('collection'),
+  photo: msg('photo'),
+}
 
 /** What the chooser shows for one type, straight from the gate matrix. */
 export interface GateAvailability {
@@ -210,7 +221,7 @@ export async function submit(input: {
     const body = (await res.json()) as SubmitResult | ContributeError
     return res.ok ? (body as SubmitResult) : (body as ContributeError)
   } catch {
-    return { error: 'unavailable', message: 'We could not confirm your submission. Your text is still here. Check your contributions before trying again.' }
+    return { error: 'unavailable', message: t('We could not confirm your submission. Your text is still here. Check your contributions before trying again.') }
   }
 }
 
@@ -224,7 +235,7 @@ export async function saveDraft(input: {
     const body = (await res.json()) as { draft: Draft } | ContributeError
     return res.ok ? (body as { draft: Draft }).draft : (body as ContributeError)
   } catch {
-    return { error: 'unavailable', message: 'Draft not saved. Keep this page open and try again when your connection returns.' }
+    return { error: 'unavailable', message: t('Draft not saved. Keep this page open and try again when your connection returns.') }
   }
 }
 
@@ -242,7 +253,7 @@ export async function withdraw(id: string): Promise<Contribution | ContributeErr
     const body = (await res.json()) as { contribution: Contribution } | ContributeError
     return res.ok ? (body as { contribution: Contribution }).contribution : (body as ContributeError)
   } catch {
-    return { error: 'unavailable', message: 'We could not confirm the withdrawal. Check the status and try again.' }
+    return { error: 'unavailable', message: t('We could not confirm the withdrawal. Check the status and try again.') }
   }
 }
 
@@ -342,13 +353,22 @@ export async function searchListings(query: string): Promise<Listing[]> {
 /** The categories the event chips offer. Closed, so the feed can be filtered. */
 export const EVENT_CATEGORIES = ['music', 'church', 'sport', 'market', 'kids', 'civic'] as const
 
+export const EVENT_CATEGORY_NAMES: Record<(typeof EVENT_CATEGORIES)[number], string> = {
+  music: msg('music'),
+  church: msg('church'),
+  sport: msg('sport'),
+  market: msg('market'),
+  kids: msg('kids'),
+  civic: msg('civic'),
+}
+
 /** The fields a correction may touch. One correction, one field. */
 export const CORRECTION_FIELDS = [
-  { field: 'phone', label: 'Phone' },
-  { field: 'hours', label: 'Hours' },
-  { field: 'address', label: 'Address' },
-  { field: 'name', label: 'Name' },
-  { field: 'closed', label: 'Closed for good' },
+  { field: 'phone', label: msg('Phone') },
+  { field: 'hours', label: msg('Hours') },
+  { field: 'address', label: msg('Address') },
+  { field: 'name', label: msg('Name') },
+  { field: 'closed', label: msg('Closed for good') },
 ] as const
 
 /**
@@ -362,20 +382,20 @@ export const CORRECTION_FIELDS = [
 export const NOTICE_SEVERITIES = [
   {
     value: 'informational',
-    name: 'A notice',
-    what: 'Appears under Notices and in the week ahead. Nobody makes a sound.',
-    note: 'most notices',
+    name: msg('A notice'),
+    what: msg('Appears under Notices and in the week ahead. Nobody makes a sound.'),
+    note: msg('most notices'),
   },
   {
     value: 'advisory',
-    name: 'Time sensitive',
-    what: 'A quiet push, and it stays at the top of Today until it passes.',
+    name: msg('Time sensitive'),
+    what: msg('A quiet push, and it stays at the top of Today until it passes.'),
     note: null,
   },
   {
     value: 'urgent',
-    name: 'Urgent',
-    what: 'Wakes up every phone in Russellville, tonight, including people asleep. Held for a moderator before it sends.',
+    name: msg('Urgent'),
+    what: msg('Wakes up every phone in Russellville, tonight, including people asleep. Held for a moderator before it sends.'),
     note: null,
   },
 ] as const

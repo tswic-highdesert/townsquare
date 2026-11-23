@@ -28,6 +28,7 @@ import { useCallback, useEffect, useMemo, useRef, useState, type ReactNode } fro
 import './contribute.css'
 import { Button, ErrorState, Modal, Skeleton } from '../ui/index.js'
 import { Icon } from '../Icon.js'
+import { msg, t, tn } from '../i18n/index.js'
 import {
   discardDraft,
   fetchMine,
@@ -140,7 +141,7 @@ export function ContributeScreen(props: ContributeScreenProps) {
       setMine(list)
     } catch {
       if (initial) setFailed(true)
-      else setActionProblem('The latest status could not be loaded. Your confirmed submission is unchanged. Try again in a moment.')
+      else setActionProblem(t('The latest status could not be loaded. Your confirmed submission is unchanged. Try again in a moment.'))
     }
   }, [])
 
@@ -193,8 +194,9 @@ export function ContributeScreen(props: ContributeScreenProps) {
     return (
       <Shell onBack={props.onBack}>
         <ErrorState
-          line="Sign in to add something."
-          sub="Everything you add carries your handle, so we need to know who you are first."
+          heading
+          line={t('Sign in to add something.')}
+          sub={t('Everything you add carries your handle, so we need to know who you are first.')}
         />
       </Shell>
     )
@@ -203,7 +205,7 @@ export function ContributeScreen(props: ContributeScreenProps) {
   if (failed) {
     return (
       <Shell onBack={props.onBack}>
-        <ErrorState line="We could not load this." sub="Try again in a moment." />
+        <ErrorState heading line={t('We could not load this.')} sub={t('Try again in a moment.')} />
       </Shell>
     )
   }
@@ -277,7 +279,7 @@ export function ContributeScreen(props: ContributeScreenProps) {
       ?? (savedResult && !isError(savedResult) ? savedResult.id : existingDraftId)
     if (generation === composerGeneration.current) draftId.current = null
     if (savedDraft && !await discardDraft(savedDraft)) {
-      setActionProblem('Your submission was sent, but its draft could not be removed. Check Drafts before sending it again.')
+      setActionProblem(t('Your submission was sent, but its draft could not be removed. Check Drafts before sending it again.'))
     }
     publishingRef.current = false
     setPublishing(false)
@@ -298,7 +300,7 @@ export function ContributeScreen(props: ContributeScreenProps) {
       await reload()
     } else {
       setDiscarding(null)
-      setActionProblem('We could not confirm that the draft was removed. It is still shown here; try again.')
+      setActionProblem(t('We could not confirm that the draft was removed. It is still shown here; try again.'))
     }
   }
 
@@ -319,9 +321,9 @@ export function ContributeScreen(props: ContributeScreenProps) {
       {view.at === 'mine' ? (
         <>
           <div className="cn-mine-head-row">
-            <h1 className="cn-h1">What you have added</h1>
+            <h1 className="cn-h1">{t('What you have added')}</h1>
             <Button variant="primary" icon="plus" onClick={() => setChooser(true)}>
-              Add something
+              {t('Add something')}
             </Button>
           </div>
 
@@ -335,7 +337,7 @@ export function ContributeScreen(props: ContributeScreenProps) {
           {mine.drafts.length > 0 ? (
             <button type="button" className="cn-drafts-link" onClick={() => setView({ at: 'drafts' })}>
               <Icon name="archive" size={16} />
-              {mine.drafts.length === 1 ? '1 draft' : `${mine.drafts.length} drafts`}, not posted yet
+              {tn(mine.drafts.length, '{count} draft, not posted yet', '{count} drafts, not posted yet')}
             </button>
           ) : null}
 
@@ -420,10 +422,10 @@ export function ContributeScreen(props: ContributeScreenProps) {
         open={discarding !== null}
         onClose={() => setDiscarding(null)}
         kind="confirm"
-        title="Throw this draft away?"
+        title={t('Throw this draft away?')}
         description={
           discarding
-            ? `"${discarding.title}", with everything you already put in. This one is a real delete, not a version, because a draft was never published and there is nothing to keep a history of.`
+            ? t('"{title}", with everything you already put in. This one is a real delete, not a version, because a draft was never published and there is nothing to keep a history of.', { title: discarding.title })
             : ''
         }
         actions={
@@ -433,7 +435,7 @@ export function ContributeScreen(props: ContributeScreenProps) {
                 primitives already get right: a filled destructive button is a
                 button people press by accident. */}
             <Button variant="secondary" onClick={() => setDiscarding(null)}>
-              Keep it
+              {t('Keep it')}
             </Button>
             <Button
               variant="destructive"
@@ -442,7 +444,7 @@ export function ContributeScreen(props: ContributeScreenProps) {
                 if (target) void discardSavedDraft(target)
               }}
             >
-              Throw it away
+              {t('Throw it away')}
             </Button>
           </>
         }
@@ -453,12 +455,12 @@ export function ContributeScreen(props: ContributeScreenProps) {
 
 function Shell(props: { onBack: () => void; children: ReactNode }) {
   return (
-    <div className="cn-screen">
+    <main className="cn-screen">
       <Button variant="quiet" size="sm" icon="arrow-left" className="cn-back" onClick={props.onBack}>
-        Back
+        {t('Back')}
       </Button>
       {props.children}
-    </div>
+    </main>
   )
 }
 
@@ -478,7 +480,7 @@ function Composer(props: {
   onSaveDraft: () => void
   onPick: (type: ContributionType) => void
 }) {
-  const gate = props.options.types.find((t) => t.type === props.type)
+  const gate = props.options.types.find((g) => g.type === props.type)
 
   if (props.type === 'photo') {
     return <PhotoUnavailable reason={gate?.reason ?? null} onBack={props.onBack} />
@@ -498,12 +500,12 @@ function Composer(props: {
 
   return (
     <ComposerShell
-      kicker={meta.kicker}
-      title={meta.title}
+      kicker={t(meta.kicker)}
+      title={t(meta.title)}
       onBack={props.onBack}
       save={props.save}
       attribution={props.attribution}
-      publishLabel={props.publishing ? 'Sending…' : meta.publish}
+      publishLabel={props.publishing ? t('Sending…') : t(meta.publish)}
       publishDisabled={props.publishing}
       onPublish={props.onPublish}
       onSaveDraft={props.onSaveDraft}
@@ -550,10 +552,10 @@ function Composer(props: {
 }
 
 const COMPOSERS = {
-  event: { kicker: 'Adding', title: 'An event', publish: 'Post event' },
-  correction: { kicker: 'Correcting', title: 'A listing', publish: 'Send correction' },
-  notice: { kicker: 'Posting', title: 'A notice', publish: 'Publish notice' },
-  collection: { kicker: 'Making', title: 'A collection', publish: 'Publish collection' },
+  event: { kicker: msg('Adding'), title: msg('An event'), publish: msg('Post event') },
+  correction: { kicker: msg('Correcting'), title: msg('A listing'), publish: msg('Send correction') },
+  notice: { kicker: msg('Posting'), title: msg('A notice'), publish: msg('Publish notice') },
+  collection: { kicker: msg('Making'), title: msg('A collection'), publish: msg('Publish collection') },
 } as const
 
 function contentFor(type: ContributionType | null, drafts: Drafts): unknown {

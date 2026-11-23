@@ -34,12 +34,13 @@
  */
 
 import { Icon, type IconName } from './Icon.js'
+import { msg, t } from './i18n/index.js'
 import './nav/nav.css'
 
 export type TabName = 'today' | 'nearby' | 'creations' | 'yours'
 
 const TABS: ReadonlyArray<{ name: TabName; label: string; icon: IconName }> = [
-  { name: 'today', label: 'Today', icon: 'home' },
+  { name: 'today', label: msg('Today'), icon: 'home' },
   /*
     The word matches the heading it lands on. `Directory` titles its own bar
     "Directory" and opens with "There are 741 places in this directory", and a
@@ -48,15 +49,15 @@ const TABS: ReadonlyArray<{ name: TabName; label: string; icon: IconName }> = [
     stays `nearby` because `Directory` renders `TabBar current="nearby"` and
     that file is not ours to change.
   */
-  { name: 'nearby', label: 'Directory', icon: 'compass' },
-  { name: 'creations', label: 'Creations', icon: 'puzzle' },
+  { name: 'nearby', label: msg('Directory'), icon: 'compass' },
+  { name: 'creations', label: msg('Creations'), icon: 'puzzle' },
   /*
     "Yours" rather than the hi-fi's "You". The screen behind it is titled Yours
     and holds the things you kept and the things you built, and a tab whose
     word disagrees with the heading it lands on is a small lie told four times
     a day.
   */
-  { name: 'yours', label: 'Yours', icon: 'bookmarks' },
+  { name: 'yours', label: msg('Yours'), icon: 'bookmarks' },
 ]
 
 export function TabBar({
@@ -67,7 +68,7 @@ export function TabBar({
   onChange: (tab: TabName) => void
 }) {
   return (
-    <nav className="today-nav ts-nav" aria-label="Sections">
+    <nav className="today-nav ts-nav" aria-label={t('Sections')}>
       {TABS.map((tab) => {
         const here = tab.name === current
         return (
@@ -87,7 +88,7 @@ export function TabBar({
           >
             <span className="ts-tab-ind" aria-hidden="true" />
             <Icon name={tab.icon} size={22} />
-            <span className="ts-tab-label">{tab.label}</span>
+            <span className="ts-tab-label">{t(tab.label)}</span>
           </button>
         )
       })}

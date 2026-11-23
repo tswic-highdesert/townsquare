@@ -9,6 +9,7 @@
  */
 
 import { isError, type ApiError } from './session.js'
+import { t } from './i18n/index.js'
 
 export interface QueueItem {
   id: string
@@ -81,7 +82,7 @@ export async function fetchSubmission(id: string): Promise<ReviewDetail | ApiErr
   const res = await fetch(`/api/review/submissions/${id}`, { credentials: 'same-origin' })
   const parsed: unknown = await res.json().catch(() => null)
   if (!res.ok) {
-    return (parsed as ApiError | null) ?? { error: 'unavailable', message: 'Could not load that.' }
+    return (parsed as ApiError | null) ?? { error: 'unavailable', message: t('Could not load that.') }
   }
   return parsed as ReviewDetail
 }
@@ -161,7 +162,7 @@ export async function fetchCreationDetail(id: string): Promise<ModerationDetail 
   const res = await fetch(`/api/review/creations/${id}`, { credentials: 'same-origin' })
   const parsed: unknown = await res.json().catch(() => null)
   if (!res.ok) {
-    return (parsed as ApiError | null) ?? { error: 'unavailable', message: 'Could not load that.' }
+    return (parsed as ApiError | null) ?? { error: 'unavailable', message: t('Could not load that.') }
   }
   return parsed as ModerationDetail
 }
@@ -202,7 +203,7 @@ async function send<T>(path: string, body: unknown): Promise<T | ApiError> {
   })
   const parsed: unknown = await res.json().catch(() => null)
   if (!res.ok) {
-    return (parsed as ApiError | null) ?? { error: 'unavailable', message: 'Something went wrong.' }
+    return (parsed as ApiError | null) ?? { error: 'unavailable', message: t('Something went wrong.') }
   }
   return parsed as T
 }
@@ -217,14 +218,14 @@ export interface CorrectionReviewDetail {
 export async function fetchContributionQueue(): Promise<import('./contribute/contributeData.js').Contribution[] | ApiError> {
   const response = await fetch('/api/review/contributions', { credentials: 'same-origin' })
   const body = await response.json().catch(() => null)
-  if (!response.ok) return body ?? { error: 'unavailable', message: 'The correction queue could not be loaded.' }
+  if (!response.ok) return body ?? { error: 'unavailable', message: t('The correction queue could not be loaded.') }
   return body.items
 }
 
 export async function fetchContributionReview(id: string): Promise<CorrectionReviewDetail | ApiError> {
   const response = await fetch(`/api/review/contributions/${encodeURIComponent(id)}`, { credentials: 'same-origin' })
   const body = await response.json().catch(() => null)
-  return response.ok ? body : body ?? { error: 'unavailable', message: 'The correction could not be loaded.' }
+  return response.ok ? body : body ?? { error: 'unavailable', message: t('The correction could not be loaded.') }
 }
 
 export function decideContribution(id: string, decision: 'approve' | 'decline', note: string): Promise<{ contribution: import('./contribute/contributeData.js').Contribution } | ApiError> {

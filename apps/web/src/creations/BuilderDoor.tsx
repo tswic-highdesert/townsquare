@@ -23,6 +23,7 @@
 import { useEffect, useState } from 'react'
 import { Icon } from '../Icon.js'
 import { Button, Card, TextInput } from '../ui/index.js'
+import { t, tn } from '../i18n/index.js'
 import {
   fetchTokens,
   isError,
@@ -50,7 +51,7 @@ export function BuilderDoor(props: BuilderDoorProps) {
   return (
     <div className="shell cr-screen">
       <button className="cr-back" onClick={props.onBack}>
-        <Icon name="arrow-left" size={16} /> Back
+        <Icon name="arrow-left" size={16} /> {t('Back')}
       </button>
 
       {/*
@@ -63,24 +64,23 @@ export function BuilderDoor(props: BuilderDoorProps) {
         interruption, and it is reached by asking rather than sprung.
       */}
       <Card dark elevation="raised" className="cr-bd-hero">
-        <div className="cr-eyebrow">Build on Town Square</div>
-        <h1 className="cr-bd-hero-h">This town square runs on things somebody made.</h1>
+        <div className="cr-eyebrow">{t('Build on Town Square')}</div>
+        <h1 className="cr-bd-hero-h">{t('This town square runs on things somebody made.')}</h1>
         <p className="cr-bd-hero-lede">
-          If you can describe an app, the AI tool you already use can build it, and Town Square can
-          host it. A trail conditions board. A map of every camera anyone has spotted. A list of who
-          still has a generator after an ice storm.
+          {t(
+            'If you can describe an app, the AI tool you already use can build it, and Town Square can host it. A trail conditions board. A map of every camera anyone has spotted. A list of who still has a generator after an ice storm.',
+          )}
         </p>
         <Button
           variant="on-navy"
           icon="plug"
           onClick={() => document.getElementById(CONNECT_ID)?.scrollIntoView({ block: 'start' })}
         >
-          Connect your AI tool
+          {t('Connect your AI tool')}
         </Button>
         {props.creationCount !== undefined && props.creationCount > 0 && (
           <p className="cr-bd-count">
-            {props.creationCount} {props.creationCount === 1 ? 'creation is' : 'creations are'} live
-            right now.
+            {tn(props.creationCount, '{count} creation is live right now.', '{count} creations are live right now.')}
           </p>
         )}
       </Card>
@@ -108,10 +108,11 @@ function Steps() {
           1
         </span>
         <div>
-          <b>Connect</b>
+          <b>{t('Connect')}</b>
           <span>
-            Mint a token below and paste one line into your tool. It then knows the SDK, the
-            manifest format, and this town's real data.
+            {t(
+              "Mint a token below and paste one line into your tool. It then knows the SDK, the manifest format, and this town's real data.",
+            )}
           </span>
         </div>
       </li>
@@ -120,10 +121,11 @@ function Steps() {
           2
         </span>
         <div>
-          <b>Build and preview</b>
+          <b>{t('Build and preview')}</b>
           <span>
-            Describe what you want. Your tool writes it, checks it against the same validator the
-            review queue runs, and puts it on a real sandbox address you can open on your phone.
+            {t(
+              'Describe what you want. Your tool writes it, checks it against the same validator the review queue runs, and puts it on a real sandbox address you can open on your phone.',
+            )}
           </span>
         </div>
       </li>
@@ -132,11 +134,11 @@ function Steps() {
           3
         </span>
         <div>
-          <b>Submit for review</b>
+          <b>{t('Submit for review')}</b>
           <span>
-            A neighbour on the committee reads your source and your permissions, then approves it or
-            tells you what to change. It takes as long as a person reading it takes. Updates get
-            read too.
+            {t(
+              'A neighbour on the committee reads your source and your permissions, then approves it or tells you what to change. It takes as long as a person reading it takes. Updates get read too.',
+            )}
           </span>
         </div>
       </li>
@@ -150,36 +152,37 @@ function Prerequisite() {
     <div className="cr-bd-prereq">
       <div className="cr-bd-prereq-head">
         <Icon name="info" size={20} />
-        <b>You will need an AI tool of your own</b>
+        <b>{t('You will need an AI tool of your own')}</b>
       </div>
       <p>
-        Town Square does not write apps for you. There is no chat box here. You bring a tool you
-        already have, it does the writing, and the cost of that writing is yours rather than the
-        town's. That is why this is free to host.
+        {t(
+          "Town Square does not write apps for you. There is no chat box here. You bring a tool you already have, it does the writing, and the cost of that writing is yours rather than the town's. That is why this is free to host.",
+        )}
       </p>
       <ul className="cr-bd-prereq-list">
         <li>
           <Icon name="check" size={15} />
           <span>
-            <b>Claude Code</b>, in a terminal. What this is built against, and the smoothest path.
+            <b>Claude Code</b>{t(', in a terminal. What this is built against, and the smoothest path.')}
           </span>
         </li>
         <li>
           <Icon name="check" size={15} />
           <span>
-            <b>Anything else that speaks MCP.</b> Works, with a little more setup.
+            <b>{t('Anything else that speaks MCP.')}</b> {t('Works, with a little more setup.')}
           </span>
         </li>
         <li>
           <Icon name="x-circle" size={15} />
           <span>
-            <b>A phone alone</b> is not enough yet. You need a computer you can run a command on.
+            <b>{t('A phone alone')}</b> {t('is not enough yet. You need a computer you can run a command on.')}
           </span>
         </li>
       </ul>
       <p className="cr-bd-prereq-tail">
-        You do not need to know JavaScript. You do need to be willing to read what your tool wrote,
-        because you are the one submitting it and your name goes on it.
+        {t(
+          'You do not need to know JavaScript. You do need to be willing to read what your tool wrote, because you are the one submitting it and your name goes on it.',
+        )}
       </p>
     </div>
   )
@@ -211,13 +214,14 @@ function Connect({
   if (!account) {
     return (
       <div className="cr-bd-gate" id={CONNECT_ID}>
-        <div className="cr-detail-h">Connect your AI tool</div>
+        <div className="cr-detail-h">{t('Connect your AI tool')}</div>
         <p>
-          A connection token is minted against your account, so this part needs you signed in. It is
-          the same sign-in as the rest of Town Square.
+          {t(
+            'A connection token is minted against your account, so this part needs you signed in. It is the same sign-in as the rest of Town Square.',
+          )}
         </p>
         <Button variant="primary" onClick={onSignIn}>
-          Sign in
+          {t('Sign in')}
         </Button>
       </div>
     )
@@ -228,7 +232,7 @@ function Connect({
   async function mint() {
     setBusy(true)
     setProblem(null)
-    const result = await mintConnectToken(label.trim() || 'my laptop')
+    const result = await mintConnectToken(label.trim() || t('my laptop'))
     setBusy(false)
     if (isError(result)) {
       setProblem(result.message)
@@ -251,7 +255,7 @@ function Connect({
   return (
     <>
       <div className="cr-detail-h" id={CONNECT_ID}>
-        Connect your AI tool
+        {t('Connect your AI tool')}
       </div>
 
       {minted ? (
@@ -260,7 +264,7 @@ function Connect({
         <div className="cr-bd-panel">
           <div className="cr-bd-panel-head">
             <Icon name="key" size={16} />
-            <b>New connection</b>
+            <b>{t('New connection')}</b>
           </div>
 
           {/*
@@ -269,8 +273,8 @@ function Connect({
             that a hand-rolled version gets wrong about a third of the time.
           */}
           <TextInput
-            label="What is this for"
-            help="So you can tell two machines apart later. Only you see it."
+            label={t('What is this for')}
+            help={t('So you can tell two machines apart later. Only you see it.')}
             type="text"
             value={label}
             placeholder="MacBook, Claude Code"
@@ -286,43 +290,44 @@ function Connect({
             own work.
           */}
           <div className="cr-bd-scopes">
-            <div className="cr-bd-scopes-head">What this token can do</div>
+            <div className="cr-bd-scopes-head">{t('What this token can do')}</div>
             <ul>
               <li>
                 <Icon name="book" size={15} />
                 <span>
-                  <b>Read the SDK and templates.</b> Docs, examples, starting shapes.
+                  <b>{t('Read the SDK and templates.')}</b> {t('Docs, examples, starting shapes.')}
                 </span>
               </li>
               <li>
                 <Icon name="database" size={15} />
                 <span>
-                  <b>Read the town's public data.</b> Events, notices, businesses. The same things
-                  the website shows anyone.
+                  <b>{t("Read the town's public data.")}</b>{' '}
+                  {t('Events, notices, businesses. The same things the website shows anyone.')}
                 </span>
               </li>
               <li>
                 <Icon name="package" size={15} />
                 <span>
-                  <b>Create and preview drafts you own.</b> Nobody else's drafts, ever.
+                  <b>{t('Create and preview drafts you own.')}</b> {t("Nobody else's drafts, ever.")}
                 </span>
               </li>
               <li>
                 <Icon name="send" size={15} />
                 <span>
-                  <b>Submit for review.</b> Submit, not publish. There is no token that skips the
-                  committee.
+                  <b>{t('Submit for review.')}</b>{' '}
+                  {t('Submit, not publish. There is no token that skips the committee.')}
                 </span>
               </li>
             </ul>
             <p>
-              These are fixed. They are not scopes you pick, because a builder choosing their own
-              permissions is the thing the review queue exists to check.
+              {t(
+                'These are fixed. They are not scopes you pick, because a builder choosing their own permissions is the thing the review queue exists to check.',
+              )}
             </p>
           </div>
 
           <Button variant="primary" full loading={busy} onClick={() => void mint()}>
-            Mint token
+            {t('Mint token')}
           </Button>
         </div>
       )}
@@ -334,18 +339,20 @@ function Connect({
       )}
 
       {tokens === null ? null : tokens.length === 0 ? (
-        <p className="cr-footnote">No connections yet. Minting one is how this starts.</p>
+        <p className="cr-footnote">{t('No connections yet. Minting one is how this starts.')}</p>
       ) : (
         <>
-          <div className="cr-detail-h">Your connections</div>
+          <div className="cr-detail-h">{t('Your connections')}</div>
           <ul className="cr-bd-tokens">
             {tokens.map((token) => (
               <TokenRow key={token.id} token={token} onRevoke={() => void revoke(token.id)} />
             ))}
           </ul>
           <p className="cr-footnote">
-            {active.length} of 10 active. A resident with ten tokens is a resident who has lost
-            track of one.
+            {t(
+              '{active} of 10 active. A resident with ten tokens is a resident who has lost track of one.',
+              { active: active.length },
+            )}
           </p>
         </>
       )}
@@ -367,26 +374,28 @@ function Minted({ minted, onDone }: { minted: MintedToken; onDone: () => void })
     <div className="cr-bd-panel" data-state="warn">
       <div className="cr-bd-panel-head" data-state="warn">
         <Icon name="eye" size={16} />
-        <b>Copy this now</b>
+        <b>{t('Copy this now')}</b>
       </div>
 
       <p className="cr-bd-once">
         <Icon name="warning" size={15} />
-        <span>{minted.warning} Town Square keeps a one-way hash of it, so we genuinely cannot
-        recover it, not even for you. Lose it and you mint another.</span>
+        <span>{minted.warning} {t(
+          'Town Square keeps a one-way hash of it, so we genuinely cannot recover it, not even for you. Lose it and you mint another.',
+        )}</span>
       </p>
 
-      <Copyable value={minted.token} label="the token" mono />
+      <Copyable value={minted.token} label={t('the token')} mono />
       <p className="cr-bd-note">
-        The prefix on it is deliberate. Secret scanners know it, and so does the bundle checker, so
-        if this ever lands in a file you publish, something catches it.
+        {t(
+          'The prefix on it is deliberate. Secret scanners know it, and so does the bundle checker, so if this ever lands in a file you publish, something catches it.',
+        )}
       </p>
 
-      <div className="cr-bd-field-label">Paste this in your terminal</div>
-      <Copyable value={minted.claude_code_command} label="the command" mono block />
+      <div className="cr-bd-field-label">{t('Paste this in your terminal')}</div>
+      <Copyable value={minted.claude_code_command} label={t('the command')} mono block />
 
       <Button variant="secondary" full onClick={onDone}>
-        Done, I have copied it
+        {t('Done, I have copied it')}
       </Button>
     </div>
   )
@@ -429,9 +438,9 @@ function Copyable({
             () => setCopied(false),
           )
         }}
-        aria-label={copied ? `Copied ${label}` : `Copy ${label}`}
+        aria-label={copied ? t('Copied {thing}', { thing: label }) : t('Copy {thing}', { thing: label })}
       >
-        {copied ? 'Copied' : 'Copy'}
+        {copied ? t('Copied') : t('Copy')}
       </Button>
     </div>
   )
@@ -448,7 +457,7 @@ function TokenRow({ token, onRevoke }: { token: ConnectToken; onRevoke: () => vo
           <div className="cr-bd-tok-when">
             <Icon name="x-circle" size={14} />
             {/* Kept on the list so you know it is dead, not missing. */}
-            Revoked
+            {t('Revoked')}
           </div>
         ) : (
           <div className="cr-bd-tok-when">
@@ -461,12 +470,14 @@ function TokenRow({ token, onRevoke }: { token: ConnectToken; onRevoke: () => vo
       {token.revoked ? null : confirming ? (
         <div className="cr-bd-tok-confirm">
           <p>
-            <b>Revoke "{token.label}"?</b> Whatever is using it stops working on its very next call.
-            Your drafts and anything you have published stay exactly where they are.
+            <b>{t('Revoke "{label}"?', { label: token.label })}</b>{' '}
+            {t(
+              'Whatever is using it stops working on its very next call. Your drafts and anything you have published stay exactly where they are.',
+            )}
           </p>
           <div className="cr-bd-tok-confirm-acts">
             <Button variant="secondary" size="sm" onClick={() => setConfirming(false)}>
-              Keep it
+              {t('Keep it')}
             </Button>
             {/*
               Destructive is an outlined terracotta, never brick: revoking a
@@ -475,13 +486,13 @@ function TokenRow({ token, onRevoke }: { token: ConnectToken; onRevoke: () => vo
               anything.
             */}
             <Button variant="destructive" size="sm" onClick={onRevoke}>
-              Yes, revoke it
+              {t('Yes, revoke it')}
             </Button>
           </div>
         </div>
       ) : (
         <Button variant="secondary" size="sm" onClick={() => setConfirming(true)}>
-          Revoke
+          {t('Revoke')}
         </Button>
       )}
     </li>

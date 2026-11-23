@@ -19,6 +19,8 @@
  * inside a component.
  */
 
+import { t } from './i18n/index.js'
+
 export type PlaceKind = 'eat' | 'shop' | 'care' | 'civic' | 'service'
 
 export interface NearbyPlace {
@@ -99,9 +101,9 @@ export function milesBetween(a: Position, b: Position): number {
  * carries a handful of listings geocoded to the next county.
  */
 export function formatDistance(miles: number): string {
-  if (miles < 0.1) return `${Math.max(50, Math.round((miles * 5280) / 50) * 50)} ft`
-  if (miles < 10) return `${miles.toFixed(1)} mi`
-  return `${Math.round(miles)} mi`
+  if (miles < 0.1) return t('{distance} ft', { distance: Math.max(50, Math.round((miles * 5280) / 50) * 50) })
+  if (miles < 10) return t('{distance} mi', { distance: miles.toFixed(1) })
+  return t('{distance} mi', { distance: Math.round(miles) })
 }
 
 export interface RankOptions {
@@ -170,7 +172,7 @@ export function reachLabel(ranked: readonly RankedPlace[]): string | null {
     (max, p) => (p.miles === null ? max : Math.max(max ?? 0, p.miles)),
     null,
   )
-  return farthest === null ? null : `Within ${formatDistance(farthest)}`
+  return farthest === null ? null : t('Within {distance}', { distance: formatDistance(farthest) })
 }
 
 /**

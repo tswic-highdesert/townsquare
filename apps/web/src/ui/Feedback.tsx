@@ -1,6 +1,7 @@
 import type { ReactNode } from 'react'
 import { Icon, type IconName } from '../Icon.js'
 import { cx } from './cx.js'
+import { t } from '../i18n/index.js'
 
 /**
  * The states a screen spends most of its life in.
@@ -103,6 +104,8 @@ export interface EmptyStateProps {
   action?: { label: string; onAct: () => void }
   /** Centred when it owns the screen, left when it sits in a slot. */
   align?: 'center' | 'start'
+  /** When it owns the screen, the line is the screen's `h1`. */
+  heading?: boolean
   /**
    * `good` is the cleared moderation queue and the only empty in the product
    * that swaps its accent to sage: it is the one place where "there is nothing
@@ -127,10 +130,12 @@ export function EmptyState({
   sub,
   action,
   align = 'center',
+  heading = false,
   tone = 'neutral',
   children,
   className,
 }: EmptyStateProps) {
+  const Line = heading ? 'h1' : 'p'
   return (
     <div
       className={cx('ts-empty', className)}
@@ -138,7 +143,7 @@ export function EmptyState({
       data-tone={tone === 'neutral' ? undefined : tone}
     >
       {mark ? <span className={`ts-mark ts-mark--${mark}`} aria-hidden="true" /> : null}
-      <p className="ts-empty-line">{line}</p>
+      <Line className="ts-empty-line">{line}</Line>
       {sub ? <p className="ts-empty-sub">{sub}</p> : null}
       {children}
       {action ? (
@@ -167,6 +172,8 @@ export interface ErrorStateProps {
   mark?: EmptyMark
   /** Time, reference and status page. Only on a whole-screen failure. */
   meta?: string
+  /** When nothing else on the screen loaded, the line is the screen's `h1`. */
+  heading?: boolean
   children?: ReactNode
   className?: string
 }
@@ -182,18 +189,20 @@ export function ErrorState({
   line,
   sub,
   onRetry,
-  retryLabel = 'Try now',
+  retryLabel = t('Try now'),
   scope = 'section',
   mark,
   meta,
+  heading = false,
   children,
   className,
 }: ErrorStateProps) {
+  const Line = heading ? 'h1' : 'p'
   if (scope === 'screen') {
     return (
       <div className={cx('ts-screen-fail', className)}>
         {mark ? <span className={`ts-mark ts-mark--${mark}`} aria-hidden="true" /> : null}
-        <p className="ts-screen-fail-line">{line}</p>
+        <Line className="ts-screen-fail-line">{line}</Line>
         {sub ? <p className="ts-screen-fail-sub">{sub}</p> : null}
         {children}
         {onRetry ? (
@@ -209,7 +218,7 @@ export function ErrorState({
 
   return (
     <div className={cx('ts-sect-fail', className)}>
-      <p className="ts-sect-fail-line">{line}</p>
+      <Line className="ts-sect-fail-line">{line}</Line>
       {sub ? <p className="ts-sect-fail-sub">{sub}</p> : null}
       {children}
       {onRetry ? (

@@ -21,6 +21,7 @@
 
 import { Textarea, TextInput } from '../ui/index.js'
 import { Icon } from '../Icon.js'
+import { t } from '../i18n/index.js'
 import { CORRECTION_FIELDS, type Listing } from './contributeData.js'
 import { PlacePicker } from './PlacePicker.js'
 
@@ -52,9 +53,9 @@ export function correctionContent(draft: CorrectionDraft) {
 }
 
 export function correctionMissing(draft: CorrectionDraft): string | null {
-  if (!draft.listing) return 'Pick the listing you are correcting.'
-  if (!draft.newValue.trim()) return 'It needs the corrected value.'
-  if (!draft.reason.trim()) return 'A reason is required. It is what a reviewer reads.'
+  if (!draft.listing) return t('Pick the listing you are correcting.')
+  if (!draft.newValue.trim()) return t('It needs the corrected value.')
+  if (!draft.reason.trim()) return t('A reason is required. It is what a reviewer reads.')
   return null
 }
 
@@ -80,14 +81,13 @@ export function CorrectionComposer(props: {
   return (
     <>
       <p className="cn-lead">
-        Pick the one thing that is wrong. One correction, one field, so it can be accepted or turned
-        down on its own.
+        {t('Pick the one thing that is wrong. One correction, one field, so it can be accepted or turned down on its own.')}
       </p>
 
       {/* No escape hatch here: a correction is an edit against a listing that
           already exists, so there is nothing to correct if it is not one. */}
       <PlacePicker
-        label="Which listing"
+        label={t('Which listing')}
         listingsOnly
         place={draft.listing ? { listingId: draft.listing.id, name: draft.listing.name } : null}
         onPick={(_place, listing) =>
@@ -102,7 +102,7 @@ export function CorrectionComposer(props: {
 
       <div className="cn-field">
         <span className="cn-label" id="cn-fieldpick">
-          Which field
+          {t('Which field')}
         </span>
         <div className="cn-chips" role="group" aria-labelledby="cn-fieldpick">
           {CORRECTION_FIELDS.map(({ field, label }) => {
@@ -126,7 +126,7 @@ export function CorrectionComposer(props: {
                 }
               >
                 {on ? <Icon name="check" size={16} /> : null}
-                {label}
+                {t(label)}
               </button>
             )
           })}
@@ -135,19 +135,19 @@ export function CorrectionComposer(props: {
 
       <div className="cn-diff">
         <div className="cn-diff-side" data-side="old">
-          <span className="cn-diff-tag">On the listing now</span>
+          <span className="cn-diff-tag">{t('On the listing now')}</span>
           <p className="cn-diff-val">
-            {before || <span className="cn-diff-none">Nothing is listed for this yet</span>}
+            {before || <span className="cn-diff-none">{t('Nothing is listed for this yet')}</span>}
           </p>
-          <span className="cn-diff-src">From the directory import</span>
+          <span className="cn-diff-src">{t('From the directory import')}</span>
         </div>
         <div className="cn-diff-arrow" aria-hidden="true">
           <Icon name="arrow-down" size={16} />
         </div>
         <div className="cn-diff-side" data-side="new">
-          <span className="cn-diff-tag">Your correction</span>
+          <span className="cn-diff-tag">{t('Your correction')}</span>
           <TextInput
-            label="Corrected value"
+            label={t('Corrected value')}
             className="cn-sr-label"
             value={draft.newValue}
             maxLength={200}
@@ -157,19 +157,18 @@ export function CorrectionComposer(props: {
       </div>
 
       <Textarea
-        label="How do you know"
+        label={t('How do you know')}
         value={draft.reason}
         rows={3}
         maxLength={300}
-        help="A reason is required. It is what a reviewer actually reads."
+        help={t('A reason is required. It is what a reviewer actually reads.')}
         onChange={(e) => onChange({ ...draft, reason: e.target.value })}
       />
 
       <div className="cn-vernote">
         <Icon name="history" size={16} />
         <p>
-          This becomes a new version of the listing. The current one stays exactly as it is and
-          anyone, including you, can put it back. Nothing here is deleted.
+          {t('This becomes a new version of the listing. The current one stays exactly as it is and anyone, including you, can put it back. Nothing here is deleted.')}
         </p>
       </div>
     </>

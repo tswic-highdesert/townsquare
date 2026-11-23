@@ -27,6 +27,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { Icon } from '../Icon.js'
 import { FOCUSABLE, wrapFocus } from '../ui/index.js'
+import { msg, t, tn } from '../i18n/index.js'
 import {
   PER_GROUP,
   clearRecent,
@@ -45,6 +46,14 @@ const GLYPH: Record<SearchKind, 'newspaper' | 'ticket' | 'storefront' | 'puzzle'
   event: 'ticket',
   place: 'storefront',
   creation: 'puzzle',
+}
+
+/** One sentence per kind, so Spanish can agree the article with the noun. */
+const SHOW_ALL: Record<SearchKind, string> = {
+  story: msg('Show all {count} stories'),
+  event: msg('Show all {count} events'),
+  place: msg('Show all {count} places'),
+  creation: msg('Show all {count} creations'),
 }
 
 export interface SearchOverlayProps {
@@ -147,7 +156,7 @@ export function SearchOverlay(props: SearchOverlayProps) {
       className="ts-omni"
       role="dialog"
       aria-modal="true"
-      aria-label={`Search ${props.townName}`}
+      aria-label={t('Search {place}', { place: props.townName })}
       ref={panel}
       onKeyDown={onKeyDown}
     >
@@ -158,8 +167,8 @@ export function SearchOverlay(props: SearchOverlayProps) {
             ref={field}
             type="search"
             value={query}
-            placeholder={`Search ${props.townName}`}
-            aria-label={`Search ${props.townName}`}
+            placeholder={t('Search {place}', { place: props.townName })}
+            aria-label={t('Search {place}', { place: props.townName })}
             autoComplete="off"
             // The browser's own suggestion list would draw over the results
             // and offer things this town has never heard of.
@@ -174,19 +183,19 @@ export function SearchOverlay(props: SearchOverlayProps) {
           />
         </div>
         <button className="ts-omni-cancel" type="button" onClick={props.onClose}>
-          Cancel
+          {t('Cancel')}
         </button>
       </div>
 
       <div className="ts-omni-body">
         {!typed && (
           <>
-            <p className="ts-omni-lede">Stories, events, places and creations, all at once.</p>
+            <p className="ts-omni-lede">{t('Stories, events, places and creations, all at once.')}</p>
 
             {recent.length > 0 && (
               <div className="ts-omni-group">
                 <div className="ts-omni-glabel">
-                  Recent
+                  {t('Recent')}
                   <button
                     className="ts-omni-clear"
                     type="button"
@@ -195,7 +204,7 @@ export function SearchOverlay(props: SearchOverlayProps) {
                       setRecent([])
                     }}
                   >
-                    Clear
+                    {t('Clear')}
                   </button>
                 </div>
                 {recent.map((entry) => (
@@ -221,7 +230,7 @@ export function SearchOverlay(props: SearchOverlayProps) {
 
             {offers.length > 0 && (
               <div className="ts-omni-group">
-                <div className="ts-omni-glabel">Try</div>
+                <div className="ts-omni-glabel">{t('Try')}</div>
                 {offers.map((doc) => (
                   <button
                     key={`${doc.kind}:${doc.id}`}
@@ -244,8 +253,9 @@ export function SearchOverlay(props: SearchOverlayProps) {
 
             <p className="ts-omni-foot">
               <Icon name="lock" size={16} />
-              Searching happens on this device. Nothing you type is sent anywhere, and your recent
-              searches are never used to rank anything.
+              {t(
+                'Searching happens on this device. Nothing you type is sent anywhere, and your recent searches are never used to rank anything.',
+              )}
             </p>
           </>
         )}
@@ -253,14 +263,14 @@ export function SearchOverlay(props: SearchOverlayProps) {
         {typed && (
           <div aria-live="polite" className="ts-omni-count">
             {nothing
-              ? `Nothing in ${props.townName} is filed under ${query.trim()}.`
-              : `${countHits(groups)} in ${groups.length} ${groups.length === 1 ? 'group' : 'groups'}.`}
+              ? t('Nothing in {place} is filed under {query}.', { place: props.townName, query: query.trim() })
+              : tn(groups.length, '{hits} in {count} group.', '{hits} in {count} groups.', { hits: countHits(groups) })}
           </div>
         )}
 
         {groups.map((group) => (
           <div className="ts-omni-group" key={group.kind}>
-            <div className="ts-omni-glabel">{group.label}</div>
+            <div className="ts-omni-glabel">{t(group.label)}</div>
             {group.hits.map((doc) => (
               <button
                 key={`${doc.kind}:${doc.id}`}
@@ -285,7 +295,7 @@ export function SearchOverlay(props: SearchOverlayProps) {
                 type="button"
                 onClick={() => setExpanded(group.kind)}
               >
-                Show all {group.total} {group.label.toLowerCase()}
+                {t(SHOW_ALL[group.kind], { count: group.total })}
                 <Icon name="chevron-down" size={16} />
               </button>
             )}
@@ -302,17 +312,18 @@ export function SearchOverlay(props: SearchOverlayProps) {
         {nothing && (
           <>
             <p className="ts-omni-lede">
-              This searches today's stories, what is on today, every business in the directory, and
-              everything neighbours have built. It does not reach back through the archive.
+              {t(
+                "This searches today's stories, what is on today, every business in the directory, and everything neighbours have built. It does not reach back through the archive.",
+              )}
             </p>
             <div className="ts-omni-offer">
-              <div className="ts-offer-t">Know something we are missing?</div>
+              <div className="ts-offer-t">{t('Know something we are missing?')}</div>
               <div className="ts-offer-s">
-                Add it and it is in {props.townName} for everyone, tonight.
+                {t('Add it and it is in {place} for everyone, tonight.', { place: props.townName })}
               </div>
               <button className="ts-offer-btn" type="button" onClick={props.onAddSomething}>
                 <Icon name="plus" size={16} />
-                Add to the town
+                {t('Add to the town')}
               </button>
             </div>
           </>
@@ -321,7 +332,7 @@ export function SearchOverlay(props: SearchOverlayProps) {
         {props.loading && (
           <p className="ts-omni-foot">
             <Icon name="loader" size={16} />
-            Still loading the rest of the directory.
+            {t('Still loading the rest of the directory.')}
           </p>
         )}
       </div>
@@ -331,5 +342,5 @@ export function SearchOverlay(props: SearchOverlayProps) {
 
 function countHits(groups: ReturnType<typeof searchTown>): string {
   const total = groups.reduce((sum, group) => sum + group.total, 0)
-  return `${total} ${total === 1 ? 'result' : 'results'}`
+  return tn(total, '{count} result', '{count} results')
 }

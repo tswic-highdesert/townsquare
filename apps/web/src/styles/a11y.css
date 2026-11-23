@@ -1,0 +1,44 @@
+/*
+ * Accessibility rules that hold across every screen. Imported last, so they
+ * win over a screen rule without needing `!important`, except where noted.
+ */
+
+/*
+ * The `<main>` a screen puts between the app bar and the tab bar. It keeps the
+ * flex column the screen's blocks were laid out in before the landmark existed:
+ * margins still do not collapse, and the map still grows into the space left.
+ * On a wide screen it is one item in the `.today` grid, in the reading column.
+ */
+.today > .ts-main {
+  display: flex;
+  flex-direction: column;
+  flex: 1 0 auto;
+  min-width: 0;
+}
+
+/*
+ * The safety net for WCAG 2.3.3. Every screen already turns off its own
+ * movement under this query; this catches whatever a later change forgets.
+ * `!important` because a component's own transition is more specific than a
+ * universal selector, and this rule has to beat all of them.
+ */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/*
+ * The current tab keeps its focus ring. On a wide screen the current tab's
+ * lift shadow is set by a rule as specific as the ring's, and it was winning:
+ * tabbing onto the tab you are already on showed nothing at all.
+ */
+.ts-shell .today .nav-item.ts-tab:focus-visible {
+  outline: none;
+  box-shadow: var(--ts-focus);
+}

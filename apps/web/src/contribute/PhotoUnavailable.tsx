@@ -22,6 +22,7 @@
 
 import { Button } from '../ui/index.js'
 import { Icon } from '../Icon.js'
+import { t } from '../i18n/index.js'
 
 export function PhotoUnavailable(props: { reason: string | null; onBack: () => void }) {
   return (
@@ -29,33 +30,29 @@ export function PhotoUnavailable(props: { reason: string | null; onBack: () => v
       <div className="cn-gate-ic">
         <Icon name="camera" size={32} />
       </div>
-      <h3 className="cn-gate-title">Photos are not open yet</h3>
+      <h3 className="cn-gate-title">{t('Photos are not open yet')}</h3>
       <p className="cn-gate-body">
         {props.reason ??
-          'Sharing a photo needs somewhere to put the file and an EXIF strip before it lands, and Town Square has no image store yet.'}
+          t('Sharing a photo needs somewhere to put the file and an EXIF strip before it lands, and Town Square has no image store yet.')}
       </p>
       <p className="cn-gate-body">
-        When it opens, your phone's copy of the picture will still have the exact coordinates of
-        wherever you took it written inside the file. We will take that out, along with the camera
-        serial, before anything leaves your phone, and we will say so on the screen at the moment it
-        happens. That is the part worth waiting for.
+        {t("When it opens, your phone's copy of the picture will still have the exact coordinates of wherever you took it written inside the file. We will take that out, along with the camera serial, before anything leaves your phone, and we will say so on the screen at the moment it happens. That is the part worth waiting for.")}
       </p>
 
       <div className="cn-gate-alt">
-        <p className="cn-gate-alt-head">In the meantime</p>
+        <p className="cn-gate-alt-head">{t('In the meantime')}</p>
         <ul className="cn-gate-list">
           <li>
             <Icon name="calendar" size={16} />
             <span>
-              If the photo is of something happening, the thing itself is an event and anyone
-              verified can add one.
+              {t('If the photo is of something happening, the thing itself is an event and anyone verified can add one.')}
             </span>
           </li>
         </ul>
       </div>
 
       <Button variant="secondary" onClick={props.onBack}>
-        Back
+        {t('Back')}
       </Button>
     </div>
   )

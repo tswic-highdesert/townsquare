@@ -2,6 +2,7 @@ import type { InputHTMLAttributes, ReactNode } from 'react'
 import { Icon } from '../Icon.js'
 import { cx } from './cx.js'
 import { canStep, clampStep, type StepBounds } from './stepper.js'
+import { t } from '../i18n/index.js'
 
 /**
  * Controls that pick something.
@@ -126,7 +127,7 @@ export function Stepper({ value, onChange, unit, className, ...bounds }: Stepper
       <button
         type="button"
         className="ts-step-btn"
-        aria-label={`One fewer ${unit}`}
+        aria-label={t('One fewer {unit}', { unit })}
         disabled={!canStep(value, -1, bounds)}
         onClick={() => onChange(clampStep(value, -1, bounds))}
       >
@@ -143,7 +144,7 @@ export function Stepper({ value, onChange, unit, className, ...bounds }: Stepper
       <button
         type="button"
         className="ts-step-btn"
-        aria-label={`One more ${unit}`}
+        aria-label={t('One more {unit}', { unit })}
         disabled={!canStep(value, 1, bounds)}
         onClick={() => onChange(clampStep(value, 1, bounds))}
       >

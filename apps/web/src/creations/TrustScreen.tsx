@@ -22,7 +22,8 @@
 
 import { Icon } from '../Icon.js'
 import { Button } from '../ui/index.js'
-import { AppIcon, MADE_BY, TRUST_GLYPHS } from './parts.js'
+import { AppIcon, MADE_BY, TRUST_GLYPHS, trustText } from './parts.js'
+import { t } from '../i18n/index.js'
 import { summariseTrust } from './trustGroups.js'
 import type { CreationSummary } from '../townData.js'
 import './creations.css'
@@ -44,7 +45,7 @@ export function TrustScreen(props: TrustScreenProps) {
   const summary = summariseTrust(creation.manifest)
 
   return (
-    <div className="shell cr-screen">
+    <main className="shell cr-screen">
       <button className="cr-back" onClick={props.onBack}>
         <Icon name="arrow-left" size={16} /> {props.backLabel}
       </button>
@@ -54,7 +55,7 @@ export function TrustScreen(props: TrustScreenProps) {
         <div>
           <h1 className="cr-h1 cr-h1-tight">{creation.name}</h1>
           <p className="cr-lede cr-lede-tight">{creation.tagline}</p>
-          <p className="cr-by">{MADE_BY}</p>
+          <p className="cr-by">{t(MADE_BY)}</p>
         </div>
       </div>
 
@@ -65,7 +66,7 @@ export function TrustScreen(props: TrustScreenProps) {
         resident skimming reads what the screen is about, then the count, then
         as much of the list as they want.
       */}
-      <div className="cr-detail-h">What it can touch</div>
+      <div className="cr-detail-h">{t('What it can touch')}</div>
 
       <div className="cr-tally" data-tone={summary.tone}>
         <Icon name={TALLY_GLYPH[summary.tone]} size={16} />
@@ -82,8 +83,8 @@ export function TrustScreen(props: TrustScreenProps) {
                   <Icon name={TRUST_GLYPHS[line.kind]} size={16} />
                 </div>
                 <div>
-                  <div className="cr-trust-title">{line.title}</div>
-                  <div className="cr-trust-detail">{line.detail}</div>
+                  <div className="cr-trust-title">{trustText(line.title)}</div>
+                  <div className="cr-trust-detail">{trustText(line.detail)}</div>
                 </div>
               </li>
             ))}
@@ -95,10 +96,11 @@ export function TrustScreen(props: TrustScreenProps) {
         <div className="cr-counsel">
           <Icon name="scale" size={16} />
           <div>
-            <b>You do not have to open this.</b>
+            <b>{t('You do not have to open this.')}</b>
             <span>
-              Nothing on this page is an accusation. The committee approved it because it declared
-              everything honestly, which is a different question from whether you want it.
+              {t(
+                'Nothing on this page is an accusation. The committee approved it because it declared everything honestly, which is a different question from whether you want it.',
+              )}
             </span>
           </div>
         </div>
@@ -113,18 +115,18 @@ export function TrustScreen(props: TrustScreenProps) {
         {/* The safe choice first, so it is the easy target under a thumb. */}
         {summary.counsel && (
           <Button variant="secondary" size="lg" full onClick={props.onBack}>
-            Not now
+            {t('Not now')}
           </Button>
         )}
         <Button variant="primary" size="lg" full onClick={props.onOpen}>
-          Open
+          {t('Open')}
         </Button>
       </div>
 
       {props.onDetail && (
         <p className="cr-trust-more">
           <button className="cr-linkbtn" onClick={props.onDetail}>
-            More about this creation
+            {t('More about this creation')}
           </button>
         </p>
       )}
@@ -135,9 +137,11 @@ export function TrustScreen(props: TrustScreenProps) {
         date is exactly the kind of detail that would be believed.
       */}
       <p className="cr-footnote">
-        Version {creation.manifest.version}. Reviewed by a neighbour on the committee before it went
-        up, and every update is read again.
+        {t(
+          'Version {version}. Reviewed by a neighbour on the committee before it went up, and every update is read again.',
+          { version: creation.manifest.version },
+        )}
       </p>
-    </div>
+    </main>
   )
 }

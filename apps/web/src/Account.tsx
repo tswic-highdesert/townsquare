@@ -35,7 +35,14 @@ import { UnlockTable, VerificationCard } from './identity/Verification.js'
 import { Vouching } from './identity/Vouching.js'
 import { WhatWeHold } from './identity/WhatWeHold.js'
 import { signOut, isError, type AccountView } from './session.js'
+import { msg, t } from './i18n/index.js'
+import { LanguageChoice } from './i18n/LanguageSwitch.js'
 import './identity/identity.css'
+
+const ROLE: Record<Exclude<AccountView['role'], 'user'>, string> = {
+  moderator: msg('moderator'),
+  admin: msg('admin'),
+}
 
 export interface AccountScreenProps {
   account: AccountView | null
@@ -61,14 +68,14 @@ function SignedIn(props: AccountScreenProps & { account: AccountView }) {
       if (isError(result)) setLeaveError(result.message)
       else props.onAccountChange(null)
     } catch {
-      setLeaveError('We could not sign you out. Check your connection and try again.')
+      setLeaveError(t('We could not sign you out. Check your connection and try again.'))
     } finally { setLeaving(false) }
   }
 
   return (
-    <div className="id-screen">
+    <main className="id-screen">
       <Button variant="quiet" size="sm" icon="arrow-left" className="id-back" onClick={props.onBack}>
-        Back
+        {t('Back')}
       </Button>
 
       <header className="id-profile">
@@ -87,8 +94,8 @@ function SignedIn(props: AccountScreenProps & { account: AccountView }) {
             three people made about themselves.
           */}
           <p className="id-profile-meta">
-            {account.verified ? 'Verified resident' : 'Signed in'}
-            {account.role !== 'user' && ` · ${account.role}`}
+            {account.verified ? t('Verified resident') : t('Signed in')}
+            {account.role !== 'user' && ` · ${t(ROLE[account.role])}`}
           </p>
         </div>
       </header>
@@ -99,43 +106,50 @@ function SignedIn(props: AccountScreenProps & { account: AccountView }) {
         <Vouching account={account} onAccountChange={props.onAccountChange} />
       ) : (
         <section className="id-vouch">
-          <h2 className="id-h2">Vouching</h2>
+          <h2 className="id-h2">{t('Vouching')}</h2>
           <p className="id-lede">
-            Vouching is a closure: only a verified resident can vouch, which is what stops one
-            person minting a town. When a neighbour vouches for you, this is where you vouch for the
-            next person.
+            {t(
+              'Vouching is a closure: only a verified resident can vouch, which is what stops one person minting a town. When a neighbour vouches for you, this is where you vouch for the next person.',
+            )}
           </p>
         </section>
       )}
 
       <section aria-labelledby="id-unlock-t">
         <h2 className="id-h2" id="id-unlock-t">
-          What verified unlocks
+          {t('What verified unlocks')}
         </h2>
         <UnlockTable account={account} />
       </section>
 
       <WhatWeHold account={account} />
 
+      <section aria-labelledby="id-language-t">
+        <h2 className="id-h2" id="id-language-t">
+          {t('Language')}
+        </h2>
+        <LanguageChoice />
+      </section>
+
       <section className="id-leaving" aria-labelledby="id-leaving-t">
         <h2 className="id-h2" id="id-leaving-t">
-          Leaving
+          {t('Leaving')}
         </h2>
-        {leaveError && <InlineError>{leaveError}</InlineError>}
+        {leaveError && <InlineError live>{leaveError}</InlineError>}
         <div className="id-actions">
           <Button variant="secondary" disabled={leaving} onClick={() => void leave(false)}>
-            Sign out
+            {t('Sign out')}
           </Button>
           <Button variant="quiet" disabled={leaving} onClick={() => void leave(true)}>
-            Sign out everywhere
+            {t('Sign out everywhere')}
           </Button>
         </div>
         <p className="id-fine">
-          Signing out everywhere ends every session on every device and clears what this one
-          remembered. It is the one account control a pseudonymous account has, so it is a plain
-          button rather than a red one.
+          {t(
+            'Signing out everywhere ends every session on every device and clears what this one remembered. It is the one account control a pseudonymous account has, so it is a plain button rather than a red one.',
+          )}
         </p>
       </section>
-    </div>
+    </main>
   )
 }

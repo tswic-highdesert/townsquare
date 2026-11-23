@@ -13,6 +13,7 @@
  */
 
 import { isError, type ApiError } from '../session.js'
+import { t, tn } from '../i18n/index.js'
 
 export interface ConnectToken {
   id: string
@@ -45,7 +46,7 @@ async function call(path: string, init?: RequestInit): Promise<unknown> {
   })
   const body: unknown = await res.json().catch(() => null)
   if (!res.ok) {
-    return (body as ApiError | null) ?? { error: 'unavailable', message: 'Could not reach Town Square.' }
+    return (body as ApiError | null) ?? { error: 'unavailable', message: t('Could not reach Town Square.') }
   }
   return body
 }
@@ -82,13 +83,13 @@ export { isError }
  * have to subtract from today.
  */
 export function whenUsed(iso: string | null, now = Date.now()): string {
-  if (!iso) return 'Never used'
+  if (!iso) return t('Never used')
   const ms = now - Date.parse(iso)
   const minutes = Math.floor(ms / 60_000)
-  if (minutes < 1) return 'Used just now'
-  if (minutes < 60) return `Used ${minutes} minute${minutes === 1 ? '' : 's'} ago`
+  if (minutes < 1) return t('Used just now')
+  if (minutes < 60) return tn(minutes, 'Used {count} minute ago', 'Used {count} minutes ago')
   const hours = Math.floor(minutes / 60)
-  if (hours < 24) return `Used ${hours} hour${hours === 1 ? '' : 's'} ago`
+  if (hours < 24) return tn(hours, 'Used {count} hour ago', 'Used {count} hours ago')
   const days = Math.floor(hours / 24)
-  return `Used ${days} day${days === 1 ? '' : 's'} ago`
+  return tn(days, 'Used {count} day ago', 'Used {count} days ago')
 }

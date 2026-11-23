@@ -9,16 +9,18 @@
  * a test rather than by watching a clock.
  */
 
+import { intlLocale, t, tn } from '../i18n/index.js'
+
 const HOUR = 60 * 60 * 1000
 
 export function waited(since: number, now: number = Date.now()): string {
   const hours = Math.floor((now - since) / HOUR)
   // Anything under an hour is "just now" to a person, and a queue that counted
   // minutes would be a queue that redraws while you read it.
-  if (hours < 1) return 'waiting under an hour'
-  if (hours < 24) return `waiting ${hours} hour${hours === 1 ? '' : 's'}`
+  if (hours < 1) return t('waiting under an hour')
+  if (hours < 24) return tn(hours, 'waiting {count} hour', 'waiting {count} hours')
   const days = Math.round(hours / 24)
-  return `waiting ${days} day${days === 1 ? '' : 's'}`
+  return tn(days, 'waiting {count} day', 'waiting {count} days')
 }
 
 /**
@@ -30,5 +32,5 @@ export function waited(since: number, now: number = Date.now()): string {
  * a thing anybody acts on.
  */
 export function onDay(at: number): string {
-  return new Date(at).toLocaleDateString(undefined, { day: 'numeric', month: 'long' })
+  return new Date(at).toLocaleDateString(intlLocale(), { day: 'numeric', month: 'long' })
 }

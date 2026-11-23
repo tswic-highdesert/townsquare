@@ -92,6 +92,7 @@ import {
   SearchInput,
   Skeleton,
 } from '../ui/index.js'
+import { t, tn } from '../i18n/index.js'
 import { formatDistance, positionAlreadyAllowed, requestPosition, type Position } from '../nearbyData.js'
 import { saveThing, unsaveThing, type SavedThing } from '../savesData.js'
 import type { AccountView } from '../session.js'
@@ -234,7 +235,7 @@ export function Directory(props: DirectoryProps) {
         props.onSavedChange(
           props.saved.filter((s) => !(s.kind === 'business' && s.refId === place.id)),
         )
-      } else setSaveError('Could not remove this save. Please try again.')
+      } else setSaveError(t('Could not remove this save. Please try again.'))
       return
     }
     const saved = await saveThing({
@@ -247,8 +248,8 @@ export function Directory(props: DirectoryProps) {
       ...(place.url ? { url: place.url } : {}),
     })
     if (saved) props.onSavedChange([saved, ...props.saved])
-    else setSaveError('Could not save this place. Please try again.')
-    } catch { setSaveError('Could not update your saves. Please try again.') }
+    else setSaveError(t('Could not save this place. Please try again.'))
+    } catch { setSaveError(t('Could not update your saves. Please try again.')) }
     finally { setSaving(false) }
   }
 
@@ -272,7 +273,7 @@ export function Directory(props: DirectoryProps) {
 
   const bar = (
     <AppBar
-      label="Directory"
+      label={t('Directory')}
       place={payload?.town.name ?? ''}
       account={props.account}
       canReview={props.canReview}
@@ -285,12 +286,12 @@ export function Directory(props: DirectoryProps) {
     return (
       <div className="today">
         {bar}
-        <div className="today-state">
-          <p className="problem">The directory could not be loaded.</p>
+        <main className="today-state" id="ts-main" tabIndex={-1}>
+          <p className="problem" role="alert">{t('The directory could not be loaded.')}</p>
           <button className="secondary" onClick={() => window.location.reload()}>
-            Try again
+            {t('Try again')}
           </button>
-        </div>
+        </main>
         <TabBar current="nearby" onChange={props.onTab} />
       </div>
     )
@@ -302,23 +303,23 @@ export function Directory(props: DirectoryProps) {
     return (
       <div className="today">
         {bar}
-        <div className="dir-loading" aria-busy="true" aria-label="Loading the directory">
+        <main className="dir-loading" id="ts-main" tabIndex={-1} aria-busy="true" aria-label={t('Loading the directory')}>
           <Skeleton shape="line" width="86%" height={26} />
           <Skeleton shape="line" width="64%" height={26} />
           <Skeleton shape="block" width="100%" height={68} />
           <Skeleton shape="block" width="100%" height={148} />
-        </div>
+        </main>
         <TabBar current="nearby" onChange={props.onTab} />
       </div>
     )
   }
 
   if (props.selectedId && !payload.places.some(place => place.id === props.selectedId)) {
-    return <div className="today dir">{bar}<div className="today-state">
-      <h1>This place is no longer in the directory</h1>
-      <p>The listing may have changed or been removed.</p>
-      <Button onClick={() => setSelected(null)}>Browse the directory</Button>
-    </div><TabBar current="nearby" onChange={props.onTab} /></div>
+    return <div className="today dir">{bar}<main className="today-state" id="ts-main" tabIndex={-1}>
+      <h1>{t('This place is no longer in the directory')}</h1>
+      <p>{t('The listing may have changed or been removed.')}</p>
+      <Button onClick={() => setSelected(null)}>{t('Browse the directory')}</Button>
+    </main><TabBar current="nearby" onChange={props.onTab} /></div>
   }
 
   if (view.name === 'stumble') {
@@ -349,100 +350,102 @@ export function Directory(props: DirectoryProps) {
     <div className="today dir">
       {bar}
 
-      {view.name === 'home' ? (
-        <Home
-          payload={payload}
-          openRail={openRail}
-          position={position}
-          located={located}
-          locating={locating}
-          onLocate={() => void locate()}
-          onGroup={(id) => setView({ name: 'group', id })}
-          onCategory={(category) => setView({ name: 'category', category })}
-          onSearch={() => setView({ name: 'search' })}
-          onStumble={() => setView({ name: 'stumble' })}
-          onOpen={setSelected}
-        />
-      ) : view.name === 'search' ? (
-        <section className="dir-block">
-          <BackLink onBack={() => setView({ name: 'home' })} label="The directory" />
-          <div className="dir-searchwrap">
-            <SearchInput
-              label={`Search ${payload.intro.total} places`}
-              value={query}
-              onChange={(e) => setQuery(e.target.value)}
-              onClear={() => setQuery('')}
-              placeholder="A name, a street, or what it is"
-              // No recent searches and no suggested terms, deliberately. Both
-              // are small surveillance surfaces, and the answer to "I do not
-              // know what to type" is the stumble button, not a list of what
-              // other people typed.
-              autoFocus
+      <main className="ts-main" id="ts-main" tabIndex={-1}>
+        {view.name === 'home' ? (
+          <Home
+            payload={payload}
+            openRail={openRail}
+            position={position}
+            located={located}
+            locating={locating}
+            onLocate={() => void locate()}
+            onGroup={(id) => setView({ name: 'group', id })}
+            onCategory={(category) => setView({ name: 'category', category })}
+            onSearch={() => setView({ name: 'search' })}
+            onStumble={() => setView({ name: 'stumble' })}
+            onOpen={setSelected}
+          />
+        ) : view.name === 'search' ? (
+          <section className="dir-block">
+            <BackLink onBack={() => setView({ name: 'home' })} label={t('The directory')} />
+            <div className="dir-searchwrap">
+              <SearchInput
+                label={tn(payload.intro.total, 'Search {count} places', 'Search {count} places')}
+                value={query}
+                onChange={(e) => setQuery(e.target.value)}
+                onClear={() => setQuery('')}
+                placeholder={t('A name, a street, or what it is')}
+                // No recent searches and no suggested terms, deliberately. Both
+                // are small surveillance surfaces, and the answer to "I do not
+                // know what to type" is the stumble button, not a list of what
+                // other people typed.
+                autoFocus
+              />
+            </div>
+            <Results
+              places={listed}
+              layout={layout}
+              empty={
+                query.trim() === ''
+                  ? t('Type a few letters, or go back and let the directory pick something.')
+                  : t('Nothing in the directory matches "{query}".', { query: query.trim() })
+              }
+              savedRefs={savedRefs}
+              canSave={props.account !== null}
+              onToggleSave={(p) => void toggleSave(p)}
+              onOpen={setSelected}
             />
-          </div>
-          <Results
+          </section>
+        ) : (
+          <GroupLanding
+            payload={payload}
+            view={view}
             places={listed}
+            summary={filterSummary(payload.places, scope)}
+            position={position}
+            openOnly={openOnly}
+            sort={sort}
             layout={layout}
-            empty={
-              query.trim() === ''
-                ? 'Type a few letters, or go back and let the directory pick something.'
-                : `Nothing in the directory matches "${query.trim()}".`
-            }
+            onOpenOnly={setOpenOnly}
+            onSort={setSort}
+            onLayout={setLayout}
+            onBack={() => {
+              props.onMapChange?.(undefined)
+              setOnMap(false)
+              setPinned(null)
+              setView({ name: 'home' })
+            }}
+            onCategory={(category) => setView({ name: 'category', category })}
+            onGroup={(id) => setView(id ? { name: 'group', id } : { name: 'all' })}
+            bounds={payload.bounds}
+            streets={payload.streets}
+            onMap={onMap}
+            onToggleMap={() => {
+              props.onMapChange?.(!onMap)
+              setOnMap(!onMap)
+              setPinned(null)
+            }}
+            pinned={pinned}
+            onPin={setPinned}
             savedRefs={savedRefs}
             canSave={props.account !== null}
             onToggleSave={(p) => void toggleSave(p)}
             onOpen={setSelected}
           />
-        </section>
-      ) : (
-        <GroupLanding
-          payload={payload}
-          view={view}
-          places={listed}
-          summary={filterSummary(payload.places, scope)}
-          position={position}
-          openOnly={openOnly}
-          sort={sort}
-          layout={layout}
-          onOpenOnly={setOpenOnly}
-          onSort={setSort}
-          onLayout={setLayout}
-          onBack={() => {
-            props.onMapChange?.(undefined)
-            setOnMap(false)
-            setPinned(null)
-            setView({ name: 'home' })
-          }}
-          onCategory={(category) => setView({ name: 'category', category })}
-          onGroup={(id) => setView(id ? { name: 'group', id } : { name: 'all' })}
-          bounds={payload.bounds}
-          streets={payload.streets}
-          onMap={onMap}
-          onToggleMap={() => {
-            props.onMapChange?.(!onMap)
-            setOnMap(!onMap)
-            setPinned(null)
-          }}
-          pinned={pinned}
-          onPin={setPinned}
-          savedRefs={savedRefs}
-          canSave={props.account !== null}
-          onToggleSave={(p) => void toggleSave(p)}
-          onOpen={setSelected}
-        />
-      )}
+        )}
 
-      {saveError && !selected && <p role="alert" className="problem">{saveError}</p>}
-      <PlaceSheet
-        place={selected}
-        saving={saving}
-        error={saveError}
-        scrapedLabel={payload.scrapedLabel}
-        onClose={() => setSelected(null)}
-        saved={!!selected && savedRefs.has(`business:${selected.id}`)}
-        onSave={() => { if (!props.account) props.onAccount(); else if (selected) void toggleSave(selected) }}
-        onContribute={props.onContribute}
-      />
+        {saveError && !selected && <p role="alert" className="problem">{saveError}</p>}
+        <PlaceSheet
+          place={selected}
+          saving={saving}
+          error={saveError}
+          scrapedLabel={payload.scrapedLabel}
+          onClose={() => setSelected(null)}
+          saved={!!selected && savedRefs.has(`business:${selected.id}`)}
+          onSave={() => { if (!props.account) props.onAccount(); else if (selected) void toggleSave(selected) }}
+          onContribute={props.onContribute}
+        />
+      </main>
 
       <TabBar current="nearby" onChange={props.onTab} />
     </div>
@@ -492,12 +495,21 @@ function Home({
         second line states the gap in the data before a resident finds it.
       */}
       <div className="dir-intro">
-        <h1 className="dir-intro-title">Find a new favorite.</h1>
-        <p className="dir-intro-dek">{intro.total} places around Russellville. Browse, wander, or search for something specific.</p>
-        <button className="dir-intro-search" onClick={onSearch}><Icon name="search" size={20}/>Search places<Icon name="arrow-right" size={18}/></button>
+        <h1 className="dir-intro-title">{t('Find a new favorite.')}</h1>
+        <p className="dir-intro-dek">
+          {tn(
+            intro.total,
+            '{count} places around Russellville. Browse, wander, or search for something specific.',
+            '{count} places around Russellville. Browse, wander, or search for something specific.',
+          )}
+        </p>
+        <button className="dir-intro-search" onClick={onSearch}><Icon name="search" size={20}/>{t('Search places')}<Icon name="arrow-right" size={18}/></button>
         <p className="dir-intro-sub">
-          {intro.withHours} public listings include readable hours. Hours are unknown for {intro.unknownHours} others.
-          {payload.scrapedLabel ? ` Read on ${payload.scrapedLabel}.` : ''}
+          {t('{withHours} public listings include readable hours. Hours are unknown for {unknownHours} others.', {
+            withHours: intro.withHours,
+            unknownHours: intro.unknownHours,
+          })}
+          {payload.scrapedLabel ? ` ${t('Read on {date}.', { date: payload.scrapedLabel })}` : ''}
         </p>
       </div>
 
@@ -513,8 +525,8 @@ function Home({
           <Icon name="sparkle" size={22} />
         </span>
         <span className="dir-serendipity-text">
-          <span className="dir-serendipity-title">Show me something</span>
-          <span className="dir-serendipity-sub">One place at a time, drawn at random</span>
+          <span className="dir-serendipity-title">{t('Show me something')}</span>
+          <span className="dir-serendipity-sub">{t('One place at a time, drawn at random')}</span>
         </span>
         <Icon name="arrow-right" size={16} className="dir-serendipity-go" />
       </Card>
@@ -522,13 +534,13 @@ function Home({
       {openRail.length > 0 && (
         <section className="dir-block">
           <div className="dir-block-head">
-            <h2 className="dir-block-title">Open by listed hours</h2>
-            <span className="dir-block-count">{intro.openNow} places</span>
+            <h2 className="dir-block-title">{t('Open by listed hours')}</h2>
+            <span className="dir-block-count">{tn(intro.openNow, '{count} places', '{count} places')}</span>
           </div>
           <p className="dir-block-note">
             {position
-              ? 'Distance is worked out on your phone. We never receive your location.'
-              : 'Based on published hours. Call ahead to confirm before making a special trip.'}
+              ? t('Distance is worked out on your phone. We never receive your location.')
+              : t('Based on published hours. Call ahead to confirm before making a special trip.')}
           </p>
           <div className="dir-rail">
             {openRail.map((place) => (
@@ -549,17 +561,17 @@ function Home({
           <Icon name="target" size={18} />
           <div className="dir-locate-text">
             <span className="dir-locate-title">
-              {located === false ? 'Location off' : 'Sort by how far away it is'}
+              {located === false ? t('Location off') : t('Sort by how far away it is')}
             </span>
             <span className="dir-locate-detail">
               {located === false
-                ? 'Showing what is open instead.'
-                : 'Your position stays on this device. The directory is downloaded and sorted here.'}
+                ? t('Showing what is open instead.')
+                : t('Your position stays on this device. The directory is downloaded and sorted here.')}
             </span>
           </div>
           {located !== false && (
             <Button size="sm" onClick={onLocate} loading={locating}>
-              Use my location
+              {t('Use my location')}
             </Button>
           )}
         </div>
@@ -567,10 +579,10 @@ function Home({
 
       <section className="dir-block">
         <div className="dir-block-head">
-          <h2 className="dir-block-title">Browse by what it is</h2>
+          <h2 className="dir-block-title">{t('Browse by what it is')}</h2>
           {payload.groups.length > TILES_ON_HOME && (
             <button className="dir-block-link" onClick={() => setAllTiles((on) => !on)}>
-              {allTiles ? 'Fewer' : `All ${payload.groups.length}`}
+              {allTiles ? t('Fewer') : t('All {count}', { count: payload.groups.length })}
               <Icon name={allTiles ? 'chevron-up' : 'chevron-down'} size={14} />
             </button>
           )}
@@ -585,7 +597,7 @@ function Home({
             >
               <span className="dir-tile-art" aria-hidden="true" />
               <Icon name={GROUP_ICON[group.id]} size={22} className="dir-tile-icon" />
-              <span className="dir-tile-name">{group.label}</span>
+              <span className="dir-tile-name">{t(group.label)}</span>
               <span className="dir-tile-count">{group.count}</span>
             </button>
           ))}
@@ -601,8 +613,8 @@ function Home({
       */}
       <section className="dir-block">
         <div className="dir-block-head">
-          <h2 className="dir-block-title">Or by the exact words</h2>
-          <span className="dir-block-count">{intro.categories} in the scrape</span>
+          <h2 className="dir-block-title">{t('Or by the exact words')}</h2>
+          <span className="dir-block-count">{tn(intro.categories, '{count} in the scrape', '{count} in the scrape')}</span>
         </div>
         <div className="dir-chips">
           {chips.map((entry) => (
@@ -617,7 +629,7 @@ function Home({
           ))}
           {payload.tail.length > TAIL_CHIPS && (
             <button className="dir-chip" data-tail onClick={() => setAllChips((on) => !on)}>
-              {allChips ? 'Show fewer' : `${payload.tail.length - TAIL_CHIPS} more`}
+              {allChips ? t('Show fewer') : t('{count} more', { count: payload.tail.length - TAIL_CHIPS })}
               <Icon name={allChips ? 'chevron-up' : 'chevron-right'} size={14} />
             </button>
           )}
@@ -626,11 +638,11 @@ function Home({
 
       <section className="dir-block dir-block-last">
         <div className="dir-block-head">
-          <h2 className="dir-block-title">Looking for something specific?</h2>
+          <h2 className="dir-block-title">{t('Looking for something specific?')}</h2>
         </div>
         <button className="dir-searchfield" onClick={onSearch}>
           <Icon name="search" size={16} />
-          <span>Search {intro.total} places</span>
+          <span>{tn(intro.total, 'Search {count} places', 'Search {count} places')}</span>
         </button>
       </section>
     </>
@@ -695,7 +707,7 @@ function GroupLanding({
       ? payload.groups.find((g) => g.id === view.id)
       : view.name === 'category' ? payload.groups.find((g) => g.id === payload.tail.find((t) => t.category === view.category)?.group) : undefined
 
-  const title = view.name === 'all' ? 'Explore the town' : view.name === 'group' ? (group?.label ?? 'Browse') : view.category
+  const title = view.name === 'all' ? t('Explore the town') : view.name === 'group' ? (group ? t(group.label) : t('Browse')) : view.category
   const icon = group ? GROUP_ICON[group.id] : 'storefront'
   const openHere = places.filter((p) => p.openNow === true).length
 
@@ -709,15 +721,16 @@ function GroupLanding({
         chips are different questions, and only one of them can be at the top.
       */}
       <header className="dir-cathead" data-map={onMap || undefined}>
-        <BackLink onBack={onBack} label="The directory" />
+        <BackLink onBack={onBack} label={t('The directory')} />
         <div className="dir-cathead-main">
           <span className="dir-cathead-icon">
             <Icon name={icon} size={22} />
           </span>
           <div>
-            <h2 className="dir-cathead-title">{title}</h2>
+            <h1 className="dir-cathead-title">{title}</h1>
             <p className="dir-cathead-sub">
-              {summary.total} in {payload.town.name}. {openHere} open by listed hours.
+              {t('{total} in {town}.', { total: summary.total, town: payload.town.name })}{' '}
+              {tn(openHere, '{count} open by listed hours.', '{count} open by listed hours.')}
             </p>
           </div>
         </div>
@@ -730,32 +743,34 @@ function GroupLanding({
         */}
         {!onMap && view.name === 'group' && group && group.categories.length > 1 && (
           <p className="dir-cathead-blurb">
-            Rolled up from {group.categories.length} categories, including{' '}
-            {group.categories.slice(0, 4).map((c) => c.toLowerCase()).join(', ')}.
+            {t('Rolled up from {count} categories, including {list}.', {
+              count: group.categories.length,
+              list: group.categories.slice(0, 4).map((c) => c.toLowerCase()).join(', '),
+            })}
           </p>
         )}
 
         <div className="dir-tools">
           <button className="dir-tool" data-on={openOnly || undefined} onClick={() => onOpenOnly(!openOnly)} aria-pressed={openOnly}>
             <Icon name="filter" size={14} />
-            Open now
+            {t('Open now')}
           </button>
           {!onMap && <>
           <button className="dir-tool" data-on={sort === 'near' || undefined} onClick={() => onSort('near')} aria-pressed={sort === 'near'}>
             <Icon name="sort" size={14} />
-            {position ? 'Nearest' : 'What is open'}
+            {position ? t('Nearest') : t('What is open')}
           </button>
           <button className="dir-tool" data-on={sort === 'az' || undefined} onClick={() => onSort('az')} aria-pressed={sort === 'az'}>
             <Icon name="sort" size={14} />
-            A to Z
+            {t('A to Z')}
           </button>
           <button
             className="dir-tool"
             onClick={() => onLayout(layout === 'rows' ? 'grid' : 'rows')}
-            aria-label={layout === 'rows' ? 'Show these as cards' : 'Show these as a list'}
+            aria-label={layout === 'rows' ? t('Show these as cards') : t('Show these as a list')}
           >
             <Icon name={layout === 'rows' ? 'grid' : 'list'} size={14} />
-            {layout === 'rows' ? 'Cards' : 'List'}
+            {layout === 'rows' ? t('Cards') : t('List')}
           </button>
           </>}
           {/*
@@ -765,7 +780,7 @@ function GroupLanding({
           {bounds && (
             <button className="dir-tool" data-on={onMap || undefined} onClick={onToggleMap} aria-pressed={onMap}>
               <Icon name={onMap ? 'list' : 'map'} size={14} />
-              {onMap ? 'List' : 'Map'}
+              {onMap ? t('List') : t('Map')}
             </button>
           )}
         </div>
@@ -780,8 +795,12 @@ function GroupLanding({
           <p className="dir-filter-warn">
             <Icon name="info" size={14} />
             <span>
-              Showing <b>{summary.shown} of {summary.total}</b>. Open now also hides{' '}
-              {summary.hiddenUnknown} whose hours we could not read. They may well be open.
+              {t('Showing')} <b>{t('{shown} of {total}', { shown: summary.shown, total: summary.total })}</b>.{' '}
+              {tn(
+                summary.hiddenUnknown,
+                'Open now also hides {count} whose hours we could not read. They may well be open.',
+                'Open now also hides {count} whose hours we could not read. They may well be open.',
+              )}
             </span>
           </p>
         )}
@@ -801,9 +820,9 @@ function GroupLanding({
         </div>
       )}
 
-      {onMap && <div className="dir-chips dir-chips-inset dir-map-categories" aria-label="Map place categories">
-        <button className="dir-chip" aria-pressed={view.name === 'all'} onClick={() => onGroup(null)}>All places</button>
-        {payload.groups.map(item => <button key={item.id} className="dir-chip" aria-pressed={view.name === 'group' && view.id === item.id} onClick={() => onGroup(item.id)}><Icon name={GROUP_ICON[item.id]} size={16} />{item.label}</button>)}
+      {onMap && <div className="dir-chips dir-chips-inset dir-map-categories" role="group" aria-label={t('Map place categories')}>
+        <button className="dir-chip" aria-pressed={view.name === 'all'} onClick={() => onGroup(null)}>{t('All places')}</button>
+        {payload.groups.map(item => <button key={item.id} className="dir-chip" aria-pressed={view.name === 'group' && view.id === item.id} onClick={() => onGroup(item.id)}><Icon name={GROUP_ICON[item.id]} size={16} />{t(item.label)}</button>)}
       </div>}
       {onMap && bounds ? (
         <div className="dir-mapview" data-pinned={pinned ? '' : undefined}>
@@ -832,7 +851,7 @@ function GroupLanding({
           {pinned && (
             <div className="dir-mapcard">
               <PinCard place={pinned} />
-              <Button variant="primary" onClick={() => onOpen(pinned)}>View place &amp; save</Button>
+              <Button variant="primary" onClick={() => onOpen(pinned)}>{t('View place & save')}</Button>
             </div>
           )}
         </div>
@@ -842,8 +861,8 @@ function GroupLanding({
         layout={layout}
         empty={
           openOnly
-            ? 'Nothing in here is open at this minute.'
-            : 'Nothing in the directory matches that.'
+            ? t('Nothing in here is open at this minute.')
+            : t('Nothing in the directory matches that.')
         }
         savedRefs={savedRefs}
         canSave={canSave}
@@ -906,7 +925,7 @@ function Results({
     // variables, no variant, tap targets still floored at 44px. The lead is
     // widened from compact's 32px because the plate is the only thing making a
     // list of 127 scannable in the peripheral, and at 32 it is a smudge.
-    <RowList density="compact" framed className="dir-rows" label="Listings">
+    <RowList density="compact" framed className="dir-rows" label={t('Listings')}>
       {places.map((place) => (
         <ListRow key={place.id} {...shared(place)} />
       ))}
@@ -950,40 +969,42 @@ function PlaceSheet({
       <div className="dir-sheet">
         <PinCard place={place} />
         {error && <p className="problem" role="alert">{error}</p>}
-        <div className="dir-sheet-save"><Button variant="primary" icon="bookmark" disabled={saving} onClick={onSave}>{saving ? 'Saving…' : saved ? 'Saved · remove' : 'Save this place'}</Button>{onContribute && <Button variant="quiet" onClick={onContribute}>Suggest a correction</Button>}</div>
+        <div className="dir-sheet-save"><Button variant="primary" icon="bookmark" disabled={saving} onClick={onSave}>{saving ? t('Saving…') : saved ? t('Saved · remove') : t('Save this place')}</Button>{onContribute && <Button variant="quiet" onClick={onContribute}>{t('Suggest a correction')}</Button>}</div>
 
         <div className="dir-sheet-acts">
           {place.phone && (
             <a className="dir-act" href={`tel:${place.phone.replace(/[^\d+]/g, '')}`}>
               <Icon name="phone" size={20} />
-              <span className="dir-act-label">Call</span>
+              <span className="dir-act-label">{t('Call')}</span>
               <span className="dir-act-sub">{place.phone}</span>
             </a>
           )}
           {directions && (
             <a className="dir-act" href={directions} target="_blank" rel="noopener noreferrer">
               <Icon name="directions" size={20} />
-              <span className="dir-act-label">Directions</span>
-              <span className="dir-act-sub">{place.address ? shortAddress(place.address) : 'Opens Maps'}</span>
+              <span className="dir-act-label">{t('Directions')}</span>
+              <span className="dir-act-sub">{place.address ? shortAddress(place.address) : t('Opens Maps')}</span>
             </a>
           )}
           {place.url && (
             <a className="dir-act" href={place.url} target="_blank" rel="noopener noreferrer">
               <Icon name="globe" size={20} />
-              <span className="dir-act-label">Website</span>
+              <span className="dir-act-label">{t('Website')}</span>
               <span className="dir-act-sub">{hostOf(place.url)}</span>
             </a>
           )}
         </div>
 
         <div className="dir-prov">
-          <p className="dir-prov-h">What we know, and where it came from</p>
+          <p className="dir-prov-h">{t('What we know, and where it came from')}</p>
           <ul>
             <li>
               <Icon name="map-pin" size={14} />
               <span>
-                <b>Name, address and phone</b> from the public listing
-                {scrapedLabel ? `, read on ${scrapedLabel}` : ''}.
+                <b>{t('Name, address and phone')}</b>{' '}
+                {scrapedLabel
+                  ? t('from the public listing, read on {date}.', { date: scrapedLabel })
+                  : t('from the public listing.')}
               </span>
             </li>
             <li>
@@ -991,12 +1012,15 @@ function PlaceSheet({
               <span>
                 {place.phase === 'unknown' ? (
                   <>
-                    <b>Hours</b> were not published in a form we could read, so we will not say
-                    whether it is open.
+                    <b>{t('Hours')}</b>{' '}
+                    {t('were not published in a form we could read, so we will not say whether it is open.')}
                   </>
                 ) : (
                   <>
-                    <b>Listed hours</b> suggest it is {place.detail.toLowerCase()}. Hours can change; call the business to confirm.
+                    <b>{t('Listed hours')}</b>{' '}
+                    {t('suggest it is {status}. Hours can change; call the business to confirm.', {
+                      status: place.detail.toLowerCase(),
+                    })}
                   </>
                 )}
               </span>
@@ -1004,8 +1028,8 @@ function PlaceSheet({
             <li>
               <Icon name="image" size={14} />
               <span>
-                <b>Photographs</b> are not ours. Nobody has added one yet, so the card draws a
-                plate instead of somebody else's picture.
+                <b>{t('Photographs')}</b>{' '}
+                {t("are not ours. Nobody has added one yet, so the card draws a plate instead of somebody else's picture.")}
               </span>
             </li>
           </ul>
@@ -1020,7 +1044,7 @@ function hostOf(url: string): string {
   try {
     return new URL(url).hostname.replace(/^www\./, '')
   } catch {
-    return 'Opens in a new tab'
+    return t('Opens in a new tab')
   }
 }
 

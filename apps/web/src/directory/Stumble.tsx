@@ -31,6 +31,7 @@ import { useMemo, useState } from 'react'
 import { Icon } from '../Icon.js'
 import { Button, IconButton } from '../ui/index.js'
 import { formatDistance, milesBetween, type Position } from '../nearbyData.js'
+import { t, tn } from '../i18n/index.js'
 import {
   isPlaced,
   shuffleDeck,
@@ -83,26 +84,26 @@ export function Stumble(props: StumbleProps) {
 
   if (!current) {
     return (
-      <div className="dir-stumble">
-        <p className="dir-stumble-foot">There is nothing in the directory to draw from.</p>
+      <main className="dir-stumble">
+        <p className="dir-stumble-foot">{t('There is nothing in the directory to draw from.')}</p>
         <Button variant="secondary" onClick={props.onClose}>
-          Back to the directory
+          {t('Back to the directory')}
         </Button>
-      </div>
+      </main>
     )
   }
 
   const savedNow = props.saved.has(`business:${current.id}`)
 
   return (
-    <div className="dir-stumble">
+    <main className="dir-stumble">
       <div className="dir-stumble-chrome">
-        <IconButton name="close" label="Close" onClick={props.onClose} />
-        <span className="dir-stumble-eyebrow">Drawn from {props.total}</span>
+        <IconButton name="close" label={t('Close')} onClick={props.onClose} />
+        <span className="dir-stumble-eyebrow">{t('Drawn from {total}', { total: props.total })}</span>
         {props.canSave ? (
           <IconButton
             name={savedNow ? 'bookmark-filled' : 'bookmark'}
-            label={savedNow ? `Remove ${current.name} from your saved things` : `Save ${current.name}`}
+            label={savedNow ? t('Remove {name} from your saved things', { name: current.name }) : t('Save {name}', { name: current.name })}
             aria-pressed={savedNow}
             onClick={() => props.onToggleSave(current)}
           />
@@ -133,7 +134,7 @@ export function Stumble(props: StumbleProps) {
           </span>
           <div className="dir-stumble-body">
             <span className="dir-stumble-cat">{stumbleLine(current, current.miles)}</span>
-            <h2 className="dir-stumble-name">{current.name}</h2>
+            <h1 className="dir-stumble-name">{current.name}</h1>
             {/*
               No description. The scrape's is the category and the town
               restated — "Book store in Russellville, AR." — so printing it here
@@ -148,26 +149,30 @@ export function Stumble(props: StumbleProps) {
 
       <div className="dir-stumble-actions">
         <Button variant="secondary" icon="map-pin" onClick={() => props.onOpen(current)}>
-          See the listing
+          {t('See the listing')}
         </Button>
         <Button
           variant="primary"
           icon="refresh"
           onClick={() => setAt((n) => (n + 1) % deck.length)}
         >
-          Show me another
+          {t('Show me another')}
         </Button>
       </div>
 
       <p className="dir-stumble-foot">
-        Nothing is being scored and nothing is being saved unless you save it.
-        {current.miles !== null && ` This one is ${formatDistance(current.miles)} away.`}
+        {t('Nothing is being scored and nothing is being saved unless you save it.')}
+        {current.miles !== null && ` ${t('This one is {distance} away.', { distance: formatDistance(current.miles) })}`}
       </p>
 
       <p className="dir-stumble-seen" aria-hidden="true">
         <Icon name="layers" size={13} />
-        {deck.length - 1} more in the deck before anything repeats
+        {tn(
+          deck.length - 1,
+          '{count} more in the deck before anything repeats',
+          '{count} more in the deck before anything repeats',
+        )}
       </p>
-    </div>
+    </main>
   )
 }

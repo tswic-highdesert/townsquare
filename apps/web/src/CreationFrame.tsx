@@ -16,6 +16,7 @@ import { createActTokenHolder } from './actToken.js'
 import { createTownData } from './townData.js'
 import { Icon, type IconName } from './Icon.js'
 import { Button } from './ui/index.js'
+import { msg, t } from './i18n/index.js'
 import { LeavingDialog } from './creations/LeavingDialog.js'
 import './creations/creations.css'
 
@@ -111,6 +112,7 @@ export function CreationFrame(props: CreationFrameProps) {
       guestOrigin: props.guestOrigin,
       manifest: props.manifest,
       town: props.town,
+      frameTitle: t('{name}, a resident-built creation', { name: props.manifest.name }),
       context: {
         user: props.user,
         town: createTownData(props.town.id),
@@ -190,7 +192,7 @@ export function CreationFrame(props: CreationFrameProps) {
           <div className="cr-sk-line" style={{ width: '78%' }} />
           <div className="cr-sk-block" />
           <div className="cr-sk-line" style={{ width: '64%' }} />
-          <div className="cr-sk-note">starting {props.manifest.name}…</div>
+          <div className="cr-sk-note">{t('starting {name}…', { name: props.manifest.name })}</div>
         </div>
       )}
     </div>
@@ -219,29 +221,29 @@ interface FailureCopy {
 
 const REASONS: Record<ErrorReason, FailureCopy> = {
   handshake_timeout: {
-    title: "This one didn't start",
+    title: msg("This one didn't start"),
     // The blame goes to the code, never to the resident, and never to a
     // "network error" they cannot act on.
-    body: 'It never answered Town Square. Its builder has been told, and nothing you did caused it.',
+    body: msg('It never answered Town Square. Its builder has been told, and nothing you did caused it.'),
     mark: 'plug',
     retry: true,
   },
   ready_timeout: {
-    title: "This one didn't finish loading",
-    body: 'It connected but never finished rendering. Its builder has been told, and nothing you did caused it.',
+    title: msg("This one didn't finish loading"),
+    body: msg('It connected but never finished rendering. Its builder has been told, and nothing you did caused it.'),
     mark: 'clock',
     retry: true,
   },
   navigated: {
-    title: 'This one tried to send you somewhere else',
-    body: 'It left Town Square instead of running here. We stopped it and flagged it for the committee. Nothing you did.',
+    title: msg('This one tried to send you somewhere else'),
+    body: msg('It left Town Square instead of running here. We stopped it and flagged it for the committee. Nothing you did.'),
     mark: 'shield',
     tone: 'hold',
     retry: false,
   },
   crashed: {
-    title: 'This one stopped responding',
-    body: 'It stopped answering Town Square partway through. Its builder has been told.',
+    title: msg('This one stopped responding'),
+    body: msg('It stopped answering Town Square partway through. Its builder has been told.'),
     mark: 'alert-circle',
     retry: true,
   },
@@ -261,23 +263,23 @@ function Failure(props: {
       <span className="cr-failure-mark" data-tone={copy.tone}>
         <Icon name={copy.mark} size={24} />
       </span>
-      <h2>{copy.title}</h2>
-      <p>{copy.body}</p>
+      <h2>{t(copy.title)}</h2>
+      <p>{t(copy.body)}</p>
 
       {copy.retry ? (
         <Button variant="primary" icon="refresh" onClick={props.onRetry}>
-          Try again
+          {t('Try again')}
         </Button>
       ) : (
         <div className="cr-failure-acts">
           {props.onLeave && (
             <Button variant="primary" onClick={props.onLeave}>
-              Back to the gallery
+              {t('Back to the gallery')}
             </Button>
           )}
           {props.onReport && (
             <Button variant="secondary" onClick={props.onReport}>
-              Report
+              {t('Report')}
             </Button>
           )}
         </div>

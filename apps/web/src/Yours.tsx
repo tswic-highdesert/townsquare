@@ -32,6 +32,7 @@ import { TabBar, type TabName } from './TabBar.js'
 import { unsaveThing, type BuiltCreation, type SavedThing, type SaveKind } from './savesData.js'
 import { EmptyState, RowItem, RowList } from './ui/index.js'
 import type { AccountView } from './session.js'
+import { intlLocale, msg, t } from './i18n/index.js'
 
 export interface YoursProps {
   account: AccountView | null
@@ -46,6 +47,12 @@ export interface YoursProps {
   onReview: () => void
   onContribute?: () => void
   onOpenSaved?: (save: SavedThing) => void
+}
+
+const STATUS: Record<BuiltCreation['status'], string> = {
+  active: msg('Live'),
+  hidden: msg('hidden'),
+  blocked: msg('blocked'),
 }
 
 const SAVE_ICON: Record<SaveKind, IconName> = {
@@ -82,19 +89,18 @@ export function Yours(props: YoursProps) {
     return (
       <div className="today">
         {bar}
-        <div className="yours-signedout" id="ts-main" tabIndex={-1}>
+        <main className="yours-signedout" id="ts-main" tabIndex={-1}>
           <span className="yours-signedout-icon">
             <Icon name="bookmarks" size={26} />
           </span>
-          <h1>Your corner of the town square</h1>
+          <h1>{t('Your corner of the town square')}</h1>
           <p>
-            Places you keep, and anything you build. Reading {props.town.name} never needs an
-            account — this part does.
+            {t('Places you keep, and anything you build. Reading {town} never needs an account — this part does.', { town: props.town.name })}
           </p>
           <button className="primary" onClick={props.onAccount}>
-            Sign in
+            {t('Sign in')}
           </button>
-        </div>
+        </main>
         <TabBar current="yours" onChange={props.onTab} />
       </div>
     )
@@ -107,8 +113,8 @@ export function Yours(props: YoursProps) {
     try {
     if (await unsaveThing(save.kind, save.refId)) {
       props.onSavedChange(props.saved.filter((s) => s.id !== save.id))
-    } else setSaveError('Could not remove this save. Please try again.')
-    } catch { setSaveError('Could not remove this save. Please try again.') }
+    } else setSaveError(t('Could not remove this save. Please try again.'))
+    } catch { setSaveError(t('Could not remove this save. Please try again.')) }
     finally { setRemoving(null) }
   }
 
@@ -117,119 +123,121 @@ export function Yours(props: YoursProps) {
       {bar}
 
       {/* Where the skip link lands. See the note in `Today.tsx`. */}
-      <div className="yours-head" id="ts-main" tabIndex={-1}>
-        <span className="yours-avatar" data-verified={account.verified || undefined}>
-          {initials(account.handle)}
-        </span>
-        <div>
-          <h1 className="yours-handle">{account.handle}</h1>
-          <VerifiedChip verified={account.verified} />
+      <main className="ts-main" id="ts-main" tabIndex={-1}>
+        <div className="yours-head">
+          <span className="yours-avatar" data-verified={account.verified || undefined}>
+            {initials(account.handle)}
+          </span>
+          <div>
+            <h1 className="yours-handle">{account.handle}</h1>
+            <VerifiedChip verified={account.verified} />
+          </div>
         </div>
-      </div>
 
-      {/*
-        No tile row. The hi-fi has SAVED, POSTED and BUILT across the top, and
-        two of the three count things nothing measures — so what was left was a
-        row of one, saying a number the section heading below it already
-        carries. The count moved onto the heading instead.
-      */}
-      {props.built.length > 0 && (
-        <section className="today-section">
-          <SectionHead label="What you built" count={props.built.length} />
-          {/*
-            One target per creation, a title, a fact underneath and a chevron —
-            which is `Row` exactly, so this uses it rather than a fourth local
-            copy of the same shape. `framed={false}` because the section
-            already sits on the page rather than on a card.
-
-            Today drew the same shape from the same `.creation-row` classes, so
-            those rules survived this screen's migration and died with Today's.
-          */}
-          <RowList framed={false} label="What you built">
-            {props.built.map((creation) => (
-              <RowItem
-                key={creation.slug}
-                title={creation.name}
-                // Status and when it last changed, which are both facts on the
-                // row. Not "241 residents": nothing counts that.
-                meta={`${creation.status === 'active' ? 'Live' : creation.status} · updated ${sinceLabel(creation.updatedAt)}`}
-                onClick={() => props.onOpenCreation(creation.slug)}
-              />
-            ))}
-          </RowList>
-        </section>
-      )}
-
-      <section className="today-section">
-        {props.onContribute && <button className="secondary" onClick={props.onContribute}>Your contributions</button>}
-        <SectionHead label="Saved" count={props.saved.length} />
-        {saveError && <p className="problem" role="alert">{saveError}</p>}
         {/*
-          Not `Row`, deliberately.
+          No tile row. The hi-fi has SAVED, POSTED and BUILT across the top, and
+          two of the three count things nothing measures — so what was left was a
+          row of one, saying a number the section heading below it already
+          carries. The count moved onto the heading instead.
+        */}
+        {props.built.length > 0 && (
+          <section className="today-section">
+            <SectionHead label={t('What you built')} count={props.built.length} />
+            {/*
+              One target per creation, a title, a fact underneath and a chevron —
+              which is `Row` exactly, so this uses it rather than a fourth local
+              copy of the same shape. `framed={false}` because the section
+              already sits on the page rather than on a card.
 
-            A saved row has two independent targets in it: the title, which is a
-            link out to the thing, and the bookmark, which un-saves it without
-            leaving the screen. `Row`'s contract is one row, one target — the
-            trailing slot is for a chip or a time, explicitly not for a second
-            thing to press — and bending it here would either nest a button
-            inside a link or quietly widen that contract for every other screen
-            using it.
-
-            The composer and the news feed hit the same limit on two-target
-            rows. Three screens wanting it is an argument for a second
-            primitive with its own contract, not for loosening this one, and
-            none of the three is blocked meanwhile.
-          */}
-        {props.saved.length === 0 ? (
-          <EmptyState
-            align="start"
-            mark="bookmark"
-            line="You haven’t saved anything yet."
-            sub="The bookmark on a row in the directory keeps it here — the hardware store’s hours, the clinic you can never remember the name of."
-          />
-        ) : (
-          <ul className="saved-list">
-            {props.saved.map((save) => (
-              <li key={save.id} className="saved-row">
-                <span className="place-icon" data-kind={save.kind === 'event' ? 'event' : 'shop'}>
-                  <Icon name={SAVE_ICON[save.kind]} size={20} />
-                </span>
-                <span className="place-text">
-                  {/*
-                    The title is the snapshot taken when it was saved, not a
-                    live read. A saved event that quietly vanishes the morning
-                    after it happened is a list that deletes your things.
-                  */}
-                  <span className="place-name">
-                    {props.onOpenSaved ? (
-                      <button className="saved-title" onClick={() => props.onOpenSaved?.(save)}>{save.title}</button>
-                    ) : save.url ? (
-                      <a href={save.url} target="_blank" rel="noopener noreferrer">
-                        {save.title}
-                      </a>
-                    ) : (
-                      save.title
-                    )}
-                  </span>
-                  <span className="place-detail">
-                    {[save.detail, `saved ${sinceLabel(save.savedAt)}`].filter(Boolean).join(' · ')}
-                  </span>
-                </span>
-                <button
-                  className="place-save"
-                  data-saved="true"
-                  disabled={removing !== null}
-                  onClick={() => void unsave(save)}
-                  aria-label={`Remove ${save.title} from your saved things`}
-                  aria-pressed
-                >
-                  <Icon name="bookmark" size={18} />
-                </button>
-              </li>
-            ))}
-          </ul>
+              Today drew the same shape from the same `.creation-row` classes, so
+              those rules survived this screen's migration and died with Today's.
+            */}
+            <RowList framed={false} label={t('What you built')}>
+              {props.built.map((creation) => (
+                <RowItem
+                  key={creation.slug}
+                  title={creation.name}
+                  // Status and when it last changed, which are both facts on the
+                  // row. Not "241 residents": nothing counts that.
+                  meta={t('{status} · updated {when}', { status: STATUS[creation.status] ? t(STATUS[creation.status]) : creation.status, when: sinceLabel(creation.updatedAt) })}
+                  onClick={() => props.onOpenCreation(creation.slug)}
+                />
+              ))}
+            </RowList>
+          </section>
         )}
-      </section>
+
+        <section className="today-section">
+          {props.onContribute && <button className="secondary" onClick={props.onContribute}>{t('Your contributions')}</button>}
+          <SectionHead label={t('Saved')} count={props.saved.length} />
+          {saveError && <p className="problem" role="alert">{saveError}</p>}
+          {/*
+            Not `Row`, deliberately.
+
+              A saved row has two independent targets in it: the title, which is a
+              link out to the thing, and the bookmark, which un-saves it without
+              leaving the screen. `Row`'s contract is one row, one target — the
+              trailing slot is for a chip or a time, explicitly not for a second
+              thing to press — and bending it here would either nest a button
+              inside a link or quietly widen that contract for every other screen
+              using it.
+
+              The composer and the news feed hit the same limit on two-target
+              rows. Three screens wanting it is an argument for a second
+              primitive with its own contract, not for loosening this one, and
+              none of the three is blocked meanwhile.
+            */}
+          {props.saved.length === 0 ? (
+            <EmptyState
+              align="start"
+              mark="bookmark"
+              line={t('You haven’t saved anything yet.')}
+              sub={t('The bookmark on a row in the directory keeps it here — the hardware store’s hours, the clinic you can never remember the name of.')}
+            />
+          ) : (
+            <ul className="saved-list">
+              {props.saved.map((save) => (
+                <li key={save.id} className="saved-row">
+                  <span className="place-icon" data-kind={save.kind === 'event' ? 'event' : 'shop'}>
+                    <Icon name={SAVE_ICON[save.kind]} size={20} />
+                  </span>
+                  <span className="place-text">
+                    {/*
+                      The title is the snapshot taken when it was saved, not a
+                      live read. A saved event that quietly vanishes the morning
+                      after it happened is a list that deletes your things.
+                    */}
+                    <span className="place-name">
+                      {props.onOpenSaved ? (
+                        <button className="saved-title" onClick={() => props.onOpenSaved?.(save)}>{save.title}</button>
+                      ) : save.url ? (
+                        <a href={save.url} target="_blank" rel="noopener noreferrer">
+                          {save.title}
+                        </a>
+                      ) : (
+                        save.title
+                      )}
+                    </span>
+                    <span className="place-detail">
+                      {[save.detail, t('saved {when}', { when: sinceLabel(save.savedAt) })].filter(Boolean).join(' · ')}
+                    </span>
+                  </span>
+                  <button
+                    className="place-save"
+                    data-saved="true"
+                    disabled={removing !== null}
+                    onClick={() => void unsave(save)}
+                    aria-label={t('Remove {title} from your saved things', { title: save.title })}
+                  >
+                    <Icon name="bookmark" size={18} />
+                  </button>
+                </li>
+              ))}
+            </ul>
+          )}
+        </section>
+
+      </main>
 
       <TabBar current="yours" onChange={props.onTab} />
     </div>
@@ -256,8 +264,8 @@ function SectionHead({ label, count }: { label: string; count: number }) {
  */
 function sinceLabel(at: number): string {
   const days = Math.floor((Date.now() - at) / 86_400_000)
-  if (days <= 0) return 'today'
-  if (days === 1) return 'yesterday'
-  if (days < 7) return `${days} days ago`
-  return new Date(at).toLocaleDateString(undefined, { month: 'short', day: 'numeric' })
+  if (days <= 0) return t('today')
+  if (days === 1) return t('yesterday')
+  if (days < 7) return t('{count} days ago', { count: days })
+  return new Date(at).toLocaleDateString(intlLocale(), { month: 'short', day: 'numeric' })
 }

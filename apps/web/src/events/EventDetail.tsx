@@ -38,10 +38,73 @@ import {
 } from '../ui/index.js'
 import { saveThing, unsaveThing, type SavedThing } from '../savesData.js'
 import type { AccountView } from '../session.js'
+import { getLocale, msg, t } from '../i18n/index.js'
 import { CATEGORY_ICON, CATEGORY_WORD } from './categories.js'
 import { fetchEvent, type EventDetailPayload, type EventRow } from './eventsData.js'
-import { relativeLabel, rowState, townClock } from './relative.js'
+import {
+  capitalize,
+  dayText,
+  daysBetween,
+  longDay,
+  relativeLabel,
+  rowState,
+  townClock,
+} from './relative.js'
 import './events.css'
+
+type Thirds = readonly [string, string, string]
+
+const RELATIVE: Record<number, Thirds> = {
+  0: [msg('This morning'), msg('This afternoon'), msg('This evening')],
+  1: [msg('Tomorrow morning'), msg('Tomorrow afternoon'), msg('Tomorrow evening')],
+  [-1]: [msg('Yesterday morning'), msg('Yesterday afternoon'), msg('Yesterday evening')],
+}
+const RELATIVE_ALL_DAY: Record<number, string> = {
+  0: msg('Today, all day'),
+  1: msg('Tomorrow, all day'),
+  [-1]: msg('Yesterday, all day'),
+}
+const NEAR: Thirds = [msg('{day} morning'), msg('{day} afternoon'), msg('{day} evening')]
+const DATED: Thirds = [msg('{day}, morning'), msg('{day}, afternoon'), msg('{day}, evening')]
+
+/**
+ * `whenPlain` and `whenExact` in the reader's language. The API writes both in
+ * English, so English shows them as sent and Spanish builds them here from the
+ * same instants by the same rules.
+ */
+function whenWords(event: EventDetailPayload): { plain: string; exact: string } {
+  if (getLocale() === 'en') return { plain: event.whenPlain, exact: event.whenExact }
+  const tz = event.town.timezone
+  // `en-CA` formats as YYYY-MM-DD: a machine key, not display text.
+  const today = new Intl.DateTimeFormat('en-CA', { timeZone: tz }).format(new Date(event.generatedAt))
+  const away = daysBetween(today, event.day)
+  const near = away > 1 && away < 7
+  const day = capitalize(near ? dayText(event.day, { weekday: 'long' }) : longDay(event.day))
+  const stamp = capitalize(dayText(event.day, { weekday: 'short', day: 'numeric', month: 'long' }))
+
+  if (event.allDay) {
+    const relative = RELATIVE_ALL_DAY[away]
+    return {
+      plain: relative ? t(relative) : t('{day}, all day', { day }),
+      exact: t('{day}, all day', { day: stamp }),
+    }
+  }
+
+  const hour =
+    Number(
+      new Intl.DateTimeFormat('en-US', { timeZone: tz, hour: 'numeric', hourCycle: 'h23' }).format(
+        new Date(event.startsAt),
+      ),
+    ) % 24
+  const part = hour < 12 ? 0 : hour < 17 ? 1 : 2
+  const relative = RELATIVE[away]
+  const plain = relative ? t(relative[part]) : t((near ? NEAR : DATED)[part], { day })
+  const start = townClock(Date.parse(event.startsAt), tz)
+  const exact = event.endsAt
+    ? t('{day}, {start} to {end}', { day: stamp, start, end: townClock(Date.parse(event.endsAt), tz) })
+    : `${stamp}, ${start}`
+  return { plain, exact }
+}
 
 export interface EventDetailScreenProps {
   id: string
@@ -65,11 +128,11 @@ export function EventDetailScreen(props: EventDetailScreenProps) {
     )
   }, [props.id])
 
-  if (event === 'failed') return <div className="ev-detailscreen"><Back onBack={props.onBack} /><EmptyState mark="calendar" line="This event could not be loaded" sub="Please try again in a moment." action={{label: 'Try again', onAct: () => window.location.reload()}} /></div>
+  if (event === 'failed') return <main className="ev-detailscreen"><Back onBack={props.onBack} /><EmptyState heading mark="calendar" line={t('This event could not be loaded')} sub={t('Please try again in a moment.')} action={{label: t('Try again'), onAct: () => window.location.reload()}} /></main>
 
   if (event === 'missing') {
     return (
-      <div className="ev-detailscreen">
+      <main className="ev-detailscreen">
         <Back onBack={props.onBack} />
         {/*
           A scraped calendar drops things, and when it does the listing is
@@ -77,23 +140,24 @@ export function EventDetailScreen(props: EventDetailScreenProps) {
           a screen with empty fields in it.
         */}
         <EmptyState
+          heading
           mark="calendar"
-          line="This listing is no longer on the calendar"
-          sub="It was taken down at the source, or it has already happened and rolled off. Nothing on your end went wrong."
-          action={{ label: 'Back to the calendar', onAct: props.onBack }}
+          line={t('This listing is no longer on the calendar')}
+          sub={t('It was taken down at the source, or it has already happened and rolled off. Nothing on your end went wrong.')}
+          action={{ label: t('Back to the calendar'), onAct: props.onBack }}
         />
-      </div>
+      </main>
     )
   }
 
   if (!event) {
     return (
-      <div className="ev-detailscreen" aria-busy="true">
+      <main className="ev-detailscreen" aria-busy="true">
         <Back onBack={props.onBack} />
         <Skeleton width="60%" height={28} />
         <Skeleton width="40%" />
         <Skeleton shape="block" height={140} />
-      </div>
+      </main>
     )
   }
 
@@ -103,7 +167,7 @@ export function EventDetailScreen(props: EventDetailScreenProps) {
 function Back(props: { onBack: () => void }) {
   return (
     <button className="ev-back" onClick={props.onBack}>
-      <Icon name="chevron-left" size={16} /> The calendar
+      <Icon name="chevron-left" size={16} /> {t('The calendar')}
     </button>
   )
 }
@@ -118,6 +182,7 @@ function Loaded(props: EventDetailScreenProps & { event: EventDetailPayload }) {
 
   const state = rowState(event, now)
   const soon = relativeLabel(event, now)
+  const when = whenWords(event)
 
   const isSaved = props.saved.some((s) => s.kind === 'event' && s.refId === event.id)
 
@@ -152,15 +217,15 @@ function Loaded(props: EventDetailScreenProps & { event: EventDetailPayload }) {
   }
 
   return (
-    <article className="ev-detailscreen">
+    <main className="ev-detailscreen">
       <Back onBack={props.onBack} />
 
       <div className="ev-detailscreen-top">
         <span className="ev-cat" data-category={event.category}>
           <Icon name={CATEGORY_ICON[event.category]} size={14} />
-          {CATEGORY_WORD[event.category]}
+          {t(CATEGORY_WORD[event.category])}
         </span>
-        {state === 'now' && <span className="ev-chip ev-chip--now">on now</span>}
+        {state === 'now' && <span className="ev-chip ev-chip--now">{t('on now')}</span>}
         {soon && state === 'soon' && <span className="ev-chip ev-chip--soon">{soon}</span>}
       </div>
 
@@ -168,23 +233,23 @@ function Loaded(props: EventDetailScreenProps & { event: EventDetailPayload }) {
 
       <Card className="ev-when">
         <CardBody>
-          <p className="ev-when-plain">{event.whenPlain}</p>
+          <p className="ev-when-plain">{when.plain}</p>
           <p className="ev-when-exact">
             <Icon name="clock" size={14} />
-            {event.whenExact}
+            {when.exact}
           </p>
           {!event.allDay && !event.endsAt && (
             /* Said out loud rather than left as a blank. "Until when" is the
                second question anybody asks, and "the source did not say" is a
                better answer than an end time we made up. */
-            <p className="ev-when-note">No end time published.</p>
+            <p className="ev-when-note">{t('No end time published.')}</p>
           )}
         </CardBody>
       </Card>
 
-      {saveError && <p className="problem" role="alert">Could not update your saves. Please try again.</p>}
+      {saveError && <p className="problem" role="alert">{t('Could not update your saves. Please try again.')}</p>}
       <div className="ev-actions">
-        {!props.account && props.onSignIn && <Button icon="bookmark" onClick={props.onSignIn}>Sign in to save this</Button>}
+        {!props.account && props.onSignIn && <Button icon="bookmark" onClick={props.onSignIn}>{t('Sign in to save this')}</Button>}
         {props.account && (
           <Button
             variant={isSaved ? 'secondary' : 'primary'}
@@ -192,7 +257,7 @@ function Loaded(props: EventDetailScreenProps & { event: EventDetailPayload }) {
             disabled={saving}
             onClick={() => void toggleSave()}
           >
-            {saving ? 'Saving…' : isSaved ? 'Saved' : 'Save this'}
+            {saving ? t('Saving…') : isSaved ? t('Saved') : t('Save this')}
           </Button>
         )}
         {event.url && (
@@ -201,13 +266,13 @@ function Loaded(props: EventDetailScreenProps & { event: EventDetailPayload }) {
             trailingIcon="arrow-out"
             onClick={() => window.open(event.url ?? '', '_blank', 'noopener,noreferrer')}
           >
-            Open the original
+            {t('Open the original')}
           </Button>
         )}
       </div>
 
       <section className="ev-block">
-        <h2 className="ev-blocklabel">Where</h2>
+        <h2 className="ev-blocklabel">{t('Where')}</h2>
         {/*
           A plain card, not a card-level target. Directions is its own action
           and nesting a link inside a link is the thing `Card` warns about;
@@ -224,7 +289,7 @@ function Loaded(props: EventDetailScreenProps & { event: EventDetailPayload }) {
                 rel="noopener noreferrer"
               >
                 <Icon name="directions" size={14} />
-                Directions
+                {t('Directions')}
               </a>
             )}
           </CardBody>
@@ -233,21 +298,21 @@ function Loaded(props: EventDetailScreenProps & { event: EventDetailPayload }) {
 
       {event.description && (
         <section className="ev-block">
-          <h2 className="ev-blocklabel">About</h2>
+          <h2 className="ev-blocklabel">{t('About')}</h2>
           <p className="ev-prose">{event.description}</p>
         </section>
       )}
 
       {event.alsoThatDay.length > 0 && (
         <section className="ev-block">
-          <h2 className="ev-blocklabel">Also that day</h2>
+          <h2 className="ev-blocklabel">{t('Also that day')}</h2>
           <RowList className="ev-agenda" density="compact">
             {event.alsoThatDay.map((row) => (
               <AlsoRow key={row.id} row={row} onOpen={props.onOpenEvent} />
             ))}
           </RowList>
           <button className="ev-link" onClick={() => props.onOpenDay(event.day)}>
-            See the whole day
+            {t('See the whole day')}
             <Icon name="chevron-right" size={14} />
           </button>
         </section>
@@ -266,17 +331,21 @@ function Loaded(props: EventDetailScreenProps & { event: EventDetailPayload }) {
       */}
       <footer className="ev-source">
         <div>
-          <b>From {event.source.name}</b>
-          <span>Last checked around {townClock(Date.parse(event.generatedAt), event.town.timezone)}</span>
+          <b>{t('From {source}', { source: event.source.name })}</b>
+          <span>
+            {t('Last checked around {time}', {
+              time: townClock(Date.parse(event.generatedAt), event.town.timezone),
+            })}
+          </span>
         </div>
         {event.url && (
           <a href={event.url} target="_blank" rel="noopener noreferrer">
             <Icon name="arrow-out" size={14} />
-            Open the original
+            {t('Open the original')}
           </a>
         )}
       </footer>
-    </article>
+    </main>
   )
 }
 
@@ -294,9 +363,9 @@ function AlsoRow(props: { row: EventRow; onOpen: (id: string) => void }) {
           <span className="ev-time" data-allday={row.allDay || undefined}>
             {row.allDay ? (
               <span className="ev-allday">
-                all
+                {t('all')}
                 <br />
-                day
+                {t('day')}
               </span>
             ) : (
               <>

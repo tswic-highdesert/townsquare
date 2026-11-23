@@ -21,7 +21,9 @@
 
 import { Button, Card, EmptyState } from '../ui/index.js'
 import { Icon } from '../Icon.js'
-import type { Contribution, PauseState, SubmitResult } from './contributeData.js'
+import { getLocale, msg, t } from '../i18n/index.js'
+import { withBold } from './ComposerShell.js'
+import { TYPE_NAMES, type Contribution, type PauseState, type SubmitResult } from './contributeData.js'
 
 /** What the composer shows the moment a submission lands. */
 export function OutcomePanel(props: {
@@ -34,13 +36,13 @@ export function OutcomePanel(props: {
   if (result.duplicate) {
     return (
       <Card className="cn-outcome" elevation="raised">
-        <StatusLine icon="check-circle" tone="wait" label="Already sent" />
+        <StatusLine icon="check-circle" tone="wait" label={t('Already sent')} />
         <p className="cn-gate-say">
-          <b>You already sent this one.</b> We kept the first one rather than making a second, so a
-          moderator reads it once. Nothing was lost and nothing was duplicated.
+          <b>{t('You already sent this one.')}</b>{' '}
+          {t('We kept the first one rather than making a second, so a moderator reads it once. Nothing was lost and nothing was duplicated.')}
         </p>
         <Button variant="secondary" onClick={props.onDone}>
-          Back
+          {t('Back')}
         </Button>
       </Card>
     )
@@ -49,18 +51,18 @@ export function OutcomePanel(props: {
   if (result.outcome === 'published') {
     return (
       <Card className="cn-outcome" elevation="raised">
-        <StatusLine icon="check-circle" tone="live" label="Live" />
+        <StatusLine icon="check-circle" tone="live" label={t('Live')} />
         <p className="cn-gate-say">
-          <b>It is up.</b> Editing it makes a new version, and the old one stays where it is.
+          <b>{t('It is up.')}</b> {t('Editing it makes a new version, and the old one stays where it is.')}
         </p>
         <div className="cn-gate-acts-row">
           {result.recordId ? (
             <Button variant="quiet" size="sm" onClick={() => props.onHistory(result.recordId!)}>
-              See its history
+              {t('See its history')}
             </Button>
           ) : null}
           <Button variant="secondary" size="sm" onClick={props.onDone}>
-            Done
+            {t('Done')}
           </Button>
         </div>
       </Card>
@@ -70,14 +72,13 @@ export function OutcomePanel(props: {
   if (result.outcome === 'held_for_verification') {
     return (
       <Card className="cn-outcome" elevation="raised">
-        <StatusLine icon="user-plus" tone="need" label="Needs vouching" />
+        <StatusLine icon="user-plus" tone="need" label={t('Needs vouching')} />
         <p className="cn-gate-say">
-          <b>Saved, and it will post the moment you are verified.</b> Adding this is for verified
-          residents. You need neighbours to vouch for you, and we are holding this for you until
-          they have. Nothing is lost.
+          <b>{t('Saved, and it will post the moment you are verified.')}</b>{' '}
+          {t('Adding this is for verified residents. You need neighbours to vouch for you, and we are holding this for you until they have. Nothing is lost.')}
         </p>
         <Button variant="secondary" onClick={props.onDone}>
-          Back
+          {t('Back')}
         </Button>
       </Card>
     )
@@ -87,14 +88,13 @@ export function OutcomePanel(props: {
     const when = result.contribution.scheduledFor
     return (
       <Card className="cn-outcome" elevation="raised">
-        <StatusLine icon="calendar" tone="sched" label="Scheduled" />
+        <StatusLine icon="calendar" tone="sched" label={t('Scheduled')} />
         <p className="cn-gate-say">
-          <b>{when ? `Goes out ${fullWhen(when)}.` : 'Goes out at the time you set.'}</b> Nobody can
-          see it before then, including you on another device. You can pull it back any time before
-          it sends.
+          <b>{when ? t('Goes out {when}.', { when: fullWhen(when) }) : t('Goes out at the time you set.')}</b>{' '}
+          {t('Nobody can see it before then, including you on another device. You can pull it back any time before it sends.')}
         </p>
         <Button variant="secondary" onClick={props.onDone}>
-          Back
+          {t('Back')}
         </Button>
       </Card>
     )
@@ -102,13 +102,13 @@ export function OutcomePanel(props: {
 
   return (
     <Card className="cn-outcome" elevation="raised">
-      <StatusLine icon="clock" tone="wait" label="Being read" />
+      <StatusLine icon="clock" tone="wait" label={t('Being read')} />
       <p className="cn-gate-say">
-        <b>A moderator has this.</b> Corrections are read by a person before they change the town's
-        record. You will see the answer in your list either way, with whatever they wrote.
+        <b>{t('A moderator has this.')}</b>{' '}
+        {t("Corrections are read by a person before they change the town's record. You will see the answer in your list either way, with whatever they wrote.")}
       </p>
       <Button variant="secondary" onClick={props.onDone}>
-        Back
+        {t('Back')}
       </Button>
     </Card>
   )
@@ -146,9 +146,9 @@ export function ContributionRow(props: {
       {c.status === 'declined' ? (
         <>
           <p className="cn-gate-say">
-            <b>A moderator did not put this one up, and left you a note.</b>
+            <b>{t('A moderator did not put this one up, and left you a note.')}</b>
           </p>
-          <p className="cn-gate-tiny">Nothing was deleted. What you wrote is exactly as you wrote it.</p>
+          <p className="cn-gate-tiny">{t('Nothing was deleted. What you wrote is exactly as you wrote it.')}</p>
         </>
       ) : null}
 
@@ -156,7 +156,7 @@ export function ContributionRow(props: {
         <blockquote className="cn-modnote">
           <p>{c.decisionNote}</p>
           <footer>
-            <Icon name="shield" size={16} /> A moderator
+            <Icon name="shield" size={16} /> {t('A moderator')}
           </footer>
         </blockquote>
       ) : null}
@@ -164,12 +164,12 @@ export function ContributionRow(props: {
       <div className="cn-gate-acts-row">
         {c.recordId ? (
           <Button variant="quiet" size="sm" onClick={() => props.onHistory(c.recordId!)}>
-            History
+            {t('History')}
           </Button>
         ) : null}
         {c.status === 'queued' || c.status === 'scheduled' || c.status === 'held_for_verification' ? (
           <Button variant="quiet" size="sm" onClick={() => props.onWithdraw(c.id)}>
-            Withdraw it
+            {t('Withdraw it')}
           </Button>
         ) : null}
       </div>
@@ -197,15 +197,13 @@ export function PausePanel(props: { pause: PauseState; message: string; onDraft:
           already opens with the count. An earlier version wrote the count line
           here as well and the screen said it twice in a row, which reads as a
           system repeating itself at somebody it has just stopped. */}
-      <span className="cn-pause-kicker">Hold on a second</span>
-      <h3 className="cn-pause-title">{ordinalCount(props.pause.count)} today</h3>
+      <span className="cn-pause-kicker">{t('Hold on a second')}</span>
+      <h3 className="cn-pause-title">{countToday(props.pause.count)}</h3>
       <p className="cn-pause-body">{props.message}</p>
       {props.pause.retryAt ? (
         <p className="cn-pause-when">
           <Icon name="clock" size={16} />
-          <span>
-            You can post again <b>{fullWhen(props.pause.retryAt)}</b>.
-          </span>
+          <span>{withBold(t('You can post again {when}.'), 'when', fullWhen(props.pause.retryAt))}</span>
         </p>
       ) : null}
       <ul className="cn-pause-list">
@@ -216,11 +214,10 @@ export function PausePanel(props: { pause: PauseState; message: string; onDraft:
         ))}
       </ul>
       <Button variant="primary" onClick={props.onDraft}>
-        Save this as a draft
+        {t('Save this as a draft')}
       </Button>
       <p className="cn-pause-foot">
-        If you run the market or the school calendar and this is genuinely not enough, say so and we
-        will raise yours. That takes a message, not an application.
+        {t('If you run the market or the school calendar and this is genuinely not enough, say so and we will raise yours. That takes a message, not an application.')}
       </p>
     </div>
   )
@@ -231,9 +228,9 @@ export function MineEmpty({ onAdd }: { onAdd: () => void }) {
   return (
     <EmptyState
       mark="tray"
-      line="You have not added anything yet."
-      sub="An event, a correction to a listing, or a collection. Whatever you add carries your handle, and you can always take it back."
-      action={{ label: 'Add something', onAct: onAdd }}
+      line={t('You have not added anything yet.')}
+      sub={t('An event, a correction to a listing, or a collection. Whatever you add carries your handle, and you can always take it back.')}
+      action={{ label: t('Add something'), onAct: onAdd }}
     />
   )
 }
@@ -258,17 +255,17 @@ function statusFor(status: Contribution['status']): {
 } {
   switch (status) {
     case 'published':
-      return { icon: 'check-circle', tone: 'live', label: 'Live' }
+      return { icon: 'check-circle', tone: 'live', label: t('Live') }
     case 'queued':
-      return { icon: 'clock', tone: 'wait', label: 'Being read' }
+      return { icon: 'clock', tone: 'wait', label: t('Being read') }
     case 'held_for_verification':
-      return { icon: 'user-plus', tone: 'need', label: 'Needs vouching' }
+      return { icon: 'user-plus', tone: 'need', label: t('Needs vouching') }
     case 'scheduled':
-      return { icon: 'calendar', tone: 'sched', label: 'Scheduled' }
+      return { icon: 'calendar', tone: 'sched', label: t('Scheduled') }
     case 'declined':
-      return { icon: 'x-circle', tone: 'no', label: 'Turned down' }
+      return { icon: 'x-circle', tone: 'no', label: t('Turned down') }
     case 'withdrawn':
-      return { icon: 'x-circle', tone: 'no', label: 'Withdrawn' }
+      return { icon: 'x-circle', tone: 'no', label: t('Withdrawn') }
   }
 }
 
@@ -278,17 +275,33 @@ function titleOf(c: Contribution): string {
     const value = content[key]
     if (typeof value === 'string' && value.trim()) return value
   }
-  return c.type
+  return t(TYPE_NAMES[c.type])
 }
 
 /** "Nine today" rather than "9 today": a count being spoken, not tallied. */
-function ordinalCount(n: number): string {
-  const words = ['Nothing', 'One', 'Two', 'Three', 'Four', 'Five', 'Six', 'Seven', 'Eight', 'Nine']
-  return words[n] ?? String(n)
+const COUNT_TODAY = [
+  msg('Nothing today'),
+  msg('One today'),
+  msg('Two today'),
+  msg('Three today'),
+  msg('Four today'),
+  msg('Five today'),
+  msg('Six today'),
+  msg('Seven today'),
+  msg('Eight today'),
+  msg('Nine today'),
+]
+
+function countToday(n: number): string {
+  const spoken = COUNT_TODAY[n]
+  return spoken ? t(spoken) : t('{count} today', { count: n })
 }
 
+/** English keeps its day-month order; Spanish reads in its own. */
+const displayLocale = () => (getLocale() === 'es' ? 'es-US' : 'en-GB')
+
 function fullWhen(at: number): string {
-  return new Intl.DateTimeFormat('en-GB', {
+  return new Intl.DateTimeFormat(displayLocale(), {
     weekday: 'long',
     hour: 'numeric',
     minute: '2-digit',
@@ -299,9 +312,9 @@ function fullWhen(at: number): string {
 /** An interval a person can feel, rather than a timestamp to do sums on. */
 function ago(at: number): string {
   const mins = Math.round((Date.now() - at) / 60_000)
-  if (mins < 1) return 'just now'
-  if (mins < 60) return `${mins} min ago`
+  if (mins < 1) return t('just now')
+  if (mins < 60) return t('{count} min ago', { count: mins })
   const hours = Math.round(mins / 60)
-  if (hours < 24) return `${hours}h ago`
-  return new Intl.DateTimeFormat('en-GB', { day: 'numeric', month: 'short' }).format(new Date(at))
+  if (hours < 24) return t('{count}h ago', { count: hours })
+  return new Intl.DateTimeFormat(displayLocale(), { day: 'numeric', month: 'short' }).format(new Date(at))
 }

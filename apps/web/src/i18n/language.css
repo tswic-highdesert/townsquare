@@ -1,0 +1,38 @@
+/* The other language, in the app bar: a quiet text control, like "Sign in". */
+.ts-lang {
+  min-width: 44px;
+  min-height: 44px;
+  padding: 0 var(--ts-space-2);
+  border: 0;
+  border-radius: var(--ts-radius-input);
+  background: none;
+  font-family: var(--ts-font-sans);
+  font-size: var(--ts-text-label);
+  font-weight: 600;
+  color: var(--ts-ink);
+  white-space: nowrap;
+}
+
+.ts-lang:hover {
+  background: var(--ts-ink08);
+}
+
+.ts-lang:focus-visible {
+  outline: none;
+  box-shadow: var(--ts-focus);
+}
+
+/* On the account screen, both languages as a segmented pair. */
+.ts-lang-group {
+  margin-top: var(--ts-space-3);
+}
+
+.ts-lang-group .ts-seg-btn[aria-pressed='true'] {
+  background: var(--ts-surface);
+  color: var(--ts-ink);
+  box-shadow: var(--ts-shadow-flat);
+}
+
+.ts-lang-group .ts-seg-btn:hover[aria-pressed='false'] {
+  color: var(--ts-ink);
+}

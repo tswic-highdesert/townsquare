@@ -20,7 +20,8 @@
 
 import { Icon } from '../Icon.js'
 import { Button } from '../ui/index.js'
-import { AppIcon, MADE_BY, TRUST_GLYPHS } from './parts.js'
+import { AppIcon, MADE_BY, TRUST_GLYPHS, trustText } from './parts.js'
+import { t } from '../i18n/index.js'
 import { summariseTrust } from './trustGroups.js'
 import type { CreationSummary } from '../townData.js'
 import './creations.css'
@@ -38,9 +39,9 @@ export function CreationDetail(props: CreationDetailProps) {
   const lines = summary.groups.flatMap((g) => g.lines)
 
   return (
-    <div className="shell cr-screen">
+    <main className="shell cr-screen">
       <button className="cr-back" onClick={props.onBack}>
-        <Icon name="arrow-left" size={16} /> Creations
+        <Icon name="arrow-left" size={16} /> {t('Creations')}
       </button>
 
       <div className="cr-trust-head">
@@ -48,13 +49,13 @@ export function CreationDetail(props: CreationDetailProps) {
         <div>
           <h1 className="cr-h1 cr-h1-tight">{creation.name}</h1>
           <p className="cr-lede cr-lede-tight">{creation.tagline}</p>
-          <p className="cr-by">{MADE_BY}</p>
+          <p className="cr-by">{t(MADE_BY)}</p>
         </div>
       </div>
 
       <div className="cr-detail-acts">
         <Button variant="primary" trailingIcon="arrow-right" onClick={props.onOpen}>
-          Open
+          {t('Open')}
         </Button>
       </div>
 
@@ -72,7 +73,7 @@ export function CreationDetail(props: CreationDetailProps) {
         </ul>
       )}
 
-      <div className="cr-detail-h">What this one can touch</div>
+      <div className="cr-detail-h">{t('What this one can touch')}</div>
       <ul className="cr-trust cr-trust-compact">
         {lines.map((line) => (
           <li key={line.kind} data-weight={line.weight}>
@@ -80,8 +81,8 @@ export function CreationDetail(props: CreationDetailProps) {
               <Icon name={TRUST_GLYPHS[line.kind]} size={16} />
             </div>
             <div>
-              <div className="cr-trust-title">{line.title}</div>
-              <div className="cr-trust-detail">{line.detail}</div>
+              <div className="cr-trust-title">{trustText(line.title)}</div>
+              <div className="cr-trust-detail">{trustText(line.detail)}</div>
             </div>
           </li>
         ))}
@@ -98,7 +99,7 @@ export function CreationDetail(props: CreationDetailProps) {
       */}
       {manifest.defines.length > 0 && (
         <>
-          <div className="cr-detail-h">What it adds to the town</div>
+          <div className="cr-detail-h">{t('What it adds to the town')}</div>
           {manifest.defines.map((defined) => (
             <div key={defined.type} className="cr-defines">
               <div className="cr-defines-head">
@@ -106,8 +107,9 @@ export function CreationDetail(props: CreationDetailProps) {
                 <div>
                   <b>{defined.type}</b>
                   <span>
-                    {defined.label}. Defined here, owned by nobody. Any other creation can ask to
-                    read it.
+                    {t('{label}. Defined here, owned by nobody. Any other creation can ask to read it.', {
+                      label: defined.label,
+                    })}
                   </span>
                 </div>
               </div>
@@ -120,7 +122,7 @@ export function CreationDetail(props: CreationDetailProps) {
                         {spec.type}
                         {spec.maxLength ? `, ${spec.maxLength}` : ''}
                       </td>
-                      <td className="cr-req">{spec.required ? 'required' : ''}</td>
+                      <td className="cr-req">{spec.required ? t('required') : ''}</td>
                     </tr>
                   ))}
                 </tbody>
@@ -131,9 +133,11 @@ export function CreationDetail(props: CreationDetailProps) {
       )}
 
       <p className="cr-footnote">
-        Running version {manifest.version}. Town Square keeps the source a neighbour on the
-        committee read, and every update is read again before it replaces this one.
+        {t(
+          'Running version {version}. Town Square keeps the source a neighbour on the committee read, and every update is read again before it replaces this one.',
+          { version: manifest.version },
+        )}
       </p>
-    </div>
+    </main>
   )
 }

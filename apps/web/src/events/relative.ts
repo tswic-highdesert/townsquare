@@ -13,6 +13,8 @@
  * neighbour standing outside a library that closed an hour ago.
  */
 
+import { intlLocale, t, tn } from '../i18n/index.js'
+
 /** The shape this module needs. `EventRow` from the API satisfies it. */
 export interface Timed {
   startsAt: string
@@ -60,13 +62,13 @@ export function rowState(row: Timed, nowMs: number): RowState {
  */
 export function relativeLabel(row: Timed, nowMs: number): string | null {
   const state = rowState(row, nowMs)
-  if (state === 'now') return 'on now'
+  if (state === 'now') return t('on now')
   if (state !== 'soon') return null
 
   const minutes = Math.round((Date.parse(row.startsAt) - nowMs) / 60_000)
-  if (minutes <= 0) return 'starting now'
-  if (minutes === 1) return 'in a minute'
-  return `in ${minutes} min`
+  if (minutes <= 0) return t('starting now')
+  if (minutes === 1) return t('in a minute')
+  return t('in {minutes} min', { minutes })
 }
 
 /**
@@ -78,10 +80,10 @@ export function relativeLabel(row: Timed, nowMs: number): string | null {
 export function startedLabel(row: Timed, nowMs: number): string | null {
   if (rowState(row, nowMs) !== 'now') return null
   const minutes = Math.round((nowMs - Date.parse(row.startsAt)) / 60_000)
-  if (minutes < 1) return 'just started'
-  if (minutes < 60) return `started ${minutes} min ago`
+  if (minutes < 1) return t('just started')
+  if (minutes < 60) return t('started {minutes} min ago', { minutes })
   const hours = Math.round(minutes / 60)
-  return hours === 1 ? 'started an hour ago' : `started ${hours} hr ago`
+  return hours === 1 ? t('started an hour ago') : t('started {hours} hr ago', { hours })
 }
 
 /**
@@ -135,11 +137,39 @@ export function nowLineIndex(rows: readonly Timed[], nowMs: number): number | nu
  * 5:30 council meeting is a screen arguing with itself.
  */
 export function townClock(nowMs: number, timezone: string): string {
-  const text = new Intl.DateTimeFormat('en-US', {
+  const text = new Intl.DateTimeFormat(intlLocale(), {
     timeZone: timezone,
     hour: 'numeric',
     minute: '2-digit',
     hour12: true,
   }).format(new Date(nowMs))
   return text.toLowerCase()
+}
+
+/**
+ * A town day (`YYYY-MM-DD`) in the reader's language. Midday UTC is the safe
+ * hour to format a bare date, the same one the API uses.
+ */
+export function dayText(day: string, opts: Intl.DateTimeFormatOptions): string {
+  return new Intl.DateTimeFormat(intlLocale(), { timeZone: 'UTC', ...opts }).format(new Date(`${day}T12:00:00Z`))
+}
+
+/** `miércoles, 5 de agosto`: a weekday with its date. */
+export function longDay(day: string): string {
+  return dayText(day, { weekday: 'long', day: 'numeric', month: 'long' })
+}
+
+/** Spanish writes weekdays and months in lower case; a label that opens with one does not. */
+export function capitalize(text: string): string {
+  return text.charAt(0).toLocaleUpperCase(intlLocale()) + text.slice(1)
+}
+
+/** The count half of a day's spoken label: `nothing on`, `3 things on`. */
+export function dayCount(count: number): string {
+  return count === 0 ? t('nothing on') : tn(count, '{count} thing on', '{count} things on')
+}
+
+/** Whole days from `a` to `b`, both town days. Positive when `b` is later. */
+export function daysBetween(a: string, b: string): number {
+  return Math.round((Date.parse(`${b}T00:00:00Z`) - Date.parse(`${a}T00:00:00Z`)) / 86_400_000)
 }

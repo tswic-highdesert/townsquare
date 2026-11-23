@@ -14,7 +14,8 @@
 
 import { Icon } from '../Icon.js'
 import { EmptyState } from '../ui/index.js'
-import type { ContributionType, Draft } from './contributeData.js'
+import { t, tn } from '../i18n/index.js'
+import { TYPE_NAMES, type ContributionType, type Draft } from './contributeData.js'
 
 const TYPE_ICON: Record<ContributionType, 'calendar' | 'edit' | 'megaphone' | 'layers' | 'camera'> =
   {
@@ -34,15 +35,15 @@ export function DraftsList(props: {
     return (
       <EmptyState
         mark="tray"
-        line="Nothing half-written."
-        sub="Anything you start is kept here automatically, even if you close the app in the middle of it."
+        line={t('Nothing half-written.')}
+        sub={t('Anything you start is kept here automatically, even if you close the app in the middle of it.')}
       />
     )
   }
 
   return (
     <>
-      <h1 className="cn-h1">Your drafts</h1>
+      <h1 className="cn-h1">{t('Your drafts')}</h1>
       <ul className="cn-drafts">
         {props.drafts.map((draft) => (
           <li className="cn-draft" key={draft.id}>
@@ -52,7 +53,7 @@ export function DraftsList(props: {
             <button type="button" className="cn-draft-text" onClick={() => props.onResume(draft)}>
               <b>{draft.title}</b>
               <span>
-                <span className="cn-cap">{draft.type}</span> · {ago(draft.updatedAt)}
+                <span className="cn-cap">{t(TYPE_NAMES[draft.type])}</span> · {ago(draft.updatedAt)}
               </span>
               {missing(draft) ? (
                 <span className="cn-draft-missing">
@@ -61,14 +62,14 @@ export function DraftsList(props: {
               ) : null}
               {stale(draft.updatedAt) ? (
                 <span className="cn-draft-old">
-                  <Icon name="archive" size={14} /> Drafts are kept for 90 days, then tidied away
+                  <Icon name="archive" size={14} /> {t('Drafts are kept for 90 days, then tidied away')}
                 </span>
               ) : null}
             </button>
             <button
               type="button"
               className="cn-icon-btn cn-icon-btn--sm"
-              aria-label={`Throw away ${draft.title}`}
+              aria-label={t('Throw away {title}', { title: draft.title })}
               onClick={() => props.onDiscard(draft)}
             >
               <Icon name="trash" size={16} />
@@ -77,8 +78,7 @@ export function DraftsList(props: {
         ))}
       </ul>
       <p className="cn-drafts-foot">
-        Drafts are yours alone. Nobody else can see one, not a moderator, not an organisation you
-        help run.
+        {t('Drafts are yours alone. Nobody else can see one, not a moderator, not an organisation you help run.')}
       </p>
     </>
   )
@@ -97,20 +97,20 @@ function missing(draft: Draft): string | null {
 
   switch (draft.type) {
     case 'event':
-      if (!has('title')) return 'Needs a name before it can post'
-      if (typeof c['startsAt'] !== 'number') return 'Needs a start time before it can post'
+      if (!has('title')) return t('Needs a name before it can post')
+      if (typeof c['startsAt'] !== 'number') return t('Needs a start time before it can post')
       return null
     case 'correction':
-      if (!has('newValue')) return 'Needs the corrected value'
-      if (!has('reason')) return 'Needs a reason before it can be sent'
+      if (!has('newValue')) return t('Needs the corrected value')
+      if (!has('reason')) return t('Needs a reason before it can be sent')
       return null
     case 'notice':
-      return has('title') ? null : 'Needs a line saying what it is'
+      return has('title') ? null : t('Needs a line saying what it is')
     case 'collection':
-      if (!has('name')) return 'Needs a name'
+      if (!has('name')) return t('Needs a name')
       return Array.isArray(c['items']) && (c['items'] as unknown[]).length > 0
         ? null
-        : 'Needs at least one thing in it'
+        : t('Needs at least one thing in it')
     default:
       return null
   }
@@ -122,10 +122,12 @@ const stale = (at: number) => Date.now() - at > NINETY_DAYS * 0.75
 
 function ago(at: number): string {
   const mins = Math.round((Date.now() - at) / 60_000)
-  if (mins < 1) return 'just now'
-  if (mins < 60) return `${mins} minutes ago`
+  if (mins < 1) return t('just now')
+  // English has always said "1 minutes ago"; both forms are given so the
+  // English output is unchanged while Spanish gets a real singular.
+  if (mins < 60) return tn(mins, '{count} minutes ago', '{count} minutes ago')
   const hours = Math.round(mins / 60)
-  if (hours < 24) return `${hours} hours ago`
+  if (hours < 24) return tn(hours, '{count} hours ago', '{count} hours ago')
   const days = Math.round(hours / 24)
-  return days === 1 ? 'yesterday' : `${days} days ago`
+  return days === 1 ? t('yesterday') : tn(days, '{count} days ago', '{count} days ago')
 }

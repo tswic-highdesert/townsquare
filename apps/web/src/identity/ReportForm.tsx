@@ -29,6 +29,7 @@ import { useState } from 'react'
 import { Button, Card, CardBody, InlineError, Select, Textarea } from '../ui/index.js'
 import { Icon } from '../Icon.js'
 import { REPORT_REASONS, fileReport, isError, type ReportReason } from '../reportApi.js'
+import { t } from '../i18n/index.js'
 import './identity.css'
 
 export interface ReportFormProps {
@@ -53,15 +54,15 @@ export function ReportForm(props: ReportFormProps) {
     return (
       <Card elevation="raised" className="id-report">
         <CardBody>
-          <h2 className="id-report-h">Report {props.name}</h2>
+          <h2 className="id-report-h">{t('Report {name}', { name: props.name })}</h2>
           <p className="id-report-note">
             {props.account
-              ? 'Reporting is for verified residents, so a moderator knows a neighbour is behind it. Someone who is already verified can vouch for you from their account page.'
-              : 'Sign in to report this. Reporting is for verified residents, so a moderator knows a neighbour is behind it.'}
+              ? t('Reporting is for verified residents, so a moderator knows a neighbour is behind it. Someone who is already verified can vouch for you from their account page.')
+              : t('Sign in to report this. Reporting is for verified residents, so a moderator knows a neighbour is behind it.')}
           </p>
           <div className="id-actions">
             <Button variant="quiet" onClick={props.onClose}>
-              Close
+              {t('Close')}
             </Button>
           </div>
         </CardBody>
@@ -92,19 +93,19 @@ export function ReportForm(props: ReportFormProps) {
       <Card elevation="raised" className="id-report">
         <CardBody>
           <h2 className="id-report-h">
-            {outcome.duplicate ? 'Already reported' : `Report ${props.name}`}
+            {outcome.duplicate ? t('Already reported') : t('Report {name}', { name: props.name })}
           </h2>
           <p className="id-outcome" data-flat={outcome.duplicate || undefined} role="status">
             <Icon name={outcome.duplicate ? 'inbox' : 'check-circle'} size={15} />
             <span>
               {outcome.duplicate
-                ? 'You had already reported this, so we kept your first report rather than adding another.'
-                : 'Sent. A moderator will read it. Most reports are read and closed with nothing else happening, and that is normal.'}
+                ? t('You had already reported this, so we kept your first report rather than adding another.')
+                : t('Sent. A moderator will read it. Most reports are read and closed with nothing else happening, and that is normal.')}
             </span>
           </p>
           <div className="id-actions">
             <Button variant="quiet" onClick={props.onClose}>
-              Close
+              {t('Close')}
             </Button>
           </div>
         </CardBody>
@@ -115,42 +116,41 @@ export function ReportForm(props: ReportFormProps) {
   return (
     <Card elevation="raised" className="id-report">
       <CardBody>
-        <h2 className="id-report-h">Report {props.name}</h2>
+        <h2 className="id-report-h">{t('Report {name}', { name: props.name })}</h2>
         <p className="id-report-note">
-          Town Square follows the law and does not referee taste. What gets acted on is mostly the
-          first two.
+          {t('Town Square follows the law and does not referee taste. What gets acted on is mostly the first two.')}
         </p>
 
         <Select
-          label="What is wrong"
+          label={t('What is wrong')}
           value={reason}
           onChange={(e) => setReason(e.target.value as ReportReason)}
         >
           {REPORT_REASONS.map((r) => (
             <option key={r.value} value={r.value}>
-              {r.label}
+              {t(r.label)}
             </option>
           ))}
         </Select>
 
         <Textarea
-          label="Anything a moderator should know"
+          label={t('Anything a moderator should know')}
           value={detail}
           onChange={(e) => setDetail(e.target.value)}
           rows={3}
           maxLength={2000}
-          placeholder="Optional. What you saw, and where."
-          help="One category, one box. More fields would make this feel like paperwork and would collect things a moderator does not need."
+          placeholder={t('Optional. What you saw, and where.')}
+          help={t('One category, one box. More fields would make this feel like paperwork and would collect things a moderator does not need.')}
         />
 
-        {problem && <InlineError>{problem}</InlineError>}
+        {problem && <InlineError live>{problem}</InlineError>}
 
         <div className="id-actions">
           <Button variant="primary" full loading={busy} onClick={() => void send()}>
-            Send report
+            {t('Send report')}
           </Button>
           <Button variant="quiet" full disabled={busy} onClick={props.onClose}>
-            Cancel
+            {t('Cancel')}
           </Button>
         </div>
       </CardBody>

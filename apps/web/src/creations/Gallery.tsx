@@ -30,6 +30,7 @@ import { useMemo, useState } from 'react'
 import { Icon } from '../Icon.js'
 import { Button, Card, CardBody, CardMeta, CardTitle, EmptyState, Skeleton } from '../ui/index.js'
 import { AppIcon, MADE_BY, TouchStrip } from './parts.js'
+import { t } from '../i18n/index.js'
 import type { CreationSummary } from '../townData.js'
 import './creations.css'
 
@@ -76,28 +77,29 @@ export function Gallery(props: GalleryProps) {
   )
 
   return (
-    <div className="shell cr-screen">
+    <main className="shell cr-screen" id="ts-main" tabIndex={-1}>
       {props.onBack && (
         <button className="cr-back" onClick={props.onBack}>
-          <Icon name="arrow-left" size={16} /> Today
+          <Icon name="arrow-left" size={16} /> {t('Today')}
         </button>
       )}
 
-      <div className="cr-eyebrow">{props.townName} · made to be useful</div>
-      <h1 className="cr-h1">Small ideas. More connected.</h1>
+      <div className="cr-eyebrow">{t('{town} · made to be useful', { town: props.townName })}</div>
+      <h1 className="cr-h1">{t('Small ideas. More connected.')}</h1>
       <p className="cr-lede">
-        Useful tools for a day in the River Valley, and a starting point for something you could make.
-        Starter examples are labeled. Community creations will appear here as they are reviewed.
+        {t(
+          'Useful tools for a day in the River Valley, and a starting point for something you could make. Starter examples are labeled. Community creations will appear here as they are reviewed.',
+        )}
       </p>
 
-      {(props.onOpenPlan || props.onOpenMap) && <section className="cr-local-tools" aria-label="Town Square tools">
-        {props.onOpenPlan && <button className="cr-local-tool" onClick={props.onOpenPlan}><span className="cr-tool-art cr-tool-art-day"><Icon name="sun" size={52}/><span className="cr-tool-route" aria-hidden="true"><i/><i/><i/></span></span><span className="cr-tool-body"><small>Town Square tool</small><strong>Make a day of it</strong><span>A coffee, a local event, somewhere to eat. Bring your favorite stops together.</span><b>Plan your day <Icon name="arrow-right" size={18}/></b></span></button>}
-        {props.onOpenMap && <button className="cr-local-tool" onClick={props.onOpenMap}><span className="cr-tool-art cr-tool-art-map"><Icon name="map" size={70}/><Icon name="map-pin" size={34}/></span><span className="cr-tool-body"><small>Town Square tool</small><strong>Around the corner</strong><span>Explore places across town and find their address, phone and published details.</span><b>Explore the map <Icon name="arrow-right" size={18}/></b></span></button>}
+      {(props.onOpenPlan || props.onOpenMap) && <section className="cr-local-tools" aria-label={t('Town Square tools')}>
+        {props.onOpenPlan && <button className="cr-local-tool" onClick={props.onOpenPlan}><span className="cr-tool-art cr-tool-art-day"><Icon name="sun" size={52}/><span className="cr-tool-route" aria-hidden="true"><i/><i/><i/></span></span><span className="cr-tool-body"><small>{t('Town Square tool')}</small><strong>{t('Make a day of it')}</strong><span>{t('A coffee, a local event, somewhere to eat. Bring your favorite stops together.')}</span><b>{t('Plan your day')} <Icon name="arrow-right" size={18}/></b></span></button>}
+        {props.onOpenMap && <button className="cr-local-tool" onClick={props.onOpenMap}><span className="cr-tool-art cr-tool-art-map"><Icon name="map" size={70}/><Icon name="map-pin" size={34}/></span><span className="cr-tool-body"><small>{t('Town Square tool')}</small><strong>{t('Around the corner')}</strong><span>{t('Explore places across town and find their address, phone and published details.')}</span><b>{t('Explore the map')} <Icon name="arrow-right" size={18}/></b></span></button>}
       </section>}
-      <div className="cr-gallery-section"><h2>Creation starters</h2><p>Examples of what can be built here. These are not resident endorsements or community activity.</p></div>
+      <div className="cr-gallery-section"><h2>{t('Creation starters')}</h2><p>{t('Examples of what can be built here. These are not resident endorsements or community activity.')}</p></div>
 
       {creations === null ? (
-        <div className="cr-loading" aria-busy="true" aria-label="Loading the gallery">
+        <div className="cr-loading" role="status" aria-busy="true" aria-label={t('Loading the gallery')}>
           <Skeleton width="60%" />
           <Skeleton shape="block" height={96} />
           <Skeleton shape="block" height={96} />
@@ -106,9 +108,9 @@ export function Gallery(props: GalleryProps) {
         <EmptyState
           mark="sprout"
           tone="young"
-          line="No creations published yet."
-          sub="A useful local idea can start small. See how a creation connects to Town Square."
-          action={{ label: 'How it works', onAct: props.onHowItWorks }}
+          line={t('No creations published yet.')}
+          sub={t('A useful local idea can start small. See how a creation connects to Town Square.')}
+          action={{ label: t('How it works'), onAct: props.onHowItWorks }}
         />
       ) : (
         <>
@@ -118,14 +120,14 @@ export function Gallery(props: GalleryProps) {
             there is enough on the screen for filtering to be a kindness.
           */}
           {creations.length >= GRID_FROM && tags.length >= 2 && (
-            <div className="cr-cats" role="group" aria-label="Filter by tag">
+            <div className="cr-cats" role="group" aria-label={t('Filter by tag')}>
               <button
                 className="cr-cat"
                 data-state={tag === null ? 'on' : undefined}
                 aria-pressed={tag === null}
                 onClick={() => setTag(null)}
               >
-                <Icon name="grid" size={14} /> Everything <span>{creations.length}</span>
+                <Icon name="grid" size={14} /> {t('Everything')} <span>{creations.length}</span>
               </button>
               {tags.map(([name, n]) => (
                 <button
@@ -144,9 +146,9 @@ export function Gallery(props: GalleryProps) {
           {shown.length === 0 ? (
             <EmptyState
               align="start"
-              line={`Nothing is tagged ${tag}.`}
-              sub="That shelf is empty for now."
-              action={{ label: 'Show everything', onAct: () => setTag(null) }}
+              line={t('Nothing is tagged {tag}.', { tag: String(tag) })}
+              sub={t('That shelf is empty for now.')}
+              action={{ label: t('Show everything'), onAct: () => setTag(null) }}
             />
           ) : creations.length < GRID_FROM ? (
             <Firsts creations={shown} onOpen={props.onOpen} />
@@ -163,10 +165,11 @@ export function Gallery(props: GalleryProps) {
       )}
 
       <p className="cr-footnote">
-        Each creation declares its permissions before it opens. Starter examples show the platform’s
-        capabilities; they are not submissions from local residents.
+        {t(
+          'Each creation declares its permissions before it opens. Starter examples show the platform’s capabilities; they are not submissions from local residents.',
+        )}
       </p>
-    </div>
+    </main>
   )
 }
 
@@ -191,7 +194,7 @@ function CreationCard({
         <AppIcon creation={creation} />
         <CardTitle>{creation.name}</CardTitle>
         <p className="cr-card-tagline">{creation.tagline}</p>
-        <CardMeta>{MADE_BY}</CardMeta>
+        <CardMeta>{t(MADE_BY)}</CardMeta>
         <TouchStrip creation={creation} />
       </CardBody>
     </Card>
@@ -225,7 +228,7 @@ function Firsts({
           <button className="cr-firsts-body" onClick={() => onOpen(creation)}>
             <span className="cr-firsts-name">{creation.name}</span>
             <span className="cr-firsts-why">{firstSentence(creation.description)}</span>
-            <span className="cr-firsts-by">{MADE_BY}</span>
+            <span className="cr-firsts-by">{t(MADE_BY)}</span>
             <TouchStrip creation={creation} />
           </button>
         </li>
@@ -254,20 +257,21 @@ function Invitation({ onHowItWorks }: { onHowItWorks: () => void }) {
         <span className="cr-invite-icon" aria-hidden="true">
           <Icon name="wand" size={22} />
         </span>
-        <div className="cr-invite-name">Build one</div>
+        <div className="cr-invite-name">{t('Build one')}</div>
         <p className="cr-invite-copy">
-          Start with something you wish existed in town. A useful list, a local guide, a small tool.
-          Learn how to connect an app and submit it for review.
+          {t(
+            'Start with something you wish existed in town. A useful list, a local guide, a small tool. Learn how to connect an app and submit it for review.',
+          )}
         </p>
         <Button variant="secondary" trailingIcon="arrow-right" onClick={onHowItWorks}>
-          How it works
+          {t('How it works')}
         </Button>
       </article>
 
       <p className="cr-invite-line">
-        The next useful idea could be yours.
+        {t('The next useful idea could be yours.')}
         <button className="cr-invite-link" onClick={onHowItWorks}>
-          You could make one <Icon name="arrow-right" size={15} />
+          {t('You could make one')} <Icon name="arrow-right" size={15} />
         </button>
       </p>
     </>
