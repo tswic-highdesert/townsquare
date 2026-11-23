@@ -298,7 +298,10 @@ test.describe('the served response', () => {
 
   test('#3 the bundle origin never sets a cookie', async ({ request }) => {
     const origin = await creationOrigin(request, 'Neighborhood Watch')
-    for (const path of ['/', '/index.html', '/_ts/sdk/1/sdk.js', '/nope']) {
+    const entry = await (await fetchBundle(request, origin, '/')).text()
+    const sdk = /"@townsquare\/sdk":"([^"]+)"/.exec(entry)?.[1]
+    expect(sdk, 'the import map names the SDK').toMatch(/^\/_ts\/sdk\/1-[0-9a-f]{16}\/sdk\.js$/)
+    for (const path of ['/', '/index.html', sdk!, '/nope']) {
       const res = await fetchBundle(request, origin, path)
       expect(Object.keys(res.headers()).map((h) => h.toLowerCase()), path).not.toContain(
         'set-cookie',
